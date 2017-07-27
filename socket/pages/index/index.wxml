@@ -1,0 +1,6 @@
+<!--index.wxml-->
+<view class="container">
+  <input  />
+  <button bindtap="getMessage">发送消息</button>
+  <label>{{ messages }}</label>
+</view>

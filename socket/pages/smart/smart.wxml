@@ -1,0 +1,58 @@
+<!--smart.wxml-->
+<form bindsubmit="saveAI">
+  <view class="content">
+    <label stlye="line-height: 3rem;">apiHost：</label>
+    <input name="apihost" type="text" class="textInput" />
+  </view>
+
+  <view class="content" style="margin-top: 2rem;">
+    <label stlye="line-height: 3rem;">commType</label>
+    <picker name="commtype"  bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+      <view class="picker">
+        当前选择：{{array[index]}}
+      </view>
+    </picker>
+  </view>
+
+  <view class="content">
+    <label stlye="line-height: 3rem;">wechatOpenId：</label>
+    <input name="wechatopenId" type="text" class="textInput" />
+  </view>
+
+  <view class="content">
+    <label stlye="line-height: 3rem;">gizwitsAppId：</label>
+    <input name="gizwitsappId" type="text" class="textInput" />
+  </view>
+  
+  <view class="content">
+    <label stlye="line-height: 3rem;">did：</label>
+    <input name="did" type="text" class="textInput" value="{{ dids }}" />
+  </view>
+
+
+
+  <view class="content" style="margin-top: 1rem;">
+    <button bindtap="chooseImages">Do it!</button>
+  </view>
+
+  <view class="content" style="margin-top: 1rem;">
+    <button bindtap="chooseVideo">Do it!</button>
+  </view>
+
+  <view class="content" style="margin-top: 1rem;">
+    <button bindtap="read">Do it!</button>
+  </view>
+
+  <view class="content" style="margin-top: 1rem;">
+    <button bindtap="writeCommand">Do it!</button>
+  </view>
+
+</form>
+
+
+
+<view class="toast">
+  <label>{{ messages }}</label>
+</view>
+
+  <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn">按住录音（可选）</button>
