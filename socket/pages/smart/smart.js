@@ -26,6 +26,8 @@ Page({
     _bindingDevices: undefined,
     recodePath: '',  //  录音路径
     host: '', //  websocket 请求地址
+    keepalive : 180,
+    autoSub : false,
   },
 
   /**
@@ -285,6 +287,7 @@ Page({
         var limit = 20;
         var skip = 0;
         that._getBindingList(limit, skip)
+        console.log(result);
       },
       fail: function (evt) {
 
@@ -294,6 +297,7 @@ Page({
 
   _getBindingList: function (limit, skip) {
     var that = this;
+    console.log(that.data.uid);
     var query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
     wx.request({
       url: "https://api.gizwits.com/app/bindings" + query,
@@ -313,14 +317,14 @@ Page({
           });
           
           // _bindingDevices = device;
-
-          // _bindingDevices[didType] = device;
+          that._login(that.data.uid,result.data.devices[i], that.data.host);
           that._getWebSocketConn(result.data.devices[i], that.data.host, that.data.did);
+          // _bindingDevices[didType] = device;
         }
         if (result.data.devices.length == limit) {
           that._getBindingList(limit, skip + limit)
         } else {
-          that._returnDeviceList()
+          // that._returnDeviceList()
         }
       },
       fail: function (evt) {
@@ -330,31 +334,65 @@ Page({
   },
 
   _getWebSocketConn(data, host, did) {
-    var len = did.length;
-    var reqData = [];
-    for (var i = 0; i < len.length; i++) {
-      reqData.push({
-        did: did[i]
-      });
-    }
-
     var that = this;
-    wx.connectSocket({
-      url: 'wss://' + host + ":" + 8880 + "/ws/app/v1",
-    });
+    // wx.connectSocket({
+    //   url: 'wss://' + host + ":" + 8880 + "/ws/app/v1",
+    // });
+
+    myUtils.utils.getConn('wss://' + host + ":" + 8880 + "/ws/app/v1", function () { }, function () { }, function () { });
 
     wx.onSocketOpen(function () {
-      var success = [], that = this;
+      var success = [];
       success = {
-        "did": data.did,
-        "mac": data.mac,
-        "product_key": data.product_key,
-        "is_online": data.is_online,
-        "dev_alias": data.dev_alias,
-        "remark": data.remark
+        cmd: 'subscribe_res',
+        data: {
+          "did": data.did,
+          "mac": data.mac,
+          "product_key": data.product_key,
+          "is_online": data.is_online,
+          "dev_alias": data.dev_alias,
+          "remark": data.remark
+        },
       };
       wx.sendSocketMessage({
         data: JSON.stringify(success),
+        success: function (res) {
+          console.log(res);
+        },
+        fail: function (err) {
+          console.log(err)
+        }
+      });
+      wx.onSocketMessage(function (res) {
+        console.log(res);
+      })
+
+    })
+
+    this.showMessage("已发送read指令!");
+  },
+
+  _login: function (userId,data,host) {
+    var that = this;
+
+    console.log(123);
+    myUtils.utils.getConn('wss://' + host + ":" + 8880 + "/ws/app/v1",function() {},function() {},function() {});
+    var json = [];
+    wx.onSocketOpen(function () {
+      json = {
+        cmd: "login_req",
+        data: {
+          appid: that.data.gizwitsAppId,
+          uid: userId,
+          token: that.data.token,
+          p0_type: that.data.commType,
+          heartbeat_interval: that.data.keepalive,
+          auto_subscribe: that.data.autoSub
+        }
+      }
+      console.log(JSON.stringify(json));
+      wx.sendSocketMessage({
+        data: JSON.stringify(json),
         success: function (res) {
           console.log(res);
         },
@@ -369,29 +407,6 @@ Page({
 
     })
 
-    
-
-    this.showMessage("已发送read指令!");
   },
-
-  _returnDeviceList: function () {
-    var devices = [], that = this;
-    if (that.onInit) {
-      var devices = [];
-      var i = 0;
-      for (var key in that._bindingDevices) {
-        devices[i] = {
-          "did": that._bindingDevices[key].did,
-          "mac": that._bindingDevices[key].mac,
-          "product_key": that._bindingDevices[key].product_key,
-          "is_online": that._bindingDevices[key].is_online,
-          "dev_alias": that._bindingDevices[key].dev_alias,
-          "remark": that._bindingDevices[key].remark
-        };
-        i++
-      }
-      that.onInit(devices)
-    }
-  }
 
 })
