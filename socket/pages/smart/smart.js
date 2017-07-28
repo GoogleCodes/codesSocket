@@ -28,6 +28,8 @@ Page({
     host: '', //  websocket 请求地址
     keepalive : 180,
     autoSub : false,
+    socketOpen: false,  //  socket 开关
+    _getWebsocketConnInfo: [],
   },
 
   /**
@@ -57,8 +59,6 @@ Page({
     that._getUserToken();
     //  初始化
     this.showMessage("初始化成功！");
-
-    gizwitsws.GizwitsWS.prototype.connect(that.data.did);
 
   },
   /**
@@ -282,12 +282,15 @@ Page({
         phone_id: that.data.wechatOpenId
       },
       success: function (result) {
-        that.data.token = result.data.token;
-        that.data.uid = result.data.uid;
+        that.setData({
+          token: result.data.token,
+          uid: result.data.uid,
+        });
+        // that.data.token = result.data.token;
+        // that.data.uid = result.data.uid;
         var limit = 20;
         var skip = 0;
         that._getBindingList(limit, skip)
-        console.log(result);
       },
       fail: function (evt) {
 
@@ -314,11 +317,12 @@ Page({
           that.setData({
             did: device.did,  //  did
             host: device.host,  //  websocket 请求地址
+            _getWebsocketConnInfo: result.data.devices[i],
           });
+          console.log(that.data._getWebsocketConnInfo);
           
           // _bindingDevices = device;
-          that._login(that.data.uid,result.data.devices[i], that.data.host);
-          that._getWebSocketConn(result.data.devices[i], that.data.host, that.data.did);
+          that._login(that.data.uid, that.data._getWebsocketConnInfo, that.data.host);
           // _bindingDevices[didType] = device;
         }
         if (result.data.devices.length == limit) {
@@ -335,13 +339,11 @@ Page({
 
   _getWebSocketConn(data, host, did) {
     var that = this;
-    // wx.connectSocket({
-    //   url: 'wss://' + host + ":" + 8880 + "/ws/app/v1",
-    // });
 
     myUtils.utils.getConn('wss://' + host + ":" + 8880 + "/ws/app/v1", function () { }, function () { }, function () { });
 
-    wx.onSocketOpen(function () {
+    wx.onSocketOpen(function (res) {
+      console.log(res);
       var success = [];
       success = {
         cmd: 'subscribe_res',
@@ -373,22 +375,65 @@ Page({
   },
 
   _login: function (userId,data,host) {
+    console.log(data);
     var that = this;
-
-    console.log(123);
     myUtils.utils.getConn('wss://' + host + ":" + 8880 + "/ws/app/v1",function() {},function() {},function() {});
     var json = [];
-    wx.onSocketOpen(function () {
+    wx.onSocketOpen(function (res) {
       json = {
         cmd: "login_req",
         data: {
-          appid: that.data.gizwitsAppId,
-          uid: userId,
-          token: that.data.token,
-          p0_type: that.data.commType,
-          heartbeat_interval: that.data.keepalive,
-          auto_subscribe: that.data.autoSub
+          // appid: that.data.gizwitsAppId,
+          // uid: userId,
+          // token: that.data.token,
+          // p0_type: that.data.commType,
+          // heartbeat_interval: that.data.keepalive,
+          // auto_subscribe: that.data.autoSub
+
+          appid: '032c92bbb0fc4b6499a2eaed58727a3a',
+          uid: '45c691417def43db967c875f039dc53b',
+          token: '28e0ae62663e4804a0f3591601e1df5e',
+          p0_type: 'custom',
+          heartbeat_interval: 180,
+          auto_subscribe: false
         }
+      }
+      wx.sendSocketMessage({
+        data: JSON.stringify(json),
+        success: function (res) {
+          console.log(res);
+          // that._getWebSocketConn(data, that.data.host, that.data.did);
+        },
+        fail: function (err) {
+          console.log(err)
+        },
+        complete: function() {
+          that._subDevices(data,host);
+        },
+      });
+
+      wx.onSocketMessage(function (res) {
+        var options = JSON.parse(res.data);
+        if (options.data.success == false) {
+          // that._onWSMessage();
+        }
+      })
+    })
+  },
+
+  _subDevices: function (data, host) {
+    var that = this;
+    myUtils.utils.getConn('wss://' + host + ":" + 8880 + "/ws/app/v1", function () { }, function () { }, function () { });
+
+    var json = [];
+    wx.onSocketOpen(function (res) {
+      json = {
+        cmd: "subscribe_req",
+        data: [
+          {
+            did: '59NAHkTJ2m3CBnu5koAAPi',
+          }
+        ]
       }
       console.log(JSON.stringify(json));
       wx.sendSocketMessage({
@@ -402,11 +447,19 @@ Page({
       });
 
       wx.onSocketMessage(function (res) {
-        console.log(res);
+        var options = JSON.parse(res.data);
+        if (options.data.success == false) {
+          // that._onWSMessage();
+        }
       })
 
     })
 
   },
+
+  _onWSMessage: function (userId, data, host) {
+    var that = this;
+    that._login(userId, data, host);
+  }
 
 })

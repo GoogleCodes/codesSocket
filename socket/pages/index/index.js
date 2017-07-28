@@ -21,14 +21,14 @@ Page({
     myUtils.utils.getConn('ws://localhost:8080/MySocket/websocket',function(res) { //  成功调用
       console.log("请求成功！");
     },function(err) {  //  失败调用
-
-    },function() {
-      
+      console.log(err)
+    },function(err) {
+      console.log(err);
     });
 
     //  打开链接
     myUtils.utils.getSocketOpen(function(res) {
-      console.log(res, "WebSocket连接已打开！");
+      console.log(res, "WebSocket连接已打开！" + JSON.stringify(res));
     });
 
   },
