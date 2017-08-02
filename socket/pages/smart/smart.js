@@ -12,7 +12,7 @@ Page({
     array: ['custom', 'attrs_v4'],
     messages: '',
     apiHost: 'api.gizwits.com',
-    commType: 'attr_v4',
+    commType: 'attrs_v4', //  attrs_v4 || custom
     wechatOpenId: 'kceshi1',
     gizwitsAppId: '032c92bbb0fc4b6499a2eaed58727a3a',
     token: '0bcd85f5c5184d67bd4358807df51653',
@@ -22,14 +22,15 @@ Page({
     port_s: 0,
     ws_port: 0,
     wss_port: 0,
-    onInit : undefined,
+    onInit: undefined,
     _bindingDevices: undefined,
     recodePath: '',  //  录音路径
     host: '', //  websocket 请求地址
-    keepalive : 180,
-    autoSub : false,
+    keepalive: 180,
+    autoSub: false,
     socketOpen: false,  //  socket 开关
     _getWebsocketConnInfo: [],
+    url: 'ws://sandbox.gizwits.com:8080/ws/app/v1',
   },
 
   /**
@@ -42,23 +43,33 @@ Page({
     });
   },
 
-  onReceivedRaw: function (value) {
-    var str = value.did;
-    for (var i = 0; i < value.raw.length; i++) {
-      str = str + value.raw[i] + ",";
-    }
-    str = str.substr(0, str.length - 1) + "]";
-    this.showMessage(str);
-  },
-
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
     var that = this;
     that._getUserToken();
-    //  初始化
-    this.showMessage("初始化成功！");
+
+    wx.getUserInfo({
+      success: function (res) {
+        var userInfo = res.userInfo
+        var nickName = userInfo.nickName
+        var avatarUrl = userInfo.avatarUrl
+        var gender = userInfo.gender //性别 0：未知、1：男、2：女
+        var province = userInfo.province
+        var city = userInfo.city
+        var country = userInfo.country
+        var phone = userInfo.mobilePhoneNumber
+
+        console.log(nickName, avatarUrl, gender, province, city, country, phone);
+
+      }
+    })
+
+    wx.addPhoneContact({
+      firstName: '231',
+      mobilePhoneNumber: 13250672958
+    })
 
   },
   /**
@@ -194,21 +205,6 @@ Page({
     });
   },
 
-  read: function () {
-    var that = this;
-  },
-
-  writeCommand: function () {
-    var that = this;
-    var options = {
-      "lang": 10
-    };
-    console.log(options);
-    gizwitsws.GizwitsWS.prototype.send(that.data.dids, options);
-
-    this.showMessage("已对设备" + that.data.dids + "发送raw指令: " + JSON.stringify(options));
-  },
-
   /**
    * 下拉列表
    */
@@ -279,28 +275,25 @@ Page({
       },
       data: {
         lang: "en",
-        phone_id: that.data.wechatOpenId
+        phone_id: that.data.wechatOpenId,
       },
       success: function (result) {
         that.setData({
           token: result.data.token,
           uid: result.data.uid,
         });
-        // that.data.token = result.data.token;
-        // that.data.uid = result.data.uid;
         var limit = 20;
         var skip = 0;
         that._getBindingList(limit, skip)
       },
       fail: function (evt) {
-
+        console.log(evt);
       }
     })
   },
 
   _getBindingList: function (limit, skip) {
     var that = this;
-    console.log(that.data.uid);
     var query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
     wx.request({
       url: "https://api.gizwits.com/app/bindings" + query,
@@ -308,7 +301,7 @@ Page({
       header: {
         'content-type': 'application/json',
         "X-Gizwits-Application-Id": '032c92bbb0fc4b6499a2eaed58727a3a',
-        "X-Gizwits-User-token": '5e13097e89464309905d15a72a66a3d4'
+        "X-Gizwits-User-token": '37f42363dff846e7861f2b86f08d07f5'
       },
       success: function (result) {
         for (var i in result.data.devices) {
@@ -319,16 +312,10 @@ Page({
             host: device.host,  //  websocket 请求地址
             _getWebsocketConnInfo: result.data.devices[i],
           });
-          console.log(that.data._getWebsocketConnInfo);
-          
           // _bindingDevices = device;
-          that._login(that.data.uid, that.data._getWebsocketConnInfo, that.data.host);
-          // _bindingDevices[didType] = device;
-        }
-        if (result.data.devices.length == limit) {
-          that._getBindingList(limit, skip + limit)
-        } else {
-          // that._returnDeviceList()
+
+          that._login(that.data.host);
+          that._getWebSocketConn()
         }
       },
       fail: function (evt) {
@@ -337,129 +324,113 @@ Page({
     })
   },
 
-  _getWebSocketConn(data, host, did) {
+  _getWebSocketConn() {
     var that = this;
-
-    myUtils.utils.getConn('wss://' + host + ":" + 8880 + "/ws/app/v1", function () { }, function () { }, function () { });
-
-    wx.onSocketOpen(function (res) {
-      console.log(res);
-      var success = [];
-      success = {
-        cmd: 'subscribe_res',
-        data: {
-          "did": data.did,
-          "mac": data.mac,
-          "product_key": data.product_key,
-          "is_online": data.is_online,
-          "dev_alias": data.dev_alias,
-          "remark": data.remark
-        },
-      };
-      wx.sendSocketMessage({
-        data: JSON.stringify(success),
-        success: function (res) {
-          console.log(res);
-        },
-        fail: function (err) {
-          console.log(err)
-        }
-      });
-      wx.onSocketMessage(function (res) {
-        console.log(res);
-      })
-
-    })
-
     this.showMessage("已发送read指令!");
   },
 
-  _login: function (userId,data,host) {
-    console.log(data);
-    var that = this;
-    myUtils.utils.getConn('wss://' + host + ":" + 8880 + "/ws/app/v1",function() {},function() {},function() {});
-    var json = [];
-    wx.onSocketOpen(function (res) {
-      json = {
-        cmd: "login_req",
-        data: {
-          // appid: that.data.gizwitsAppId,
-          // uid: userId,
-          // token: that.data.token,
-          // p0_type: that.data.commType,
-          // heartbeat_interval: that.data.keepalive,
-          // auto_subscribe: that.data.autoSub
+  _login: function (host) {
+    var that = this, json = [];
 
-          appid: '032c92bbb0fc4b6499a2eaed58727a3a',
-          uid: '45c691417def43db967c875f039dc53b',
-          token: '28e0ae62663e4804a0f3591601e1df5e',
-          p0_type: 'custom',
-          heartbeat_interval: 180,
-          auto_subscribe: false
-        }
-      }
-      wx.sendSocketMessage({
-        data: JSON.stringify(json),
-        success: function (res) {
-          console.log(res);
-          // that._getWebSocketConn(data, that.data.host, that.data.did);
-        },
-        fail: function (err) {
-          console.log(err)
-        },
-        complete: function() {
-          that._subDevices(data,host);
-        },
-      });
-
-      wx.onSocketMessage(function (res) {
-        var options = JSON.parse(res.data);
-        if (options.data.success == false) {
-          // that._onWSMessage();
-        }
-      })
-    })
-  },
-
-  _subDevices: function (data, host) {
-    var that = this;
-    myUtils.utils.getConn('wss://' + host + ":" + 8880 + "/ws/app/v1", function () { }, function () { }, function () { });
-
-    var json = [];
-    wx.onSocketOpen(function (res) {
-      json = {
-        cmd: "subscribe_req",
-        data: [
-          {
-            did: '59NAHkTJ2m3CBnu5koAAPi',
+    wx.connectSocket({
+      // url: 'wss://sandbox.gizwits.com:8880/ws/app/v1',
+      url: that.data.url,
+      method: 'POST',
+      header: {
+        'content-type': 'application/json'
+      },
+      success: function (res) {
+        wx.onSocketOpen(function (res) {
+          json = {
+            cmd: "login_req",
+            data: {
+              appid: '032c92bbb0fc4b6499a2eaed58727a3a',
+              uid: '45c691417def43db967c875f039dc53b',
+              token: 'c26403fea3d448429b421b6facddcdd4',
+              p0_type: 'attrs_v4',
+              heartbeat_interval: 18000,
+              auto_subscribe: true
+            }
           }
-        ]
+          that._sendJson(json);
+          wx.onSocketMessage(function (res) {
+            var data = JSON.parse(res.data);
+            if (data.data.success == true) {
+              json = {
+                cmd: "subscribe_req",
+                data: [
+                  { did: '59NAHkTJ2m3CBnu5koAAPi', },
+                ]
+              };
+              that._sendJson(json);
+
+              var rJson = {
+                cmd: "c2s_read",
+                data: {
+                  did: '59NAHkTJ2m3CBnu5koAAPi'
+                }
+              };
+              that._sendJson(rJson);
+
+
+              var _sendJson = {
+                cmd: "c2s_write",
+                data: {
+                  did: '59NAHkTJ2m3CBnu5koAAPi',
+                  attrs:{
+                    "LANG": 1
+                  }
+                }
+              };
+
+              console.log(_sendJson);
+
+              wx.sendSocketMessage({
+                data: JSON.stringify(_sendJson),
+                success: function(res) {
+                  console.log(res);
+                },
+              })
+
+            }
+          })
+        })
+      },
+      fail: function (err) {
+        console.log(err);
       }
-      console.log(JSON.stringify(json));
-      wx.sendSocketMessage({
-        data: JSON.stringify(json),
-        success: function (res) {
-          console.log(res);
-        },
-        fail: function (err) {
-          console.log(err)
-        }
-      });
-
-      wx.onSocketMessage(function (res) {
-        var options = JSON.parse(res.data);
-        if (options.data.success == false) {
-          // that._onWSMessage();
-        }
-      })
-
     })
-
   },
 
-  _onWSMessage: function (userId, data, host) {
+  _reay: function () {
+    
+  },
+
+  _send: function (did, data) {
     var that = this;
-    that._login(userId, data, host);
+    that._sendJson(data);
+  },
+
+  _sMessage: function(message) {
+    var that = this;
+    that._sendJson();
+    wx.onSocketMessage(function(res){
+      message = res.data;
+    })
+  },
+
+  _sendJson: function (json) {
+    wx.sendSocketMessage({
+      data: JSON.stringify(json),
+      success: function (res) {
+        console.log(res);
+      },
+    })
+  },
+
+  readSocketDate: function() {
+
   }
+
 
 })

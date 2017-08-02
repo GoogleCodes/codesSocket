@@ -19,11 +19,11 @@ Page({
     })
 
     myUtils.utils.getConn('ws://localhost:8080/MySocket/websocket',function(res) { //  成功调用
-      console.log("请求成功！");
+      console.log("请求成功！" + JSON.stringify(res));
     },function(err) {  //  失败调用
       console.log(err)
     },function(err) {
-      console.log(err);
+      
     });
 
     //  打开链接
@@ -50,6 +50,7 @@ Page({
 
     //  接收服务器的信息
     myUtils.utils.getServerMessage(that.data.messages,function(res) {
+      console.log(res);
       that.setData({
         messages: res.data
       });
