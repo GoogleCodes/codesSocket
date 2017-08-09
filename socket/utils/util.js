@@ -1,6 +1,6 @@
 var utils = (function() {
   var options = {
-    formatTime(number) {  //  时间格式化
+    formatTime: function(number) {  //  时间格式化
       var n = number * 1000;
       var date = new Date(n);
       //  年份
@@ -16,9 +16,9 @@ var utils = (function() {
       //  秒钟
       var second = date.getSeconds()
       //  合并变量 
-      return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':')
+      return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':');
     },
-    formatNumber(n) {  //  时间格式化
+    formatNumber: function(n) {  //  时间格式化
       n = n.toString()
       return n[1] ? n : '0' + n
     },
