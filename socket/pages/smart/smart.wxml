@@ -1,32 +1,31 @@
 <!--smart.wxml-->
+<view class="pushMsgFm">
+  <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
 
-<form name='pushMsgFm' report-submit bindsubmit='orderSign'>
-
-  enter product:<input type="text" style="border:1px solid #ccc;width: 90%;margin: 0px auto;" name="product" value='' placeholder="enter your name" /> detail: <input type="text" name='detail' placeholder="enter desc" style="border:1px solid #ccc;width: 90%;margin: 0px auto;"
-  />
-
-
-
-  <view class="content" style="margin-top: 2rem;">
-    <picker name="commtype" bindchange="bindPickerChange" value="{{ index }}" range="{{ array }}">
-      <view class="picker">当前选择：{{array[index]}}</view>
-    </picker>
-  </view>
-
-  <button form-type="submit">submit</button>
-
-</form>
-
-<form>
-  <view class="bodyView">
-    <view class="changeText">
-      <label>连接</label>
+    <view class="bodyView">
+      <view class="changeText">
+        <label>上线</label>
+      </view>
+      <view class="changeInput" style="float:right;">
+        <switch type="switch" checked="{{ goLine }}" name="switchBtn" bindchange="goLineSocket" />
+      </view>
     </view>
-    <view class="changeInput" style="float:right;">
-      <switch type="switch" checked="{{ switchButton }}" bindchange="chonseSocket" />
+
+    <view class="bodyView">
+      <view class="changeText">
+        <label>连接</label>
+      </view>
+      <view class="changeInput" style="float:right;">
+        <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" />
+      </view>
     </view>
-  </view>
-</form>
+
+    <button class="confirm" form-type="submit">Go</button>
+
+  </form>
+</view>
+
+
 
 <view class="toast">
   <label>{{ messages }}</label>
@@ -35,101 +34,3 @@
 <view class="fixed-video">
   <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn">按住录音（可选）</button>
 </view>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <view class="content" style="margin-top: 1rem;">
-    <button bindtap="chooseImages">upLoadImages</button>
-  </view>
-  <view class="content" style="margin-top: 1rem;">
-    <button bindtap="chooseVideo">upLoadVideo</button>
-  </view> -->

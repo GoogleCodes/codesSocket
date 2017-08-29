@@ -3,7 +3,6 @@
 /**
  * https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx82bd98556e74419d&secret=05b32110ac7df00b61d965e687f71495
  * 
- * 
  *  200	OK
  *   Connection: close
  *   Date: Tue, 08 Aug 2017 06:35:07 GMT
@@ -28,7 +27,9 @@ App({
         success: function (res) {
           // success  
           var d = that.globalData.wxData;//这里存储了appid、secret、token串  
-          var url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' + 'wx82bd98556e74419d' + '&secret=' + '05b32110ac7df00b61d965e687f71495' + '&js_code=' + res.code + '&grant_type=authorization_code';
+          var url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' + 'wx82bd98556e74419d' + 
+          '&secret=' + '05b32110ac7df00b61d965e687f71495' + 
+          '&js_code=' + res.code + '&grant_type=authorization_code';
           wx.request({
             url: url,
             data: {},
