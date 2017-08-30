@@ -11,10 +11,12 @@ Page({
   data: {
     socketOpen: false,  //  开关
     messages: '',
-    apiHost: 'api.gizwits.com',
-    commType: 'attrs_v4', //  attrs_v4 || custom
-    wechatOpenId: 'kceshi1',
-    gizwitsAppId: '032c92bbb0fc4b6499a2eaed58727a3a',
+    options: {
+      apiHost: 'api.gizwits.com',
+      commType: 'attrs_v4', //  attrs_v4 || custom
+      wechatOpenId: 'kceshi1',
+      gizwitsAppId: '032c92bbb0fc4b6499a2eaed58727a3a',   //  45c691417def43db967c875f039dc53b || 032c92bbb0fc4b6499a2eaed58727a3a
+    },
     token: '',
     uid: '',
     did: '',
@@ -89,7 +91,7 @@ Page({
         url: urls,
         filePath: s.data.recodePath,
         method: "GET",
-        name: 'abc',
+        name: '呵呵哒！',
         header: ('Access-Control-Allow-Origin: *'),
         header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
         header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
@@ -106,9 +108,7 @@ Page({
               title: '提示',
               content: data.message,
               showCancel: false,
-              success: function (res) {
-
-              }
+              success: function (res) { }
             });
           }
           wx.hideToast();
@@ -173,8 +173,7 @@ Page({
           filePath: res.tempFilePaths[0],
           name: 'abcdsfd',
           success: function (res) {
-            var data = res.data
-            console.log(res);
+            var data = res.data;
           }
         })
       },
@@ -236,15 +235,15 @@ Page({
   _getUserToken: function () {
     var that = this;
     wx.request({
-      url: "https://" + that.data.apiHost + "/app/users",
+      url: "https://" + that.data.options.apiHost + "/app/users",
       method: 'POST',
       header: {
         'content-type': 'application/json',
-        "X-Gizwits-Application-Id": that.data.gizwitsAppId
+        "X-Gizwits-Application-Id": that.data.options.gizwitsAppId, //  that.data.gizwitsAppId
       },
       data: {
         lang: "en",
-        phone_id: that.data.wechatOpenId,
+        phone_id: that.data.options.wechatOpenId,
       },
       success: function (result) {
         that.setData({
@@ -263,18 +262,19 @@ Page({
 
   _getBindingList: function (limit, skip) {
     var that = this;
-    console.log(that.data.uid, that.data.token);
+    console.log(that.data.options.gizwitsAppId, that.data.token);
     var query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
     wx.request({
       url: "https://api.gizwits.com/app/bindings" + query,
       method: 'GET',
       header: {
         'content-type': 'application/json',
-        'X-Gizwits-Application-Id': "032c92bbb0fc4b6499a2eaed58727a3a",
+        'X-Gizwits-Application-Id': that.data.options.gizwitsAppId, //032c92bbb0fc4b6499a2eaed58727a3a
         'X-Gizwits-User-token': that.data.token
       },
       success: function (result) {
         for (var i in result.data.devices) {
+          console.log(result.data.devices);
           var device = result.data.devices[i];
           //  获取数据
           that.setData({
@@ -282,7 +282,7 @@ Page({
             host: device.host,  //  websocket 请求地址
           });
         }
-        // that._login();
+        that._login();
       },
       fail: function (evt) { }
     })
@@ -308,6 +308,7 @@ Page({
     }, heartbeatInterval);
   },
 
+
   _login: function () {
     var that = this, json = [];
     //  创建Socket
@@ -316,31 +317,26 @@ Page({
       header: {
         'content-type': 'application/json'
       },
-      success: function (res) {
-
-      },
+      success: function (res) { },
     });
-
     //  监听 WebSocket 连接事件
     wx.onSocketOpen(function (res) {
       that.data.socketOpen = true;
       json = {
         cmd: "login_req",
         data: {
-          appid: that.data.gizwitsAppId,
+          appid: that.data.options.gizwitsAppId,
           uid: that.data.uid,
           token: that.data.token,
-          p0_type: 'attrs_v4',
+          p0_type: that.data.options.commType,
           heartbeat_interval: that.data.keepalive,
           auto_subscribe: true
         }
       }
       that._sendJson(json);
-      // that._startPing();
     })
 
     wx.onSocketMessage(function (res) {
-      console.log(res);
       var data = JSON.parse(res.data);
       if (that.data.socketOpen) {
         if (data.data.success == true) {
@@ -353,35 +349,6 @@ Page({
             },]
           };
           that._sendJson(json);
-          // //  读取数据
-          // that.getJSON('c2s_read', that.data.did);
-          // //  获取服务器返回的信息
-          // wx.onSocketMessage(function (res) {
-          //   var str = JSON.parse(res.data), _sendJson = {};
-          //   // if (str.cmd === 's2c_noti') {
-          //   if (e.detail.value == true) {
-          //     that.setData({ switchButton: true });
-          //     //  发送数据
-          //     var option = {
-          //       did: that.data.did,
-          //       attrs: {
-          //         'lang': that.data.switchButton
-          //       },
-          //     };
-          //     that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
-          //   } else {
-          //     that.setData({ switchButton: false });
-          //     //  发送数据
-          //     var option = {
-          //       did: that.data.did,
-          //       attrs: {
-          //         'lang': that.data.switchButton
-          //       },
-          //     };
-          //     that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
-          //   }
-          //   // }
-          // });
         } else {
           console.log(data.data);
           if (data.data.msg == "M2M socket has closed, please login again!") {
@@ -394,71 +361,56 @@ Page({
 
   },
 
-  goLineSocket: function() {
-    wx.connectSocket({
-      url: that.data.url,
-      header: {
-        'content-type': 'application/json'
-      },
-      success: function (res) { 
-        wx.onSocketOpen(function (res) {
-          json = {
-            cmd: "login_req",
-            data: {
-              appid: that.data.gizwitsAppId,
-              uid: that.data.uid,
-              token: that.data.token,
-              p0_type: 'attrs_v4',
-              heartbeat_interval: that.data.keepalive,
-              auto_subscribe: true
-            }
-          }
-          that._sendJson(json);
-        })
-      },
-    })
-  },
-
   chonseSocket: function (e) {
     var that = this, json = [];
-    wx.connectSocket({
-      url: that.data.url,
-      header: {
-        'content-type': 'application/json'
-      },
-      success: function (res) { },
-    });
-    that.setData({
-      socketOpen: true,
-    });
-    wx.onSocketOpen(function (res) {
-      json = {
-        cmd: "login_req",
-        data: {
-          appid: that.data.gizwitsAppId,
-          uid: that.data.uid,
-          token: that.data.token,
-          p0_type: 'attrs_v4',
-          heartbeat_interval: that.data.keepalive,
-          auto_subscribe: true
-        }
-      }
-      that._sendJson(json);
-    })
+    // wx.connectSocket({
+    //   url: that.data.url,
+    //   header: {
+    //     'content-type': 'application/json'
+    //   },
+    //   success: function (res) {
 
-    if (that.data.socketOpen) {
+    //   },
+    // })
+
+    that.setData({ socketOpen: true });
+    // json = {
+    //   cmd: "login_req",
+    //   data: {
+    //     appid: that.data.options.gizwitsAppId,
+    //     uid: that.data.uid,
+    //     token: that.data.token,
+    //     p0_type: 'attrs_v4',
+    //     heartbeat_interval: that.data.keepalive,
+    //     auto_subscribe: true
+    //   }
+    // }
+    // //  发送数据
+    // that._sendJson(json);
+
+
+    if (e.detail.value == true) {
+      that.setData({ switchButton: true });
+      //  发送数据
+      that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
+    } else {
+      that.setData({ switchButton: false });
+      //  发送数据
+      that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
+    }
+
+    wx.onSocketOpen(function (res) {
       wx.onSocketMessage(function (res) {
+        console.log("测试!2");
         var data = JSON.parse(res.data);
         if (data.data.success == true) {
           //  链接socket
           json = {
             cmd: "subscribe_req",
-            data: [
-              {
-                did: that.data.did,
-                passcode: 123456
-              },
-            ]
+            data: [{
+              did: that.data.did,
+              passcode: 123456
+            },]
           };
           that._sendJson(json);
           //  读取数据
@@ -470,30 +422,17 @@ Page({
               if (e.detail.value == true) {
                 that.setData({ switchButton: true });
                 //  发送数据
-                var option = {
-                  did: that.data.did,
-                  attrs: {
-                    'lang': that.data.switchButton
-                  },
-                };
                 that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
               } else {
                 that.setData({ switchButton: false });
                 //  发送数据
-                var option = {
-                  did: that.data.did,
-                  attrs: {
-                    'lang': that.data.switchButton
-                  },
-                };
                 that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
               }
             }
           });
         }
       });
-    }
-
+    });
 
   },
 
@@ -506,7 +445,7 @@ Page({
         did: dids
       }
     };
-    that._sendJson(json);
+    this._sendJson(json);
   },
 
   sendJSON: function (cmd, dids, form) {
@@ -634,11 +573,9 @@ Page({
           data: data,
           method: 'POST',
           success: function (res) {
-            console.log(res, "push msg");
             that.setData({ switchButton: true });
           },
           fail: function (err) {
-            // fail  
             console.log("push err")
             console.log(err);
           }

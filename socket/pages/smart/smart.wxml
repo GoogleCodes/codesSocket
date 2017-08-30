@@ -4,33 +4,20 @@
 
     <view class="bodyView">
       <view class="changeText">
-        <label>上线</label>
-      </view>
-      <view class="changeInput" style="float:right;">
-        <switch type="switch" checked="{{ goLine }}" name="switchBtn" bindchange="goLineSocket" />
-      </view>
-    </view>
-
-    <view class="bodyView">
-      <view class="changeText">
-        <label>连接</label>
+        <label>发送</label>
       </view>
       <view class="changeInput" style="float:right;">
         <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" />
       </view>
     </view>
 
-    <button class="confirm" form-type="submit">Go</button>
+    <button class="confirm" form-type="submit" hover-class="primaryHover" hover-start-time="10" hover-stay-time="500000000">Go</button>
+
+    <view class="thatMessage" style="margin-top: 15px;">{{ messages }}</view>
 
   </form>
 </view>
 
-
-
-<view class="toast">
-  <label>{{ messages }}</label>
-</view>
-
 <view class="fixed-video">
-  <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn">按住录音（可选）</button>
+  <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn" hover-class="primaryHover" hover-start-time="10" hover-stay-time="500000000">按住录音（可选）</button>
 </view>
