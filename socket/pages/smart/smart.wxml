@@ -1,23 +1,36 @@
 <!--smart.wxml-->
 <view class="pushMsgFm">
   <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
-
     <view class="bodyView">
       <view class="changeText">
-        <label>发送</label>
+        <label>Save</label>
       </view>
       <view class="changeInput" style="float:right;">
         <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" />
       </view>
     </view>
-
-    <button class="confirm" form-type="submit" hover-class="primaryHover" hover-start-time="10" hover-stay-time="500000000">Go</button>
-
-    <view class="thatMessage" style="margin-top: 15px;">{{ messages }}</view>
-
+    <view>{{ options.online }}</view>
+    <button class="confirm" form-type="submit" hover-class="primaryHover" hover-start-time="10" hover-stay-time="1000">Go</button>
   </form>
 </view>
 
+ <!-- <scroll-view>
+  <view wx:if="{{ voices }}" class="common-list" style="margin-bottom:120rpx;">
+    <block wx:for="{{ voices }}">
+      <view class="board">
+        <view class="cell">
+          <view class="cell-bd" data-key="{{ item.filePath }}" bindtap="gotoPlay">
+            <view class="date">存储路径: {{ item.filePath }}</view>
+            <view class="date">存储时间: {{ item.createTime }}</view>
+            <view class="date">音频大小: {{ item.size }}KB</view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+</scroll-view>  -->
+
 <view class="fixed-video">
-  <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn" hover-class="primaryHover" hover-start-time="10" hover-stay-time="500000000">按住录音（可选）</button>
+  <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn" 
+          hover-class="primaryHover" hover-start-time="10" hover-stay-time="20">按住录音（可选）</button>
 </view>
