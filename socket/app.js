@@ -1,33 +1,17 @@
 //app.js
-
-/**
- * https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx82bd98556e74419d&secret=05b32110ac7df00b61d965e687f71495
- * 
- *  200	OK
- *   Connection: close
- *   Date: Tue, 08 Aug 2017 06:35:07 GMT
- *   Content-Type: application/json; encoding=utf-8
- *   Content-Length: 175
- *   {
- *       "access_token": "E4zeIEZXYhgrykQzRzF-wNeFj7Njsi_BLsxzKj7AOuRMwGEclOby1Hj0rqdRkAzBqV77dt1mITz3tS4JQ1rZub9f43tL_bX2-KGzkn_DdespF-WRwR8AYq9VhQDsWrXaIDLfAFATOW",
- * AbLD6HObyWI7JjAfO_bHEdJ47Lmd8fmFrpZmtx5dNnGVCLiLSVHOR2xAXDv6eftq7qyh-_wfkptPWBOsCoSBmJEUVR5tuzy-8QQMKTTinloQVOcAJAAFY
- *       "expires_in": 7200
- *   }
- */
-
-require('utils/gizwits_ws_0.3.0.min.js');
-
 App({
   onLaunch: function() {
     //  微信小程序appid  微信小程序secret
-    var that = this, appID = 'wx82bd98556e74419d', secret = 'fc9c09765ac6d8c477f2ce71620d4ff1';
-    //获取openid  
+    var that = this, appID = 'wx82bd98556e74419d', secret = 'f8695b267219ed670f0553e8a3ab1fbb';
+    //获取openid
     var user = wx.getStorageSync('user') || {};
+    console.log(user);
     if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {//不要在30天后才更换openid-尽量提前10分钟更新  
       wx.login({
         success: function (res) {
-          var d = that.globalData.wxData;//这里存储了appid、secret、token串  
-          var url = 'https://api.weixin.qq.com/sns/jscode2session?appid='+appID+'&secret='+secret+'&js_code='+res.code+'&grant_type=authorization_code';
+          console.log(res);
+          var d = that.globalData.wxData; //  这里存储了appid、secret、token串
+          var url = 'https://api.weixin.qq.com/sns/jscode2session?appid='+ appID +'&secret='+ secret +'&js_code='+ res.code +'&grant_type=authorization_code';
           wx.request({
             url: url,
             data: {},
@@ -45,7 +29,6 @@ App({
     } else {
       console.log(user);
     }
-
     wx.getUserInfo({
       success: function (res) {
         var userInfo = res.userInfo
@@ -56,8 +39,7 @@ App({
         var city = userInfo.city
         var country = userInfo.country
       }
-    })
-
+    });
   },
 
   getUserInfo: function(cb) {

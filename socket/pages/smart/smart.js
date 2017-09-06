@@ -1,7 +1,28 @@
 // smart.js
 
 var myUtils = require('../../utils/util.js');
+var util = require('../../utils/mp5.js');
 var gizwitsws = require('../../utils/gizwits_ws_0.3.0.min.js');
+
+var app = new getApp();
+
+var getDate = new Date();
+//  年份  月份  日期  小时  分钟  秒钟
+var year = getDate.getFullYear(),
+  month = getDate.getMonth() + 1,
+  day = getDate.getDate(),
+  hours = getDate.getHours(),
+  minutes = getDate.getMinutes() + 4,
+  seconds = getDate.getSeconds();
+
+var thatTime = year + "年" + month + "月" + day + "日" + hours + "小时" + minutes + "分钟" + seconds + "秒钟";
+
+var abc = year + month + day + hours + minutes + seconds;
+
+console.log(abc);
+
+var timestamp = Date.parse(new Date(year, month, day, hours, minutes, seconds)) / 1000;
+console.log(timestamp);
 
 Page({
   /**
@@ -16,8 +37,8 @@ Page({
         'attrs': 'attrs_v4',
         'custom': 'custom'
       },
-      wechatOpenId: 'kceshi1',
-      gizwitsAppId: '032c92bbb0fc4b6499a2eaed58727a3a',   //  032c92bbb0fc4b6499a2eaed58727a3a
+      wechatOpenId: 'kceshi1',  //  kceshi1
+      gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed
     },
     uid: '',
     token: '',
@@ -32,6 +53,9 @@ Page({
     switchButton: false,  //  开关
     _heartbeatInterval: 60,  //  心跳
     _heartbeatTimerId: undefined,
+    array: ['', '国语', '粤语'],
+    index: 1,
+    arrayCharset: 'zh',
   },
 
   /**
@@ -39,12 +63,32 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
-
-    var s1 = '语音识别失败';
-    var s2 = '语音识别失败';
-    console.log(s1 == s2);  //true
-
+    var openComputer = '开, ';
+    var result = openComputer.replace(/(^\s+)|(\s+$)/g, "");//去掉前后空格
+    result = result.replace(/[,]/g, "");
+    console.log(result);
     this._getUserToken();
+
+    wx.login({
+      success: function (res) {
+        console.log(res);
+        var url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' + 'wx82bd98556e74419d' + '&secret=' + 'f8695b267219ed670f0553e8a3ab1fbb' + '&js_code=' + res.code + '&grant_type=authorization_code';
+        wx.request({
+          url: url,
+          data: {},
+          method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
+          // header: {}, // 设置请求的 header  
+          success: function (res) {
+            console.log(res);
+            var obj = {};
+            obj.openid = res.data.openid;
+            obj.expires_in = Date.now() + res.data.expires_in;
+            wx.setStorageSync('user', obj);//存储openid  
+          }
+        });
+      }
+    })
+
   },
 
   /**
@@ -54,7 +98,6 @@ Page({
     var that = this;
     wx.startRecord({
       success: function (res) {
-        console.log(res);
         var tempFilePath = res.tempFilePath;
         that.setData({ recodePath: tempFilePath, isRecode: true });
         wx.showToast({
@@ -112,7 +155,7 @@ Page({
    */
   endRecode: function () {
     var s = this;
-    console.log("end" + "----");
+    console.log("end" + "---------------------------------------");
     wx.stopRecord();
     s.setData({ isRecode: false });
     wx.showToast();
@@ -122,36 +165,52 @@ Page({
       wx.uploadFile({
         url: urls,
         filePath: s.data.recodePath,
-        method: "GET",
+        method: "POST",
         name: 'abc',
         header: ('Access-Control-Allow-Origin: *'),
         header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
+        formData: {
+          'lan': 'zh',
+        },
         header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success: function (res) {
-          console.log("是否返回的东西：", res, '---1');
-          var str = '语音识别失败';
-          var str2 = res.data.toString();
-          console.log(str2);
-          if (str2 !== str) {
+          console.log("返回的东西是：", res);
+          if (res.statusCode == 404) {
             wx.showToast({
-              title: '语音识别失败',
+              title: '服务器搞飞机去了~~~~~',
               icon: 'success',
-              duration: 1000
-            })
-          } else {
-            console.log(options, '-----------------2');
-            var options = JSON.parse(res.data);
-            for (var i in options) {
-              console.log(options[i]);
-              if (options[i]) {
-                console.log(options[i]);
-                s.setData({ switchButton: true });
-              }
+              duration: 2000
+            });
+            return;
+          }
+          var options = JSON.parse(res.data);
+          for (var i in options) {
+            var openComputer = '开', closeComputer = '关';
+            var sqlStr = options[i].toString();
+            var result = sqlStr.replace(/(^\s+)|(\s+$)/g, "");//去掉前后空格
+            result = result.replace(/[,]/g, "");
+            console.log(result + ":result");
+            if (result) {
+              s.setData({ switchButton: true });
+              //  发送数据
+              s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
+              wx.showToast({
+                title: '打开成功',
+                icon: 'success',
+                duration: 2000
+              });
+            } else if (options[i].toString() === closeComputer) {
+              s.setData({ switchButton: false });
+              //  发送数据
+              s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
+              wx.showToast({
+                title: '关闭成功',
+                icon: 'success',
+                duration: 2000
+              });
             }
-            
           }
           var str = res.data;
-          var data = JSON.parse(str);
           if (data.states == 1) {
             var cEditData = s.data.editData;
             cEditData.recodeIdentity = data.identitys;
@@ -256,15 +315,17 @@ Page({
   _getUserToken: function () {
     var that = this;
     wx.request({
-      url: "https://" + that.data.options.apiHost + "/app/users",
+      //  http://swagger.gizwits.com/doc/index/openapi_apps#/绑定管理/post_app_bind_mac   http://api.gizwits.com/app/bind_mac   https://api.gizwits.com/app/users
+      url: "https://api.gizwits.com/app/login",
       method: 'POST',
       header: {
-        'content-type': 'application/json',
-        "X-Gizwits-Application-Id": that.data.options.gizwitsAppId, //  that.data.gizwitsAppId
+        'content-type': 'application/json', 
+        "X-Gizwits-Application-Id": 'd8b4d2f0bce943ee9ecb4abfa01a2e55', //  that.data.gizwitsAppId phone_id: that.data.options.wechatOpenId,
       },
       data: {
         lang: "en",
-        phone_id: that.data.options.wechatOpenId,
+        username: '13250672958',
+        password: '123456789',
       },
       success: function (result) {
         that.setData({
@@ -290,7 +351,7 @@ Page({
       method: 'GET',
       header: {
         'content-type': 'application/json',
-        'X-Gizwits-Application-Id': that.data.options.gizwitsAppId, //032c92bbb0fc4b6499a2eaed58727a3a
+        'X-Gizwits-Application-Id': that.data.options.gizwitsAppId,
         'X-Gizwits-User-token': that.data.token
       },
       success: function (result) {
@@ -301,8 +362,8 @@ Page({
           that.setData({
             did: device.did,  //  did
             host: device.host,  //  websocket 请求地址
-            ws_port: device.port, //  端口
-            wss_port: device.port_s, //  端口
+            ws_port: device.ws_port, //  端口
+            wss_port: device.wss_port, //  端口
           });
         }
         console.log(that.data.ws_port, that.data.wss_port);
@@ -324,18 +385,16 @@ Page({
     }, heartbeatInterval);
   },
 
-
   _login: function () {
     var that = this, json = [];
     //  创建Socket
     wx.connectSocket({
-      url: 'wss://sandbox.gizwits.com:8880/ws/app/v1',
+      url: 'wss://sandbox.gizwits.com:' + that.data.wss_port +'/ws/app/v1',
       header: {
         'content-type': 'application/json'
       },
       success: function (res) { },
     });
-    console.log(that.data.options.json.attrs);
     //  监听 WebSocket 连接事件
     wx.onSocketOpen(function (res) {
       that.data.socketOpen = true;
@@ -454,7 +513,7 @@ Page({
       data: {
         did: dids,
         attrs: {
-          "lang": form,
+          "onoffAll": form,
         },
       },
     };
@@ -469,141 +528,94 @@ Page({
     wx.sendSocketMessage({
       //  对象转换字符串
       data: JSON.stringify(json),
-      success: function (res) {
-        console.log(res);
-      },
-      fail: function (err) {
-        console.log(err);
-      },
-      complete: function () {
-
-      }
+      success: function (res) { },
+      fail: function (err) { },
+      complete: function () { }
     })
+  },
+
+  bindPickerChange: function (e) {
+    var that = this;
+    that.setData({
+      index: e.detail.value
+    });
+    if (that.data.index == 1) {
+      that.setData({
+        arrayCharset: 'zh', //  国语
+      });
+      console.log('picker发送选择改变，携带值为', e.detail.value, that.data.index);
+    } else if (that.data.index == 2) {
+      that.setData({
+        arrayCharset: 'ct',// 粤语
+      });
+      console.log('picker发送选择改变，携带值为', e.detail.value, that.data.index)
+    }
   },
 
   orderSign: function (e) {
     var that = this;
-    // var countdown = 5 * 24 * 3600;
+    var fId = e.detail.formId, fObj = e.detail.value;
+    var countdown = 24 * 3600 * 5;
+    var num = 5;
+    num--;
+    console.log(num);
     // // 立即显示还剩五天
-    // console.log("还剩余5天0小时0分0秒");
-    // // 倒计时
-    // var countdownTimer = setInterval(function () {
-    //   // 倒计时到零时，停止倒计时
-    //   if (countdown <= 0) {
-    //     var fId = e.detail.formId;
-    //     console.log(e.detail.formId);
-    //     var fObj = e.detail.value;
-    //     var l = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + 'AbLD6HObyWI7JjAfO_bHEdJ47Lmd8fmFrpZmtx5dNnGVCLiLSVHOR2xAXDv6eftq7qyh-_wfkptPWBOsCoSBmJEUVR5tuzy-8QQMKTTinloQVOcAJAAFY';
-    //     var d = {
-    //       touser: "orlTr0FLJctfgvRE7-mCfRjlEXQc",
-    //       template_id: 'lDTHk4E5k9xVGa_vB-ZUKYhwi6pY6gbVkN5jiUzwh_s',//这个是1、申请的模板消息id，  
-    //       page: '/pages/smart/smart',
-    //       form_id: fId,
-    //       data: {//测试完发现竟然value或者data都能成功收到模板消息发送成功通知，是bug还是故意？？【鄙视、鄙视、鄙视...】 下面的keyword*是你1、设置的模板消息的关键词变量  
-    //         "keyword1": {
-    //           "value": fObj.product,
-    //           "color": "#4a4a4a"
-    //         },
-    //         "keyword2": {
-    //           "value": fObj.detail,
-    //           "color": "#9b9b9b"
-    //         }
-    //       },
-    //       emphasis_keyword: 'keyword1.DATA'
-    //     }
-    //     wx.request({
-    //       url: l,
-    //       data: d,
-    //       method: 'POST',
-    //       success: function (res) {
-    //         console.log("push msg");
-    //         console.log(res);
-    //         that.setData({ switchButton: true });
-    //       },
-    //       fail: function (err) {
-    //         // fail  
-    //         console.log("push err")
-    //         console.log(err);
-    //       }
-    //     });
-    //     return clearInterval(countdownTimer);
-    //   }
-    //   countdown -= 1;
-    //   var rest = countdown;
-    //   // 天
-    //   var days = parseInt(rest / (24 * 3600), 10);
-    //   rest -= days * 24 * 3600;
-    //   // 时
-    //   var hours = parseInt(rest / 3600, 10);
-    //   rest -= hours * 3600;
-    //   // 分
-    //   var minutes = parseInt(rest / 60, 10);
-    //   rest -= minutes * 60;
-    //   // 秒
-    //   var seconds = parseInt(rest, 10);
-    //   console.log("还剩余" + days + "天" + hours + "小时" + minutes + "分" + seconds + "秒");
-    // }, 1e3);
-
-
-    var num = 10;
-    var start = setInterval(function () {
-      num--;
-      console.log(num, e.detail);
-      if (num == 0) {
-        var fId = e.detail.formId;
-        console.log(e.detail.formId);
-        var fObj = e.detail.value;
-        var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + 'TJBlaI5ml1g47fuehGc5MD-sTFtJLrlryundqNpvg4LH9FH1tFaD6ZIBWlqqVnOJYV-a9TXZkdBDgqqVxsWvfmmAvzsNs2h8njiVZyixRhzBaBTYQdTVVCdl4lCthdtuZDQiAGAMQD';
-        var data = {
-          touser: wx.getStorageSync('user').openid, // "orlTr0FLJctfgvRE7-mCfRjlEXQc",
-          template_id: 'lDTHk4E5k9xVGa_vB-ZUKYhwi6pY6gbVkN5jiUzwh_s',//这个是1、申请的模板消息id，  
+    console.log("还剩余5天0小时0分0秒");
+    // 倒计时
+    var countdownTimer = setInterval(function () {
+      countdown -= 1;
+      var rest = countdown;
+      // 天
+      var days = parseInt(rest / (24 * 3600), 10);
+      rest -= days * 24 * 3600;
+      // 时
+      var hours = parseInt(rest / 3600, 10);
+      rest -= hours * 3600;
+      // 分
+      var minutes = parseInt(rest / 60, 10);
+      rest -= minutes * 60;
+      // 秒
+      var seconds = parseInt(rest, 10);
+      console.log("还剩余" + days + "天" + hours + "小时" + minutes + "分" + seconds + "秒");
+    }, 1e3);
+    if (num == 0) {
+      var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + 'fazdORwCMHy9xDhht38IpLrEBkjAlwl_DIFKfnowSsQZGh_ANXeGukzHitmXt638k6qUPH1iQHubHOVok_XEPs4ljISfgm5SDP4-UFtzhBQxY1ljS1RmA_c6nd5I_xawLFTfADAYSG';
+      wx.request({
+        url: url,
+        data: {
+          touser: wx.getStorageSync('user').openid,
+          template_id: 'ho9RAP7GBHDJYg3EVHqiBgxSQmt1apwOpGAhLBCfgkI',//这个是1、申请的模板消息id，  
           page: '/pages/smart/smart',
           form_id: fId,
           data: {
             "keyword1": {
-              "value": '测试一下',
+              "value": '测试发送消息',
               "color": "#4a4a4a"
             },
             "keyword2": {
-              "value": '苹果',
+              "value": '智能灯已经开启',
               "color": "#4a4a4a"
-            },
-            "keyword3": {
-              "value": '桔子水晶酒店（北京世贸天阶店），商务大床房（无早）',
-              "color": "#4a4a4a"
-            },
-            "keyword4": {
-              "value": '20170902',
-              "color": "#4a4a4a"
-            },
-            "keyword5": {
-              "value": '99.9',
-              "color": "#c40000"
             }
           },
           emphasis_keyword: 'keyword1.DATA'
+        },
+        method: 'POST',
+        success: function (res) {
+          that.setData({ switchButton: true });
+          //  发送数据
+          that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
+          wx.showToast({
+            title: '发送成功',
+            icon: 'success',
+            duration: 2000
+          });
+        },
+        fail: function (err) {
+          console.log("push err")
+          console.log(err);
         }
-        wx.request({
-          url: url,
-          data: data,
-          method: 'POST',
-          success: function (res) {
-            that.setData({ switchButton: true });
-            //  发送数据
-            that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
-            wx.showToast({
-              title: '发送成功',
-              icon: 'success',
-              duration: 2000
-            });
-          },
-          fail: function (err) {
-            console.log("push err")
-            console.log(err);
-          }
-        });
-        clearInterval(start);
-      }
-    }, 1000);
+      });
+      clearInterval(countdownTimer);
+    };
   }
 }); 

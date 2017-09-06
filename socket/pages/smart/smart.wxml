@@ -1,36 +1,24 @@
 <!--smart.wxml-->
 <view class="pushMsgFm">
-  <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
-    <view class="bodyView">
-      <view class="changeText">
-        <label>Save</label>
-      </view>
-      <view class="changeInput" style="float:right;">
-        <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" />
-      </view>
-    </view>
-    <view>{{ options.online }}</view>
-    <button class="confirm" form-type="submit" hover-class="primaryHover" hover-start-time="10" hover-stay-time="1000">Go</button>
-  </form>
-</view>
-
- <!-- <scroll-view>
-  <view wx:if="{{ voices }}" class="common-list" style="margin-bottom:120rpx;">
-    <block wx:for="{{ voices }}">
-      <view class="board">
-        <view class="cell">
-          <view class="cell-bd" data-key="{{ item.filePath }}" bindtap="gotoPlay">
-            <view class="date">存储路径: {{ item.filePath }}</view>
-            <view class="date">存储时间: {{ item.createTime }}</view>
-            <view class="date">音频大小: {{ item.size }}KB</view>
-          </view>
+    <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
+        <view class="bodyView">
+            <view class="changeText">
+                <label>Save</label>
+            </view>
+            <view class="changeInput" style="float:right;">
+                <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" />
+            </view>
         </view>
-      </view>
-    </block>
-  </view>
-</scroll-view>  -->
-
+        <view>{{ options.online }}</view>
+        <view class="section">
+            <picker mode="selector" range="{{ array }}" value="{{ index }}" bindchange="bindPickerChange">
+                <view class="picker">当前选择：{{ array[index] }}</view>
+            </picker>
+        </view>
+        <button class="confirm" form-type="submit" hover-class="primaryHover" hover-start-time="10" hover-stay-time="1000">设置发送消息</button>
+    </form>
+</view>
+<!-- 录音按钮 -->
 <view class="fixed-video">
-  <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn" 
-          hover-class="primaryHover" hover-start-time="10" hover-stay-time="20">按住录音（可选）</button>
+    <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn">按住录音</button>
 </view>

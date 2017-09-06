@@ -1,3 +1,5 @@
+
+
 /* smart.wxss */
 
 .bodyView {
@@ -36,6 +38,8 @@
 .fixed-video {
     position: fixed;
     bottom: 0px;
+    right: 0px;
+    left: 0px;
     border-top: 1px solid #eee;
     height: 50px;
     width: 100%;
@@ -57,10 +61,12 @@
 }
 
 .confirm {
-    line-height: 1.5rem;
-    padding: 0.3rem 1rem;
     width: 100%;
-    margin-top: 20px;
+    font-size: 34rpx;
+    height: 35px;
+    line-height: 35px;
+    background: #1AAD19;
+    color: #fff;
 }
 
 .board {
@@ -88,4 +94,16 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+
+
+.section {
+  margin: 10px 0px;
+  height: 35px;
+  line-height: 35px;
+  background: rgb(251,249,254);
+}
+
+.section .picker {
+  padding: 0px 2.5%;
 }
