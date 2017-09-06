@@ -29,6 +29,10 @@
     margin: 10px 0px;
 }
 
+.pushMsgFm .openMessage {
+  margin-top: 20px;
+}
+
 .fromInput {
     border: 1px solid #ccc;
     width: 100%;
@@ -52,11 +56,6 @@
     height: 35px;
     line-height: 35px;
     font-size: 14px;
-    color: #fff;
-}
-
-.primaryHover {
-    background: -webkit-linear-gradient(#0070c9, #42a1ec);
     color: #fff;
 }
 
@@ -106,4 +105,11 @@
 
 .section .picker {
   padding: 0px 2.5%;
+}
+
+/* 点击后出现的按钮样式 */
+.primaryHover {
+    transition: 0.5s;
+    background: -webkit-linear-gradient(#37aaea,#117ed2);
+    color: #fff;
 }

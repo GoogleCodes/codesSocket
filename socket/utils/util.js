@@ -1,6 +1,3 @@
-
-require('../app.js');
-
 var utils = (function() {
   var options = {
     formatTime: function(number) {  //  时间格式化

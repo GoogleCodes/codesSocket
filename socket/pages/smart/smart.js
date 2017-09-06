@@ -1,28 +1,9 @@
 // smart.js
 
 var myUtils = require('../../utils/util.js');
-var util = require('../../utils/mp5.js');
 var gizwitsws = require('../../utils/gizwits_ws_0.3.0.min.js');
 
 var app = new getApp();
-
-var getDate = new Date();
-//  年份  月份  日期  小时  分钟  秒钟
-var year = getDate.getFullYear(),
-  month = getDate.getMonth() + 1,
-  day = getDate.getDate(),
-  hours = getDate.getHours(),
-  minutes = getDate.getMinutes() + 4,
-  seconds = getDate.getSeconds();
-
-var thatTime = year + "年" + month + "月" + day + "日" + hours + "小时" + minutes + "分钟" + seconds + "秒钟";
-
-var abc = year + month + day + hours + minutes + seconds;
-
-console.log(abc);
-
-var timestamp = Date.parse(new Date(year, month, day, hours, minutes, seconds)) / 1000;
-console.log(timestamp);
 
 Page({
   /**
@@ -37,7 +18,7 @@ Page({
         'attrs': 'attrs_v4',
         'custom': 'custom'
       },
-      wechatOpenId: 'kceshi1',  //  kceshi1
+      wechatOpenId: 'kceshi1',  //  测试:kceshi1
       gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed
     },
     uid: '',
@@ -56,6 +37,8 @@ Page({
     array: ['', '国语', '粤语'],
     index: 1,
     arrayCharset: 'zh',
+    startPoint: [0,0],
+    openMessage: '',
   },
 
   /**
@@ -63,45 +46,25 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
-    var openComputer = '开, ';
-    var result = openComputer.replace(/(^\s+)|(\s+$)/g, "");//去掉前后空格
-    result = result.replace(/[,]/g, "");
-    console.log(result);
     this._getUserToken();
-
-    wx.login({
-      success: function (res) {
-        console.log(res);
-        var url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' + 'wx82bd98556e74419d' + '&secret=' + 'f8695b267219ed670f0553e8a3ab1fbb' + '&js_code=' + res.code + '&grant_type=authorization_code';
-        wx.request({
-          url: url,
-          data: {},
-          method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
-          // header: {}, // 设置请求的 header  
-          success: function (res) {
-            console.log(res);
-            var obj = {};
-            obj.openid = res.data.openid;
-            obj.expires_in = Date.now() + res.data.expires_in;
-            wx.setStorageSync('user', obj);//存储openid  
-          }
-        });
-      }
-    })
-
   },
 
   /**
    * 开始录音
    */
-  startRecode: function () {
+  startRecode: function (e) {
     var that = this;
+    
+    that.setData({
+      startPoint: [e.touches[0].pageX, e.touches[0].pageY],
+    });
+    console.log(that.data.startPoint);
     wx.startRecord({
       success: function (res) {
         var tempFilePath = res.tempFilePath;
         that.setData({ recodePath: tempFilePath, isRecode: true });
         wx.showToast({
-          title: '恭喜，录音成功!',
+          title: '录音成功!',
           icon: 'success',
           duration: 1000
         });
@@ -150,12 +113,48 @@ Page({
     })
   },
 
+  //  长按触摸
+  mytouchmove: function(e) {
+    var that = this;
+    //  当前触摸点坐标
+    var curPoint = [e.touches[0].pageX, e.touches[0].pageY];
+    var startPoint = that.data.startPoint;
+    //  比较pageX值
+    if (curPoint[0] <= startPoint[0]) {
+      if (Math.abs(curPoint[0] - startPoint[0]) >= Math.abs(curPoint[1] - startPoint[1])) {
+        console.log(e.timeStamp + '- touch left move');
+      } else {
+        if (curPoint[1] >= startPoint[1]) {
+          console.log(e.timeStamp + '- touch down move');
+        } else {
+          console.log(e.timeStamp + '- touch up move');
+          wx.stopRecord();
+          return;
+        }
+      }
+    } else {
+      if (Math.abs(curPoint[0] - startPoint[0]) >= Math.abs(curPoint[1] - startPoint[1])) {
+        console.log(e.timeStamp + '- touch left move');
+      } else {
+        if (curPoint[1] >= startPoint[1]) {
+          console.log(e.timeStamp + '- touch down move');
+        } else {
+          console.log(e.timeStamp + '- touch up move');
+          wx.stopRecord();
+          return;
+        }
+      }
+    }
+
+  },
+
   /**
    * 结束录音
    */
-  endRecode: function () {
+  endRecode: function (e) {
     var s = this;
     console.log("end" + "---------------------------------------");
+    
     wx.stopRecord();
     s.setData({ isRecode: false });
     wx.showToast();
@@ -170,27 +169,40 @@ Page({
         header: ('Access-Control-Allow-Origin: *'),
         header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
         formData: {
-          'lan': 'zh',
+          'lan': s.data.arrayCharset, // 'zh',
         },
         header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success: function (res) {
           console.log("返回的东西是：", res);
+          var options = JSON.parse(res.data);
+          var error = res.data.toString(), error_text = '语音识别失败';
           if (res.statusCode == 404) {
             wx.showToast({
-              title: '服务器搞飞机去了~~~~~',
+              title: '服务器搞飞机去了!呜呜呜~~~~',
               icon: 'success',
               duration: 2000
             });
             return;
           }
-          var options = JSON.parse(res.data);
+          if (error === error_text) {
+            wx.showToast({
+              title: '语音识别失败!请重试!',
+              icon: 'success',
+              duration: 2000
+            });
+          }
+          var result = null,  sqlStr = null;
           for (var i in options) {
-            var openComputer = '开', closeComputer = '关';
             var sqlStr = options[i].toString();
-            var result = sqlStr.replace(/(^\s+)|(\s+$)/g, "");//去掉前后空格
-            result = result.replace(/[,]/g, "");
-            console.log(result + ":result");
-            if (result) {
+            console.log(sqlStr);
+            s.setData({
+              openMessage: sqlStr,
+            });
+            if (typeof(sqlStr) == "string") {
+              var myString = sqlStr.substring(0,1);
+              console.log(myString+":result");
+            }
+            if (myString === "开") {
               s.setData({ switchButton: true });
               //  发送数据
               s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
@@ -199,7 +211,7 @@ Page({
                 icon: 'success',
                 duration: 2000
               });
-            } else if (options[i].toString() === closeComputer) {
+            } else if (myString === "关") {
               s.setData({ switchButton: false });
               //  发送数据
               s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
@@ -226,7 +238,7 @@ Page({
           }
           wx.hideToast();
         },
-        fail: function (res) {
+        fail: function (res) {  //  错误提示
           wx.showModal({
             title: '提示',
             content: "网络请求失败，请确保网络是否正常",
@@ -452,7 +464,7 @@ Page({
           var noti = JSON.parse(res.data), _sendJson = {};
           switch (noti.cmd) {
             case 'subscribe_res':
-              for (var i in noti.data.success) {  //  do somethings
+              for (var i in noti.data.success) {
                 that.setData({
                   did: noti.data.success[i].did
                 });
@@ -460,7 +472,7 @@ Page({
             case 'pong':
               break;
             case 's2c_noti':
-              console.log(noti.data.attrs.lang);
+              //  do somethings
           }
         });
       }

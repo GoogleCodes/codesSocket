@@ -9,16 +9,18 @@
                 <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" />
             </view>
         </view>
-        <view>{{ options.online }}</view>
+        <label class="openMessage">{{ openMessage }}</label>
         <view class="section">
             <picker mode="selector" range="{{ array }}" value="{{ index }}" bindchange="bindPickerChange">
                 <view class="picker">当前选择：{{ array[index] }}</view>
             </picker>
         </view>
-        <button class="confirm" form-type="submit" hover-class="primaryHover" hover-start-time="10" hover-stay-time="1000">设置发送消息</button>
+        <button class="confirm" form-type="submit" hidden="{{ true }}">设置发送消息</button>
     </form>
 </view>
 <!-- 录音按钮 -->
 <view class="fixed-video">
-    <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn">按住录音</button>
+    <button type="primary" 
+            bindtouchstart="startRecode" bindtouchend="endRecode" bindtouchmove='mytouchmove'
+            class="cxbtn" hover-class="primaryHover" hover-start-time="10" hover-stay-time="20">按住录音</button>
 </view>
