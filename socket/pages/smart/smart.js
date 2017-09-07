@@ -1,7 +1,6 @@
 // smart.js
-
+//  导入js
 var myUtils = require('../../utils/util.js');
-var gizwitsws = require('../../utils/gizwits_ws_0.3.0.min.js');
 
 var app = new getApp();
 
@@ -10,6 +9,8 @@ Page({
    * 页面的初始数据
    */
   data: {
+    uname: '',
+    pword: '',
     voices: [],
     socketOpen: false,  //  开关
     options: {
@@ -19,7 +20,7 @@ Page({
         'custom': 'custom'
       },
       wechatOpenId: 'kceshi1',  //  测试:kceshi1
-      gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed
+      gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed 141b9a9bb1df416cbb18bb85c864633f
     },
     uid: '',
     token: '',
@@ -30,23 +31,29 @@ Page({
     recodePath: '',  //  录音路径
     keepalive: 180,
     socketOpen: false,  //  socket 开关
-    url: 'wss://sandbox.gizwits.com:8880/ws/app/v1',  //  websocket 请求地址
+    url: 'sandbox.gizwits.com',  //  websocket 请求地址 sandbox.gizwits.com
     switchButton: false,  //  开关
     _heartbeatInterval: 60,  //  心跳
     _heartbeatTimerId: undefined,
     array: ['', '国语', '粤语'],
     index: 1,
     arrayCharset: 'zh',
-    startPoint: [0,0],
+    startPoint: [0, 0],
     openMessage: '',
+    isSpeaking: false,  //  是否正在说话
+    listDevices: {},  //  设备列表
+    chonseDid: 0,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: function () {
     var that = this;
     this._getUserToken();
+    // var limit = 20;
+    // var skip = 0;
+    // that._getBindingList(20, 0)
   },
 
   /**
@@ -54,15 +61,14 @@ Page({
    */
   startRecode: function (e) {
     var that = this;
-    
+    wx.vibrateShort();
     that.setData({
       startPoint: [e.touches[0].pageX, e.touches[0].pageY],
     });
-    console.log(that.data.startPoint);
     wx.startRecord({
       success: function (res) {
         var tempFilePath = res.tempFilePath;
-        that.setData({ recodePath: tempFilePath, isRecode: true });
+        that.setData({ recodePath: tempFilePath, isSpeaking: true });
         wx.showToast({
           title: '录音成功!',
           icon: 'success',
@@ -85,9 +91,8 @@ Page({
           }
         });
       },
-      fail: function (res) {
-        console.log("fail");
-        console.log(res.data);
+      fail: function (err) {
+        console.log(err.data);
       }
     });
   },
@@ -114,7 +119,7 @@ Page({
   },
 
   //  长按触摸
-  mytouchmove: function(e) {
+  mytouchmove: function (e) {
     var that = this;
     //  当前触摸点坐标
     var curPoint = [e.touches[0].pageX, e.touches[0].pageY];
@@ -128,8 +133,9 @@ Page({
           console.log(e.timeStamp + '- touch down move');
         } else {
           console.log(e.timeStamp + '- touch up move');
+          that.setData({ isSpeaking: false });
           wx.stopRecord();
-          return;
+          return false;
         }
       }
     } else {
@@ -153,10 +159,8 @@ Page({
    */
   endRecode: function (e) {
     var s = this;
-    console.log("end" + "---------------------------------------");
-    
     wx.stopRecord();
-    s.setData({ isRecode: false });
+    s.setData({ isSpeaking: false });
     wx.showToast();
     setTimeout(function () {
       var urls = 'http://yuyin.ittun.com/public/index/index/zhen';
@@ -173,36 +177,34 @@ Page({
         },
         header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success: function (res) {
-          console.log("返回的东西是：", res);
-          var options = JSON.parse(res.data);
-          var error = res.data.toString(), error_text = '语音识别失败';
-          if (res.statusCode == 404) {
-            wx.showToast({
-              title: '服务器搞飞机去了!呜呜呜~~~~',
-              icon: 'success',
-              duration: 2000
-            });
-            return;
-          }
-          if (error === error_text) {
+          var error_text = '语音识别失败';
+          console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
+          if (res.data.toString() == error_text) {
             wx.showToast({
               title: '语音识别失败!请重试!',
               icon: 'success',
               duration: 2000
             });
           }
-          var result = null,  sqlStr = null;
+          // if (res.statusCode == 404) {
+          //   wx.showToast({
+          //     title: '服务器搞飞机去了!呜呜呜~~~~',
+          //     icon: 'success',
+          //     duration: 2000
+          //   });
+          //   return;
+          // }
+          var options = JSON.parse(res.data), result = null, sqlStr = null;
           for (var i in options) {
             var sqlStr = options[i].toString();
             console.log(sqlStr);
             s.setData({
               openMessage: sqlStr,
             });
-            if (typeof(sqlStr) == "string") {
-              var myString = sqlStr.substring(0,1);
-              console.log(myString+":result");
+            if (typeof (sqlStr) == "string") {
+              var myString = sqlStr.substring(0, 1);
             }
-            if (myString === "开") {
+            if (myString == "开" || myString == '打') {
               s.setData({ switchButton: true });
               //  发送数据
               s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
@@ -211,7 +213,7 @@ Page({
                 icon: 'success',
                 duration: 2000
               });
-            } else if (myString === "关") {
+            } else if (myString == "关") {
               s.setData({ switchButton: false });
               //  发送数据
               s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
@@ -241,9 +243,9 @@ Page({
         fail: function (res) {  //  错误提示
           wx.showModal({
             title: '提示',
-            content: "网络请求失败，请确保网络是否正常",
+            content: "录音的姿势不对!",
             showCancel: false,
-            success: function (res) { }
+            success: function (res) {}
           });
           wx.hideToast();
         }
@@ -251,34 +253,10 @@ Page({
     }, 1000)
   },
 
-  chooseVideo: function () {
-    wx.chooseVideo({
-      //相机和相册
-      sourceType: ['album', 'camera'],
-      //录制视频最大时长
-      maxDuration: 60,
-      //摄像头
-      camera: ['front', 'back'],
-      //这里返回的是tempFilePaths并不是tempFilePath
-      success: function (res) {
-        var tempFilePaths = res.tempFilePaths
-        wx.uploadFile({
-          url: 'http://yuyin.ittun.com/public/index/index/fanyi',
-          filePath: res.tempFilePaths[0],
-          name: 'abcdsfd',
-          success: function (res) { }
-        })
-      },
-      fail: function (e) {
-        console.log(e)
-      }
-    });
-  },
-
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady: function (res) {
 
   },
 
@@ -324,15 +302,15 @@ Page({
 
   },
 
-  _getUserToken: function () {
+  _getUserToken() {
     var that = this;
     wx.request({
-      //  http://swagger.gizwits.com/doc/index/openapi_apps#/绑定管理/post_app_bind_mac   http://api.gizwits.com/app/bind_mac   https://api.gizwits.com/app/users
+      // https://api.gizwits.com/app/users
       url: "https://api.gizwits.com/app/login",
       method: 'POST',
       header: {
-        'content-type': 'application/json', 
-        "X-Gizwits-Application-Id": 'd8b4d2f0bce943ee9ecb4abfa01a2e55', //  that.data.gizwitsAppId phone_id: that.data.options.wechatOpenId,
+        'content-type': 'application/json',
+        "X-Gizwits-Application-Id": that.data.options.gizwitsAppId, // phone_id: that.data.options.wechatOpenId,
       },
       data: {
         lang: "en",
@@ -356,7 +334,7 @@ Page({
 
   _getBindingList: function (limit, skip) {
     var that = this;
-    console.log(that.data.options.gizwitsAppId, that.data.token);
+    var options = wx.getStorageSync('options');
     var query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
     wx.request({
       url: "https://api.gizwits.com/app/bindings" + query,
@@ -364,11 +342,13 @@ Page({
       header: {
         'content-type': 'application/json',
         'X-Gizwits-Application-Id': that.data.options.gizwitsAppId,
-        'X-Gizwits-User-token': that.data.token
+        'X-Gizwits-User-token':  that.data.token,
       },
       success: function (result) {
+        that.setData({
+          listDevices: result.data.devices
+        });
         for (var i in result.data.devices) {
-          console.log(result.data.devices);
           var device = result.data.devices[i];
           //  获取数据
           that.setData({
@@ -378,11 +358,30 @@ Page({
             wss_port: device.wss_port, //  端口
           });
         }
-        console.log(that.data.ws_port, that.data.wss_port);
-        that._login();
       },
       fail: function (evt) { }
     })
+  },
+
+  //  选中列表设备
+  chonseDid(e) {
+    var that = this;
+    that._login();
+    var did = e.currentTarget.dataset.did, index = e.currentTarget.dataset.index
+    if (that.data.chonseDid === index) {
+      console.log(did);
+      this.setData({
+        did: did,
+      });
+      return;
+    } else {
+      this.setData({
+        did: did,
+        chonseDid: index,
+      });
+      console.log(that.data.did);
+    }
+
   },
 
   //  心跳开始
@@ -401,7 +400,7 @@ Page({
     var that = this, json = [];
     //  创建Socket
     wx.connectSocket({
-      url: 'wss://sandbox.gizwits.com:' + that.data.wss_port +'/ws/app/v1',
+      url: 'wss://' + that.data.url + ':' + that.data.wss_port + '/ws/app/v1',
       header: {
         'content-type': 'application/json'
       },
@@ -409,6 +408,7 @@ Page({
     });
     //  监听 WebSocket 连接事件
     wx.onSocketOpen(function (res) {
+      var options = wx.getStorageSync('options');
       that.data.socketOpen = true;
       json = {
         cmd: "login_req",
@@ -424,27 +424,6 @@ Page({
       that._startPing();
       that._sendJson(json);
     });
-    wx.onSocketMessage(function (res) {
-      var data = JSON.parse(res.data);
-      if (that.data.socketOpen) {
-        if (data.data.success == true) {
-          //  链接socket
-          json = {
-            cmd: "subscribe_req",
-            data: [{
-              did: that.data.did,
-            },]
-          };
-          that._sendJson(json);
-        } else {
-          console.log(data.data);
-          if (data.data.msg == "M2M socket has closed, please login again!") {
-            that._login();
-          }
-        }
-      }
-    })
-
     wx.onSocketMessage(function (res) {
       var data = JSON.parse(res.data);
       if (data.data.success == true) {
@@ -472,9 +451,15 @@ Page({
             case 'pong':
               break;
             case 's2c_noti':
-              //  do somethings
+            //  do somethings
+            case 's2c_raw':
+            //  do somethings
           }
         });
+      } else {
+        if (data.data.msg == "M2M socket has closed, please login again!") {
+          that._login();
+        }
       }
     });
   },
@@ -630,4 +615,4 @@ Page({
       clearInterval(countdownTimer);
     };
   }
-}); 
+});

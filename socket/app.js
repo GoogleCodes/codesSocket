@@ -5,7 +5,6 @@ App({
     var that = this, appID = 'wx82bd98556e74419d', secret = 'f8695b267219ed670f0553e8a3ab1fbb';
     //获取openid
     var user = wx.getStorageSync('user') || {};
-    console.log(user);
     if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {//不要在30天后才更换openid-尽量提前10分钟更新  
       wx.login({
         success: function (res) {
@@ -26,8 +25,6 @@ App({
           });
         }
       });
-    } else {
-      console.log(user);
     }
     wx.getUserInfo({
       success: function (res) {

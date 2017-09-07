@@ -1,26 +1,33 @@
 <!--smart.wxml-->
 <view class="pushMsgFm">
-    <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
-        <view class="bodyView">
-            <view class="changeText">
-                <label>Save</label>
-            </view>
-            <view class="changeInput" style="float:right;">
-                <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" />
-            </view>
-        </view>
-        <label class="openMessage">{{ openMessage }}</label>
-        <view class="section">
-            <picker mode="selector" range="{{ array }}" value="{{ index }}" bindchange="bindPickerChange">
-                <view class="picker">当前选择：{{ array[index] }}</view>
-            </picker>
-        </view>
-        <button class="confirm" form-type="submit" hidden="{{ true }}">设置发送消息</button>
-    </form>
+  <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
+    <view class="bodyView">
+      <view class="changeText">
+        <label>Save</label>
+      </view>
+      <view class="changeInput" style="float:right;">
+        <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" />
+      </view>
+    </view>
+    <label class="openMessage">{{ openMessage }}</label>
+    <view class="section">
+      <picker mode="selector" range="{{ array }}" value="{{ index }}" bindchange="bindPickerChange">
+        <view class="picker">当前选择：{{ array[index] }}</view>
+      </picker>
+    </view>
+    <button class="confirm" form-type="submit" hidden='{{ true }}'>设置发送消息</button>
+  </form>
 </view>
+
+<view class='listDevices'>
+  <view>设备：</view>
+  <block wx:for="{{ listDevices }}">
+    <view class="view_li {{ chonseDid == index ? 'active' : '' }}" style="font-size: 14px;" bindtap='chonseDid' data-index="{{ index }}" data-did="{{ item.did }}" wx:if="{{ item.is_online == true }}">{{ item.did }}</view>
+  </block>
+</view>
+
+
 <!-- 录音按钮 -->
 <view class="fixed-video">
-    <button type="primary" 
-            bindtouchstart="startRecode" bindtouchend="endRecode" bindtouchmove='mytouchmove'
-            class="cxbtn" hover-class="primaryHover" hover-start-time="10" hover-stay-time="20">按住录音</button>
+  <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" bindtouchmove='mytouchmove' class="cxbtn" hover-class="primaryHover" hover-start-time="10" hover-stay-time="20">按住录音</button>
 </view>

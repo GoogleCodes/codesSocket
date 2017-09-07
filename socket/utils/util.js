@@ -22,6 +22,42 @@ var utils = (function() {
       n = n.toString()
       return n[1] ? n : '0' + n
     },
+    post(url, appid, data, success, fail, complete) {  //  post 请求
+      wx.request({
+        url: url,
+        method: 'POST',
+        data: data,
+        header: { 
+          'content-type': 'application/x-www-form-urlencoded',
+          "X-Gizwits-Application-Id": appid,
+        },
+        success: function (res) {
+          success(res)
+        },
+        fail() {  //  请求失败调用
+          fail();
+        },
+        complete(res) {  //  请求成功与否都要调用
+          complete(res);
+        }
+      })
+    },
+    got(url, data, success, fail, complete) { // get请求
+      wx.request({
+        url: url, //  请求连接
+        data: data, //  请求数据
+        header: { 'content-type': 'application/json' },
+        success: function (res) { //  请求成功调用
+          success(res)
+        },
+        fail() {  //  请求失败调用
+          fail();
+        },
+        complete(res) {  //  请求成功与否都要调用
+          complete(res);
+        }
+      })
+    },
     /**
      * 显示内容
      */

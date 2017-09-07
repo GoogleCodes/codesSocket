@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/smart/smart",
+    "pages/login/login",
     "pages/logs/logs"
   ],
   "window": {
