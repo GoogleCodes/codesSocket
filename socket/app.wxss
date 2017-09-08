@@ -54,7 +54,7 @@ page,.page {
 }
 .wc{
   color: white;
-  padding: 30rpx 0 30rpx 40rpx;
+  padding: 20rpx 0 20rpx 40rpx;
   border-bottom: 1px solid #ccc;
 }
 .page-content{
@@ -68,7 +68,11 @@ page,.page {
   z-index: 0;
   transition: All 0.4s ease; 
   -webkit-transition: All 0.4s ease;
-  box-shadow: -5px 0px 10px #999; 
+}
+
+.wx-hover {
+  background: #fff;
+  color: #333;
 }
 
 .page-top .icon-liebiao {

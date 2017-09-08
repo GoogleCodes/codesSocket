@@ -12,6 +12,8 @@
   height: 35px;
   padding: 5px 0px;
   position: relative;
+  background: rgb(251, 249, 254);
+  margin-top: 10px;
 }
 
 .changeText {
@@ -23,7 +25,7 @@
 }
 
 .bodyView .changeInput {
-  margin: 2px 10px;
+  margin: 2px 0px 0px 10px;
 }
 
 .bodyView .appidText {
@@ -43,7 +45,8 @@
 }
 
 .pushMsgFm .openMessage {
-  margin-top: 20px;
+  margin: 10px 0px;
+  display: block;
 }
 
 .fromInput {
@@ -65,9 +68,9 @@
 
 .fixed-video button[type="primary"] {
   width: 97%;
-  margin: 8px auto;
-  height: 35px;
-  line-height: 35px;
+  margin: 5px auto;
+  height: 40px;
+  line-height: 40px;
   font-size: 14px;
   color: #fff;
 }
@@ -131,6 +134,8 @@
 
 .listDevices {
   width: 95%;
+  height: 100%;
+  overflow-y: auto;
   position: relative;
   left: 0px;
   right: 0px;

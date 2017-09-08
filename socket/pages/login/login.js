@@ -8,12 +8,12 @@ Page({
     uname: '',
     pword: '',
     wechatOpenId: 'kceshi1',
-    gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55', //  032c92bbb0fc4b6499a2eaed58727a3a  d8b4d2f0bce943ee9ecb4abfa01a2e55
+    gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f', //  032c92bbb0fc4b6499a2eaed58727a3a  d8b4d2f0bce943ee9ecb4abfa01a2e55 141b9a9bb1df416cbb18bb85c864633f
     token: ''
   },
 
   loginForm(e) {
-    var that = this;
+    var that = this;      
     if (e.detail.value.uname == '') {
       wx.showToast({
         title: '账号框为空',
@@ -47,7 +47,6 @@ Page({
       },
       data: {
         lang: "en",
-        // phone_id: that.data.wechatOpenId,
         username: that.data.uname,
         password: that.data.pword,
       },
@@ -55,7 +54,7 @@ Page({
         var options = {
           uid: result.data.uid,
           token: result.data.token,
-          gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55'
+          gizwitsAppId: that.data.gizwitsAppId
         };
         wx.setStorageSync('options', options);
         that.setData({

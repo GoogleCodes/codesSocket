@@ -9,7 +9,6 @@ Page({
    * 页面的初始数据
    */
   data: {
-
     open: false,
     mark: 0,
     newmark: 0,
@@ -18,7 +17,6 @@ Page({
     windowWidth: wx.getSystemInfoSync().windowWidth,
     staus: 1,
     translate: '',
-
 
     uname: '',
     pword: '',
@@ -62,10 +60,16 @@ Page({
    */
   onLoad: function () {
     var that = this;
-    // this._getUserToken();
-    // var limit = 20;
-    // var skip = 0;
-    that._getBindingList(20, 0)
+    this._getUserToken();
+    var limit = 20;
+    var skip = 0;
+    if (wx.getStorageSync('options') == '') {
+      wx.removeStorageSync('userInformation');
+      wx.redirectTo({ url: '../login/login', });
+    } else {
+      that._getBindingList(20, 0);
+    }
+    
   },
 
   /**
@@ -73,7 +77,6 @@ Page({
    */
   startRecode: function (e) {
     var that = this;
-    wx.vibrateShort();
     that.setData({
       startPoint: [e.touches[0].pageX, e.touches[0].pageY],
     });
@@ -270,7 +273,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function (res) {
-
+    
   },
 
   /**
@@ -379,6 +382,7 @@ Page({
             console.log(device.did);
           }
         }
+        // that._login();
       },
       fail: function (evt) { }
     })
