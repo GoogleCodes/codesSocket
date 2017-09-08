@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/smart/smart",
     "pages/login/login",
+    "pages/smart/smart",
     "pages/logs/logs"
   ],
   "window": {

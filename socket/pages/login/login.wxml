@@ -2,10 +2,10 @@
 <view class="loginView">
   <form name='pushMsgFm' report-submit bindsubmit='loginForm'>
     <view class='bodyView'>
-      <input type='tel' class='appidText' value='{{ uname }}' name='uname' />
+      <input type='number' class='appidText' value='{{ uname }}' name='uname' placeholder='用户账号' focus='true' />
     </view>
     <view class='bodyView'>
-      <input type='password' class='appidText' value='{{ pword }}' name='pword' />
+      <input type='password' class='appidText' value='{{ pword }}' name='pword' placeholder='用户密码' />
     </view>
     <button type="primary" class="confirm" form-type="submit">登录</button>
   </form>

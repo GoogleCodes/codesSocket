@@ -14,6 +14,21 @@ Page({
 
   loginForm(e) {
     var that = this;
+    if (e.detail.value.uname == '') {
+      wx.showToast({
+        title: '账号框为空',
+        icon: 'success',
+        duration: 2000
+      });
+      return false;
+    } else if (e.detail.value.pword == '') {
+      wx.showToast({
+        title: '密码框为空',
+        icon: 'success',
+        duration: 2000
+      });
+      return false;
+    }
     that.setData({
       uname: e.detail.value.uname,
       pword: e.detail.value.pword
@@ -47,13 +62,12 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
-        wx.navigateTo({url: '../smart/smart',})
+        wx.redirectTo({url: '../smart/smart',})
       },
       fail: function (evt) {
         console.log(evt);
       }
-    })
-
+    });
   },
 
   /**
@@ -66,14 +80,19 @@ Page({
       uname: userInfom.username,
       pword: userInfom.password,
     });
-    
+    if (wx.getStorageSync('userInformation') == '') {
+      console.log(1);
+    } else {
+      console.log(2);
+      wx.redirectTo({ url: '../smart/smart', })
+    }
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-  
+    
   },
 
   /**

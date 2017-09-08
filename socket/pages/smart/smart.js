@@ -9,6 +9,17 @@ Page({
    * 页面的初始数据
    */
   data: {
+
+    open: false,
+    mark: 0,
+    newmark: 0,
+    startmark: 0,
+    endmark: 0,
+    windowWidth: wx.getSystemInfoSync().windowWidth,
+    staus: 1,
+    translate: '',
+
+
     uname: '',
     pword: '',
     voices: [],
@@ -20,7 +31,7 @@ Page({
         'custom': 'custom'
       },
       wechatOpenId: 'kceshi1',  //  测试:kceshi1
-      gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed 141b9a9bb1df416cbb18bb85c864633f
+      gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed 141b9a9bb1df416cbb18bb85c864633f
     },
     uid: '',
     token: '',
@@ -43,6 +54,7 @@ Page({
     isSpeaking: false,  //  是否正在说话
     listDevices: {},  //  设备列表
     chonseDid: 0,
+    gizwitsVisible: true,
   },
 
   /**
@@ -50,10 +62,10 @@ Page({
    */
   onLoad: function () {
     var that = this;
-    this._getUserToken();
+    // this._getUserToken();
     // var limit = 20;
     // var skip = 0;
-    // that._getBindingList(20, 0)
+    that._getBindingList(20, 0)
   },
 
   /**
@@ -160,6 +172,7 @@ Page({
   endRecode: function (e) {
     var s = this;
     wx.stopRecord();
+    var options = wx.getStorageSync('options');
     s.setData({ isSpeaking: false });
     wx.showToast();
     setTimeout(function () {
@@ -302,6 +315,11 @@ Page({
 
   },
 
+  backLogin() {
+    wx.removeStorageSync('userInformation');
+    wx.redirectTo({ url: '../login/login', })
+  },
+
   _getUserToken() {
     var that = this;
     wx.request({
@@ -341,8 +359,8 @@ Page({
       method: 'GET',
       header: {
         'content-type': 'application/json',
-        'X-Gizwits-Application-Id': that.data.options.gizwitsAppId,
-        'X-Gizwits-User-token':  that.data.token,
+        'X-Gizwits-Application-Id': options.gizwitsAppId,//that.data.options.gizwitsAppId,
+        'X-Gizwits-User-token': options.token,
       },
       success: function (result) {
         that.setData({
@@ -350,13 +368,16 @@ Page({
         });
         for (var i in result.data.devices) {
           var device = result.data.devices[i];
-          //  获取数据
-          that.setData({
-            did: device.did,  //  did
-            host: device.host,  //  websocket 请求地址
-            ws_port: device.ws_port, //  端口
-            wss_port: device.wss_port, //  端口
-          });
+          if (result.data.devices[i].is_online == true) {
+            //  获取数据
+            that.setData({
+              did: device.did,  //  did
+              host: device.host,  //  websocket 请求地址
+              ws_port: device.ws_port, //  端口
+              wss_port: device.wss_port, //  端口
+            });
+            console.log(device.did);
+          }
         }
       },
       fail: function (evt) { }
@@ -367,6 +388,7 @@ Page({
   chonseDid(e) {
     var that = this;
     that._login();
+    that.setData({gizwitsVisible: false});
     var did = e.currentTarget.dataset.did, index = e.currentTarget.dataset.index
     if (that.data.chonseDid === index) {
       console.log(did);
@@ -413,9 +435,9 @@ Page({
       json = {
         cmd: "login_req",
         data: {
-          appid: that.data.options.gizwitsAppId,
-          uid: that.data.uid,
-          token: that.data.token,
+          appid: options.gizwitsAppId,
+          uid: options.uid,
+          token: options.token,
           p0_type: that.data.options.json.attrs,
           heartbeat_interval: that.data.keepalive,
           auto_subscribe: true
@@ -614,5 +636,99 @@ Page({
       });
       clearInterval(countdownTimer);
     };
-  }
+  },
+
+  tap_ch: function (e) {
+    if (this.data.open) {
+      this.setData({
+        translate: 'transform: translateX(0px)'
+      })
+      this.data.open = false;
+    } else {
+      this.setData({
+        translate: 'transform: translateX(' + this.data.windowWidth * 0.75 + 'px)'
+      })
+      this.data.open = true;
+    }
+  },
+
+  tap_start: function (e) {
+    this.data.mark = this.data.newmark = e.touches[0].pageX;
+    if (this.data.staus == 1) {
+      // staus = 1指默认状态
+      this.data.startmark = e.touches[0].pageX;
+    } else {
+      // staus = 2指屏幕滑动到右边的状态
+      this.data.startmark = e.touches[0].pageX;
+    }
+
+  },
+  tap_drag: function (e) {
+    /*
+     * 手指从左向右移动
+     * @newmark是指移动的最新点的x轴坐标 ， @mark是指原点x轴坐标
+     */
+    this.data.newmark = e.touches[0].pageX;
+    if (this.data.mark < this.data.newmark) {
+      if (this.data.staus == 1) {
+        if (this.data.windowWidth * 0.75 > Math.abs(this.data.newmark - this.data.startmark)) {
+          this.setData({
+            translate: 'transform: translateX(' + (this.data.newmark - this.data.startmark) + 'px)'
+          })
+        }
+      }
+
+    }
+    /*
+     * 手指从右向左移动
+     * @newmark是指移动的最新点的x轴坐标 ， @mark是指原点x轴坐标
+     */
+    if (this.data.mark > this.data.newmark) {
+      if (this.data.staus == 1 && (this.data.newmark - this.data.startmark) > 0) {
+        this.setData({
+          translate: 'transform: translateX(' + (this.data.newmark - this.data.startmark) + 'px)'
+        })
+      } else if (this.data.staus == 2 && this.data.startmark - this.data.newmark < this.data.windowWidth * 0.75) {
+        this.setData({
+          translate: 'transform: translateX(' + (this.data.newmark + this.data.windowWidth * 0.75 - this.data.startmark) + 'px)'
+        })
+      }
+
+    }
+
+    this.data.mark = this.data.newmark;
+
+  },
+  tap_end: function (e) {
+    if (this.data.staus == 1 && this.data.startmark < this.data.newmark) {
+      if (Math.abs(this.data.newmark - this.data.startmark) < (this.data.windowWidth * 0.2)) {
+        this.setData({
+          translate: 'transform: translateX(0px)'
+        })
+        this.data.staus = 1;
+      } else {
+        this.setData({
+          translate: 'transform: translateX(' + this.data.windowWidth * 0.75 + 'px)'
+        })
+        this.data.staus = 2;
+      }
+    } else {
+      if (Math.abs(this.data.newmark - this.data.startmark) < (this.data.windowWidth * 0.2)) {
+        this.setData({
+          translate: 'transform: translateX(' + this.data.windowWidth * 0.75 + 'px)'
+        })
+        this.data.staus = 2;
+      } else {
+        this.setData({
+          translate: 'transform: translateX(0px)'
+        })
+        this.data.staus = 1;
+      }
+    }
+
+    this.data.mark = 0;
+    this.data.newmark = 0;
+  },
+
+
 });

@@ -6,19 +6,22 @@
   width: 90%;
 }
 .loginView .appidText {
-    border-bottom: 1px solid #ccc;
-    width: 100%;
-    height: 30px;
-    line-height: 30px;
+    border: 1px solid #eee;
+    width: 95%;
+    height: 40px;
+    border-radius: 5px;
+    background: #eee;
+    line-height: 40px;
     margin: 10px 0px;
+    padding-left: 5%;
     color: #333;
 }
 
 .loginView button[type="primary"] {
     width: 100%;
     margin: 20px auto 0px;
-    height: 35px;
-    line-height: 35px;
+    height: 40px;
+    line-height: 40px;
     font-size: 14px;
     color: #fff;
 }
