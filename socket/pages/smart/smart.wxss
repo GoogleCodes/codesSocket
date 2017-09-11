@@ -66,13 +66,14 @@
   background: #fff;
 }
 
-.fixed-video button[type="primary"] {
+.fixed-video .cxbtn {
   width: 97%;
   margin: 5px auto;
   height: 40px;
   line-height: 40px;
   font-size: 14px;
   color: #fff;
+  background: #6ba74f;
 }
 
 .confirm {
@@ -124,14 +125,13 @@
 
 /* 点击后出现的按钮样式 */
 
-.primaryHover {
+.page-top .primaryHover {
   transition: 0.5s;
-  background: -webkit-linear-gradient(#37aaea, #117ed2);
+  background: -webkit-linear-gradient(#6ba74f, #2e511e);
   color: #fff;
 }
 
 /* listDevices start */
-
 .listDevices {
   width: 95%;
   height: 100%;
@@ -142,9 +142,21 @@
   margin: 10px auto;
 }
 
+.placeChonse {
+  width: 100%;
+  height: 35px;
+  line-height: 35px;
+  background: rgb(251, 249, 254);
+  text-indent: 1em;
+}
+
+.scrollView {
+
+}
+
 .view_li {
-  width: 95%;
-  margin: 10px 0px;
+  width: 90%;
+  margin: 10px 2.5%;
   border-radius: 5px;
   padding-left: 5%;
   height: 50px;
@@ -154,8 +166,12 @@
   float: left;
 }
 
+.scrollView:last-child {
+  padding-bottom: 100px;
+}
+
 .active {
-  background: #c40000;
+  background: #6ba74f;
   position: relative;
 }
 

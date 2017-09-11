@@ -1,12 +1,18 @@
 <!--pages/login/login.wxml-->
 <view class="loginView">
   <form name='pushMsgFm' report-submit bindsubmit='loginForm'>
-    <view class='bodyView'>
-      <input type='number' class='appidText' value='{{ uname }}' name='uname' placeholder='用户账号' focus='true' />
+    <view class='bodyView' style="border-bottom: 1px solid #eee;">
+      <view class="iconfont icon-user fl"></view>
+      <input type='number' class='appidText fr' value='{{ uname }}' name='uname' placeholder='用户账号' focus='true' />
     </view>
     <view class='bodyView'>
-      <input type='password' class='appidText' value='{{ pword }}' name='pword' placeholder='用户密码' />
+      <view class="iconfont icon-mima fl"></view>
+      <input type='password' class='appidText fr' value='{{ pword }}' name='pword' placeholder='用户密码' />
     </view>
     <button type="primary" class="confirm" form-type="submit">登录</button>
   </form>
 </view>
+
+<loading class="loading" hidden="{{ loadHidden }}" bindchange="loadChange">
+  加载中。。。
+</loading>

@@ -1,19 +1,28 @@
 /* pages/login/login.wxss */
-
-
 .loginView {
   margin: 0% 5%;
   width: 90%;
 }
+
+.bodyView {
+  width: 100%;
+  height: 40px;
+}
+
+.bodyView .iconfont {
+  font-size: 46rpx;
+  color: #6ba74f;
+  line-height: 40px;
+  text-align: center;
+  height: 40px;
+  width: 10%;
+}
+
 .loginView .appidText {
-    border: 1px solid #eee;
-    width: 95%;
+    width: 90%;
     height: 40px;
     border-radius: 5px;
-    background: #eee;
     line-height: 40px;
-    margin: 10px 0px;
-    padding-left: 5%;
     color: #333;
 }
 
@@ -23,5 +32,11 @@
     height: 40px;
     line-height: 40px;
     font-size: 14px;
+    background: #6ba74f;
     color: #fff;
+}
+
+.loading {
+  font-size: 1.2rpx;
+  font-family: 'microsoft yahei';
 }

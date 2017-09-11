@@ -11,12 +11,11 @@
   <view class="page-top" style="{{translate}}">
     <!--
      bindtouchmove="tap_drag" bindtouchend="tap_end" bindtouchstart="tap_start" 
-    --> 
-    <!-- <image bindtap="tap_ch" src="../../images/btn.png"></image> -->
+    -->
     <view bindtap="tap_ch" class='icon-liebiao iconfont'></view>
-
     <!--smart.wxml-->
     <view class="pushMsgFm" hidden='{{ gizwitsVisible }}'>
+      <view style="line-height: 30px;margin-top: 10px;">所需的时间是：{{ ins_i }}秒</view>
       <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
         <view class="bodyView">
           <view class="changeText">
@@ -37,25 +36,24 @@
     </view>
 
     <view class='listDevices'>
-      <view>请先选择设备：</view>
+      <view class="placeChonse">请先选择设备：</view>
       <!-- 
           wx:if="{{ item.is_online == true }}"  {{ chonseDid == index ? 'active' : '' }} 
           hover-class="active" hover-start-time='10' hover-start-time='50000'
       -->
-      <view wx:for="{{ listDevices }}">
-        <view style="font-size: 14px;" bindtap='chonseDid' wx:if="{{ item.is_online == true }}"
-              data-index="{{ index }}" data-did="{{ item.did }}" 
-              class="view_li {{ chonseDid == index ? 'active' : '' }}" >
-          <view style="margin-top: 4px;">did:{{ item.did }}</view>
-          <view>mac:{{ item.mac }}</view>
+      <scroll-view scroll-y style="height:{{ eleHeight }}px;background:rgb(251, 249, 254);" scroll-top="10" enable-back-to-top="true">
+        <view wx:for="{{ listDevices }}" class="scrollView">
+          <view style="font-size: 14px;" bindtap='chonseDid' wx:if="{{ item.is_online == true }}" data-index="{{ index }}" data-did="{{ item.did }}" class="view_li {{ chonseDid == index ? 'active' : '' }}">
+            <view style="margin-top: 4px;">did:{{ item.did }}</view>
+            <view>mac:{{ item.mac }}</view>
+          </view>
         </view>
-      </view>
+      </scroll-view>
     </view>
 
-    <!-- 录音按钮 -->
+    <!-- 录音按钮 bindtouchmove='mytouchmove' -->
     <view class="fixed-video">
-      <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" bindtouchmove='mytouchmove' class="cxbtn" hover-class="primaryHover" hover-start-time="10" hover-stay-time="20">按住录音</button>
+      <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn" hover-class="primaryHover" hover-start-time="10" hover-stay-time="2000">按住录音</button>
     </view>
   </view>
-
 </view>

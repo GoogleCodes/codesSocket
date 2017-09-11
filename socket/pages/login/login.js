@@ -8,8 +8,9 @@ Page({
     uname: '',
     pword: '',
     wechatOpenId: 'kceshi1',
-    gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f', //  032c92bbb0fc4b6499a2eaed58727a3a  d8b4d2f0bce943ee9ecb4abfa01a2e55 141b9a9bb1df416cbb18bb85c864633f
-    token: ''
+    gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55', //  032c92bbb0fc4b6499a2eaed58727a3a  d8b4d2f0bce943ee9ecb4abfa01a2e55 141b9a9bb1df416cbb18bb85c864633f
+    token: '',
+    loadHidden: true,
   },
 
   loginForm(e) {
@@ -31,7 +32,8 @@ Page({
     }
     that.setData({
       uname: e.detail.value.uname,
-      pword: e.detail.value.pword
+      pword: e.detail.value.pword,
+      loadHidden: false,
     });
     var userInfo = {
       username: that.data.uname,
@@ -51,6 +53,7 @@ Page({
         password: that.data.pword,
       },
       success: function (result) {
+        that.setData({ loadHidden : true, });
         var options = {
           uid: result.data.uid,
           token: result.data.token,

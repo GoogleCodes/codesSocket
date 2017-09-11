@@ -4,6 +4,8 @@ var myUtils = require('../../utils/util.js');
 
 var app = new getApp();
 
+var times = null, ins = 0;
+
 Page({
   /**
    * 页面的初始数据
@@ -17,7 +19,7 @@ Page({
     windowWidth: wx.getSystemInfoSync().windowWidth,
     staus: 1,
     translate: '',
-
+    eleHeight: 0,
     uname: '',
     pword: '',
     voices: [],
@@ -53,6 +55,7 @@ Page({
     listDevices: {},  //  设备列表
     chonseDid: 0,
     gizwitsVisible: true,
+    ins_i: 0,
   },
 
   /**
@@ -63,13 +66,19 @@ Page({
     this._getUserToken();
     var limit = 20;
     var skip = 0;
+    wx.getSystemInfo({
+      success: function(res) {
+        that.setData({
+          eleHeight: res.windowHeight - 145,
+        });
+      },
+    });
     if (wx.getStorageSync('options') == '') {
       wx.removeStorageSync('userInformation');
       wx.redirectTo({ url: '../login/login', });
     } else {
       that._getBindingList(20, 0);
     }
-    
   },
 
   /**
@@ -77,9 +86,9 @@ Page({
    */
   startRecode: function (e) {
     var that = this;
-    that.setData({
-      startPoint: [e.touches[0].pageX, e.touches[0].pageY],
-    });
+    // that.setData({
+    //   startPoint: [e.touches[0].pageX, e.touches[0].pageY],
+    // });
     wx.startRecord({
       success: function (res) {
         var tempFilePath = res.tempFilePath;
@@ -89,6 +98,12 @@ Page({
           icon: 'success',
           duration: 1000
         });
+        ins = 0;
+        times = setInterval(function () {
+          ins++;
+          console.log(ins);
+        }, 1000);
+
         wx.getSavedFileList({
           success: function (res) {
             var voices = [];
@@ -180,7 +195,6 @@ Page({
     wx.showToast();
     setTimeout(function () {
       var urls = 'http://yuyin.ittun.com/public/index/index/zhen';
-      console.log(s.data.recodePath + "----");
       wx.uploadFile({
         url: urls,
         filePath: s.data.recodePath,
@@ -189,10 +203,12 @@ Page({
         header: ('Access-Control-Allow-Origin: *'),
         header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
         formData: {
-          'lan': s.data.arrayCharset, // 'zh',
+          'lan': s.data.arrayCharset,
         },
         header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success: function (res) {
+          clearInterval(times);
+          s.setData({ ins_i: ins });
           var error_text = '语音识别失败';
           console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
           if (res.data.toString() == error_text) {
@@ -314,13 +330,23 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
-
-  },
+  onShareAppMessage: function () {},
 
   backLogin() {
-    wx.removeStorageSync('userInformation');
-    wx.redirectTo({ url: '../login/login', })
+    wx.showModal({
+      title: '提示',
+      content: "你确定要退出登录???",
+      showCancel: true,
+      success: function (res) {
+        console.log(res.cancel,  res.confirm);
+        if (res.confirm == true) {
+          wx.removeStorageSync('userInformation');
+          wx.redirectTo({ url: '../login/login', })
+        } else if (res.cancel == false) {
+          return;
+        }
+      }
+    });
   },
 
   _getUserToken() {
@@ -396,9 +422,7 @@ Page({
     var did = e.currentTarget.dataset.did, index = e.currentTarget.dataset.index
     if (that.data.chonseDid === index) {
       console.log(did);
-      this.setData({
-        did: did,
-      });
+      this.setData({did: did,});
       return;
     } else {
       this.setData({
@@ -407,7 +431,6 @@ Page({
       });
       console.log(that.data.did);
     }
-
   },
 
   //  心跳开始
@@ -681,7 +704,6 @@ Page({
           })
         }
       }
-
     }
     /*
      * 手指从右向左移动
@@ -697,9 +719,7 @@ Page({
           translate: 'transform: translateX(' + (this.data.newmark + this.data.windowWidth * 0.75 - this.data.startmark) + 'px)'
         })
       }
-
     }
-
     this.data.mark = this.data.newmark;
 
   },
@@ -729,10 +749,7 @@ Page({
         this.data.staus = 1;
       }
     }
-
     this.data.mark = 0;
     this.data.newmark = 0;
   },
-
-
 });
