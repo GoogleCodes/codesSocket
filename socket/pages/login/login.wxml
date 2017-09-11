@@ -9,10 +9,10 @@
       <view class="iconfont icon-mima fl"></view>
       <input type='password' class='appidText fr' value='{{ pword }}' name='pword' placeholder='用户密码' />
     </view>
-    <button type="primary" class="confirm" form-type="submit">登录</button>
+    <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>登录</button>
   </form>
 </view>
 
-<loading class="loading" hidden="{{ loadHidden }}" bindchange="loadChange">
+<!-- <loading class="loading" hidden="{{ loadHidden }}" bindchange="loadChange">
   加载中。。。
-</loading>
+</loading> -->

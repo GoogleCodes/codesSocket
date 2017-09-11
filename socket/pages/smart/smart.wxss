@@ -150,9 +150,6 @@
   text-indent: 1em;
 }
 
-.scrollView {
-
-}
 
 .view_li {
   width: 90%;
@@ -173,6 +170,12 @@
 .active {
   background: #6ba74f;
   position: relative;
+}
+
+
+.wc .icon-user::before {
+  margin-right: 10px;
+  font-size: 16px;
 }
 
 /* listDevices end */

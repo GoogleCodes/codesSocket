@@ -1,0 +1,14 @@
+<!--template/util/util.wxml-->
+
+<template name="pageBottom">
+  <view class="page-bottom">
+    <view class="page-content">
+      <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
+        <view class="wc_list" bindtap='backLogin'>
+          <view class="iconfont icon-user fl"></view>
+          <view class="fl">退出登录</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>

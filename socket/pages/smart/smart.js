@@ -46,8 +46,8 @@ Page({
     switchButton: false,  //  开关
     _heartbeatInterval: 60,  //  心跳
     _heartbeatTimerId: undefined,
-    array: ['', '国语', '粤语'],
-    index: 1,
+    array: ['国语', '粤语'],
+    index: 0,
     arrayCharset: 'zh',
     startPoint: [0, 0],
     openMessage: '',
@@ -56,6 +56,8 @@ Page({
     chonseDid: 0,
     gizwitsVisible: true,
     ins_i: 0,
+    ins_y: '',
+    ins_l: '',
   },
 
   /**
@@ -103,7 +105,6 @@ Page({
           ins++;
           console.log(ins);
         }, 1000);
-
         wx.getSavedFileList({
           success: function (res) {
             var voices = [];
@@ -148,42 +149,6 @@ Page({
     })
   },
 
-  //  长按触摸
-  mytouchmove: function (e) {
-    var that = this;
-    //  当前触摸点坐标
-    var curPoint = [e.touches[0].pageX, e.touches[0].pageY];
-    var startPoint = that.data.startPoint;
-    //  比较pageX值
-    if (curPoint[0] <= startPoint[0]) {
-      if (Math.abs(curPoint[0] - startPoint[0]) >= Math.abs(curPoint[1] - startPoint[1])) {
-        console.log(e.timeStamp + '- touch left move');
-      } else {
-        if (curPoint[1] >= startPoint[1]) {
-          console.log(e.timeStamp + '- touch down move');
-        } else {
-          console.log(e.timeStamp + '- touch up move');
-          that.setData({ isSpeaking: false });
-          wx.stopRecord();
-          return false;
-        }
-      }
-    } else {
-      if (Math.abs(curPoint[0] - startPoint[0]) >= Math.abs(curPoint[1] - startPoint[1])) {
-        console.log(e.timeStamp + '- touch left move');
-      } else {
-        if (curPoint[1] >= startPoint[1]) {
-          console.log(e.timeStamp + '- touch down move');
-        } else {
-          console.log(e.timeStamp + '- touch up move');
-          wx.stopRecord();
-          return;
-        }
-      }
-    }
-
-  },
-
   /**
    * 结束录音
    */
@@ -210,13 +175,14 @@ Page({
           clearInterval(times);
           s.setData({ ins_i: ins });
           var error_text = '语音识别失败';
-          console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
+          console.log("返回的东西是：", res.data);
           if (res.data.toString() == error_text) {
             wx.showToast({
               title: '语音识别失败!请重试!',
               icon: 'success',
               duration: 2000
             });
+            clearInterval(times);
           }
           // if (res.statusCode == 404) {
           //   wx.showToast({
@@ -227,6 +193,11 @@ Page({
           //   return;
           // }
           var options = JSON.parse(res.data), result = null, sqlStr = null;
+          console.log(options, '---------------------------', options.time1);
+          s.setData({
+            ins_y: options.time1,
+            ins_l: options.time2,
+          });
           for (var i in options) {
             var sqlStr = options[i].toString();
             console.log(sqlStr);
@@ -269,6 +240,7 @@ Page({
               showCancel: false,
               success: function (res) { }
             });
+            clearInterval(times);
           }
           wx.hideToast();
         },
@@ -585,12 +557,12 @@ Page({
     that.setData({
       index: e.detail.value
     });
-    if (that.data.index == 1) {
+    if (that.data.index == 0) {
       that.setData({
         arrayCharset: 'zh', //  国语
       });
       console.log('picker发送选择改变，携带值为', e.detail.value, that.data.index);
-    } else if (that.data.index == 2) {
+    } else if (that.data.index == 1) {
       that.setData({
         arrayCharset: 'ct',// 粤语
       });
@@ -667,9 +639,7 @@ Page({
 
   tap_ch: function (e) {
     if (this.data.open) {
-      this.setData({
-        translate: 'transform: translateX(0px)'
-      })
+      this.setData({ translate: 'transform: translateX(0px)' })
       this.data.open = false;
     } else {
       this.setData({
