@@ -31,7 +31,7 @@ Page({
         'custom': 'custom'
       },
       wechatOpenId: 'kceshi1',  //  测试:kceshi1
-      gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed 141b9a9bb1df416cbb18bb85c864633f
+      gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed
     },
     uid: '',
     token: '',
@@ -88,9 +88,6 @@ Page({
    */
   startRecode: function (e) {
     var that = this;
-    // that.setData({
-    //   startPoint: [e.touches[0].pageX, e.touches[0].pageY],
-    // });
     wx.startRecord({
       success: function (res) {
         var tempFilePath = res.tempFilePath;
@@ -312,6 +309,7 @@ Page({
       success: function (res) {
         console.log(res.cancel,  res.confirm);
         if (res.confirm == true) {
+          wx.removeStorageSync('options');
           wx.removeStorageSync('userInformation');
           wx.redirectTo({ url: '../login/login', })
         } else if (res.cancel == false) {

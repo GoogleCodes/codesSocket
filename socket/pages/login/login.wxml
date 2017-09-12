@@ -10,9 +10,11 @@
       <input type='password' class='appidText fr' value='{{ pword }}' name='pword' placeholder='用户密码' />
     </view>
     <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>登录</button>
+    <view class="labels" hidden='{{ true }}'>
+      <view class="viewLabel fl">注册新用户</view>
+      <navigator url='../forget/forget' open-type='navigate'>
+        <view class="viewLabel fr" bindtap='forgetPwd'>忘记密码</view>
+      </navigator>
+    </view>
   </form>
 </view>
-
-<!-- <loading class="loading" hidden="{{ loadHidden }}" bindchange="loadChange">
-  加载中。。。
-</loading> -->

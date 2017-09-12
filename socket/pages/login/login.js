@@ -82,12 +82,30 @@ Page({
       uname: userInfom.username,
       pword: userInfom.password,
     });
-    if (wx.getStorageSync('userInformation') == '') {
-      console.log(1);
-    } else {
-      console.log(2);
+    if (wx.getStorageSync('userInformation') !== '') {
       wx.redirectTo({ url: '../smart/smart', })
     }
+  },
+
+  forgetPwd (){
+    return;
+    let that = this;
+    wx.request({
+      url: 'https://api.gizwits.com/app/reset_password',
+      method: 'POST',
+      header: {
+        'content-type': 'application/json',
+        'Accept' : ' application/json',
+        "X-Gizwits-Application-Id": that.data.gizwitsAppId, // phone_id: that.data.options.wechatOpenId,
+      },
+      data: {
+        "phone": that.data.uname,
+        "new_pwd": that.data.pword,
+        "code": "string"    //  手机验证码
+      },
+      success (res) {},
+      fail (err) {},
+    })
   },
 
   /**
