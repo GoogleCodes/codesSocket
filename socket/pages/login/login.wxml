@@ -3,18 +3,21 @@
   <form name='pushMsgFm' report-submit bindsubmit='loginForm'>
     <view class='bodyView' style="border-bottom: 1px solid #eee;">
       <view class="iconfont icon-user fl"></view>
-      <input type='number' class='appidText fr' value='{{ uname }}' name='uname' placeholder='用户账号' focus='true' />
+      <input type='number' class='appidText fr' value='{{ uname }}' name='uname' placeholder='用户账号' focus='true' maxlength='11' />
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-mima fl"></view>
-      <input type='password' class='appidText fr' value='{{ pword }}' name='pword' placeholder='用户密码' />
+      <input type='password' class='appidText fr' value='{{ pword }}' name='pword' placeholder='用户密码' confirm-type='done' />
     </view>
     <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>登录</button>
     <view class="labels" hidden='{{ true }}'>
-      <view class="viewLabel fl">注册新用户</view>
+      <navigator url='../reg/reg' open-type='navigate'>
+        <view class="viewLabel fl">注册新用户</view>
+      </navigator>
       <navigator url='../forget/forget' open-type='navigate'>
         <view class="viewLabel fr" bindtap='forgetPwd'>忘记密码</view>
       </navigator>
     </view>
   </form>
 </view>
+

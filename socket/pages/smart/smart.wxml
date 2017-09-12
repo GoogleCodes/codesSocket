@@ -1,17 +1,9 @@
-
 <!-- <import src="../../../template/util/util.wxml" /> -->
 
 <view class="page">
-   <view class="page-bottom">
-    <view class="page-content">
-      <view class="wc" bindtap='backLogin' hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
-        <view class="wc_list">
-          <view class="iconfont icon-user fl"></view>
-          <view class="fl">退出登录</view>
-        </view>
-      </view>
-    </view>
-  </view>
+  <!-- 导入模块 -->
+  <import src="../../template/util/util.wxml" />
+  <template is="pageBottom" data="{{ backLogin }}"></template>
 
   <view class="page-top" style="{{ translate }}">
     <!--
@@ -21,8 +13,8 @@
     <!--smart.wxml-->
     <view class="pushMsgFm" hidden='{{ gizwitsVisible }}'>
       <!-- <view style="line-height: 30px;margin-top: 10px;">全部所需的时间是：{{ ins_i }}秒</view> -->
-      <view style="line-height: 30px;margin-top: 10px;">视频解析所需的时间是：{{ ins_y }}秒</view>
-      <view style="line-height: 30px;margin-top: 10px;">百度云识别的时间是：{{ ins_l }}秒</view>
+      <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">视频解析所需的时间是：{{ ins_y }}秒</view>
+      <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">百度云识别的时间是：{{ ins_l }}秒</view>
       <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
         <view class="bodyView">
           <view class="changeText">
@@ -50,7 +42,7 @@
       -->
       <scroll-view scroll-y style="height:{{ eleHeight }}px;background:rgb(251, 249, 254);" scroll-top="10" enable-back-to-top="true">
         <view wx:for="{{ listDevices }}" class="scrollView">
-          <view style="font-size: 14px;" bindtap='chonseDid' wx:if="{{ item.is_online == true }}" data-index="{{ index }}" data-did="{{ item.did }}" class="view_li {{ chonseDid == index ? 'active' : '' }}">
+          <view style="font-size: 14px;" bindtap='chonseDid' bindtouchmove='touchMoveView' wx:if="{{ item.is_online == true }}" data-index="{{ index }}" data-did="{{ item.did }}" class="view_li {{ chonseDid == index ? 'active' : '' }}">
             <view style="margin-top: 4px;">did:{{ item.did }}</view>
             <view>mac:{{ item.mac }}</view>
           </view>

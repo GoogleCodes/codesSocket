@@ -3,12 +3,35 @@
 <template name="pageBottom">
   <view class="page-bottom">
     <view class="page-content">
-      <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
-        <view class="wc_list" bindtap='backLogin'>
+      <view class="wc" bindtap='backLogin' hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
+        <view class="wc_list">
           <view class="iconfont icon-user fl"></view>
           <view class="fl">退出登录</view>
         </view>
       </view>
     </view>
+  </view>
+</template>
+
+<!-- 表单模块 -->
+<template name="utilInput">
+  <view class="loginView">
+    <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
+      <view class='bodyView'>
+        <view class="iconfont icon-user fl"></view>
+        <input type='number' 
+          class='appidText fl' value='{{ phone }}' style="width: 150px" name='phone' placeholder='请输入手机号码' focus='true'  maxlength='11' />
+        <button class="fr codeBtn" bindtap='getCodeNumber' disabled='{{ disaCode }}'>{{ getCodeNumber }}</button>
+      </view>
+      <view class='bodyView'>
+        <view class="iconfont icon-code fl"></view>
+        <input type='password' class='appidText fl' value='{{ code }}' name='code' placeholder='请输入验证码' />
+      </view>
+      <view class='bodyView'>
+        <view class="iconfont icon-mima fl"></view>
+        <input type='password' class='appidText fl' value='{{ pword }}' name='pword' placeholder='请输入登录密码' confirm-type='done' />
+      </view>
+      <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>重置登录</button>
+    </form>
   </view>
 </template>

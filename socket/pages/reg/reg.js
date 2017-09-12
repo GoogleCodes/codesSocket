@@ -1,4 +1,4 @@
-// pages/forget/forget.js
+// pages/reg/reg.js
 Page({
 
   /**
@@ -17,15 +17,16 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+  
   },
 
-  getCodeNumber () {
+  //  获取验证码
+  getCodeNumber() {
     let that = this;
     var num = 10;
-    var times = setInterval(function() {
+    var times = setInterval(function () {
       num--;
-      that.setData({getCodeNumber: "还有" + num + "秒",});
+      that.setData({ getCodeNumber: "还有" + num + "秒", });
       if (num > 0) {
         that.setData({
           disaCode: true,
@@ -37,10 +38,10 @@ Page({
           disaCode: false,
         });
       }
-    },1000);
+    }, 1000);
   },
 
-  ForgetForm (e) {
+  ForgetForm(e) {
     console.log('forget');
     if (e.detail.value.phone == '') {
       wx.showModal({

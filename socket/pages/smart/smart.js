@@ -65,7 +65,7 @@ Page({
    */
   onLoad: function () {
     var that = this;
-    this._getUserToken();
+    // this._getUserToken();
     var limit = 20;
     var skip = 0;
     wx.getSystemInfo({
@@ -97,11 +97,6 @@ Page({
           icon: 'success',
           duration: 1000
         });
-        ins = 0;
-        times = setInterval(function () {
-          ins++;
-          console.log(ins);
-        }, 1000);
         wx.getSavedFileList({
           success: function (res) {
             var voices = [];
@@ -179,7 +174,6 @@ Page({
               icon: 'success',
               duration: 2000
             });
-            clearInterval(times);
           }
           // if (res.statusCode == 404) {
           //   wx.showToast({
@@ -190,7 +184,6 @@ Page({
           //   return;
           // }
           var options = JSON.parse(res.data), result = null, sqlStr = null;
-          console.log(options, '---------------------------', options.time1);
           s.setData({
             ins_y: options.time1,
             ins_l: options.time2,
@@ -319,6 +312,10 @@ Page({
     });
   },
 
+  touchMoveView () {
+    console.log(1);
+  },
+
   _getUserToken() {
     var that = this;
     wx.request({
@@ -358,7 +355,7 @@ Page({
       method: 'GET',
       header: {
         'content-type': 'application/json',
-        'X-Gizwits-Application-Id': options.gizwitsAppId,//that.data.options.gizwitsAppId,
+        'X-Gizwits-Application-Id': options.gizwitsAppId, //  that.data.options.gizwitsAppId,
         'X-Gizwits-User-token': options.token,
       },
       success: function (result) {
@@ -375,7 +372,6 @@ Page({
               ws_port: device.ws_port, //  端口
               wss_port: device.wss_port, //  端口
             });
-            console.log(device.did);
           }
         }
         // that._login();

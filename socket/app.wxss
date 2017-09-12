@@ -1,4 +1,5 @@
 /**app.wxss**/
+
 .container {
   height: 100%;
   display: flex;
@@ -10,18 +11,21 @@
   font-family: 'Segoe UI', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+/* iconfont start */
+
 @font-face {
-	font-family: 'iconfont';
-	src: url('iconfont.eot');
-	font-weight: normal;
-	font-style: normal;
+  font-family: 'iconfont';
+  src: url('iconfont.eot');
+  font-weight: normal;
+  font-style: normal;
 }
+
 @font-face {
-	font-family: 'iconfont';
-	src: url(data:application/font-woff;charset=utf-8;base64,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) format('woff'),
-		url('iconfont.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
+  font-family: 'iconfont';
+  src: url(data:application/font-woff;charset=utf-8;base64,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) format('woff'),
+         url('iconfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 .fr {
@@ -33,22 +37,34 @@
 }
 
 .iconfont {
-  font-family:"iconfont" !important;
-  font-size:16px;
-  font-style:normal;
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-code:before { content: "\e6e8"; }
+.icon-code:before {
+  content: "\e6e8";
+}
 
-.icon-liebiao:before { content: "\e6bf"; }
+.icon-liebiao:before {
+  content: "\e6bf";
+}
 
-.icon-user:before { content: "\e601"; }
+.icon-user:before {
+  content: "\e601";
+}
 
-.icon-mima:before { content: "\e641"; }
+.icon-mima:before {
+  content: "\e641";
+}
 
-.icon-deng:before { content: "\e65d"; }
+.icon-deng:before {
+  content: "\e65d";
+}
+
+/* iconfont end */
 
 page, .page {
   height: 100%;
@@ -68,7 +84,6 @@ page, .page {
   z-index: 0;
 }
 
-
 .page-content {
   padding-top: 300rpx;
   width: 75%;
@@ -81,7 +96,7 @@ page, .page {
   background: rgb(255, 255, 255);
   z-index: 0;
   transition: All 0.4s ease;
-  box-shadow:0px 1px 100px #ccc;
+  box-shadow: 0px 1px 100px #ccc;
   -webkit-transition: All 0.4s ease;
 }
 
@@ -89,9 +104,11 @@ page, .page {
   padding: 0rpx 0 0rpx 40rpx;
   color: #333;
   height: 40px;
+  border-bottom: 1px solid #ccc;
 }
 
 .wc_list {
+  height: 40px;
   line-height: 40px;
 }
 
@@ -102,9 +119,9 @@ page, .page {
 
 .page-top .icon-liebiao {
   font-size: 60rpx;
-  height: 40px;
+  height: 45px;
   text-indent: 0.3em;
-  line-height: 40px;
+  line-height: 45px;
   background: #6ba74f;
   color: #fff;
 }
@@ -126,3 +143,84 @@ page, .page {
   transform: rotate(0deg) scale(0.8) translate(75%, 0%);
   -webkit-transform: rotate(0deg) scale(0.8) translate(75%, 0%);
 }
+
+/* loginView start */
+
+.loginView {
+  width: 100%;
+  background: #fff;
+}
+
+.bodyView {
+  width: 90%;
+  margin: 0% auto;
+  border-bottom: 1px solid #f2f2f2;
+  height: 40px;
+}
+
+.bodyView .iconfont {
+  font-size: 46rpx;
+  color: #6ba74f;
+  line-height: 40px;
+  text-align: center;
+  height: 40px;
+  width: 10%;
+}
+
+.loginView {
+  position: relative;
+}
+
+.loginView .appidText {
+  width: 65%;
+  height: 40px;
+  border-radius: 5px;
+  line-height: 40px;
+  font-size: 14px;
+}
+
+.loginView .bodyView .codeBtn {
+  width: 32%;
+  line-height: 30px;
+  border-radius: 5px;
+  margin-top: 5px;
+  background: #6ba74f;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+}
+
+.loginView .labels {
+  margin-top: 10px;
+}
+
+.loginView .labels .viewLabel {
+  height: 35px;
+  line-height: 35px;
+  color: #6ba74f;
+  font-size: 35rpx;
+}
+
+.loginView button[type="primary"] {
+  width: 95%;
+  margin: 15px auto;
+  height: 40px;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  line-height: 40px;
+  font-size: 14px;
+  background: #6ba74f;
+  color: #fff;
+}
+
+/* loginView end */
+
+/* loading start */
+
+.loading {
+  font-size: 1.2rpx;
+  font-family: 'microsoft yahei';
+}
+
+/* loading end */

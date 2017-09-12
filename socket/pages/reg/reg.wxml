@@ -1,3 +1,4 @@
+<!--pages/reg/reg.wxml-->
 <!-- <view class="loginView">
   <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
     <view class='bodyView'>
@@ -7,15 +8,16 @@
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-code fl"></view>
-      <input type='password' class='appidText fl' value='{{ code }}' name='code' placeholder='请输入验证码' />
+      <input type='password' class='appidText fl' value='{{ pword }}' name='code' placeholder='请输入验证码' />
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-mima fl"></view>
       <input type='password' class='appidText fl' value='{{ pword }}' name='pword' placeholder='请输入登录密码' />
     </view>
-    <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>重置登录</button>
+    <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>立即注册</button>
   </form>
 </view> -->
 
+<!-- 导入模块 -->
 <import src="../../template/util/util.wxml" />
 <template is="utilInput" data="{{ phone,disaCode,getCodeNumber,code,pword,loadHidden }}"></template>

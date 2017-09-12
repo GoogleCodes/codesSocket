@@ -16,17 +16,19 @@ Page({
   loginForm(e) {
     var that = this;      
     if (e.detail.value.uname == '') {
-      wx.showToast({
-        title: '账号框为空',
-        icon: 'success',
-        duration: 2000
+      wx.showModal({
+        title: '提示',
+        content: "用户账号为空!",
+        showCancel: false,
+        success: function (res) { }
       });
       return false;
     } else if (e.detail.value.pword == '') {
-      wx.showToast({
-        title: '密码框为空',
-        icon: 'success',
-        duration: 2000
+      wx.showModal({
+        title: '提示',
+        content: "用户密码为空!",
+        showCancel: false,
+        success: function (res) { }
       });
       return false;
     }
