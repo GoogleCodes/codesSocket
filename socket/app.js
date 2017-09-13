@@ -1,6 +1,10 @@
 //app.js
 App({
+  data: {
+    deviceInfo: {}
+  },
   onLaunch: function() {
+    this.data.deviceInfo = wx.getSystemInfoSync();
     //  微信小程序appid  微信小程序secret
     var that = this, appID = 'wx82bd98556e74419d', secret = 'f8695b267219ed670f0553e8a3ab1fbb';
     //获取openid
@@ -8,7 +12,6 @@ App({
     if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {//不要在30天后才更换openid-尽量提前10分钟更新  
       wx.login({
         success: function (res) {
-          console.log(res);
           var d = that.globalData.wxData; //  这里存储了appid、secret、token串
           var url = 'https://api.weixin.qq.com/sns/jscode2session?appid='+ appID +'&secret='+ secret +'&js_code='+ res.code +'&grant_type=authorization_code';
           wx.request({

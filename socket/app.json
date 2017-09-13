@@ -2,6 +2,7 @@
   "pages": [
     "pages/login/login",
     "pages/smart/smart",
+    "pages/more/more",
     "pages/forget/forget",
     "pages/reg/reg",
     "pages/logs/logs",

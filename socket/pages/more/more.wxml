@@ -1,0 +1,19 @@
+<!--pages/more/more.wxml-->
+<view class="container" style="color: #333;">
+   <scroll-view style='height:{{ height }}px;' scroll-y='{{ scrollY }}' class='msg-list' bindscroll = 'onScroll'>
+       <view wx:for="{{msgList}}" wx:key="id"  class='msg-item' animation='{{ item.wrapAnimation }}'> 
+            <view id='{{item.id}}' class='msg' animation='{{ item.animation }}' bindtouchstart='ontouchstart' bindtouchmove='ontouchmove' bindtouchend='ontouchend'>
+                <text class='user-name'>did:4544651156sad4a56d1a5</text>
+                <text class='msg-text'>did:4544651156sad4a56d1a5</text>
+            </view>
+            <view class='msg-menu'>
+                <view id='{{item.id}}' class='menu-delete' bindtap='onDeleteMsgTap' bindlongtap='onDeleteMsgLongtap'>
+                    删除
+                </view>
+                <view id='{{item.id}}' class='menu-mark' bindtap='onMarkMsgTap' bindlongtap='onMarkMsgLongtap'>
+                    标记未读
+                </view>
+            </view>
+       </view>
+   </scroll-view>
+</view>

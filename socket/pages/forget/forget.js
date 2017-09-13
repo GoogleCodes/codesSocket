@@ -8,9 +8,10 @@ Page({
     loadHidden: true,
     getCodeNumber: '获取验证码',
     disaCode: false,
-    phone: '',
-    code: '',
-    pword: ''
+    phone: '',  //  手机号码
+    code: '', //  验证码
+    pword: '',  //  密码
+    unpword: '', //  重覆密码
   },
 
   /**
@@ -41,31 +42,48 @@ Page({
   },
 
   ForgetForm (e) {
-    console.log('forget');
-    if (e.detail.value.phone == '') {
-      wx.showModal({
-        title: '提示',
-        content: "请输入手机号码!",
-        showCancel: false,
-        success: function (res) { }
-      });
-      return false;
-    } else if (e.detail.value.code == '') {
-      wx.showModal({
-        title: '提示',
-        content: "验证码为空!",
-        showCancel: false,
-        success: function (res) { }
-      });
-      return false;
-    } else if (e.detail.value.pword == '') {
-      wx.showModal({
-        title: '提示',
-        content: "密码为空!",
-        showCancel: false,
-        success: function (res) { }
-      });
-      return false;
+    //  验证
+    switch (true) {
+      case e.detail.value.phone == '':
+        wx.showModal({
+          title: '提示',
+          content: "请输入手机号码!",
+          showCancel: false,
+          success: function (res) { }
+        });
+        return false;
+      case e.detail.value.code == '':
+        wx.showModal({
+          title: '提示',
+          content: "验证码为空!",
+          showCancel: false,
+          success: function (res) { }
+        });
+        return false;
+      case e.detail.value.pword == '':
+        wx.showModal({
+          title: '提示',
+          content: "密码为空!",
+          showCancel: false,
+          success: function (res) { }
+        });
+        return false;
+      case e.detail.value.unpword == '':
+        wx.showModal({
+          title: '提示',
+          content: "密码为空!",
+          showCancel: false,
+          success: function (res) { }
+        });
+        return false;
+      case e.detail.value.unpword !== e.detail.value.pword:
+        wx.showModal({
+          title: '提示',
+          content: "两个密码不相等!",
+          showCancel: false,
+          success: function (res) { }
+        });
+        return false;
     }
   },
 

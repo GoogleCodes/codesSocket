@@ -20,4 +20,4 @@
 
 <!-- 导入模块 -->
 <import src="../../template/util/util.wxml" />
-<template is="utilInput" data="{{ phone,disaCode,getCodeNumber,code,pword,loadHidden }}"></template>
+<template is="utilInput" data="{{ phone,disaCode,getCodeNumber,code,pword,loadHidden,unpword }}"></template>

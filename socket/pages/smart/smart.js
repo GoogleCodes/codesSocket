@@ -36,38 +36,36 @@ Page({
     uid: '',
     token: '',
     did: '',
-    host: '', //  websocket 请求地址
+    host: '', //  websocket 请求地址 sandbox.gizwits.com
     ws_port: 0, //  端口
     wss_port: 0, //  端口
     recodePath: '',  //  录音路径
     keepalive: 180,
     socketOpen: false,  //  socket 开关
-    url: 'sandbox.gizwits.com',  //  websocket 请求地址 sandbox.gizwits.com
     switchButton: false,  //  开关
     _heartbeatInterval: 60,  //  心跳
     _heartbeatTimerId: undefined,
     array: ['国语', '粤语'],
     index: 0,
     arrayCharset: 'zh',
-    startPoint: [0, 0],
     openMessage: '',
     isSpeaking: false,  //  是否正在说话
     listDevices: {},  //  设备列表
     chonseDid: 0,
     gizwitsVisible: true,
+    gizwitsListVisible: false,
     ins_i: 0,
     ins_y: '',
     ins_l: '',
+    chonseUpdate: false,
+    chonseDelete: true,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function () {
-    var that = this;
-    // this._getUserToken();
-    var limit = 20;
-    var skip = 0;
+    let that = this,  limit = 20, skip = 0;
     wx.getSystemInfo({
       success: function(res) {
         that.setData({
@@ -108,9 +106,7 @@ Page({
               var voice = { filePath: res.fileList[i].filePath, createTime: createTime, size: size };
               voices = voices.concat(voice);
             }
-            that.setData({
-              voices: voices
-            })
+            that.setData({ voices: voices })
           }
         });
       },
@@ -191,11 +187,10 @@ Page({
           for (var i in options) {
             var sqlStr = options[i].toString();
             console.log(sqlStr);
-            s.setData({
-              openMessage: sqlStr,
-            });
+            s.setData({openMessage: sqlStr,});
+            var myString 
             if (typeof (sqlStr) == "string") {
-              var myString = sqlStr.substring(0, 1);
+              myString = sqlStr.substring(0, 1);
             }
             if (myString == "开" || myString == '打') {
               s.setData({ switchButton: true });
@@ -302,6 +297,8 @@ Page({
       success: function (res) {
         console.log(res.cancel,  res.confirm);
         if (res.confirm == true) {
+          wx.closeSocket({})  //  关闭websocket
+          //  清除缓存
           wx.removeStorageSync('options');
           wx.removeStorageSync('userInformation');
           wx.redirectTo({ url: '../login/login', })
@@ -311,73 +308,66 @@ Page({
       }
     });
   },
-
-  touchMoveView () {
-    console.log(1);
+  
+  //  获取产品数据点定义
+  _getGizwitsDataing(key) {
+    let that = this, options = wx.getStorageSync('options');
+    myUtils.options._getGizwits('datapoint?product_key=' + key, '', options.gizwitsAppId, function (res) {
+      console.log(res);
+    }, function (err) { });
   },
 
-  _getUserToken() {
-    var that = this;
-    wx.request({
-      // https://api.gizwits.com/app/users
-      url: "https://api.gizwits.com/app/login",
-      method: 'POST',
-      header: {
-        'content-type': 'application/json',
-        "X-Gizwits-Application-Id": that.data.options.gizwitsAppId, // phone_id: that.data.options.wechatOpenId,
-      },
-      data: {
-        lang: "en",
-        username: '13250672958',
-        password: '123456789',
-      },
-      success: function (result) {
-        that.setData({
-          uid: result.data.uid,
-          token: result.data.token,
+  //  监控设备
+  _GizwitsDevdata(did) {
+    let that = this,  options = wx.getStorageSync('options');
+    myUtils.options._getGizwits('devdata/' + did + '/latest', '', options.gizwitsAppId, function(res) {
+      console.log(res);
+    }, function(err) {});
+  },
+
+  _shareGizwits() {
+    let that = this,  options = wx.getStorageSync('options');
+    let json = {
+      "type": 0,
+      "did": that.data.did,
+      "uid": options.uid,
+    };
+    myUtils.options._privateGizws('sharing', json, options.gizwitsAppId, options.token, function (result) {
+      if (result.data.error_code == 9081) {
+        wx.showModal({
+          title: '提示',
+          content: "来宾或普通用户不能共享设备!",
+          showCancel: false,
+          success: function (res) {}
         });
-        var limit = 20;
-        var skip = 0;
-        that._getBindingList(limit, skip)
-      },
-      fail: function (evt) {
-        console.log(evt);
+        return false;
       }
-    })
+    }, function (err) { });
   },
 
   _getBindingList: function (limit, skip) {
     var that = this;
-    var options = wx.getStorageSync('options');
-    var query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
-    wx.request({
-      url: "https://api.gizwits.com/app/bindings" + query,
-      method: 'GET',
-      header: {
-        'content-type': 'application/json',
-        'X-Gizwits-Application-Id': options.gizwitsAppId, //  that.data.options.gizwitsAppId,
-        'X-Gizwits-User-token': options.token,
-      },
-      success: function (result) {
-        that.setData({
-          listDevices: result.data.devices
-        });
-        for (var i in result.data.devices) {
-          var device = result.data.devices[i];
-          if (result.data.devices[i].is_online == true) {
-            //  获取数据
-            that.setData({
-              did: device.did,  //  did
-              host: device.host,  //  websocket 请求地址
-              ws_port: device.ws_port, //  端口
-              wss_port: device.wss_port, //  端口
-            });
-          }
+    let options = wx.getStorageSync('options');
+    let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
+    myUtils.options._privateGizw('bindings' + query, '', options.gizwitsAppId, options.token, function (result) {
+      that.setData({listDevices: result.data.devices});
+      var pKey = null;
+      for (var i in result.data.devices) {
+        var device = result.data.devices[i];
+        if (result.data.devices[i].is_online == true) {
+          //  获取数据
+          that.setData({
+            did: device.did,  //  did
+            host: device.host,  //  websocket 请求地址
+            ws_port: device.ws_port, //  端口
+            wss_port: device.wss_port, //  端口
+          });
+          pKey = device.product_key;
         }
-        // that._login();
-      },
-      fail: function (evt) { }
-    })
+      }
+      that._GizwitsDevdata(that.data.did);
+      that._getGizwitsDataing(pKey);
+    }, function (err) {});
   },
 
   //  选中列表设备
@@ -415,7 +405,7 @@ Page({
     var that = this, json = [];
     //  创建Socket
     wx.connectSocket({
-      url: 'wss://' + that.data.url + ':' + that.data.wss_port + '/ws/app/v1',
+      url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
       header: {
         'content-type': 'application/json'
       },
@@ -555,12 +545,10 @@ Page({
       that.setData({
         arrayCharset: 'zh', //  国语
       });
-      console.log('picker发送选择改变，携带值为', e.detail.value, that.data.index);
     } else if (that.data.index == 1) {
       that.setData({
         arrayCharset: 'ct',// 粤语
       });
-      console.log('picker发送选择改变，携带值为', e.detail.value, that.data.index)
     }
   },
 
@@ -716,4 +704,67 @@ Page({
     this.data.mark = 0;
     this.data.newmark = 0;
   },
+
+  onMarkMsgTap() {
+    let that = this;
+    that.setData({
+      chonseUpdate: true,
+      chonseDelete: false,
+    });
+  },
+
+
+  //  删除设备
+  onDevicesDelete(e) {
+    let that = this;
+    wx.showModal({
+      title: '提示',
+      content: "你确定要删除嘛???",
+      showCancel: true,
+      success: function (res) {
+        if (res.confirm == true) {
+          wx.request({
+            header: {
+              'Content-Type': 'application/json',
+              'Accept': ' application/json',
+              'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
+              'X-Gizwits-User-token': wx.getStorageSync('options').token,
+            },
+            method: 'DELETE',
+            data: {
+              devices: [
+                {
+                  did: e.currentTarget.dataset.did,
+                }
+              ]
+            },
+            url: 'https://api.gizwits.com/app/bindings',
+            success(res) {
+              that.setData({
+                gizwitsVisible: true,
+                gizwitsListVisible: true,
+              });
+            },
+            fail(err) {}
+          });
+        } else if (res.cancel == true) {
+          that.setData({
+            chonseUpdate: false,
+            chonseDelete: true,
+          });
+          return;
+        }
+      },
+      fail (err) {}
+    }); 
+  },
+
+  goReturn () {
+    let that = this;
+    that.setData({
+      chonseDelete: true,
+      chonseUpdate: false,
+    });
+  }
+
 });

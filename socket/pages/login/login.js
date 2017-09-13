@@ -1,6 +1,12 @@
 // pages/login/login.js
-Page({
 
+var _util = require('../../utils/util.js');
+
+let count = (num) => {
+  console.log(num);
+};
+
+Page({
   /**
    * 页面的初始数据
    */
@@ -8,54 +14,62 @@ Page({
     uname: '',
     pword: '',
     wechatOpenId: 'kceshi1',
-    gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55', //  032c92bbb0fc4b6499a2eaed58727a3a  d8b4d2f0bce943ee9ecb4abfa01a2e55 141b9a9bb1df416cbb18bb85c864633f
+    gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
     token: '',
     loadHidden: true,
   },
 
   loginForm(e) {
-    var that = this;      
-    if (e.detail.value.uname == '') {
-      wx.showModal({
-        title: '提示',
-        content: "用户账号为空!",
-        showCancel: false,
-        success: function (res) { }
-      });
-      return false;
-    } else if (e.detail.value.pword == '') {
-      wx.showModal({
-        title: '提示',
-        content: "用户密码为空!",
-        showCancel: false,
-        success: function (res) { }
-      });
-      return false;
+    var that = this;
+    switch (true) {
+      case e.detail.value.uname == '':
+        wx.showModal({
+          title: '提示',
+          content: "用户账号为空!",
+          showCancel: false,
+          success: function (res) { }
+        });
+        return false;
+      case e.detail.value.pword == '':
+        wx.showModal({
+          title: '提示',
+          content: "用户账号为空!",
+          showCancel: false,
+          success: function (res) { }
+        });
+        return false;
     }
     that.setData({
       uname: e.detail.value.uname,
       pword: e.detail.value.pword,
       loadHidden: false,
     });
-    var userInfo = {
+    var json = {
+      lang: "en",
       username: that.data.uname,
       password: that.data.pword,
     };
-    wx.setStorageSync('userInformation', userInfo);
-    wx.request({
-      url: "https://api.gizwits.com/app/login",
-      method: 'POST',
-      header: {
-        'content-type': 'application/json',
-        "X-Gizwits-Application-Id": that.data.gizwitsAppId, // phone_id: that.data.options.wechatOpenId,
-      },
-      data: {
-        lang: "en",
-        username: that.data.uname,
-        password: that.data.pword,
-      },
-      success: function (result) {
-        that.setData({ loadHidden : true, });
+    
+    var head = {
+      'content-type': 'application/json',
+      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
+    };
+
+    wx.setStorageSync('userInformation', json);
+
+    _util.sendRrquest('login', 'POST', json, head).then(function (result) {
+      if (result.data.error_code == 9020) { //  如果账号或者密码错误 提示错误
+        wx.showModal({
+          title: '提示',
+          content: "账号或者密码错误!",
+          showCancel: false,
+          success: function (res) {
+            that.setData({ loadHidden: true, });
+          }
+        });
+        return false;
+      } else {
+        that.setData({ loadHidden: true, });
         var options = {
           uid: result.data.uid,
           token: result.data.token,
@@ -66,12 +80,38 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
-        wx.redirectTo({url: '../smart/smart',})
-      },
-      fail: function (evt) {
-        console.log(evt);
+        wx.redirectTo({ url: '../smart/smart', });
       }
     });
+
+    // _util.options._loginGizwits('login', json, that.data.gizwitsAppId, function (result) {
+    //   if (result.data.error_code == 9020) { //  如果账号或者密码错误 提示错误
+    //     wx.showModal({
+    //       title: '提示',
+    //       content: "账号或者密码错误!",
+    //       showCancel: false,
+    //       success: function (res) {
+    //         that.setData({ loadHidden: true, });
+    //       }
+    //     });
+    //     return false;
+    //   } else {
+    //     that.setData({ loadHidden: true, });
+    //     var options = {
+    //       uid: result.data.uid,
+    //       token: result.data.token,
+    //       gizwitsAppId: that.data.gizwitsAppId
+    //     };
+    //     wx.setStorageSync('options', options);
+    //     that.setData({
+    //       uid: result.data.uid,
+    //       token: result.data.token,
+    //     });
+    //     wx.redirectTo({ url: '../smart/smart', });
+    //   }
+    // }, function(err) {
+    //   console.log(err);
+    // });
   },
 
   /**
@@ -89,7 +129,7 @@ Page({
     }
   },
 
-  forgetPwd (){
+  forgetPwd () {
     return;
     let that = this;
     wx.request({

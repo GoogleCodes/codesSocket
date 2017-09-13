@@ -3,6 +3,14 @@
 <template name="pageBottom">
   <view class="page-bottom">
     <view class="page-content">
+      <navigator url="../forget/forget" open-type="navigate">
+        <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
+          <view class="wc_list">
+            <view class="iconfont icon-weibiaoti2zhuanhuan fl"></view>
+            <view class="fl">修改密码</view>
+          </view>
+        </view>
+      </navigator>
       <view class="wc" bindtap='backLogin' hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
         <view class="wc_list">
           <view class="iconfont icon-user fl"></view>
@@ -19,8 +27,7 @@
     <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
       <view class='bodyView'>
         <view class="iconfont icon-user fl"></view>
-        <input type='number' 
-          class='appidText fl' value='{{ phone }}' style="width: 150px" name='phone' placeholder='请输入手机号码' focus='true'  maxlength='11' />
+        <input type='number' class='appidText fl' value='{{ phone }}' style="width: 150px" name='phone' placeholder='请输入手机号码' focus='true' maxlength='11' />
         <button class="fr codeBtn" bindtap='getCodeNumber' disabled='{{ disaCode }}'>{{ getCodeNumber }}</button>
       </view>
       <view class='bodyView'>
@@ -29,7 +36,11 @@
       </view>
       <view class='bodyView'>
         <view class="iconfont icon-mima fl"></view>
-        <input type='password' class='appidText fl' value='{{ pword }}' name='pword' placeholder='请输入登录密码' confirm-type='done' />
+        <input type='password' class='appidText fl' value='{{ pword }}' name='pword' placeholder='请输入登录密码' />
+      </view>
+      <view class='bodyView'>
+        <view class="iconfont icon-mima fl"></view>
+        <input type='password' class='appidText fl' value='{{ unpword }}' name='unpword' placeholder='请输入登录密码' confirm-type='done' />
       </view>
       <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>重置登录</button>
     </form>

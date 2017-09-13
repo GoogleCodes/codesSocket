@@ -14,6 +14,7 @@
   position: relative;
   background: rgb(251, 249, 254);
   margin-top: 10px;
+  border: none;
 }
 
 .changeText {
@@ -132,6 +133,7 @@
 }
 
 /* listDevices start */
+
 .listDevices {
   width: 95%;
   height: 100%;
@@ -150,28 +152,93 @@
   text-indent: 1em;
 }
 
-
-.view_li {
+.scrollView .view_li {
   width: 90%;
   margin: 10px 2.5%;
   border-radius: 5px;
-  padding-left: 5%;
   height: 50px;
   line-height: 22px;
   background: #26a5ff;
   color: #fff;
   float: left;
+  padding-left: 5%;
+}
+
+.scrollView {
+  width: 100%;
+  position: relative;
+}
+
+.scrollView .msg-menus {
+  width: 60px;
+  float: right;
+  margin: 10px 2.5%;
+  clear: both;
+  height: 50px;
+  position: absolute;
+  right: 0px;
+  z-index: 0;
+  top: 0px;
+}
+
+.scrollView .utils {
+  width: 95%;
+  height: 50px;
+  position: absolute;
+  top: 0px;
+  margin: 10px 2.5%;
+  left: 0px;
+  background: #6ba74f;
+  border-radius: 5px;
+}
+
+.scrollView .msg-menus .menu-mark {
+  width: 100%;
+  height: 50px;
+  clear: both;
+  border-radius: 0px 5px 5px 0px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  font-size: 18px;
+  line-height: 50px;
+}
+
+.scrollView .utils .menu-marks {
+  width: 60px;
+  height: 100%;
+  background: #c40000;
+  text-align: center;
+  color: #fff;
+  line-height: 50px;
+}
+
+.scrollView .utils .icon-share {
+  background: #6ba74f;
+  border-radius: 5px 0px 0px 5px;
+}
+
+.scrollView .utils .icon-return {
+  background: green;
+  border-radius: 0px 5px 5px 0px;
+}
+
+.scrollView .msg-menus .icon-weibiaoti2zhuanhuan {
+  background: green;
+}
+
+.scrollView .msg-menus .icon-shanchu {
+  background: #c40000;
 }
 
 .scrollView:last-child {
   padding-bottom: 100px;
 }
 
-.active {
+.scrollView .active {
   background: #6ba74f;
   position: relative;
 }
-
 
 .wc .icon-user::before {
   margin-right: 10px;
