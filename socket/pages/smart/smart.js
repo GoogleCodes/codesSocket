@@ -1,9 +1,7 @@
 // smart.js
 //  导入js
 var myUtils = require('../../utils/util.js');
-
 var app = new getApp();
-
 var times = null, ins = 0;
 
 Page({
@@ -32,13 +30,13 @@ Page({
       },
       wechatOpenId: 'kceshi1',  //  测试:kceshi1
       gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',   //  虚拟测试:032c92bbb0fc4b6499a2eaed58727a3a || d8b4d2f0bce943ee9ecb4abfa01a2e55 || ba5546adce5e4efa9f2923e60a602fed
+      did: '',
+      host: '', //  websocket 请求地址 sandbox.gizwits.com
+      ws_port: 0, //  端口
+      wss_port: 0, //  端口
     },
     uid: '',
     token: '',
-    did: '',
-    host: '', //  websocket 请求地址 sandbox.gizwits.com
-    ws_port: 0, //  端口
-    wss_port: 0, //  端口
     recodePath: '',  //  录音路径
     keepalive: 180,
     socketOpen: false,  //  socket 开关
@@ -65,9 +63,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function () {
-    let that = this,  limit = 20, skip = 0;
+    let that = this, limit = 20, skip = 0;
     wx.getSystemInfo({
-      success: function(res) {
+      success: function (res) {
         that.setData({
           eleHeight: res.windowHeight - 145,
         });
@@ -146,7 +144,7 @@ Page({
     var options = wx.getStorageSync('options');
     s.setData({ isSpeaking: false });
     wx.showToast();
-    setTimeout(function () {
+    setInterval(() => {
       var urls = 'http://yuyin.ittun.com/public/index/index/zhen';
       wx.uploadFile({
         url: urls,
@@ -160,7 +158,6 @@ Page({
         },
         header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success: function (res) {
-          clearInterval(times);
           s.setData({ ins_i: ins });
           var error_text = '语音识别失败';
           console.log("返回的东西是：", res.data);
@@ -187,8 +184,8 @@ Page({
           for (var i in options) {
             var sqlStr = options[i].toString();
             console.log(sqlStr);
-            s.setData({openMessage: sqlStr,});
-            var myString 
+            s.setData({ openMessage: sqlStr, });
+            var myString
             if (typeof (sqlStr) == "string") {
               myString = sqlStr.substring(0, 1);
             }
@@ -225,7 +222,6 @@ Page({
               showCancel: false,
               success: function (res) { }
             });
-            clearInterval(times);
           }
           wx.hideToast();
         },
@@ -234,7 +230,7 @@ Page({
             title: '提示',
             content: "录音的姿势不对!",
             showCancel: false,
-            success: function (res) {}
+            success: function (res) { }
           });
           wx.hideToast();
         }
@@ -246,7 +242,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function (res) {
-    
+
   },
 
   /**
@@ -287,7 +283,7 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {},
+  onShareAppMessage: function () { },
 
   backLogin() {
     wx.showModal({
@@ -295,7 +291,7 @@ Page({
       content: "你确定要退出登录???",
       showCancel: true,
       success: function (res) {
-        console.log(res.cancel,  res.confirm);
+        console.log(res.cancel, res.confirm);
         if (res.confirm == true) {
           wx.closeSocket({})  //  关闭websocket
           //  清除缓存
@@ -308,37 +304,46 @@ Page({
       }
     });
   },
-  
+
   //  获取产品数据点定义
   _getGizwitsDataing(key) {
     let that = this, options = wx.getStorageSync('options');
-    myUtils.options._getGizwits('datapoint?product_key=' + key, '', options.gizwitsAppId, function (res) {
-      console.log(res);
-    }, function (err) { });
+    var head = {
+      'content-type': 'application/json',
+      'X-Gizwits-Application-Id': options.gizwitsAppId,
+    };
+    myUtils.sendRrquest('datapoint?product_key=' + key, 'GET', '', head).then(function (result) { }, function (err) { });
   },
 
   //  监控设备
   _GizwitsDevdata(did) {
-    let that = this,  options = wx.getStorageSync('options');
-    myUtils.options._getGizwits('devdata/' + did + '/latest', '', options.gizwitsAppId, function(res) {
-      console.log(res);
-    }, function(err) {});
+    let that = this, options = wx.getStorageSync('options');
+    let head = {
+      'content-type': 'application/json',
+      'X-Gizwits-Application-Id': options.gizwitsAppId,
+    };
+    myUtils.sendRrquest('devdata/' + did + '/latest', 'GET', '', head).then(function (result) { }, function (err) { });
   },
 
   _shareGizwits() {
-    let that = this,  options = wx.getStorageSync('options');
-    let json = {
+    let that = this, options = wx.getStorageSync('options');
+    var json = {
       "type": 0,
       "did": that.data.did,
       "uid": options.uid,
     };
-    myUtils.options._privateGizws('sharing', json, options.gizwitsAppId, options.token, function (result) {
+    var head = {
+      'content-type': 'application/json',
+      'X-Gizwits-Application-Id': options.gizwitsAppId,
+      'X-Gizwits-User-token': options.token,
+    };
+    myUtils.sendRrquest('sharing', 'POST', json, head).then(function (result) {
       if (result.data.error_code == 9081) {
         wx.showModal({
           title: '提示',
           content: "来宾或普通用户不能共享设备!",
           showCancel: false,
-          success: function (res) {}
+          success: function (res) { }
         });
         return false;
       }
@@ -349,36 +354,41 @@ Page({
     var that = this;
     let options = wx.getStorageSync('options');
     let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
-    myUtils.options._privateGizw('bindings' + query, '', options.gizwitsAppId, options.token, function (result) {
-      that.setData({listDevices: result.data.devices});
+    var head = {
+      'content-type': 'application/json',
+      'X-Gizwits-Application-Id': options.gizwitsAppId,
+      'X-Gizwits-User-token': options.token,
+    };
+    myUtils.sendRrquest('bindings' + query, 'GET', '', head).then(function (result) {
+      that.setData({ listDevices: result.data.devices });
       var pKey = null;
       for (var i in result.data.devices) {
         var device = result.data.devices[i];
         if (result.data.devices[i].is_online == true) {
           //  获取数据
           that.setData({
-            did: device.did,  //  did
-            host: device.host,  //  websocket 请求地址
-            ws_port: device.ws_port, //  端口
-            wss_port: device.wss_port, //  端口
+            'options.did': device.did,  //  did
+            'options.host': device.host,  //  websocket 请求地址
+            'options.ws_port': device.ws_port, //  端口
+            'options.wss_port': device.wss_port, //  端口
           });
           pKey = device.product_key;
         }
       }
-      that._GizwitsDevdata(that.data.did);
+      that._GizwitsDevdata(that.data.options.did);
       that._getGizwitsDataing(pKey);
-    }, function (err) {});
+    }, function (err) { });
   },
 
   //  选中列表设备
   chonseDid(e) {
     var that = this;
     that._login();
-    that.setData({gizwitsVisible: false});
+    that.setData({ gizwitsVisible: false });
     var did = e.currentTarget.dataset.did, index = e.currentTarget.dataset.index
     if (that.data.chonseDid === index) {
       console.log(did);
-      this.setData({did: did,});
+      this.setData({ did: did, });
       return;
     } else {
       this.setData({
@@ -405,7 +415,7 @@ Page({
     var that = this, json = [];
     //  创建Socket
     wx.connectSocket({
-      url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
+      url: 'wss://' + that.data.options.host + ':' + that.data.options.wss_port + '/ws/app/v1',
       header: {
         'content-type': 'application/json'
       },
@@ -558,7 +568,6 @@ Page({
     var countdown = 24 * 3600 * 5;
     var num = 5;
     num--;
-    console.log(num);
     // // 立即显示还剩五天
     console.log("还剩余5天0小时0分0秒");
     // 倒计时
@@ -713,7 +722,6 @@ Page({
     });
   },
 
-
   //  删除设备
   onDevicesDelete(e) {
     let that = this;
@@ -723,29 +731,22 @@ Page({
       showCancel: true,
       success: function (res) {
         if (res.confirm == true) {
-          wx.request({
-            header: {
-              'Content-Type': 'application/json',
-              'Accept': ' application/json',
-              'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
-              'X-Gizwits-User-token': wx.getStorageSync('options').token,
-            },
-            method: 'DELETE',
-            data: {
-              devices: [
-                {
-                  did: e.currentTarget.dataset.did,
-                }
-              ]
-            },
-            url: 'https://api.gizwits.com/app/bindings',
-            success(res) {
-              that.setData({
-                gizwitsVisible: true,
-                gizwitsListVisible: true,
-              });
-            },
-            fail(err) {}
+          let head = {
+            'Content-Type': 'application/json',
+            'Accept': ' application/json',
+            'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
+            'X-Gizwits-User-token': wx.getStorageSync('options').token,
+          };
+          let json = {
+            devices: [{
+              did: e.currentTarget.dataset.did,
+            }]
+          };
+          myUtils.sendRrquest('bindings', 'DELETE', json, head).then(function (result) {
+            that.setData({
+              gizwitsVisible: true,
+              gizwitsListVisible: true,
+            });
           });
         } else if (res.cancel == true) {
           that.setData({
@@ -755,11 +756,12 @@ Page({
           return;
         }
       },
-      fail (err) {}
-    }); 
+      fail(err) { }
+    });
   },
 
-  goReturn () {
+  //  返回
+  goReturn() {
     let that = this;
     that.setData({
       chonseDelete: true,

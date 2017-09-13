@@ -52,7 +52,7 @@
           </view>
         </view>
       </scroll-view>
-    </view>s
+    </view>
 
     <!-- 录音按钮 bindtouchmove='mytouchmove' -->
     <view class="fixed-video">

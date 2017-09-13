@@ -2,10 +2,6 @@
 
 var _util = require('../../utils/util.js');
 
-let count = (num) => {
-  console.log(num);
-};
-
 Page({
   /**
    * 页面的初始数据
@@ -49,14 +45,11 @@ Page({
       username: that.data.uname,
       password: that.data.pword,
     };
-    
     var head = {
       'content-type': 'application/json',
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
-
     wx.setStorageSync('userInformation', json);
-
     _util.sendRrquest('login', 'POST', json, head).then(function (result) {
       if (result.data.error_code == 9020) { //  如果账号或者密码错误 提示错误
         wx.showModal({
@@ -83,35 +76,6 @@ Page({
         wx.redirectTo({ url: '../smart/smart', });
       }
     });
-
-    // _util.options._loginGizwits('login', json, that.data.gizwitsAppId, function (result) {
-    //   if (result.data.error_code == 9020) { //  如果账号或者密码错误 提示错误
-    //     wx.showModal({
-    //       title: '提示',
-    //       content: "账号或者密码错误!",
-    //       showCancel: false,
-    //       success: function (res) {
-    //         that.setData({ loadHidden: true, });
-    //       }
-    //     });
-    //     return false;
-    //   } else {
-    //     that.setData({ loadHidden: true, });
-    //     var options = {
-    //       uid: result.data.uid,
-    //       token: result.data.token,
-    //       gizwitsAppId: that.data.gizwitsAppId
-    //     };
-    //     wx.setStorageSync('options', options);
-    //     that.setData({
-    //       uid: result.data.uid,
-    //       token: result.data.token,
-    //     });
-    //     wx.redirectTo({ url: '../smart/smart', });
-    //   }
-    // }, function(err) {
-    //   console.log(err);
-    // });
   },
 
   /**
