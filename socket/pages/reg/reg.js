@@ -1,4 +1,7 @@
 // pages/reg/reg.js
+
+var _util = require('../../utils/util.js');
+
 Page({
 
   /**
@@ -87,6 +90,22 @@ Page({
         });
         return false;
     }
+    var json = {
+      'lang': 'en',
+      'phone': that.data.uname,
+      'password': that.data.pword,
+      'code': that.data.code
+    };
+    var head = {
+      'content-type': 'application/json',
+      'Accept': 'application/json',
+      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
+    };
+    wx.setStorageSync('userInformation', json);
+    _util.sendRrquest('users', 'POST', json, head).then(function (result) {
+
+    });
+
   },
 
   /**

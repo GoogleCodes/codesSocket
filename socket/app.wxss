@@ -101,7 +101,7 @@ page, .page {
   padding: 0rpx 0 0rpx 40rpx;
   color: #333;
   height: 40px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #eee;
 }
 
 .wc_list {
@@ -109,8 +109,20 @@ page, .page {
   line-height: 40px;
 }
 
-.wc_list .icon-weibiaoti2zhuanhuan {
+.wc_list .icon-weibiaoti2zhuanhuan, .icon-share {
   margin-right: 10px;
+}
+
+.wc_list .icon-share {
+  margin-right: 6px;
+}
+
+.wc_list .icon-user, .icon-weibiaoti2zhuanhuan{
+  font-size: 18px;
+}
+
+.icon-share {
+  font-size: 22px;
 }
 
 .wx-hover {

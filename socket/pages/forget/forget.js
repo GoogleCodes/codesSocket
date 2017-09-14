@@ -1,4 +1,7 @@
 // pages/forget/forget.js
+
+var _util = require('../../utils/util.js');
+
 Page({
 
   /**
@@ -42,6 +45,7 @@ Page({
   },
 
   ForgetForm (e) {
+    let that = this;
     //  验证
     switch (true) {
       case e.detail.value.phone == '':
@@ -85,6 +89,19 @@ Page({
         });
         return false;
     }
+    var json = {
+      phone: that.data.uname,
+      new_pwd: that.data.pword,
+      code: that.data.code
+    };
+    var head = {
+      'content-type' : 'application/json',
+      'Accept' : 'application/json',
+      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
+    };
+    _util.sendRrquest('reset_password', 'POST', json, head).then(function (result) {
+      
+    });
   },
 
   /**

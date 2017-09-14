@@ -3,8 +3,8 @@
     "pages/login/login",
     "pages/smart/smart",
     "pages/more/more",
-    "pages/forget/forget",
     "pages/reg/reg",
+    "pages/forget/forget",
     "pages/logs/logs",
     "template/util/util"
   ],

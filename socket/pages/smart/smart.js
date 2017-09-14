@@ -326,10 +326,14 @@ Page({
   },
 
   _shareGizwits() {
+    wx.scanCode({
+      success(res) {},
+    })
+    return;
     let that = this, options = wx.getStorageSync('options');
     var json = {
       "type": 0,
-      "did": that.data.did,
+      "did": that.options.data.did,
       "uid": options.uid,
     };
     var head = {
@@ -375,8 +379,8 @@ Page({
           pKey = device.product_key;
         }
       }
-      that._GizwitsDevdata(that.data.options.did);
-      that._getGizwitsDataing(pKey);
+      // that._GizwitsDevdata(that.data.options.did);
+      // that._getGizwitsDataing(pKey);
     }, function (err) { });
   },
 
