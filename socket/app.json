@@ -1,8 +1,9 @@
 {
   "pages": [
-    "pages/login/login",
     "pages/smart/smart",
+    "pages/text/text",
     "pages/more/more",
+    "pages/login/login",
     "pages/reg/reg",
     "pages/forget/forget",
     "pages/logs/logs",

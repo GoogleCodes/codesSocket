@@ -85,6 +85,7 @@ Page({
     }
   },
 
+  
   /**
    * 开始录音
    */
@@ -252,6 +253,37 @@ Page({
    */
   onReady: function (res) {
 
+    let that = this;
+
+    if (that.data.gizwitsVisible == true) {
+      that.setData({
+        chonseDid: -1
+      });
+    }
+
+    // wx.openSetting({
+    //   success: (res) => {
+    //     res.authSetting = {
+    //       "scope.userinfo": true,
+    //       "scope.userLocation": true,
+    //       "scope.record": true
+    //     };
+    //   }
+    // });
+
+    // //  返回值中只会出现小程序已经向用户请求过的权限。
+    // wx.getSetting({
+    //   success: (res) => {
+    //     res.authSetting = {
+    //       "scope.userinfo": true,
+    //       "scope.userLocation": true,
+    //       "scope.record": true
+    //     };
+    //   },
+    // })
+
+
+
   },
 
   /**
@@ -345,11 +377,6 @@ Page({
       "did": that.options.data.did,
       "uid": options.uid,
     };
-    // var head = {
-    //   'content-type': 'application/json',
-    //   'X-Gizwits-Application-Id': options.gizwitsAppId,
-    //   'X-Gizwits-User-token': options.token,
-    // };
     myUtils.sendRrquest('sharing', 'POST', json, that.data.head).then(function (result) {
       if (result.data.error_code == 9081) {
         wx.showModal({
@@ -361,6 +388,42 @@ Page({
         return false;
       }
     }, function (err) { });
+  },
+
+  _postScheduler(did) {
+    var that = this;
+    var json = {
+      "raw": "string",
+      "attrs": {
+        'onoffAll' : true,
+      },
+      "date": "2017-09-15",
+      "time": "15:15",
+      "repeat": "mon,tue,wed,thu,fri,sat,sun",
+      "days": [],
+      "start_date": "2017-09-15",
+      "end_date": "2017-09-16",
+      "enabled": true,
+      "remark": ""
+    };
+
+    wx.getLocation({
+      type: 'wgs84', // gcj02
+      success: function (res) {
+        var latitude = res.latitude //  纬度，浮点数，范围为-90~90，负数表示南纬
+        var longitude = res.longitude //  经度，浮点数，范围为-180~180，负数表示西经
+        var speed = res.speed //  速度，浮点数，单位m/s
+        var accuracy = res.accuracy //  位置的精确度
+        console.log(latitude, longitude, speed, accuracy);
+      }
+    })
+
+    // myUtils.sendRrquest('devices/' + did + '/scheduler', 'POST', json, that.data.head).then(function (result) {
+    //   console.log(result);
+    //   myUtils.sendRrquest('devices/' + did + '/scheduler?limit=20&skip=0', 'GET', '', that.data.head).then(function (result) {
+    //     console.log(result.data);
+    //   }, function (err) { });
+    // }, function (err) { });
   },
 
   _getBindingList: function (limit, skip) {
@@ -388,6 +451,7 @@ Page({
           pKey = device.product_key;
         }
       }
+      that._postScheduler(that.data.options.did);
       // that._GizwitsDevdata(that.data.options.did);
       // that._getGizwitsDataing(pKey);
     }, function (err) { });
@@ -492,15 +556,28 @@ Page({
     });
   },
 
+  //  拉动按钮
+  sliderchange(e) {
+    return;
+    let that = this, json = {
+      'hardwareVersion': e.detail.value,
+    };
+    console.log(json);
+    that.sendJSON('c2s_write', that.data.did, json);
+  },
+
   //  智能灯开关
-  chonseSocket: function (e) {
-    var that = this, json = [];
+  chonseSocket(e) {
+    var that = this, json = {};
     that.setData({ socketOpen: true });
     //  发送数据开关 true : 打开  false : 关闭
     if (e.detail.value == true) {
       that.setData({ switchButton: true });
       //  发送数据
-      that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
+      json = {
+        "onoffAll": that.data.switchButton,
+      };
+      that.sendJSON('c2s_write', that.data.did, json);
       wx.showToast({
         title: '打开成功',
         icon: 'success',
@@ -509,7 +586,10 @@ Page({
     } else {
       that.setData({ switchButton: false });
       //  发送数据
-      that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
+      json = {
+        "onoffAll": that.data.switchButton,
+      };
+      that.sendJSON('c2s_write', that.data.did, json);
       wx.showToast({
         title: '关闭成功',
         icon: 'success',
@@ -518,7 +598,7 @@ Page({
     }
   },
 
-  getJSON: function (cmd, dids, names) {
+  getJSON(cmd, dids, names) {
     var that = this;
     //  读取数据
     var json = {
@@ -531,15 +611,16 @@ Page({
     this._sendJson(json);
   },
 
-  sendJSON: function (cmd, dids, form) {
+  sendJSON(cmd, dids, form) {
     var that = this;
     var json = {
       cmd: cmd,
       data: {
         did: dids,
-        attrs: {
-          "onoffAll": form,
-        },
+        attrs: form,
+        // attrs: {
+        //   "onoffAll": form,
+        // },
       },
     };
     that._sendJson(json);
@@ -744,18 +825,12 @@ Page({
       showCancel: true,
       success: function (res) {
         if (res.confirm == true) {
-          // let head = {
-          //   'Content-Type': 'application/json',
-          //   'Accept': ' application/json',
-          //   'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
-          //   'X-Gizwits-User-token': wx.getStorageSync('options').token,
-          // };
           let json = {
             devices: [{
               did: e.currentTarget.dataset.did,
             }]
           };
-          myUtils.sendRrquest('bindings', 'DELETE', json, that.head).then(function (result) {
+          myUtils.sendRrquest('bindings', 'DELETE', json, that.data.head).then(function (result) {
             that.setData({
               gizwitsVisible: true,
               gizwitsListVisible: true,
