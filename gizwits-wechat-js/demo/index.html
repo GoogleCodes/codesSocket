@@ -275,19 +275,17 @@
         <label>command:</label><br/>
         <div>
           <label>
-            <input type="checkbox"  name="" id="switch">
+            <input type="checkbox" id="switch">
             开关
           </label>
+          <input type="range" id="slider" min="0" max="100" value="0" />
         </div>
         <textarea rows="10" cols="90" id="command" placeholder='如果commType=custom，请输入p0，例如[<byte>,<byte>,<byte>...]；如果commType=attrs_v4，请输入datapoints，例如{"power":true}'></textarea>
         <br/>
         <button id="write" onclick="writeCommand()">Do it!</button>
         <br/>
         <p>（发送指令成功后，稍后会收到设备状态信息。）</p>
-
       </td>
-
-
       <td align="left" valign="top" style="padding: 0 0 0 10px;">
         <button id="clear" onclick="clearLog();">clear</button><br/>
         <span id="log"></span>
