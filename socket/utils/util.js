@@ -28,7 +28,7 @@ let options = {
 };
 
 const sendRrquest = (url, method, data, header) => {
-  var promise = new Promise(function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     wx.request({
       url: src + url,
       data: data,
@@ -38,7 +38,6 @@ const sendRrquest = (url, method, data, header) => {
       fail: reject
     })
   });
-  return promise;
 };
 
 //  对外开发接口

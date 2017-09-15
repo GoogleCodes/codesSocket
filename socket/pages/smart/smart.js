@@ -35,6 +35,12 @@ Page({
       ws_port: 0, //  端口
       wss_port: 0, //  端口
     },
+    head: {
+      'Content-Type': 'application/json',
+      'Accept': ' application/json',
+      'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
+      'X-Gizwits-User-token': wx.getStorageSync('options').token,
+    },
     uid: '',
     token: '',
     recodePath: '',  //  录音路径
@@ -144,97 +150,100 @@ Page({
     var options = wx.getStorageSync('options');
     s.setData({ isSpeaking: false });
     wx.showToast();
-    setInterval(() => {
-      var urls = 'http://yuyin.ittun.com/public/index/index/zhen';
-      wx.uploadFile({
-        url: urls,
-        filePath: s.data.recodePath,
-        method: "POST",
-        name: 'abc',
-        header: ('Access-Control-Allow-Origin: *'),
-        header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
-        formData: {
-          'lan': s.data.arrayCharset,
-        },
-        header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
-        success: function (res) {
-          s.setData({ ins_i: ins });
-          var error_text = '语音识别失败';
-          console.log("返回的东西是：", res.data);
-          if (res.data.toString() == error_text) {
+
+    wx.uploadFile({
+      url: 'http://yuyin.ittun.com/public/index/index/zhen',
+      filePath: s.data.recodePath,
+      method: "POST",
+      name: 'abc',
+      header: ('Access-Control-Allow-Origin: *'),
+      header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
+      formData: {
+        'lan': s.data.arrayCharset,
+      },
+      header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
+      success: function (res) {
+        s.setData({ ins_i: ins });
+        var error_text = '语音识别失败';
+        console.log("返回的东西是：", res.data);
+        if (res.statusCode == 404) {
+          wx.showToast({
+            title: '服务器坏掉了!呜呜呜~~~~',
+            icon: 'success',
+            duration: 2000
+          });
+          return true;
+        }
+        if (res.data.toString() == error_text) {
+          wx.showToast({
+            title: '语音识别失败!请重试!',
+            icon: 'success',
+            duration: 2000
+          });
+        }
+        var options = JSON.parse(res.data), result = null, sqlStr = null;
+        s.setData({
+          ins_y: options.time1,
+          ins_l: options.time2,
+        });
+        for (var i in options) {
+          var sqlStr = options[i].toString();
+          console.log(sqlStr);
+          s.setData({ openMessage: sqlStr, });
+          var myString
+          if (typeof (sqlStr) == "string") {
+            myString = sqlStr.substring(0, 1);
+          }
+          if (myString == "开" || myString == '打') {
+            s.setData({ switchButton: true });
+            //  发送数据
+            s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
             wx.showToast({
-              title: '语音识别失败!请重试!',
+              title: '打开成功',
+              icon: 'success',
+              duration: 2000
+            });
+          } else if (myString == "关") {
+            s.setData({ switchButton: false });
+            //  发送数据
+            s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
+            wx.showToast({
+              title: '关闭成功',
               icon: 'success',
               duration: 2000
             });
           }
-          // if (res.statusCode == 404) {
-          //   wx.showToast({
-          //     title: '服务器搞飞机去了!呜呜呜~~~~',
-          //     icon: 'success',
-          //     duration: 2000
-          //   });
-          //   return;
-          // }
-          var options = JSON.parse(res.data), result = null, sqlStr = null;
-          s.setData({
-            ins_y: options.time1,
-            ins_l: options.time2,
-          });
-          for (var i in options) {
-            var sqlStr = options[i].toString();
-            console.log(sqlStr);
-            s.setData({ openMessage: sqlStr, });
-            var myString
-            if (typeof (sqlStr) == "string") {
-              myString = sqlStr.substring(0, 1);
-            }
-            if (myString == "开" || myString == '打') {
-              s.setData({ switchButton: true });
-              //  发送数据
-              s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
-              wx.showToast({
-                title: '打开成功',
-                icon: 'success',
-                duration: 2000
-              });
-            } else if (myString == "关") {
-              s.setData({ switchButton: false });
-              //  发送数据
-              s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
-              wx.showToast({
-                title: '关闭成功',
-                icon: 'success',
-                duration: 2000
-              });
-            }
-          }
-          var str = res.data;
-          if (data.states == 1) {
-            var cEditData = s.data.editData;
-            cEditData.recodeIdentity = data.identitys;
-            s.setData({ editData: cEditData });
-          }
-          else {
-            wx.showModal({
-              title: '提示',
-              content: data.message,
-              showCancel: false,
-              success: function (res) { }
-            });
-          }
-          wx.hideToast();
-        },
-        fail: function (res) {  //  错误提示
+        }
+        var str = res.data;
+        if (data.states == 1) {
+          var cEditData = s.data.editData;
+          cEditData.recodeIdentity = data.identitys;
+          s.setData({ editData: cEditData });
+        }
+        else {
           wx.showModal({
             title: '提示',
-            content: "录音的姿势不对!",
+            content: data.message,
             showCancel: false,
             success: function (res) { }
           });
-          wx.hideToast();
         }
-      });
+        wx.hideToast();
+      },
+      fail: function (res) {  //  错误提示
+        wx.showModal({
+          title: '提示',
+          content: "录音的姿势不对!",
+          showCancel: false,
+          success: function (res) { }
+        });
+        wx.hideToast();
+        return;
+      }
+    });
+
+    setInterval(() => {
+      
     }, 1000)
   },
 
@@ -336,12 +345,12 @@ Page({
       "did": that.options.data.did,
       "uid": options.uid,
     };
-    var head = {
-      'content-type': 'application/json',
-      'X-Gizwits-Application-Id': options.gizwitsAppId,
-      'X-Gizwits-User-token': options.token,
-    };
-    myUtils.sendRrquest('sharing', 'POST', json, head).then(function (result) {
+    // var head = {
+    //   'content-type': 'application/json',
+    //   'X-Gizwits-Application-Id': options.gizwitsAppId,
+    //   'X-Gizwits-User-token': options.token,
+    // };
+    myUtils.sendRrquest('sharing', 'POST', json, that.data.head).then(function (result) {
       if (result.data.error_code == 9081) {
         wx.showModal({
           title: '提示',
@@ -735,18 +744,18 @@ Page({
       showCancel: true,
       success: function (res) {
         if (res.confirm == true) {
-          let head = {
-            'Content-Type': 'application/json',
-            'Accept': ' application/json',
-            'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
-            'X-Gizwits-User-token': wx.getStorageSync('options').token,
-          };
+          // let head = {
+          //   'Content-Type': 'application/json',
+          //   'Accept': ' application/json',
+          //   'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
+          //   'X-Gizwits-User-token': wx.getStorageSync('options').token,
+          // };
           let json = {
             devices: [{
               did: e.currentTarget.dataset.did,
             }]
           };
-          myUtils.sendRrquest('bindings', 'DELETE', json, head).then(function (result) {
+          myUtils.sendRrquest('bindings', 'DELETE', json, that.head).then(function (result) {
             that.setData({
               gizwitsVisible: true,
               gizwitsListVisible: true,

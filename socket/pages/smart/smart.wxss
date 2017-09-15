@@ -218,7 +218,13 @@
   border-radius: 5px 0px 0px 5px;
 }
 
+.scrollView .utils .icon-shanchu{
+  border-radius: 5px 0px 0px 5px;
+  width: 75%;
+}
+
 .scrollView .utils .icon-return {
+  width: 25%;
   background: green;
   border-radius: 0px 5px 5px 0px;
 }

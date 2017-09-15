@@ -51,6 +51,7 @@ Page({
     };
     wx.setStorageSync('userInformation', json);
     _util.sendRrquest('login', 'POST', json, head).then(function (result) {
+      console.log(result.data);
       if (result.data.error_code == 9020) { //  如果账号或者密码错误 提示错误
         wx.showModal({
           title: '提示',
@@ -73,7 +74,8 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
-        wx.redirectTo({ url: '../smart/smart', });
+
+         wx.redirectTo({ url: '../smart/smart', });
       }
     });
   },
