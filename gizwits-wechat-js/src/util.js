@@ -61,8 +61,8 @@ function read() {
 
 //	发送数据
 function writeCommand() {
-  var did = $('#writeDid').val();
 
+  var did = $('#writeDid').val();
   let attrs = $('#command').val(), switchs = $('#switch').val();
   let sliderNum = $("#slider").val();
   $("#sliderSpan").text($("#slider").val());
@@ -78,7 +78,6 @@ function writeCommand() {
   } catch (e) {
     showError("数据格式错误：" + e);
   }
-  
   // if ($('#commType').val() == "attrs_v4") {
   //   let attrs = $('#command').val(), switchs = $('#switch').val();
   //   let sliderNum = $("#slider").val();
@@ -194,4 +193,13 @@ function deleteGizw() {
 
 function modifyGizw() {
   gizwitsws._getModifyList('4hT7CZrxk9FqdCrzkz4BWS',' ',' ',' ');
+}
+
+function tap_ch() {
+  var eleopen = false;
+  eleopen = true;
+  $(".page-top").css({
+    'transform': 'translate(300px, 0px)'
+  });
+
 }

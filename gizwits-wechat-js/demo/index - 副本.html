@@ -5,6 +5,7 @@
   <title>叶绿体</title>
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   <link rel="stylesheet" type="text/css" href="../css/utils.css" />
+  <link rel="stylesheet" type="text/css" href="../css/common.css" />
   <!-- <script src="jquery.min.js"></script> -->
   <script src="jquery-3.2.1.min.js"></script>
   <script src="jquery.cookie.min.js"></script>
@@ -13,110 +14,123 @@
 </head>
 
 <body>
-  <div class="header-tab">
-    <span class="iconfont icon-liebiao"></span>
-  </div>
-  <div class="login">
-    <div class="login-title">登录帐号</div>
-    <div class="type-text">
-      <input type="text" value="13250672958" name="username" id="username" />
-    </div>
-    <div class="type-text">
-      <input type="password" value="123456789" name="password" id="password" />
-    </div>
-    <div class="type-text">
-      <input type="button" onclick="goLogin()" value="登录" />
+
+
+  <div class="page-bottom">
+    <div class="page-content">
+      <span>123</span>
     </div>
   </div>
-  
-  <table border="0" cellpadding="0" , cellspacing="0">
-    <tr>
-      <td align="left" valign="top" style="display: none;">
-        <div>
-          <h4>1. 首先，请初始化GizwitsWS对象</h4> <!--  style="display: none;" -->
-          <table border="0" cellpadding="0" , cellspacing="2">
-            <tr>
-              <td align="left" valign="top">
-                <label>apiHost:</label>
-              </td>
-              <td align="left" valign="top">
-                <input type="text" id="apiHost" value="api.gizwits.com" size="30" />
-              </td>
-            </tr>
-            <tr>
-              <td align="left" valign="top">
-                <label>commType:</label>
-              </td>
-              <td align="left" valign="top">
-                <select id="commType" about="">
-                  <option value="custom">custom</option>
-                  <option value="attrs_v4" selected="selected">attrs_v4</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <td align="left" valign="top">
-                <label>wechatOpenId:</label>
-              </td>
-              <td align="left" valign="top">
-                <input type="text" id="wechatOpenId" value="" size="30" placeholder="wx001" />
-              </td>
-            </tr>
-            <tr>
-              <td align="left" valign="top">
-                <label>gizwitsAppId:</label>
-              </td>
-              <td align="left" valign="top">
-                <input type="text" id="gizwitsAppId" value="" size="30" placeholder="60d9d45a420b4f539434adb127fe5e5e" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <button id="newObj" onclick="newObj()">Do it!</button>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </td>
-    </tr>
-  </table>
-  <div class="frame">  
-    <!-- <h4>2. 然后，使用GizwitsWS.init()获取绑定列表</h4>
-    <button id="init" onclick="init()">Do it!</button> -->
-    <div>
-      <select id="did" class="select" about=""></select>
-      <select id="writeDid" style="display: none;" class="select" about=""></select>
+
+
+  <div class="page-top">
+    <div class="header-tab" onclick="tap_ch()">
+      <span class="iconfont icon-liebiao"></span>
     </div>
-    <button id="connect" onclick="connect()">Do it!</button>
-    <div style="display: none;">
-      <h4>4. 选择已连接设备，读取状态</h4>
-      <select id="readDid" about="" style="width: 300px;"></select>
-      <label>names:</label>
-      <textarea rows="10" cols="90" id="names" placeholder=''></textarea>
-      <button id="read" onclick="read()">Do it!</button>
-    </div>
-    <div class="check_frame">
-      <div class="check_txt fl">save</div>
-      <div class="fr">
-        <input type="checkbox" id="switch" class="checkbox" name="check" />
-        <label class="trigger" for="switch" onclick="writeCommand()"></label>
+    <div class="login">
+      <div class="login-title">登录帐号</div>
+      <div class="type-text">
+        <input type="text" value="13250672958" name="username" id="username" />
+      </div>
+      <div class="type-text">
+        <input type="password" value="123456789" name="password" id="password" />
+      </div>
+      <div class="type-text">
+        <input type="button" onclick="goLogin()" value="登录" />
       </div>
     </div>
-    <div class="clear" style="display: none;">
-      <input type="range" id="slider" min="0" max="100" value="0" />
-      <span id="sliderSpan">0</span>
+    
+    <table border="0" cellpadding="0" , cellspacing="0">
+      <tr>
+        <td align="left" valign="top" style="display: none;">
+          <div>
+            <h4>1. 首先，请初始化GizwitsWS对象</h4> <!--  style="display: none;" -->
+            <table border="0" cellpadding="0" , cellspacing="2">
+              <tr>
+                <td align="left" valign="top">
+                  <label>apiHost:</label>
+                </td>
+                <td align="left" valign="top">
+                  <input type="text" id="apiHost" value="api.gizwits.com" size="30" />
+                </td>
+              </tr>
+              <tr>
+                <td align="left" valign="top">
+                  <label>commType:</label>
+                </td>
+                <td align="left" valign="top">
+                  <select id="commType" about="">
+                    <option value="custom">custom</option>
+                    <option value="attrs_v4" selected="selected">attrs_v4</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td align="left" valign="top">
+                  <label>wechatOpenId:</label>
+                </td>
+                <td align="left" valign="top">
+                  <input type="text" id="wechatOpenId" value="" size="30" placeholder="wx001" />
+                </td>
+              </tr>
+              <tr>
+                <td align="left" valign="top">
+                  <label>gizwitsAppId:</label>
+                </td>
+                <td align="left" valign="top">
+                  <input type="text" id="gizwitsAppId" value="" size="30" placeholder="60d9d45a420b4f539434adb127fe5e5e" />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <button id="newObj" onclick="newObj()">Do it!</button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <div class="frame">  
+      <!-- <h4>2. 然后，使用GizwitsWS.init()获取绑定列表</h4>
+      <button id="init" onclick="init()">Do it!</button> -->
+      <div>
+        <select id="did" class="select" about=""></select>
+        <select id="writeDid" style="display: none;" class="select" about=""></select>
+      </div>
+      <button id="connect" onclick="connect()">Do it!</button>
+      <div style="display: none;">
+        <h4>4. 选择已连接设备，读取状态</h4>
+        <select id="readDid" about="" style="width: 300px;"></select>
+        <label>names:</label>
+        <textarea rows="10" cols="90" id="names" placeholder=''></textarea>
+        <button id="read" onclick="read()">Do it!</button>
+      </div>
+      <div class="check_frame">
+        <div class="check_txt fl">save</div>
+        <div class="fr">
+          <input type="checkbox" id="switch" class="checkbox" name="check" />
+          <label class="trigger" for="switch" onclick="writeCommand()"></label>
+        </div>
+      </div>
+      <div class="clear" style="display: none;">
+        <input type="range" id="slider" min="0" max="100" value="0" />
+        <span id="sliderSpan">0</span>
+      </div>
+      <!-- <textarea rows="10" cols="90" id="command" placeholder=''></textarea> -->
+      <!-- <button id="write" onclick="writeCommand()">Do it!</button> -->
+      <!-- <a id="write" class="iconfont icon-weibiaoti2zhuanhuan" onclick="writeCommand()">控制设备</a> -->
+      <a href="javascript:void(0);" class="iconfont icon-code" onclick="modifyGizw()">修改名称</a>
+      <a href="javascript:void(0);" class="iconfont icon-shanchu" onclick="deleteGizw()">删除设备</a>
     </div>
-    <!-- <textarea rows="10" cols="90" id="command" placeholder=''></textarea> -->
-    <!-- <button id="write" onclick="writeCommand()">Do it!</button> -->
-    <!-- <a id="write" class="iconfont icon-weibiaoti2zhuanhuan" onclick="writeCommand()">控制设备</a> -->
-    <a href="javascript:void(0);" class="iconfont icon-code" onclick="modifyGizw()">修改名称</a>
-    <a href="javascript:void(0);" class="iconfont icon-shanchu" onclick="deleteGizw()">删除设备</a>
-  </div>
-  <div class="body_Gizw">
-    <div class="tagMessage">
-      <span id="log"></span>
-      <button id="clear" onclick="clearLog();">clear</button>
+    <div class="body_Gizw">
+      <div class="tagMessage">
+        <span id="log"></span>
+        <button id="clear" onclick="clearLog();">clear</button>
+      </div>
     </div>
+
   </div>
+  
 </body>
 </html>
