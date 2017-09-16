@@ -1,0 +1,119 @@
+
+/* login start */
+.login {}
+
+.login .login-title {
+	text-align: center;
+	line-height: 45px;
+}
+
+.login .type-text {
+	width: 80%;
+	margin: 10px auto 0px;
+}
+
+.login .type-text input[type='text'],input[type='password'],input[type='button'] {
+	width: 100%;
+	text-indent: 1em;
+	border-radius: 5px;
+	border: 1px solid #eee;
+	height: 35px;
+}
+
+.login .type-text input[type='button'] {
+	color: #999;
+}
+
+/* login end */
+
+/* body_Gizw start */
+.body_Gizw {
+	width: 95%;
+}
+
+.body_Gizw .tagMessage {
+	background: #fff;
+	width: 100%;
+	height: 100%;
+}
+
+.body_Gizw .tagMessage #log {
+	font-size: 14px;
+    width: 100%;
+    display: block;
+    padding: 10px 10px 0;
+    height: auto;
+    color: #333;
+}
+
+.body_Gizw .tagMessage #log p {
+	margin: 5px;
+}
+
+.body_Gizw .tagMessage #clear {
+	width: 100%;
+    margin: 0px 10px 10px;
+    height: 35px;
+}
+/* body-Gizw end */
+
+
+.gizw-title {
+	margin: 5px;
+}
+
+/* frame start */
+
+.frame .check_frame {
+	width: 100%;
+	margin-top: 10px;
+	height: 50px;
+	background: rgb(251, 249, 254);
+}
+
+.frame .check_frame #switch { display: none; }
+
+.frame .check_frame .trigger {
+	cursor: pointer;
+	position: relative;
+	float: left;
+	width: 60px;
+	border-radius: 100px;
+    height: 30px;
+	margin: 10px;
+	background: #666;
+	overflow: hidden;
+	-webkit-transition: background .15s linear;
+}
+
+.frame .check_frame #switch:checked + .trigger { 
+	background: #00C5FF; 
+}
+
+.frame .check_frame .trigger:before {
+  	content: '';
+  	position: absolute;
+  	top: 0;
+  	left: 0;
+  	bottom: 0;
+	width: 20px;
+  	border-radius: 100px;
+    height: 20px;
+  	margin: auto 5px;
+  	box-shadow: 0 0 0 100px hsla(0, 0%, 0%, .3);
+  	-webkit-transition: left .15s linear;
+}
+.frame .check_frame #switch:checked + .trigger:before { 
+	left: 30px;
+}
+
+.frame .check_frame .check_txt {
+	line-height: 50px;
+	text-indent: 1em;
+}
+
+/* frame end */
+
+.fl {float: left;}
+.fr {float: right;}
+.clear {clear: both;}

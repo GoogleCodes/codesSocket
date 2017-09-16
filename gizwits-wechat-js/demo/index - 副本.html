@@ -5,7 +5,8 @@
   <title>叶绿体</title>
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   <link rel="stylesheet" type="text/css" href="../css/utils.css" />
-  <script src="jquery.min.js"></script>
+  <!-- <script src="jquery.min.js"></script> -->
+  <script src="jquery-3.2.1.min.js"></script>
   <script src="jquery.cookie.min.js"></script>
   <script src="../src/gizwits_ws_0.3.0.min.js"></script>
   <script src="../src/util.js"></script>
@@ -24,16 +25,11 @@
       <input type="button" onclick="goLogin()" value="登录" />
     </div>
   </div>
-  <div class="body_Gizw">
-    <div class="tagMessage">
-      <span id="log"></span>
-      <button id="clear" onclick="clearLog();">clear</button>
-    </div>
-  </div>
+  
   <table border="0" cellpadding="0" , cellspacing="0">
     <tr>
-      <td align="left" valign="top">
-        <div style="display: none;">
+      <td align="left" valign="top" style="display: none;">
+        <div>
           <h4>1. 首先，请初始化GizwitsWS对象</h4> <!--  style="display: none;" -->
           <table border="0" cellpadding="0" , cellspacing="2">
             <tr>
@@ -81,39 +77,42 @@
       </td>
     </tr>
   </table>
-
-
-  <div>  
+  <div class="frame">  
     <!-- <h4>2. 然后，使用GizwitsWS.init()获取绑定列表</h4>
-    <button id="init" onclick="init()">Do it!</button> -->
-    <p class="gizw-title">请连接设备：</p>
+    <button id="init" onclick="init()">Do it!</button>
+ -->
     <select id="did" about="" style="width: 300px;"></select>
     <button id="connect" onclick="connect()">Do it!</button>
     <div style="display: none;">
       <h4>4. 选择已连接设备，读取状态</h4>
-      <label style="display:inline-block;width: 90px">did:</label><select id="readDid" about="" style="width: 300px;"></select>
+      <select id="readDid" about="" style="width: 300px;"></select>
       <label>names:</label>
-      <textarea rows="10" cols="90" id="names" placeholder='如果commType=custom，可不填；如果commType=attrs_v4，请输入要读取的数据点名称，例如["A01","A02", ...]，如需要读取所有数据点，也请不填写内容'></textarea>
+      <textarea rows="10" cols="90" id="names" placeholder=''></textarea>
       <button id="read" onclick="read()">Do it!</button>
-      <br/>
-      <p>（发送指令成功后，稍后会收到设备状态信息。）</p>
     </div>
     <select id="writeDid" about="" style="width: 300px;"></select>
-    <br/>
-    <label>command:</label><br/>
-    <div>
-      <div>
-        <label>
-          <input type="checkbox" id="switch">
-          开关
-        </label>
-        <input type="range" id="slider" min="0" max="100" value="0" />
-        <span id="sliderSpan">0</span>
+    <div class="check_frame">
+      <div class="check_txt fl">save</div>
+      <div class="fr">
+        <input type="checkbox" id="switch" class="checkbox" name="check" />
+        <label class="trigger" for="switch" ></label>
       </div>
+    </div>
+    <div class="clear" style="display: none;">
+      <input type="range" id="slider" min="0" max="100" value="0" />
+      <span id="sliderSpan">0</span>
     </div>
     <!-- <textarea rows="10" cols="90" id="command" placeholder=''></textarea> -->
     <button id="write" onclick="writeCommand()">Do it!</button>
   </div>
+  <div class="body_Gizw">
 
+    <button onclick="deleteGizw()">删除设备</button>
+
+    <div class="tagMessage">
+      <span id="log"></span>
+      <button id="clear" onclick="clearLog();">clear</button>
+    </div>
+  </div>
 </body>
 </html>
