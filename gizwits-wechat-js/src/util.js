@@ -62,32 +62,48 @@ function read() {
 //	发送数据
 function writeCommand() {
   var did = $('#writeDid').val();
-  if ($('#commType').val() == "attrs_v4") {
-    let attrs = $('#command').val(), switchs = $('#switch').val();
-    let sliderNum = $("#slider").val();
-    $("#sliderSpan").text($("#slider").val());
-    let chonse = false;
-    $('#switch').is(':checked') ? chonse = true : chonse = false;
 
-    var json = {
-      "onoffAll": chonse,
-    };
-    try {
-      gizwitsws.write(did, json);
-      // gizwitsws.write(did, JSON.parse(attrs));
-      // showScreen("已对设备" + did + "发送write指令: " + attrs);
-    } catch (e) {
-      showError("数据格式错误：" + e);
-    }
-  } else {
-    var raw = $('#command').val();
-    try {
-      gizwitsws.send(did, JSON.parse(raw));
-      // showScreen("已对设备" + did + "发送raw指令: " + raw);
-    } catch (e) {
-      showError("数据格式错误：" + e);
-    }
+  let attrs = $('#command').val(), switchs = $('#switch').val();
+  let sliderNum = $("#slider").val();
+  $("#sliderSpan").text($("#slider").val());
+  let chonse = false;
+  $('#switch').is(':checked') ? chonse = true : chonse = false;
+  var json = {
+    "onoffAll": chonse,
+  };
+  try {
+    gizwitsws.write(did, json);
+    // gizwitsws.write(did, JSON.parse(attrs));
+    // showScreen("已对设备" + did + "发送write指令: " + attrs);
+  } catch (e) {
+    showError("数据格式错误：" + e);
   }
+  
+  // if ($('#commType').val() == "attrs_v4") {
+  //   let attrs = $('#command').val(), switchs = $('#switch').val();
+  //   let sliderNum = $("#slider").val();
+  //   $("#sliderSpan").text($("#slider").val());
+  //   let chonse = false;
+  //   $('#switch').is(':checked') ? chonse = true : chonse = false;
+  //   var json = {
+  //     "onoffAll": chonse,
+  //   };
+  //   try {
+  //     gizwitsws.write(did, json);
+  //     // gizwitsws.write(did, JSON.parse(attrs));
+  //     // showScreen("已对设备" + did + "发送write指令: " + attrs);
+  //   } catch (e) {
+  //     showError("数据格式错误：" + e);
+  //   }
+  // } else {
+  //   var raw = $('#command').val();
+  //   try {
+  //     gizwitsws.send(did, JSON.parse(raw));
+  //     // showScreen("已对设备" + did + "发送raw指令: " + raw);
+  //   } catch (e) {
+  //     showError("数据格式错误：" + e);
+  //   }
+  // }
 }
 
 function clearLog() {
@@ -160,6 +176,7 @@ function showError(txt) {
 function addSelectOption(selectId, value, text) {
   if ($(selectId + ' option[value =' + value + ']').length == 0) {
     $(selectId).append("<option value=" + value + ">" + text + "</option>");
+    // $(selectId).append("<p value=" + value + ">" + text + "</p>");
   }
 }
 
@@ -167,10 +184,14 @@ function goLogin() {
   var uname = $("#username").val();
   var pword = $("#password").val();
   gizwitsws._getUserLogin(uname,pword);
-  
+
 };
 
 
 function deleteGizw() {
   gizwitsws._getDeleteList('4hT7CZrxk9FqdCrzkz4BWS');
+}
+
+function modifyGizw() {
+  gizwitsws._getModifyList('4hT7CZrxk9FqdCrzkz4BWS',' ',' ',' ');
 }

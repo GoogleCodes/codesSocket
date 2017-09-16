@@ -13,6 +13,9 @@
 </head>
 
 <body>
+  <div class="header-tab">
+    <span class="iconfont icon-liebiao"></span>
+  </div>
   <div class="login">
     <div class="login-title">登录帐号</div>
     <div class="type-text">
@@ -79,9 +82,11 @@
   </table>
   <div class="frame">  
     <!-- <h4>2. 然后，使用GizwitsWS.init()获取绑定列表</h4>
-    <button id="init" onclick="init()">Do it!</button>
- -->
-    <select id="did" about="" style="width: 300px;"></select>
+    <button id="init" onclick="init()">Do it!</button> -->
+    <div>
+      <select id="did" class="select" about=""></select>
+      <select id="writeDid" style="display: none;" class="select" about=""></select>
+    </div>
     <button id="connect" onclick="connect()">Do it!</button>
     <div style="display: none;">
       <h4>4. 选择已连接设备，读取状态</h4>
@@ -90,12 +95,11 @@
       <textarea rows="10" cols="90" id="names" placeholder=''></textarea>
       <button id="read" onclick="read()">Do it!</button>
     </div>
-    <select id="writeDid" about="" style="width: 300px;"></select>
     <div class="check_frame">
       <div class="check_txt fl">save</div>
       <div class="fr">
         <input type="checkbox" id="switch" class="checkbox" name="check" />
-        <label class="trigger" for="switch" ></label>
+        <label class="trigger" for="switch" onclick="writeCommand()"></label>
       </div>
     </div>
     <div class="clear" style="display: none;">
@@ -103,12 +107,12 @@
       <span id="sliderSpan">0</span>
     </div>
     <!-- <textarea rows="10" cols="90" id="command" placeholder=''></textarea> -->
-    <button id="write" onclick="writeCommand()">Do it!</button>
+    <!-- <button id="write" onclick="writeCommand()">Do it!</button> -->
+    <!-- <a id="write" class="iconfont icon-weibiaoti2zhuanhuan" onclick="writeCommand()">控制设备</a> -->
+    <a href="javascript:void(0);" class="iconfont icon-code" onclick="modifyGizw()">修改名称</a>
+    <a href="javascript:void(0);" class="iconfont icon-shanchu" onclick="deleteGizw()">删除设备</a>
   </div>
   <div class="body_Gizw">
-
-    <button onclick="deleteGizw()">删除设备</button>
-
     <div class="tagMessage">
       <span id="log"></span>
       <button id="clear" onclick="clearLog();">clear</button>
