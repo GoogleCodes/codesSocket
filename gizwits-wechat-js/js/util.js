@@ -62,7 +62,6 @@ function read() {
 
 //	发送数据
 function writeCommand() {
-
   var did = $('#writeDid').val();
   let attrs = $('#command').val(), switchs = $('#switch').val();
   let sliderNum = $("#slider").val();
@@ -119,10 +118,6 @@ function openGizw() {
 };
 
 
-
-//=========================================================
-// callback functions
-//=========================================================
 function onInit(devices) {
   if (devices.length == 0) {
     showScreen("没有绑定的设备");
@@ -194,7 +189,6 @@ function goLogin() {
   var uname = $("#username").val();
   var pword = $("#password").val();
   gizwitsws._getUserLogin(uname,pword);
-
 };
 
 function deleteGizw() {
