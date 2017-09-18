@@ -736,7 +736,6 @@ Page({
     wx.showToast();
     setTimeout(function () {
       var urls = 'http://yuyin.ittun.com/public/index/index/zhen';
-      console.log(s.data.recodePath + "----");
       wx.uploadFile({
         url: urls,
         filePath: s.data.recodePath,
@@ -758,15 +757,19 @@ Page({
               duration: 2000
             });
           }
-          // if (res.statusCode == 404) {
-          //   wx.showToast({
-          //     title: '服务器搞飞机去了!呜呜呜~~~~',
-          //     icon: 'success',
-          //     duration: 2000
-          //   });
-          //   return;
-          // }
-          var options = JSON.parse(res.data), result = null, sqlStr = null;
+          if (res.statusCode == 404) {
+            wx.showToast({
+              title: '服务器搞飞机去了!呜呜呜~~~~',
+              icon: 'success',
+              duration: 2000
+            });
+            return;
+          }
+          var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
+          s.setData({
+            ins_y: options.time1,
+            ins_l: options.time2,
+          });
           for (var i in options) {
             var sqlStr = options[i].toString();
             console.log(sqlStr);
@@ -778,8 +781,11 @@ Page({
             }
             if (myString == "开" || myString == '打') {
               s.setData({ switchButton: true });
+              json = {
+                "onoffAll": s.data.switchButton,
+              };
               //  发送数据
-              s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
+              s.sendJSON('c2s_write', s.data.did, json);
               wx.showToast({
                 title: '打开成功',
                 icon: 'success',
@@ -787,8 +793,11 @@ Page({
               });
             } else if (myString == "关") {
               s.setData({ switchButton: false });
+              json = {
+                "onoffAll": s.data.switchButton,
+              };
               //  发送数据
-              s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
+              s.sendJSON('c2s_write', s.data.did, json);
               wx.showToast({
                 title: '关闭成功',
                 icon: 'success',
