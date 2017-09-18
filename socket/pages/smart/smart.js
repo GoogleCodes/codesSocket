@@ -85,182 +85,19 @@ Page({
     }
   },
 
-  
-  /**
-   * 开始录音
-   */
-  startRecode: function (e) {
-    var that = this;
-    wx.startRecord({
-      success: function (res) {
-        var tempFilePath = res.tempFilePath;
-        that.setData({ recodePath: tempFilePath, isSpeaking: true });
-        wx.showToast({
-          title: '录音成功!',
-          icon: 'success',
-          duration: 1000
-        });
-        wx.getSavedFileList({
-          success: function (res) {
-            var voices = [];
-            for (var i in res.fileList) {
-              //  格式化时间  
-              var createTime = new Date(res.fileList[i].createTime)
-              //  将音频大小B转为KB  
-              var size = (res.fileList[i].size / 1024).toFixed(2);
-              var voice = { filePath: res.fileList[i].filePath, createTime: createTime, size: size };
-              voices = voices.concat(voice);
-            }
-            that.setData({ voices: voices })
-          }
-        });
-      },
-      fail: function (err) {
-        console.log(err.data);
-      }
-    });
-  },
 
-  //点击播放录音  
-  gotoPlay: function (e) {
-    var filePath = e.currentTarget.dataset.key;
-    //点击开始播放  
-    wx.showToast({
-      title: '开始播放',
-      icon: 'success',
-      duration: 1000
-    })
-    wx.playVoice({
-      filePath: filePath,
-      success: function () {
-        wx.showToast({
-          title: '播放结束',
-          icon: 'success',
-          duration: 1000
-        })
-      }
-    })
-  },
 
-  /**
-   * 结束录音
-   */
-  endRecode: function (e) {
-    var s = this;
-    wx.stopRecord();
-    var options = wx.getStorageSync('options');
-    s.setData({ isSpeaking: false });
-    wx.showToast();
-
-    wx.uploadFile({
-      url: 'http://yuyin.ittun.com/public/index/index/zhen',
-      filePath: s.data.recodePath,
-      method: "POST",
-      name: 'abc',
-      header: ('Access-Control-Allow-Origin: *'),
-      header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
-      formData: {
-        'lan': s.data.arrayCharset,
-      },
-      header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
-      success: function (res) {
-        s.setData({ ins_i: ins });
-        var error_text = '语音识别失败';
-        console.log("返回的东西是：", res.data);
-        if (res.statusCode == 404) {
-          wx.showToast({
-            title: '服务器坏掉了!呜呜呜~~~~',
-            icon: 'success',
-            duration: 2000
-          });
-          return true;
-        }
-        if (res.data.toString() == error_text) {
-          wx.showToast({
-            title: '语音识别失败!请重试!',
-            icon: 'success',
-            duration: 2000
-          });
-        }
-        var options = JSON.parse(res.data), result = null, sqlStr = null;
-        s.setData({
-          ins_y: options.time1,
-          ins_l: options.time2,
-        });
-        for (var i in options) {
-          var sqlStr = options[i].toString();
-          console.log(sqlStr);
-          s.setData({ openMessage: sqlStr, });
-          var myString
-          if (typeof (sqlStr) == "string") {
-            myString = sqlStr.substring(0, 1);
-          }
-          if (myString == "开" || myString == '打') {
-            s.setData({ switchButton: true });
-            //  发送数据
-            s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
-            wx.showToast({
-              title: '打开成功',
-              icon: 'success',
-              duration: 2000
-            });
-          } else if (myString == "关") {
-            s.setData({ switchButton: false });
-            //  发送数据
-            s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
-            wx.showToast({
-              title: '关闭成功',
-              icon: 'success',
-              duration: 2000
-            });
-          }
-        }
-        var str = res.data;
-        if (data.states == 1) {
-          var cEditData = s.data.editData;
-          cEditData.recodeIdentity = data.identitys;
-          s.setData({ editData: cEditData });
-        }
-        else {
-          wx.showModal({
-            title: '提示',
-            content: data.message,
-            showCancel: false,
-            success: function (res) { }
-          });
-        }
-        wx.hideToast();
-      },
-      fail: function (res) {  //  错误提示
-        wx.showModal({
-          title: '提示',
-          content: "录音的姿势不对!",
-          showCancel: false,
-          success: function (res) { }
-        });
-        wx.hideToast();
-        return;
-      }
-    });
-
-    setInterval(() => {
-      
-    }, 1000)
-  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function (res) {
-
     let that = this;
-
     if (that.data.gizwitsVisible == true) {
       that.setData({
         chonseDid: -1
       });
     }
-
     // wx.openSetting({
     //   success: (res) => {
     //     res.authSetting = {
@@ -281,9 +118,6 @@ Page({
     //     };
     //   },
     // })
-
-
-
   },
 
   /**
@@ -368,7 +202,7 @@ Page({
 
   _shareGizwits() {
     wx.scanCode({
-      success(res) {},
+      success(res) { },
     })
     return;
     let that = this, options = wx.getStorageSync('options');
@@ -395,35 +229,35 @@ Page({
     var json = {
       "raw": "string",
       "attrs": {
-        'onoffAll' : true,
+        'onoffAll': true,
       },
-      "date": "2017-09-15",
+      "date": "2017-09-18",
       "time": "15:15",
       "repeat": "mon,tue,wed,thu,fri,sat,sun",
       "days": [],
-      "start_date": "2017-09-15",
-      "end_date": "2017-09-16",
+      "start_date": "2017-09-18",
+      "end_date": "2017-09-20",
       "enabled": true,
       "remark": ""
     };
+    myUtils.sendRrquest('devices/' + did + '/scheduler', 'POST', json, that.data.head).then(function (result) {
+      console.log(result);
+      // myUtils.sendRrquest('devices/' + did + '/scheduler?limit=20&skip=0', 'GET', '', that.data.head).then(function (result) {
+      //   console.log(result.data);
+      // }, function (err) { });
+    }, function (err) { });
 
-    wx.getLocation({
-      type: 'wgs84', // gcj02
-      success: function (res) {
-        var latitude = res.latitude //  纬度，浮点数，范围为-90~90，负数表示南纬
-        var longitude = res.longitude //  经度，浮点数，范围为-180~180，负数表示西经
-        var speed = res.speed //  速度，浮点数，单位m/s
-        var accuracy = res.accuracy //  位置的精确度
-        console.log(latitude, longitude, speed, accuracy);
-      }
-    })
+    // wx.getLocation({
+    //   type: 'wgs84', // gcj02
+    //   success: function (res) {
+    //     var latitude = res.latitude //  纬度，浮点数，范围为-90~90，负数表示南纬
+    //     var longitude = res.longitude //  经度，浮点数，范围为-180~180，负数表示西经
+    //     var speed = res.speed //  速度，浮点数，单位m/s
+    //     var accuracy = res.accuracy //  位置的精确度
+    //     console.log(latitude, longitude, speed, accuracy);
+    //   }
+    // })
 
-    // myUtils.sendRrquest('devices/' + did + '/scheduler', 'POST', json, that.data.head).then(function (result) {
-    //   console.log(result);
-    //   myUtils.sendRrquest('devices/' + did + '/scheduler?limit=20&skip=0', 'GET', '', that.data.head).then(function (result) {
-    //     console.log(result.data);
-    //   }, function (err) { });
-    // }, function (err) { });
   },
 
   _getBindingList: function (limit, skip) {
@@ -855,6 +689,139 @@ Page({
       chonseDelete: true,
       chonseUpdate: false,
     });
-  }
+  },
 
+  /**
+   * 开始录音
+   */
+  startRecode: function (e) {
+    var that = this;
+    wx.startRecord({
+      success: function (res) {
+        var tempFilePath = res.tempFilePath;
+        that.setData({ recodePath: tempFilePath, isSpeaking: true });
+        wx.showToast({
+          title: '录音成功!',
+          icon: 'success',
+          duration: 1000
+        });
+        wx.getSavedFileList({
+          success: function (res) {
+            var voices = [];
+            for (var i in res.fileList) {
+              //  格式化时间  
+              var createTime = new Date(res.fileList[i].createTime)
+              //  将音频大小B转为KB  
+              var size = (res.fileList[i].size / 1024).toFixed(2);
+              var voice = { filePath: res.fileList[i].filePath, createTime: createTime, size: size };
+              voices = voices.concat(voice);
+            }
+            that.setData({ voices: voices })
+          }
+        });
+      },
+      fail: function (err) {
+        console.log(err.data);
+      }
+    });
+  },
+
+  /**
+   * 结束录音
+   */
+  endRecode: function (e) {
+    var s = this;
+    wx.stopRecord();
+    s.setData({ isSpeaking: false });
+    wx.showToast();
+    setTimeout(function () {
+      var urls = 'http://yuyin.ittun.com/public/index/index/zhen';
+      console.log(s.data.recodePath + "----");
+      wx.uploadFile({
+        url: urls,
+        filePath: s.data.recodePath,
+        method: "POST",
+        name: 'abc',
+        header: ('Access-Control-Allow-Origin: *'),
+        header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
+        formData: {
+          'lan': s.data.arrayCharset, // 'zh',
+        },
+        header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
+        success: function (res) {
+          var error_text = '语音识别失败';
+          console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
+          if (res.data.toString() == error_text) {
+            wx.showToast({
+              title: '语音识别失败!请重试!',
+              icon: 'success',
+              duration: 2000
+            });
+          }
+          // if (res.statusCode == 404) {
+          //   wx.showToast({
+          //     title: '服务器搞飞机去了!呜呜呜~~~~',
+          //     icon: 'success',
+          //     duration: 2000
+          //   });
+          //   return;
+          // }
+          var options = JSON.parse(res.data), result = null, sqlStr = null;
+          for (var i in options) {
+            var sqlStr = options[i].toString();
+            console.log(sqlStr);
+            s.setData({
+              openMessage: sqlStr,
+            });
+            if (typeof (sqlStr) == "string") {
+              var myString = sqlStr.substring(0, 1);
+            }
+            if (myString == "开" || myString == '打') {
+              s.setData({ switchButton: true });
+              //  发送数据
+              s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
+              wx.showToast({
+                title: '打开成功',
+                icon: 'success',
+                duration: 2000
+              });
+            } else if (myString == "关") {
+              s.setData({ switchButton: false });
+              //  发送数据
+              s.sendJSON('c2s_write', s.data.did, s.data.switchButton);
+              wx.showToast({
+                title: '关闭成功',
+                icon: 'success',
+                duration: 2000
+              });
+            }
+          }
+          var str = res.data;
+          if (data.states == 1) {
+            var cEditData = s.data.editData;
+            cEditData.recodeIdentity = data.identitys;
+            s.setData({ editData: cEditData });
+          }
+          else {
+            wx.showModal({
+              title: '提示',
+              content: data.message,
+              showCancel: false,
+              success: function (res) { }
+            });
+          }
+          wx.hideToast();
+        },
+        fail: function (res) {  //  错误提示
+          wx.showModal({
+            title: '提示',
+            content: "录音的姿势不对!",
+            showCancel: false,
+            success: function (res) { }
+          });
+          wx.hideToast();
+        }
+      });
+    }, 1000)
+  },
 });

@@ -45,6 +45,7 @@ function init() {
 function connect() {
   var did = $('#did').val();
   gizwitsws.connect(did);
+  gizwitsws.createThatTime(did);
   showScreen("已发送connect指令!");
 }
 
@@ -67,7 +68,7 @@ function writeCommand() {
   let sliderNum = $("#slider").val();
   $("#sliderSpan").text($("#slider").val());
   let chonse = false;
-  $('#switch').is(':checked') ? chonse = true : chonse = false;
+  $('#switch').is(':checked') ? chonse = false : chonse = true;
   var json = {
     "onoffAll": chonse,
   };
@@ -108,6 +109,16 @@ function writeCommand() {
 function clearLog() {
   $('#log').html("");
 }
+
+function clearEle() {
+  $(".body_Gizw").css({"display": "none"});
+};
+
+function openGizw() {
+  $(".body_Gizw").css({"display": "block"});
+};
+
+
 
 //=========================================================
 // callback functions
@@ -186,7 +197,6 @@ function goLogin() {
 
 };
 
-
 function deleteGizw() {
   gizwitsws._getDeleteList('4hT7CZrxk9FqdCrzkz4BWS');
 }
@@ -196,10 +206,17 @@ function modifyGizw() {
 }
 
 function tap_ch() {
+  return;
   var eleopen = false;
-  eleopen = true;
-  $(".page-top").css({
-    'transform': 'translate(300px, 0px)'
-  });
-
+  if (eleopen) {
+    $(".page-top").css({
+      'transform': 'translate(0px, 0px)'
+    });
+    eleopen = false;
+  } else {
+    $(".page-top").css({
+      'transform': 'translate(300px, 0px)'
+    });
+    eleopen = true;
+  }
 }

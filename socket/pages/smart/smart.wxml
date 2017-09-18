@@ -13,8 +13,8 @@
     <!--smart.wxml-->
     <view class="pushMsgFm" hidden='{{ gizwitsVisible }}'>
       <!-- <view style="line-height: 30px;margin-top: 10px;">全部所需的时间是：{{ ins_i }}秒</view> -->
-      <!-- <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">视频解析所需的时间是：{{ ins_y }}秒</view> -->
-      <!-- <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">百度云识别的时间是：{{ ins_l }}秒</view>  -->
+      <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">视频解析所需的时间是：{{ ins_y }}秒</view>
+      <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">百度云识别的时间是：{{ ins_l }}秒</view>
       <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
         <view class="bodyView">
           <view class="changeText">
@@ -24,7 +24,7 @@
             <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" color="#6ba74f" />
           </view>
         </view>
-        <view class="section_gap">
+        <view class="section_gap" hidden='{{ }}'>
           <view class="body-view">
             <slider bindchange="sliderchange" min="0" max="100" show-value />
           </view>
@@ -48,7 +48,7 @@
               <view style="margin-top: 4px;">did:{{ item.did }}</view>
               <view>mac:{{ item.mac }}</view>
             </view>
-            <view class="msg-menus">
+            <view class="msg-menus" hidden='{{ true }}'>
               <view id='{{ item.did }}' class='menu-mark iconfont icon-weibiaoti2zhuanhuan' hidden='{{ chonseUpdate }}' bindtap='onMarkMsgTap'></view>
             </view>
             <view class="utils" hidden='{{ chonseDelete }}'>
