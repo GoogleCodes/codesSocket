@@ -47,6 +47,7 @@ function connect() {
   gizwitsws.connect(did);
   gizwitsws.createThatTime(did);
   showScreen("已发送connect指令!");
+  $(".awesome").css({ 'display' : 'block' });
 }
 
 function read() {
@@ -118,6 +119,9 @@ function openGizw() {
 };
 
 
+//=========================================================
+// callback functions
+//=========================================================
 function onInit(devices) {
   if (devices.length == 0) {
     showScreen("没有绑定的设备");
@@ -126,6 +130,12 @@ function onInit(devices) {
       showScreen("did=" + devices[i].did);
       showScreen("mac=" + devices[i].mac);
       // showScreen("product_key=" + devices[i].product_key);
+      if (devices[i].is_online == true) {
+        $(".online").text("已上线：" + devices[i].is_online);
+      } else {
+        $(".online").text("已下线：" + devices[i].is_online);
+      }
+      
       showScreen("is_online=" + devices[i].is_online);
       // showScreen("dev_alias=" + devices[i].dev_alias);
       // showScreen("remark=" + devices[i].remark);
@@ -189,6 +199,7 @@ function goLogin() {
   var uname = $("#username").val();
   var pword = $("#password").val();
   gizwitsws._getUserLogin(uname,pword);
+
 };
 
 function deleteGizw() {
@@ -201,16 +212,4 @@ function modifyGizw() {
 
 function tap_ch() {
   return;
-  var eleopen = false;
-  if (eleopen) {
-    $(".page-top").css({
-      'transform': 'translate(0px, 0px)'
-    });
-    eleopen = false;
-  } else {
-    $(".page-top").css({
-      'transform': 'translate(300px, 0px)'
-    });
-    eleopen = true;
-  }
 }

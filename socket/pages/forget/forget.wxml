@@ -18,4 +18,4 @@
 </view> -->
 
 <import src="../../template/util/util.wxml" />
-<template is="utilInput" data="{{ phone,disaCode,getCodeNumber,code,pword,loadHidden,unpword }}"></template>
+<template is="utilInput" data="{{ phone,disaCode,getCodeNumber,code,pword,loadHidden,unpword,codeImages }}"></template>

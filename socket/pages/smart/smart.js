@@ -4,6 +4,8 @@ var myUtils = require('../../utils/util.js');
 var app = new getApp();
 var times = null, ins = 0;
 
+var initTxt = '我是在转义\n换行符前的文字我是在转义换行符后的文字'
+
 Page({
   /**
    * 页面的初始数据
@@ -63,6 +65,7 @@ Page({
     ins_l: '',
     chonseUpdate: false,
     chonseDelete: true,
+    message: initTxt
   },
 
   /**
@@ -85,14 +88,12 @@ Page({
     }
   },
 
-
-
-
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function (res) {
     let that = this;
+    that.mapCtx = wx.createMapContext('myMap');
     if (that.data.gizwitsVisible == true) {
       that.setData({
         chonseDid: -1
@@ -200,15 +201,16 @@ Page({
     myUtils.sendRrquest('devdata/' + did + '/latest', 'GET', '', head).then(function (result) { }, function (err) { });
   },
 
+  //  扫描二维码分享
   _shareGizwits() {
-    wx.scanCode({
-      success(res) { },
-    })
-    return;
+    // wx.scanCode({
+    //   success(res) { },
+    // })
+
     let that = this, options = wx.getStorageSync('options');
     var json = {
       "type": 0,
-      "did": that.options.data.did,
+      "did": that.data.options.did,
       "uid": options.uid,
     };
     myUtils.sendRrquest('sharing', 'POST', json, that.data.head).then(function (result) {
@@ -225,17 +227,17 @@ Page({
   },
 
   _postScheduler(did) {
-    var that = this;
-    var json = {
+    let that = this;
+    let json = {
       "raw": "string",
       "attrs": {
         'onoffAll': true,
       },
-      "date": "2017-09-18",
+      "date": "2017-09-19",
       "time": "15:15",
       "repeat": "mon,tue,wed,thu,fri,sat,sun",
       "days": [],
-      "start_date": "2017-09-18",
+      "start_date": "2017-09-19",
       "end_date": "2017-09-20",
       "enabled": true,
       "remark": ""
@@ -247,16 +249,15 @@ Page({
       // }, function (err) { });
     }, function (err) { });
 
-    // wx.getLocation({
-    //   type: 'wgs84', // gcj02
-    //   success: function (res) {
-    //     var latitude = res.latitude //  纬度，浮点数，范围为-90~90，负数表示南纬
-    //     var longitude = res.longitude //  经度，浮点数，范围为-180~180，负数表示西经
-    //     var speed = res.speed //  速度，浮点数，单位m/s
-    //     var accuracy = res.accuracy //  位置的精确度
-    //     console.log(latitude, longitude, speed, accuracy);
-    //   }
-    // })
+    wx.getLocation({
+      type: 'gcj02', // gcj02 wgs84
+      success: function (res) {
+        var latitude = res.latitude //  纬度，浮点数，范围为-90~90，负数表示南纬
+        var longitude = res.longitude //  经度，浮点数，范围为-180~180，负数表示西经
+        var speed = res.speed //  速度，浮点数，单位m/s
+        var accuracy = res.accuracy //  位置的精确度
+      }
+    });
 
   },
 
@@ -726,9 +727,7 @@ Page({
     });
   },
 
-  /**
-   * 结束录音
-   */
+  //  结束录音
   endRecode: function (e) {
     var s = this;
     wx.stopRecord();

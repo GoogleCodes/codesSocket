@@ -62,6 +62,9 @@ Page({
         });
         return false;
       } else {
+        //  登录成功后向后台发送一条消息记录
+        //  ......
+        
         that.setData({ loadHidden: true, });
         var options = {
           uid: result.data.uid,
@@ -73,7 +76,7 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
-         wx.redirectTo({ url: '../smart/smart', });
+        wx.redirectTo({ url: '../smart/smart', });
       }
     });
   },

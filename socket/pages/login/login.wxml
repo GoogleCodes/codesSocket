@@ -10,7 +10,7 @@
       <input type='password' class='appidText fr' value='{{ pword }}' name='pword' placeholder='用户密码' confirm-type='done' />
     </view>
     <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>登录</button>
-    <view class="labels" hidden='{{ true }}'>
+    <view class="labels">
       <navigator url='../reg/reg' open-type='navigate'>
         <view class="viewLabel fl">注册新用户</view>
       </navigator>
