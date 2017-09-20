@@ -3,13 +3,21 @@
 <template name="pageBottom">
   <view class="page-bottom">
     <view class="page-content">
-      <view class="wc" bindtap='_shareGizwits' hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
+      <!-- <navigator url="../scene/scene" open-type="navigate">
+        <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
+          <view class="wc_list">
+            <view class="iconfont icon-deng fl"></view>
+            <view class="fl">情景模式</view>
+          </view>
+        </view>
+      </navigator> -->
+      <view class="wc" bindtap='_shareGizwits' hidden='{{ true }}' hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
         <view class="wc_list">
           <view class="iconfont icon-share fl"></view>
           <view class="fl">接受分享</view>
         </view>
       </view>
-      <navigator url="../forget/forget" open-type="navigate">
+      <navigator url="../forget/forget" open-type="navigate" hidden='{{ true }}'>
         <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
           <view class="wc_list">
             <view class="iconfont icon-weibiaoti2zhuanhuan fl"></view>
@@ -33,7 +41,7 @@
     <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
       <view class='bodyView'>
         <view class="iconfont icon-user fl"></view>
-        <input type='number' class='appidText fl' value='{{ phone }}' bindblur="bindChange" style="width: 150px" name='phone' placeholder='请输入手机号码'  />
+        <input type='number' class='appidText fl' value='{{ phone }}' bindblur="bindChange" style="width: 150px" name='phone' placeholder='请输入手机号码' />
         <button class="fr codeBtn" bindtap='getCodeNumber' disabled='{{ disaCode }}' data-phone="{{ phone }}">{{ getCodeNumber }}</button>
       </view>
       <view class='bodyView'>

@@ -4,8 +4,6 @@ var myUtils = require('../../utils/util.js');
 var app = new getApp();
 var times = null, ins = 0;
 
-var initTxt = '我是在转义\n换行符前的文字我是在转义换行符后的文字'
-
 Page({
   /**
    * 页面的初始数据
@@ -50,7 +48,7 @@ Page({
     socketOpen: false,  //  socket 开关
     switchButton: false,  //  开关
     _heartbeatInterval: 60,  //  心跳
-    _heartbeatTimerId: undefined,
+    _heartbeatTimerId: undefined,  //  心跳
     array: ['国语', '粤语'],
     index: 0,
     arrayCharset: 'zh',
@@ -65,7 +63,6 @@ Page({
     ins_l: '',
     chonseUpdate: false,
     chonseDelete: true,
-    message: initTxt
   },
 
   /**
@@ -92,6 +89,7 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function (res) {
+    this.orderSign();
     let that = this;
     that.mapCtx = wx.createMapContext('myMap');
     if (that.data.gizwitsVisible == true) {
@@ -108,7 +106,6 @@ Page({
     //     };
     //   }
     // });
-
     // //  返回值中只会出现小程序已经向用户请求过的权限。
     // wx.getSetting({
     //   success: (res) => {
@@ -167,7 +164,6 @@ Page({
       content: "你确定要退出登录???",
       showCancel: true,
       success: function (res) {
-        console.log(res.cancel, res.confirm);
         if (res.confirm == true) {
           wx.closeSocket({})  //  关闭websocket
           //  清除缓存
@@ -203,61 +199,99 @@ Page({
 
   //  扫描二维码分享
   _shareGizwits() {
-    // wx.scanCode({
-    //   success(res) { },
-    // })
-
-    let that = this, options = wx.getStorageSync('options');
-    var json = {
-      "type": 0,
-      "did": that.data.options.did,
-      "uid": options.uid,
-    };
-    myUtils.sendRrquest('sharing', 'POST', json, that.data.head).then(function (result) {
-      if (result.data.error_code == 9081) {
-        wx.showModal({
-          title: '提示',
-          content: "来宾或普通用户不能共享设备!",
-          showCancel: false,
-          success: function (res) { }
-        });
-        return false;
-      }
-    }, function (err) { });
+    let that = this, code = "";
+    wx.scanCode({
+      success(res) {
+        //  创建设备分享
+        // myUtils.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then(function (result) {
+        //   console.log(result);
+        // }, function (err) {
+        //   console.log(err);
+        // });
+      },
+    })
+    //  查询分享设备
+    var sharing_type = 1, status = 0;
+    myUtils.sendRrquest('sharing?sharing_type=' + sharing_type + '&status=' + status +'', 'GET', '', that.data.head).then(function (result) {
+      console.log(result.data);
+    }, function (err) {
+      console.log(err);
+    });
   },
 
   _postScheduler(did) {
     let that = this;
+    let dodate = new Date();
+    let y = dodate.getFullYear(), m = dodate.getMonth() + 1, d = dodate.getDate();
+    console.log(y + '-' + m + '-' + d);
+    var thatTime = y + '-' + m + '-' + d;
     let json = {
       "raw": "string",
       "attrs": {
         'onoffAll': true,
       },
-      "date": "2017-09-19",
-      "time": "15:15",
-      "repeat": "mon,tue,wed,thu,fri,sat,sun",
-      "days": [],
-      "start_date": "2017-09-19",
-      "end_date": "2017-09-20",
+      "date": thatTime,
+      "time": "19:00",
+      "repeat": "day",  //"mon,tue,wed,thu,fri,sat,sun",
+      "days": [20,21,22,23,24,25,26,27,28,29,30],
+      "start_date": thatTime,
+      "end_date": "2017-09-23",
       "enabled": true,
       "remark": ""
     };
     myUtils.sendRrquest('devices/' + did + '/scheduler', 'POST', json, that.data.head).then(function (result) {
       console.log(result);
-      // myUtils.sendRrquest('devices/' + did + '/scheduler?limit=20&skip=0', 'GET', '', that.data.head).then(function (result) {
-      //   console.log(result.data);
-      // }, function (err) { });
+      return;
+      myUtils.sendRrquest('devices/' + did + '/scheduler?limit=20&skip=0', 'GET', '', that.data.head).then(function (result) {
+        var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + '4OuqRyEiOHXGoTLOBYPhX-axxXr9iUBV5wUGzUCxWPYFv4dzUz6wodRrepmCOAFwBQ160Y2T-f2E0I0nOoWNm9f2-YxsipOedVdVGZQFNG30m3Q-LLBB7TkGePC5OxDNDPAcAHAPBM';
+        wx.request({
+          url: url,
+          data: {
+            touser: wx.getStorageSync('user').openid,
+            template_id: 'ho9RAP7GBHDJYg3EVHqiBgxSQmt1apwOpGAhLBCfgkI',//这个是1、申请的模板消息id，  
+            page: '/pages/smart/smart',
+            form_id: wx.getStorageSync('userInformation').formID,
+            data: {
+              "keyword1": {
+                "value": '测试发送消息',
+                "color": "#4a4a4a"
+              },
+              "keyword2": {
+                "value": '智能灯已开启',
+                "color": "#4a4a4a"
+              }
+            },
+            emphasis_keyword: 'keyword1.DATA'
+          },
+          method: 'POST',
+          success: function (res) {
+            console.log(res);
+            that.setData({ switchButton: true });
+            //  发送数据
+            that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
+            wx.showToast({
+              title: '发送成功',
+              icon: 'success',
+              duration: 2000
+            });
+          },
+          fail: function (err) {
+            console.log("push err")
+            console.log(err);
+          }
+        });
+      }, function (err) { });
     }, function (err) { });
 
-    wx.getLocation({
-      type: 'gcj02', // gcj02 wgs84
-      success: function (res) {
-        var latitude = res.latitude //  纬度，浮点数，范围为-90~90，负数表示南纬
-        var longitude = res.longitude //  经度，浮点数，范围为-180~180，负数表示西经
-        var speed = res.speed //  速度，浮点数，单位m/s
-        var accuracy = res.accuracy //  位置的精确度
-      }
-    });
+    // wx.getLocation({
+    //   type: 'gcj02', // gcj02 wgs84
+    //   success: function (res) {
+    //     var latitude = res.latitude //  纬度，浮点数，范围为-90~90，负数表示南纬
+    //     var longitude = res.longitude //  经度，浮点数，范围为-180~180，负数表示西经
+    //     var speed = res.speed //  速度，浮点数，单位m/s
+    //     var accuracy = res.accuracy //  位置的精确度
+    //   }
+    // });
 
   },
 
@@ -286,7 +320,6 @@ Page({
           pKey = device.product_key;
         }
       }
-      that._postScheduler(that.data.options.did);
       // that._GizwitsDevdata(that.data.options.did);
       // that._getGizwitsDataing(pKey);
     }, function (err) { });
@@ -301,6 +334,7 @@ Page({
     if (that.data.chonseDid === index) {
       console.log(did);
       this.setData({ did: did, });
+      that._postScheduler(that.data.options.did);
       return;
     } else {
       this.setData({
@@ -491,11 +525,10 @@ Page({
     }
   },
 
-  orderSign: function (e) {
-    var that = this;
-    var fId = e.detail.formId, fObj = e.detail.value;
-    var countdown = 24 * 3600 * 5;
-    var num = 5;
+  orderSign: function () {
+    let that = this;
+    let countdown = 24 * 3600 * 5;
+    let num = 5;
     num--;
     // // 立即显示还剩五天
     console.log("还剩余5天0小时0分0秒");
@@ -514,24 +547,24 @@ Page({
       rest -= minutes * 60;
       // 秒
       var seconds = parseInt(rest, 10);
-      console.log("还剩余" + days + "天" + hours + "小时" + minutes + "分" + seconds + "秒");
+      // console.log("还剩余" + days + "天" + hours + "小时" + minutes + "分" + seconds + "秒");
     }, 1e3);
     if (num == 0) {
-      var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + 'fazdORwCMHy9xDhht38IpLrEBkjAlwl_DIFKfnowSsQZGh_ANXeGukzHitmXt638k6qUPH1iQHubHOVok_XEPs4ljISfgm5SDP4-UFtzhBQxY1ljS1RmA_c6nd5I_xawLFTfADAYSG';
+      var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + 'jqiB8Cd9wDru7y-cFLDpDo2Pi2k2Uuk6Yt-kn30hW59QhOFhT80FHt5l20UETxTgZYggistyJ67Phtj5HkzNKybX-mUJ-jz7U0tFwiEvpE0-9fBUpyXw39Q7vsubsriVEHKaAGATWZ';
       wx.request({
         url: url,
         data: {
           touser: wx.getStorageSync('user').openid,
           template_id: 'ho9RAP7GBHDJYg3EVHqiBgxSQmt1apwOpGAhLBCfgkI',//这个是1、申请的模板消息id，  
           page: '/pages/smart/smart',
-          form_id: fId,
+          form_id: wx.getStorageSync('userInformation').formID,
           data: {
             "keyword1": {
               "value": '测试发送消息',
               "color": "#4a4a4a"
             },
             "keyword2": {
-              "value": '智能灯已经开启',
+              "value": '智能灯已开启',
               "color": "#4a4a4a"
             }
           },
@@ -734,14 +767,15 @@ Page({
     s.setData({ isSpeaking: false });
     wx.showToast();
     setTimeout(function () {
-      var urls = 'http://yuyin.ittun.com/public/index/index/zhen';
       wx.uploadFile({
-        url: urls,
+        url: 'http://yuyin.ittun.com/public/index/index/zhen',
         filePath: s.data.recodePath,
         method: "POST",
         name: 'abc',
-        header: ('Access-Control-Allow-Origin: *'),
-        header: ("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"),
+        header: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
+        },
         formData: {
           'lan': s.data.arrayCharset, // 'zh',
         },

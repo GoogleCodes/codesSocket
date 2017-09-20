@@ -1,14 +1,16 @@
 <view class="page">
+  
   <!-- 导入模块 -->
   <import src="../../template/util/util.wxml" />
   <template is="pageBottom"></template>
 
-  <view class="page-top" style="{{ translate }}">
+  <view class="page-top" style="{{ translate }}" >
+    <!-- <view style="position: fixed;top: 45px;left: 0px;width: 15%;height: 81%;z-index: 10;" bindtouchmove="tap_drag" bindtouchend="tap_end" bindtouchstart="tap_start"></view> -->
     <!--
      bindtouchmove="tap_drag" bindtouchend="tap_end" bindtouchstart="tap_start" 
     -->
     <view class="header-tab">
-      <view bindtap="tap_ch" class='icon-liebiao iconfont'></view>
+      <view bindtap="tap_ch" class='icon-liebiao iconfont fl'></view>
     </view>
     <!--smart.wxml-->
     <view class="pushMsgFm" hidden='{{ gizwitsVisible }}'>
@@ -20,11 +22,11 @@
           <view class="changeText">
             <label>Save</label>
           </view>
-          <view class="changeInput" style="float:right;">
+          <view class="changeInput" style="float:right;" >
             <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" color="#6ba74f" />
           </view>
         </view>
-        <view class="section_gap">
+        <view class="section_gap" hidden='{{ true }}'>
           <view class="body-view">
             <slider bindchange="sliderchange" min="0" max="100" show-value />
           </view>
@@ -41,7 +43,6 @@
 
     <view class='listDevices' hidden='{{ gizwitsListVisible }}'>
       <view class="placeChonse">请先选择设备：</view>
-      <text style="word-break: break-all;">{{ message }}</text>
       <scroll-view scroll-y style="height:{{ eleHeight }}px;background:rgb(251, 249, 254);" scroll-top="10" enable-back-to-top="true">
         <view wx:for="{{ listDevices }}" wx:key="did" class="scrollView">
           <view wx:if="{{ item.is_online == true }}">
@@ -49,7 +50,7 @@
               <view style="margin-top: 4px;">did:{{ item.did }}</view>
               <view>mac:{{ item.mac }}</view>
             </view>
-            <view class="msg-menus">
+            <view class="msg-menus" hidden='{{ true }}'>
               <view id='{{ item.did }}' class='menu-mark iconfont icon-weibiaoti2zhuanhuan' hidden='{{ chonseUpdate }}' bindtap='onMarkMsgTap'></view>
             </view>
             <view class="utils" hidden='{{ chonseDelete }}'>

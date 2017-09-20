@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
     loadHidden: true,
     getCodeNumber: '获取验证码',
     disaCode: false,
@@ -15,13 +16,47 @@ Page({
     code: '', //  验证码
     pword: '',  //  密码
     unpword: '', //  重覆密码
+    codeImages: '',  //  图片验证码,
+    token: '',
+    captcha_id: '',
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-  
+    this.getToken();
+  },
+
+  //  获取Token
+  getToken() {
+    let that = this;
+    let headToken = {
+      'content-type': 'application/json',
+      'Accept': 'application/json',
+      'X-Gizwits-Application-Auth': '14599c169b7a1ad3d13375533943db5b',
+      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
+    };
+    //  获取token
+    _util.sendRrquest('request_token', 'POST', '', headToken).then(function (result) {
+      console.log(result.data.token);
+      that.setData({ token: result.data.token });
+      //  获取图片验证码
+      let head = {
+        'content-type': 'application/json',
+        'Accept': 'application/json',
+        'X-Gizwits-Application-Token': that.data.token,
+        'X-Gizwits-Application-Id': that.data.gizwitsAppId,
+      };
+      //  获取图片验证码
+      _util.sendRrquest('verify/codes', 'GET', '', head).then(function (result) {
+        console.log(result.data);
+        that.setData({
+          codeImages: result.data.captcha_url,
+          captcha_id: result.data.captcha_id
+        });
+      });
+    });
   },
 
   //  获取验证码
@@ -43,6 +78,23 @@ Page({
         });
       }
     }, 1000);
+    let head = {
+      'content-type': 'application/json',
+      'Accept': 'application/json',
+      'X-Gizwits-Application-Token': that.data.token,
+      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
+    };
+    let json = {
+      "phone": that.data.phone
+    };
+    _util.sendRrquest('sms_code', 'POST', json, head).then(function (result) {
+      console.log(result.data);
+    });
+  },
+
+  bindChange(e) {
+    let that = this;
+    that.data.phone = e.detail.value;
   },
 
   ForgetForm(e) {
@@ -103,7 +155,14 @@ Page({
     };
     wx.setStorageSync('userInformation', json);
     _util.sendRrquest('users', 'POST', json, head).then(function (result) {
-
+      wx.showToast({
+        title: '注册成功！',
+        icon: 'success',
+        duration: 2000
+      });
+      wx.removeStorageSync("userInformation");
+      wx.removeStorageSync("options");
+      wx.redirectTo({ url: '../login/login', });
     });
 
   },

@@ -1,0 +1,15 @@
+<!--pages/scene/scene.wxml-->
+
+<view class="bodyView">
+  <view class="changeText fl">
+    <label>{{ sceneSwitchText }}</label>
+  </view>
+  <view class="changeInput fr" style="float:right;">
+    <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" color="#6ba74f" />
+  </view>
+
+  <view>
+    <view></view>
+  </view>
+
+</view>

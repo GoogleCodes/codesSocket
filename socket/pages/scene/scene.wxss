@@ -1,0 +1,5 @@
+/* pages/scene/scene.wxss */
+
+.changeText {
+  line-height: 35px;
+}

@@ -2,6 +2,7 @@
   "pages": [
     "pages/login/login",
     "pages/smart/smart",
+    "pages/scene/scene",
     "pages/text/text",
     "pages/more/more",
     "pages/forget/forget",

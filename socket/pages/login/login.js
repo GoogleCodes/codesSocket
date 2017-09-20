@@ -17,6 +17,8 @@ Page({
 
   loginForm(e) {
     var that = this;
+    let fId = e.detail.formId, fObj = e.detail.value;
+    console.log(fId, fObj);
     switch (true) {
       case e.detail.value.uname == '':
         wx.showModal({
@@ -40,10 +42,14 @@ Page({
       pword: e.detail.value.pword,
       loadHidden: false,
     });
+
+    console.log(fId, fObj);
     var json = {
       lang: "en",
       username: that.data.uname,
       password: that.data.pword,
+      formID: fId,
+      fromObject: fObj,
     };
     var head = {
       'content-type': 'application/json',
@@ -64,7 +70,6 @@ Page({
       } else {
         //  登录成功后向后台发送一条消息记录
         //  ......
-        
         that.setData({ loadHidden: true, });
         var options = {
           uid: result.data.uid,
@@ -165,4 +170,5 @@ Page({
   onShareAppMessage: function () {
   
   }
+
 })

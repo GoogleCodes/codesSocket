@@ -6,7 +6,7 @@ App({
   onLaunch: function() {
     this.data.deviceInfo = wx.getSystemInfoSync();
     //  微信小程序appid  微信小程序secret
-    var that = this, appID = 'wx82bd98556e74419d', secret = 'f8695b267219ed670f0553e8a3ab1fbb';
+    var that = this, appID = 'wx427aa2cee61883dd', secret = '945ffa55aed70a50c4db910df20c778e';
     //获取openid
     var user = wx.getStorageSync('user') || {};
     if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {//不要在30天后才更换openid-尽量提前10分钟更新  

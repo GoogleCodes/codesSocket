@@ -132,7 +132,11 @@ page, .page {
   margin-right: 10px;
 }
 
-.wc_list .icon-share {
+.wc_list .icon-deng {
+  margin-right: 10px;
+}
+
+.wc_list .icon-share{
   margin-right: 6px;
 }
 

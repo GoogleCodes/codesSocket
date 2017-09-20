@@ -26,9 +26,7 @@ Page({
    */
   onLoad: function (options) {
     let that = this;
-
     that.getToken();
-
   },
 
   //  获取Token
@@ -42,7 +40,6 @@ Page({
     };
     //  获取token
     _util.sendRrquest('request_token', 'POST', '', headToken).then(function (result) {
-      console.log(result.data.token);
       that.setData({ token: result.data.token });
       //  获取图片验证码
       let head = {
@@ -160,9 +157,9 @@ Page({
         icon: 'success',
         duration: 2000
       });
-      wx.redirectTo({ url: '../login/login', });
       wx.removeStorageSync("userInformation");
       wx.removeStorageSync("options");
+      wx.redirectTo({ url: '../login/login', });
     });
   },
 
