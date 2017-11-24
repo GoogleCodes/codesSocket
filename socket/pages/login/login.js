@@ -18,7 +18,6 @@ Page({
   loginForm(e) {
     var that = this;
     let fId = e.detail.formId, fObj = e.detail.value;
-    console.log(fId, fObj);
     switch (true) {
       case e.detail.value.uname == '':
         wx.showModal({
@@ -42,8 +41,6 @@ Page({
       pword: e.detail.value.pword,
       loadHidden: false,
     });
-
-    console.log(fId, fObj);
     var json = {
       lang: "en",
       username: that.data.uname,
@@ -69,7 +66,6 @@ Page({
         return false;
       } else {
         //  登录成功后向后台发送一条消息记录
-        //  ......
         that.setData({ loadHidden: true, });
         var options = {
           uid: result.data.uid,
@@ -91,27 +87,6 @@ Page({
    */
   onLoad: function (options) {
     
-  },
-
-  forgetPwd () {
-    return;
-    let that = this;
-    wx.request({
-      url: 'https://api.gizwits.com/app/reset_password',
-      method: 'POST',
-      header: {
-        'content-type': 'application/json',
-        'Accept' : ' application/json',
-        "X-Gizwits-Application-Id": that.data.gizwitsAppId, // phone_id: that.data.options.wechatOpenId,
-      },
-      data: {
-        "phone": that.data.uname,
-        "new_pwd": that.data.pword,
-        "code": "string"    //  手机验证码
-      },
-      success (res) {},
-      fail (err) {},
-    })
   },
 
   /**

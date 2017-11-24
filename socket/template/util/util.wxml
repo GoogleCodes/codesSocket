@@ -3,21 +3,21 @@
 <template name="pageBottom">
   <view class="page-bottom">
     <view class="page-content">
-      <!-- <navigator url="../scene/scene" open-type="navigate">
+       <navigator url="../scene/scene" open-type="navigate" hidden='{{ true }}'>
         <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
           <view class="wc_list">
             <view class="iconfont icon-deng fl"></view>
             <view class="fl">情景模式</view>
           </view>
         </view>
-      </navigator> -->
-      <view class="wc" bindtap='_shareGizwits' hidden='{{ true }}' hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
+      </navigator> 
+      <view class="wc" bindtap='_shareGizwits' hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
         <view class="wc_list">
           <view class="iconfont icon-share fl"></view>
           <view class="fl">接受分享</view>
         </view>
       </view>
-      <navigator url="../forget/forget" open-type="navigate" hidden='{{ true }}'>
+      <navigator url="../forget/forget" open-type="navigate">
         <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
           <view class="wc_list">
             <view class="iconfont icon-weibiaoti2zhuanhuan fl"></view>

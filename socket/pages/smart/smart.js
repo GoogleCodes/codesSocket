@@ -1,6 +1,7 @@
 // smart.js
 //  导入js
 var myUtils = require('../../utils/util.js');
+let urls = require('../../utils/common/common.js');
 var app = new getApp();
 var times = null, ins = 0;
 
@@ -23,7 +24,6 @@ Page({
     voices: [],
     socketOpen: false,  //  开关
     options: {
-      apiHost: 'api.gizwits.com',
       json: {
         'attrs': 'attrs_v4',
         'custom': 'custom'
@@ -44,7 +44,6 @@ Page({
     uid: '',
     token: '',
     recodePath: '',  //  录音路径
-    keepalive: 180,
     socketOpen: false,  //  socket 开关
     switchButton: false,  //  开关
     _heartbeatInterval: 60,  //  心跳
@@ -83,13 +82,14 @@ Page({
     } else {
       that._getBindingList(20, 0);
     }
+    console.log(myUtils.toStringTools('打开'));
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function (res) {
-    this.orderSign();
+    // this.orderSign();
     let that = this;
     that.mapCtx = wx.createMapContext('myMap');
     if (that.data.gizwitsVisible == true) {
@@ -97,6 +97,25 @@ Page({
         chonseDid: -1
       });
     }
+
+    // let arr = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    // console.log(arr.length);
+
+    let arr = new Array(768);
+    for (let i = 0; i <= 677; i++) {
+      arr[i] = 0;
+    }
+    console.log(arr.length);
+    // let too = myUtils.toStringTools('打开情景模式');
+    // var arrtoo = arr.slice(0);
+    // console.log(too.concat(arrtoo).splice(0, 768));
+    
+    // myUtils.sendRrquest('scene', 'GET', '', that.data.head).then(function (result) {
+    //   console.log(result.data);
+    // }, function (err) {
+    //   console.log(err);
+    // });
+
     // wx.openSetting({
     //   success: (res) => {
     //     res.authSetting = {
@@ -118,46 +137,22 @@ Page({
     // })
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
+  stringToBytes(str) {
+    var ch, st, re = [];
+    for (var i = 0; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      st = [];
+      do {
+        st.push(ch & 0xFF);
+        ch = ch >> 8;
+      }
+      while (ch);
+      re = re.concat(st.reverse());
+    }
+    return re;
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () { },
-
+  //  登出
   backLogin() {
     wx.showModal({
       title: '提示',
@@ -170,8 +165,6 @@ Page({
           wx.removeStorageSync('options');
           wx.removeStorageSync('userInformation');
           wx.redirectTo({ url: '../login/login', })
-        } else if (res.cancel == false) {
-          return;
         }
       }
     });
@@ -182,48 +175,64 @@ Page({
     let that = this, options = wx.getStorageSync('options');
     var head = {
       'content-type': 'application/json',
-      'X-Gizwits-Application-Id': options.gizwitsAppId,
+      'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
     };
     myUtils.sendRrquest('datapoint?product_key=' + key, 'GET', '', head).then(function (result) { }, function (err) { });
   },
 
   //  监控设备
   _GizwitsDevdata(did) {
-    let that = this, options = wx.getStorageSync('options');
+    let that = this;
     let head = {
       'content-type': 'application/json',
-      'X-Gizwits-Application-Id': options.gizwitsAppId,
+      'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
     };
     myUtils.sendRrquest('devdata/' + did + '/latest', 'GET', '', head).then(function (result) { }, function (err) { });
   },
 
   //  扫描二维码分享
   _shareGizwits() {
-    let that = this, code = "";
+    let that = this, code = "adc1b95729864eecb02cd614cd305abc";
     wx.scanCode({
       success(res) {
         //  创建设备分享
-        // myUtils.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then(function (result) {
-        //   console.log(result);
-        // }, function (err) {
-        //   console.log(err);
-        // });
+        myUtils.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then(function (result) {
+          console.log(result);
+        }, function (err) { });
       },
     })
-    //  查询分享设备
-    var sharing_type = 1, status = 0;
-    myUtils.sendRrquest('sharing?sharing_type=' + sharing_type + '&status=' + status +'', 'GET', '', that.data.head).then(function (result) {
-      console.log(result.data);
+
+    // //  创建设备分享
+    myUtils.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then(function (result) {
+      console.log(result);
     }, function (err) {
       console.log(err);
     });
+
+    // var options = {
+    //   "type": 0,
+    //   "did": that.data.options.did,
+    //   "uid": wx.getStorageSync('options').uid,
+    // };
+    // myUtils.sendRrquest('sharing', 'POST', options, that.data.head).then(function (result) {
+    //   console.log(result);
+    // }, function (err) {
+    //   console.log(err);
+    // });
+
+    //  查询分享设备
+    // var sharing_type = 1, status = 0;
+    // myUtils.sendRrquest('sharing?sharing_type=' + sharing_type + '&status=' + status + '', 'GET', '', that.data.head).then(function (result) {
+    //   console.log(result.data);
+    // }, function (err) {
+    //   console.log(err);
+    // });
   },
 
   _postScheduler(did) {
     let that = this;
     let dodate = new Date();
     let y = dodate.getFullYear(), m = dodate.getMonth() + 1, d = dodate.getDate();
-    console.log(y + '-' + m + '-' + d);
     var thatTime = y + '-' + m + '-' + d;
     let json = {
       "raw": "string",
@@ -233,7 +242,7 @@ Page({
       "date": thatTime,
       "time": "19:00",
       "repeat": "day",  //"mon,tue,wed,thu,fri,sat,sun",
-      "days": [20,21,22,23,24,25,26,27,28,29,30],
+      "days": [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
       "start_date": thatTime,
       "end_date": "2017-09-23",
       "enabled": true,
@@ -241,9 +250,8 @@ Page({
     };
     myUtils.sendRrquest('devices/' + did + '/scheduler', 'POST', json, that.data.head).then(function (result) {
       console.log(result);
-      return;
       myUtils.sendRrquest('devices/' + did + '/scheduler?limit=20&skip=0', 'GET', '', that.data.head).then(function (result) {
-        var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + '4OuqRyEiOHXGoTLOBYPhX-axxXr9iUBV5wUGzUCxWPYFv4dzUz6wodRrepmCOAFwBQ160Y2T-f2E0I0nOoWNm9f2-YxsipOedVdVGZQFNG30m3Q-LLBB7TkGePC5OxDNDPAcAHAPBM';
+        var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + 'OuvB3IxXvzl5vqP6p1T7anDYHKBpzFAZEipOlElbRwBWSsDMlNbX2GEVH59tpR-dcSV4W6np0lzOqjn5eUqga9lvRqEVUVgGZfMmjD5tf37PL_Iz_G3DAhXM5pzdenHwTOCeACAJES';
         wx.request({
           url: url,
           data: {
@@ -276,13 +284,11 @@ Page({
             });
           },
           fail: function (err) {
-            console.log("push err")
-            console.log(err);
+            
           }
         });
       }, function (err) { });
     }, function (err) { });
-
     // wx.getLocation({
     //   type: 'gcj02', // gcj02 wgs84
     //   success: function (res) {
@@ -292,7 +298,6 @@ Page({
     //     var accuracy = res.accuracy //  位置的精确度
     //   }
     // });
-
   },
 
   _getBindingList: function (limit, skip) {
@@ -341,7 +346,6 @@ Page({
         did: did,
         chonseDid: index,
       });
-      console.log(that.data.did);
     }
   },
 
@@ -378,7 +382,7 @@ Page({
           uid: options.uid,
           token: options.token,
           p0_type: that.data.options.json.attrs,
-          heartbeat_interval: that.data.keepalive,
+          heartbeat_interval: 180,
           auto_subscribe: true
         }
       }
@@ -394,7 +398,7 @@ Page({
           data: [{
             did: that.data.did,
             passcode: 123456
-          },]
+          }]
         };
         that._sendJson(json);
         //  读取数据
@@ -427,43 +431,46 @@ Page({
 
   //  拉动按钮
   sliderchange(e) {
-    return;
     let that = this, json = {
       'hardwareVersion': e.detail.value,
     };
-    console.log(json);
     that.sendJSON('c2s_write', that.data.did, json);
   },
 
   //  智能灯开关
   chonseSocket(e) {
     var that = this, json = {};
+    let arr = new Array(768);
+    for (let i = 0; i < 768; i++) {
+      arr[i] = 0; 
+    }
+    console.log(arr);
+    var arrtoo = arr.slice(0);
     that.setData({ socketOpen: true });
     //  发送数据开关 true : 打开  false : 关闭
     if (e.detail.value == true) {
       that.setData({ switchButton: true });
+      let too = myUtils.toStringTools('打开情景模式');
+      let aoo = too.concat(arrtoo).splice(0, 768);
+      console.log(aoo.length);
       //  发送数据
       json = {
         "onoffAll": that.data.switchButton,
+        "data": too.concat(arrtoo).splice(0, 768)
       };
+      console.log(json.data);
       that.sendJSON('c2s_write', that.data.did, json);
-      wx.showToast({
-        title: '打开成功',
-        icon: 'success',
-        duration: 2000
-      });
+      myUtils.Toast('打开成功', 'success');
     } else {
+      let too = myUtils.toStringTools('关闭情景模式');
       that.setData({ switchButton: false });
       //  发送数据
       json = {
         "onoffAll": that.data.switchButton,
+        "data": too.concat(arrtoo).splice(0, 768)
       };
       that.sendJSON('c2s_write', that.data.did, json);
-      wx.showToast({
-        title: '关闭成功',
-        icon: 'success',
-        duration: 2000
-      });
+      myUtils.Toast('关闭成功', 'success');
     }
   },
 
@@ -477,7 +484,7 @@ Page({
         names: names
       }
     };
-    this._sendJson(json);
+    myUtils.sendJsons(json);
   },
 
   sendJSON(cmd, dids, form) {
@@ -487,29 +494,23 @@ Page({
       data: {
         did: dids,
         attrs: form,
-        // attrs: {
-        //   "onoffAll": form,
-        // },
       },
     };
-    that._sendJson(json);
+    myUtils.sendJsons(json);
   },
 
   /**
   * 发送数据
   */
-  _sendJson: function (json) {
+  _sendJson(json) {
     var that = this;
     wx.sendSocketMessage({
       //  对象转换字符串
       data: JSON.stringify(json),
-      success: function (res) { },
-      fail: function (err) { },
-      complete: function () { }
     })
   },
 
-  bindPickerChange: function (e) {
+  bindPickerChange(e) {
     var that = this;
     that.setData({
       index: e.detail.value
@@ -525,69 +526,69 @@ Page({
     }
   },
 
-  orderSign: function () {
+  orderSign: function (e) {
     let that = this;
-    let countdown = 24 * 3600 * 5;
-    let num = 5;
-    num--;
-    // // 立即显示还剩五天
-    console.log("还剩余5天0小时0分0秒");
-    // 倒计时
-    var countdownTimer = setInterval(function () {
-      countdown -= 1;
-      var rest = countdown;
-      // 天
-      var days = parseInt(rest / (24 * 3600), 10);
-      rest -= days * 24 * 3600;
-      // 时
-      var hours = parseInt(rest / 3600, 10);
-      rest -= hours * 3600;
-      // 分
-      var minutes = parseInt(rest / 60, 10);
-      rest -= minutes * 60;
-      // 秒
-      var seconds = parseInt(rest, 10);
-      // console.log("还剩余" + days + "天" + hours + "小时" + minutes + "分" + seconds + "秒");
-    }, 1e3);
-    if (num == 0) {
-      var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + 'jqiB8Cd9wDru7y-cFLDpDo2Pi2k2Uuk6Yt-kn30hW59QhOFhT80FHt5l20UETxTgZYggistyJ67Phtj5HkzNKybX-mUJ-jz7U0tFwiEvpE0-9fBUpyXw39Q7vsubsriVEHKaAGATWZ';
-      wx.request({
-        url: url,
+    // let countdown = 24 * 3600 * 5;
+    // let num = 5;
+    // num--;
+    // // // 立即显示还剩五天
+    // console.log("还剩余5天0小时0分0秒");
+    // // 倒计时
+    // var countdownTimer = setInterval(function () {
+    //   countdown -= 1;
+    //   var rest = countdown;
+    //   // 天
+    //   var days = parseInt(rest / (24 * 3600), 10);
+    //   rest -= days * 24 * 3600;
+    //   // 时
+    //   var hours = parseInt(rest / 3600, 10);
+    //   rest -= hours * 3600;
+    //   // 分
+    //   var minutes = parseInt(rest / 60, 10);
+    //   rest -= minutes * 60;
+    //   // 秒
+    //   var seconds = parseInt(rest, 10);
+    //   // console.log("还剩余" + days + "天" + hours + "小时" + minutes + "分" + seconds + "秒");
+    // }, 1e3);
+    var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + '2BVg5XaXPn8MD6UgPp-bbMQ03VjKFxmn03ZBqpMp23ZN7V4uIhPNDZC2sIP6ArX2fjvUaUUKCrx-xLkLyRDGU2T8zqB3Q9ck9G-kczwwwIsgCIMLi1di2pdaXzNFTOIHJNWiAJAWAJ';
+    wx.request({
+      url: url,
+      data: {
+        touser: wx.getStorageSync('user').openid,   //  e.detail.formId   wx.getStorageSync('user').openid
+        template_id: 'ho9RAP7GBHDJYg3EVHqiBgxSQmt1apwOpGAhLBCfgkI',//这个是1、申请的模板消息id，  
+        page: '/pages/smart/smart',
+        form_id: wx.getStorageSync('userInformation').formID,
         data: {
-          touser: wx.getStorageSync('user').openid,
-          template_id: 'ho9RAP7GBHDJYg3EVHqiBgxSQmt1apwOpGAhLBCfgkI',//这个是1、申请的模板消息id，  
-          page: '/pages/smart/smart',
-          form_id: wx.getStorageSync('userInformation').formID,
-          data: {
-            "keyword1": {
-              "value": '测试发送消息',
-              "color": "#4a4a4a"
-            },
-            "keyword2": {
-              "value": '智能灯已开启',
-              "color": "#4a4a4a"
-            }
+          "keyword1": {
+            "value": '测试发送消息',
+            "color": "#4a4a4a"
           },
-          emphasis_keyword: 'keyword1.DATA'
+          "keyword2": {
+            "value": '智能灯已开启',
+            "color": "#4a4a4a"
+          }
         },
-        method: 'POST',
-        success: function (res) {
-          that.setData({ switchButton: true });
-          //  发送数据
-          that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
-          wx.showToast({
-            title: '发送成功',
-            icon: 'success',
-            duration: 2000
-          });
-        },
-        fail: function (err) {
-          console.log("push err")
-          console.log(err);
-        }
-      });
-      clearInterval(countdownTimer);
-    };
+        emphasis_keyword: 'keyword1.DATA'
+      },
+      method: 'POST',
+      success: function (res) {
+        that.setData({ switchButton: true });
+        //  发送数据
+        that.sendJSON('c2s_write', that.data.did, that.data.switchButton);
+        wx.showToast({
+          title: '发送成功',
+          icon: 'success',
+          duration: 2000
+        });
+      },
+      fail: function (err) {
+        console.log("push err")
+        console.log(err);
+      }
+    });
+    // if (num == 0) {
+    //   clearInterval(countdownTimer);
+    // };
   },
 
   tap_ch: function (e) {
@@ -611,7 +612,6 @@ Page({
       // staus = 2指屏幕滑动到右边的状态
       this.data.startmark = e.touches[0].pageX;
     }
-
   },
   tap_drag: function (e) {
     /*
@@ -644,7 +644,6 @@ Page({
       }
     }
     this.data.mark = this.data.newmark;
-
   },
   tap_end: function (e) {
     if (this.data.staus == 1 && this.data.startmark < this.data.newmark) {
@@ -768,7 +767,7 @@ Page({
     wx.showToast();
     setTimeout(function () {
       wx.uploadFile({
-        url: 'http://yuyin.ittun.com/public/index/index/zhen',
+        url: 'https://www.chlorop.com.cn/yuyin/public/index/index/zhen', // urls.onloadurl, //
         filePath: s.data.recodePath,
         method: "POST",
         name: 'abc',
@@ -783,20 +782,13 @@ Page({
         success: function (res) {
           var error_text = '语音识别失败';
           console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
-          if (res.data.toString() == error_text) {
-            wx.showToast({
-              title: '语音识别失败!请重试!',
-              icon: 'success',
-              duration: 2000
-            });
-          }
-          if (res.statusCode == 404) {
-            wx.showToast({
-              title: '服务器搞飞机去了!呜呜呜~~~~',
-              icon: 'success',
-              duration: 2000
-            });
-            return;
+          switch(true) {
+            case res.data.toString() == error_text:
+              myUtils.Toast('语音识别失败!请重试!','success');
+              break;
+            case res.statusCode == 404:
+              myUtils.Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
+              return;
           }
           var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
           s.setData({
@@ -812,30 +804,25 @@ Page({
             if (typeof (sqlStr) == "string") {
               var myString = sqlStr.substring(0, 1);
             }
-            if (myString == "开" || myString == '打') {
-              s.setData({ switchButton: true });
-              json = {
-                "onoffAll": s.data.switchButton,
-              };
-              //  发送数据
-              s.sendJSON('c2s_write', s.data.did, json);
-              wx.showToast({
-                title: '打开成功',
-                icon: 'success',
-                duration: 2000
-              });
-            } else if (myString == "关") {
-              s.setData({ switchButton: false });
-              json = {
-                "onoffAll": s.data.switchButton,
-              };
-              //  发送数据
-              s.sendJSON('c2s_write', s.data.did, json);
-              wx.showToast({
-                title: '关闭成功',
-                icon: 'success',
-                duration: 2000
-              });
+            switch (true) {
+              case myString == "开" || myString == '打':
+                s.setData({ switchButton: true });
+                json = {
+                  "onoffAll": s.data.switchButton,
+                };
+                //  发送数据
+                s.sendJSON('c2s_write', s.data.did, json);
+                myUtils.Toast('打开成功!', 'success');
+                break;
+              case myString == "关":
+                s.setData({ switchButton: false });
+                json = {
+                  "onoffAll": s.data.switchButton,
+                };
+                //  发送数据
+                s.sendJSON('c2s_write', s.data.did, json);
+                myUtils.Toast('关闭成功!', 'success');
+                break;
             }
           }
           var str = res.data;

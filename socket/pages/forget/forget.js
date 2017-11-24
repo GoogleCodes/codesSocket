@@ -35,7 +35,7 @@ Page({
     let headToken = {
       'content-type': 'application/json',
       'Accept': 'application/json',
-      'X-Gizwits-Application-Auth': '14599c169b7a1ad3d13375533943db5b',
+      'X-Gizwits-Application-Auth': '14599c169b7a1ad3d13375533943db5b', //  md5加密 appid + appsecret
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     //  获取token
@@ -50,7 +50,6 @@ Page({
       };
       //  获取图片验证码
       _util.sendRrquest('verify/codes', 'GET', '', head).then(function (result) {
-        console.log(result.data);
         that.setData({ 
           codeImages: result.data.captcha_url,
           captcha_id: result.data.captcha_id
@@ -59,6 +58,9 @@ Page({
     });
   },
 
+  /**
+   * 获取手机验证码
+   */
   getCodeNumber (e) {
     let that = this;
     var num = 10;
@@ -86,9 +88,7 @@ Page({
     let json = {
       "phone": that.data.phone
     };
-    _util.sendRrquest('sms_code', 'POST', json, head).then(function (result) {
-      console.log(result.data);
-    });
+    _util.sendRrquest('sms_code', 'POST', json, head).then(function (result) {});
   },
 
   bindChange(e) {

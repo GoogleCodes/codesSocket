@@ -9,7 +9,7 @@ App({
     var that = this, appID = 'wx427aa2cee61883dd', secret = '945ffa55aed70a50c4db910df20c778e';
     //获取openid
     var user = wx.getStorageSync('user') || {};
-    if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {//不要在30天后才更换openid-尽量提前10分钟更新  
+    if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {//不要在30天后才更换openid-尽量提前10分钟更新
       wx.login({
         success: function (res) {
           var d = that.globalData.wxData; //  这里存储了appid、secret、token串
