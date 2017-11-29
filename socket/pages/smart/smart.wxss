@@ -21,6 +21,7 @@
   background: rgb(251, 249, 254);
   margin-top: 10px;
   border: none;
+  font-size: 0.8rem;
 }
 
 .page-top .pushMsgFm .section_gap {
@@ -136,6 +137,7 @@
 
 .section .picker {
   padding: 0px 2.5%;
+  font-size: 0.8rem;
 }
 
 /* 点击后出现的按钮样式 */
@@ -164,6 +166,7 @@
   line-height: 35px;
   background: rgb(251, 249, 254);
   text-indent: 1em;
+  font-size: 0.8rem;
 }
 
 .scrollView .view_li {

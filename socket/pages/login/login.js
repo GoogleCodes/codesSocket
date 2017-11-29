@@ -1,14 +1,14 @@
 // pages/login/login.js
 
-var _util = require('../../utils/util.js');
+var tools = require('../../utils/util.js');
 
 Page({
   /**
    * 页面的初始数据
    */
   data: {
-    uname: '',
-    pword: '',
+    uname: '13250672958',
+    pword: '123456789',
     wechatOpenId: 'kceshi1',
     gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
     token: '',
@@ -20,21 +20,13 @@ Page({
     let fId = e.detail.formId, fObj = e.detail.value;
     switch (true) {
       case e.detail.value.uname == '':
-        wx.showModal({
-          title: '提示',
-          content: "用户账号为空!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示', '用户账号为空!');
         return false;
       case e.detail.value.pword == '':
-        wx.showModal({
-          title: '提示',
-          content: "用户账号为空!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示', '用户密码为空!');
         return false;
+      default:
+        break;
     }
     that.setData({
       uname: e.detail.value.uname,
@@ -53,15 +45,12 @@ Page({
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     wx.setStorageSync('userInformation', json);
-    _util.sendRrquest('login', 'POST', json, head).then(function (result) {
+
+    
+    tools.sendRrquest('login', 'POST', json, head).then((result) => {
       if (result.data.error_code == 9020) { //  如果账号或者密码错误 提示错误
-        wx.showModal({
-          title: '提示',
-          content: "账号或者密码错误!",
-          showCancel: false,
-          success: function (res) {
-            that.setData({ loadHidden: true, });
-          }
+        tools.showModel('提示','账号或者密码错误',function(res) {
+          that.setData({ loadHidden: true, });
         });
         return false;
       } else {
@@ -83,18 +72,27 @@ Page({
   },
 
   /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    
-  },
-
-  /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady() {
     var that = this;
+    //  获取用户信息
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/member/getUser',
+      method: "POST",
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        tel: '13232800159'
+      },
+      success(res) {
+        wx.setStorageSync('wxuser', res.data.data)
+      }
+    })
     var userInfom = wx.getStorageSync('userInformation');
+    
     that.setData({
       uname: userInfom.username,
       pword: userInfom.password,
@@ -103,47 +101,5 @@ Page({
       wx.redirectTo({ url: '../smart/smart', })
     }
   },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
-  }
 
 })

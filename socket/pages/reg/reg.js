@@ -1,6 +1,6 @@
 // pages/reg/reg.js
 
-var _util = require('../../utils/util.js');
+var tools = require('../../utils/util.js');
 
 Page({
 
@@ -12,11 +12,13 @@ Page({
     loadHidden: true,
     getCodeNumber: '获取验证码',
     disaCode: false,
-    phone: '',  //  手机号码
-    code: '', //  验证码
-    pword: '',  //  密码
-    unpword: '', //  重覆密码
-    codeImages: '',  //  图片验证码,
+    mobile: '',          //  手机号码
+    code: '',           //  验证码
+    pword: '',          //  密码
+    unpword: '',        //  重覆密码
+    codeImages: '',     //  图片验证码,
+    webcharName: '',    //  微信名称
+    webcharImg: '',     //  微信头像
     token: '',
     captcha_id: '',
   },
@@ -24,8 +26,29 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad(options) {
     this.getToken();
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/member/getUser',
+      method: "POST",
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        tel: '13232800159'
+      },
+      success(res) {
+        console.log(res);
+      }
+    })
+  
+  },
+
+  mobileInputEvent(e) {
+    this.setData({
+      mobile: e.detail.value
+    })
   },
 
   //  获取Token
@@ -33,13 +56,13 @@ Page({
     let that = this;
     let headToken = {
       'content-type': 'application/json',
+      'content-type': 'application/x-www-form-urlencoded',
       'Accept': 'application/json',
       'X-Gizwits-Application-Auth': '14599c169b7a1ad3d13375533943db5b',
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     //  获取token
-    _util.sendRrquest('request_token', 'POST', '', headToken).then(function (result) {
-      console.log(result.data.token);
+    tools.sendRrquest('request_token', 'POST', '', headToken).then(function (result) {
       that.setData({ token: result.data.token });
       //  获取图片验证码
       let head = {
@@ -49,21 +72,41 @@ Page({
         'X-Gizwits-Application-Id': that.data.gizwitsAppId,
       };
       //  获取图片验证码
-      _util.sendRrquest('verify/codes', 'GET', '', head).then(function (result) {
+      tools.sendRrquest('verify/codes', 'GET', '', head).then(function (result) {
         console.log(result.data);
         that.setData({
           codeImages: result.data.captcha_url,
           captcha_id: result.data.captcha_id
         });
       });
+
     });
+
+    wx.getUserInfo({
+      success(res) {
+        let userInfo = res.userInfo;
+        that.setData({
+          webcharName: userInfo.nickName,
+          webcharImg: userInfo.avatarUrl
+        });
+      }
+    });
+
   },
 
   //  获取验证码
-  getCodeNumber() {
+  getCodeNumbers() {
     let that = this;
-    var num = 10;
-    var times = setInterval(function () {
+    let mobile = this.data.mobile;
+    const regMobile = /^1[3|4|5|8][0-9]\d{4,8}$/;
+    if (!regMobile.test(mobile)) {
+      wx.showToast({
+        title: '手机号有误！'
+      })
+      return false;
+    }
+    var num = 60;
+    var intervalId = setInterval(() => {
       num--;
       that.setData({ getCodeNumber: "还有" + num + "秒", });
       if (num > 0) {
@@ -71,24 +114,34 @@ Page({
           disaCode: true,
         });
       } else {
-        clearInterval(times);
+        clearInterval(intervalId);
         that.setData({
           getCodeNumber: '重新获取',
           disaCode: false,
         });
       }
     }, 1000);
+    let json = {
+      'phone': mobile
+    };
     let head = {
       'content-type': 'application/json',
       'Accept': 'application/json',
       'X-Gizwits-Application-Token': that.data.token,
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
-    let json = {
-      "phone": that.data.phone
-    };
-    _util.sendRrquest('sms_code', 'POST', json, head).then(function (result) {
-      console.log(result.data);
+    tools.sendRrquest('sms_code', 'POST', json, head).then(function (result) {
+      try {
+        if (result.data.error_code == 9008) {
+          wx.showModal({
+            title: '提示',
+            content: "请输入手机号码!",
+            showCancel: false,
+            success: function (res) { }
+          });
+        }
+      }catch(e){
+      }
     });
   },
 
@@ -98,68 +151,56 @@ Page({
   },
 
   ForgetForm(e) {
-    console.log('forget');
+    let that = this;
+    var json = {
+      'tel': '13232800159',
+      'name': '康屌丝',
+      'password': '123123',
+      'wxname': that.data.webcharName,
+      'wximage': that.data.webcharImg
+    };
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/member/add',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      method: "POST",
+      data: json,
+      success(res) {
+        wx.showToast({
+          title: '注册成功！',
+          icon: 'success',
+          duration: 2000
+        });
+      }
+    })
+    return;
     //  验证
     switch (true) {
-      case e.detail.value.phone == '':
-        wx.showModal({
-          title: '提示',
-          content: "请输入手机号码!",
-          showCancel: false,
-          success: function (res) { }
-        });
+      case e.detail.value.mobile == '':
+        tools.showModel('提示', '请输入手机号码');
         return false;
       case e.detail.value.code == '':
-        wx.showModal({
-          title: '提示',
-          content: "验证码为空!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示', '验证码为空');
         return false;
       case e.detail.value.pword == '':
-        wx.showModal({
-          title: '提示',
-          content: "密码为空!",
-          showCancel: false,
-          success: function (res) { }
-        });
-        return false;
-      case e.detail.value.unpword == '':
-        wx.showModal({
-          title: '提示',
-          content: "密码为空!",
-          showCancel: false,
-          success: function (res) { }
-        });
-        return false;
-      case e.detail.value.unpword !== e.detail.value.pword:
-        wx.showModal({
-          title: '提示',
-          content: "两个密码不相等!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示', '密码为空');
         return false;
     }
-    var json = {
-      'lang': 'en',
-      'phone': that.data.uname,
-      'password': that.data.pword,
-      'code': that.data.code
-    };
+    
     var head = {
       'content-type': 'application/json',
       'Accept': 'application/json',
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     wx.setStorageSync('userInformation', json);
-    _util.sendRrquest('users', 'POST', json, head).then(function (result) {
-      wx.showToast({
-        title: '注册成功！',
-        icon: 'success',
-        duration: 2000
-      });
+    tools.sendRrquest('users', 'POST', json, head).then((result) => {
+      switch(true) {
+        case result.data.error_code == 910:
+          tools.showModel('提示', '验证码错误');
+          break;
+      }
       wx.removeStorageSync("userInformation");
       wx.removeStorageSync("options");
       wx.redirectTo({ url: '../login/login', });
@@ -174,45 +215,4 @@ Page({
   
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
-  }
 })

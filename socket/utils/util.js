@@ -56,8 +56,21 @@ const stringToBytes = (str) => {
   return re;
 }
 
+//  发送数据
+const sendDataJson = (cmd, dids, form) => {
+  var that = this;
+  var json = {
+    cmd: cmd,
+    data: {
+      did: dids,
+      attrs: form,
+    },
+  };
+  storageJson(json);
+}
+
 //  格式化JSON
-const _sendJson = (json) => {
+const storageJson = (json) => {
   wx.sendSocketMessage({
     //  对象转换字符串
     data: JSON.stringify(json),
@@ -73,11 +86,25 @@ const _Toast = (message,types) => {
   });
 }
 
+const _goShowModel = (title, desc, success) => {
+  wx.showModal({
+    title: title,
+    content: desc,
+    showCancel: false,
+    success (res) {
+      success(res)
+    }
+  });
+}
+
 //  对外开发接口
 module.exports = {
   options: options,
   sendRrquest: sendRrquest,
   toStringTools: stringToBytes,
-  sendJsons: _sendJson,
+  storageJSONS: storageJson,
+  sendData: sendDataJson,
   Toast: _Toast,
+  showModel: _goShowModel
+  
 }

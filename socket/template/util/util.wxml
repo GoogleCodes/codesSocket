@@ -1,22 +1,21 @@
 <!--template/util/util.wxml-->
-
 <template name="pageBottom">
   <view class="page-bottom">
     <view class="page-content">
-       <navigator url="../scene/scene" open-type="navigate" hidden='{{ true }}'>
-        <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
-          <view class="wc_list">
-            <view class="iconfont icon-deng fl"></view>
-            <view class="fl">情景模式</view>
-          </view>
-        </view>
-      </navigator> 
       <view class="wc" bindtap='_shareGizwits' hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
         <view class="wc_list">
           <view class="iconfont icon-share fl"></view>
           <view class="fl">接受分享</view>
         </view>
       </view>
+      <navigator url="../person/person" open-type="navigate">
+        <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
+        <view class="wc_list">
+          <view class="iconfont icon-user fl"></view>
+          <view class="fl">个人信息</view>
+        </view>
+      </view>
+      </navigator>
       <navigator url="../forget/forget" open-type="navigate">
         <view class="wc" hover-class='wx-hover' hover-start-time='50' hover-stay-time='1000'>
           <view class="wc_list">
@@ -32,32 +31,5 @@
         </view>
       </view>
     </view>
-  </view>
-</template>
-
-<!-- 表单模块 -->
-<template name="utilInput">
-  <view class="loginView">
-    <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
-      <view class='bodyView'>
-        <view class="iconfont icon-user fl"></view>
-        <input type='number' class='appidText fl' value='{{ phone }}' bindblur="bindChange" style="width: 150px" name='phone' placeholder='请输入手机号码' />
-        <button class="fr codeBtn" bindtap='getCodeNumber' disabled='{{ disaCode }}' data-phone="{{ phone }}">{{ getCodeNumber }}</button>
-      </view>
-      <view class='bodyView'>
-        <view class="iconfont icon-code fl"></view>
-        <input type='password' class='appidText fl' style="width: 55%" value='{{ code }}' name='code' placeholder='请输入验证码' />
-        <!-- <image src="{{ codeImages }}" class="fr codeImage" /> -->
-      </view>
-      <view class='bodyView'>
-        <view class="iconfont icon-mima fl"></view>
-        <input type='password' class='appidText fl' value='{{ pword }}' name='pword' placeholder='请输入登录密码' />
-      </view>
-      <view class='bodyView'>
-        <view class="iconfont icon-mima fl"></view>
-        <input type='password' class='appidText fl' value='{{ unpword }}' name='unpword' placeholder='请输入登录密码' confirm-type='done' />
-      </view>
-      <button type="primary" form-type="submit" class="confirm" loading='{{ !loadHidden }}'>重置登录</button>
-    </form>
   </view>
 </template>

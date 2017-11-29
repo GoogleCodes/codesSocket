@@ -1,6 +1,6 @@
 // pages/forget/forget.js
 
-var _util = require('../../utils/util.js');
+var tools = require('../../utils/util.js');
 
 Page({
 
@@ -39,7 +39,7 @@ Page({
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     //  获取token
-    _util.sendRrquest('request_token', 'POST', '', headToken).then(function (result) {
+    tools.sendRrquest('request_token', 'POST', '', headToken).then(function (result) {
       that.setData({ token: result.data.token });
       //  获取图片验证码
       let head = {
@@ -49,7 +49,7 @@ Page({
         'X-Gizwits-Application-Id': that.data.gizwitsAppId,
       };
       //  获取图片验证码
-      _util.sendRrquest('verify/codes', 'GET', '', head).then(function (result) {
+      tools.sendRrquest('verify/codes', 'GET', '', head).then(function (result) {
         that.setData({ 
           codeImages: result.data.captcha_url,
           captcha_id: result.data.captcha_id
@@ -58,21 +58,35 @@ Page({
     });
   },
 
+  mobileInputEvent(e) {
+    this.setData({
+      phone: e.detail.value
+    });
+  },
+
   /**
    * 获取手机验证码
    */
   getCodeNumber (e) {
     let that = this;
-    var num = 10;
-    var times = setInterval(function() {
+    let mobile = this.data.phone;
+    let regMobile = /^1[3|4|5|8][0-9]\d{4,8}$/;
+    if (!regMobile.test(mobile)) {
+      wx.showToast({
+        title: '手机号有误！'
+      })
+      return false;
+    }
+    var num = 60;
+    var intervalId = setInterval(() => {
       num--;
-      that.setData({getCodeNumber: "还有" + num + "秒",});
+      that.setData({ getCodeNumber: "还有" + num + "秒", });
       if (num > 0) {
         that.setData({
           disaCode: true,
         });
       } else {
-        clearInterval(times);
+        clearInterval(intervalId);
         that.setData({
           getCodeNumber: '重新获取',
           disaCode: false,
@@ -88,7 +102,7 @@ Page({
     let json = {
       "phone": that.data.phone
     };
-    _util.sendRrquest('sms_code', 'POST', json, head).then(function (result) {});
+    tools.sendRrquest('sms_code', 'POST', json, head).then(function (result) {});
   },
 
   bindChange(e) {
@@ -101,45 +115,22 @@ Page({
     //  验证
     switch (true) {
       case e.detail.value.phone == '':
-        wx.showModal({
-          title: '提示',
-          content: "请输入手机号码!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示','请输入手机号码');
         return false;
       case e.detail.value.code == '':
-        wx.showModal({
-          title: '提示',
-          content: "验证码为空!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示', '验证码为空');
         return false;
       case e.detail.value.pword == '':
-        wx.showModal({
-          title: '提示',
-          content: "密码为空!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示', '密码为空');
         return false;
       case e.detail.value.unpword == '':
-        wx.showModal({
-          title: '提示',
-          content: "密码为空!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示', '密码为空');
         return false;
       case e.detail.value.unpword !== e.detail.value.pword:
-        wx.showModal({
-          title: '提示',
-          content: "两个密码不相等!",
-          showCancel: false,
-          success: function (res) { }
-        });
+        tools.showModel('提示', '两个密码不相等');
         return false;
+      default:
+        break;
     }
     let json = {
       phone: e.detail.value.phone,
@@ -151,12 +142,8 @@ Page({
       'Accept' : 'application/json',
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
-    _util.sendRrquest('reset_password', 'POST', json, head).then(function (result) {
-      wx.showToast({
-        title: '密码修改成功！',
-        icon: 'success',
-        duration: 2000
-      });
+    tools.sendRrquest('reset_password', 'POST', json, head).then((result) => {
+      tools.Toast('密码修改成功！');
       wx.removeStorageSync("userInformation");
       wx.removeStorageSync("options");
       wx.redirectTo({ url: '../login/login', });
@@ -170,45 +157,4 @@ Page({
   
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-  
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
-  }
 })

@@ -1,0 +1,20 @@
+/* pages/person.wxss */
+
+/* person start */
+.person {
+  margin: 0 5%;
+}
+.person .wxhead {
+  width: 10rem;
+  height: 10rem;
+  margin: 0 auto;
+}
+
+.person .pson-li {
+  height: 2rem;
+  font-size: 0.9rem;
+  line-height: 2rem;
+  text-indent: 1em;
+  border-bottom: 1px solid #ccc;
+}
+/* person end */

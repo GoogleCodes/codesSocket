@@ -2,13 +2,13 @@
   "pages": [
     "pages/login/login",
     "pages/smart/smart",
-    "pages/scene/scene",
     "pages/text/text",
     "pages/more/more",
-    "pages/forget/forget",
     "pages/reg/reg",
+    "pages/forget/forget",
     "pages/logs/logs",
-    "template/util/util"
+    "template/util/util",
+    "pages/person/person"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -1,10 +1,11 @@
 <!--pages/reg/reg.wxml-->
-<!-- <view class="loginView">
+ <view class="loginView">
   <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
     <view class='bodyView'>
       <view class="iconfont icon-user fl"></view>
-      <input type='number' class='appidText fl' value='{{ phone }}' style="width: 150px" name='phone' placeholder='请输入手机号码' focus='true' />
-      <button class="fr codeBtn" bindtap='getCodeNumber' disabled='{{ disaCode }}'>{{ getCodeNumber }}</button>
+      <input class='appidText fl' bindblur='mobileInputEvent' value='{{ mobile }}' 
+      style="width: 150px" name='mobile' placeholder='请输入手机号码' focus='true' />
+      <button class="fr codeBtn" bindtap='getCodeNumbers' disabled='{{ disaCode }}'>{{ getCodeNumber }}</button>
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-code fl"></view>
@@ -16,8 +17,4 @@
     </view>
     <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>立即注册</button>
   </form>
-</view> -->
-
-<!-- 导入模块 -->
-<import src="../../template/util/util.wxml" />
-<template is="utilInput" data="{{ phone,disaCode,getCodeNumber,code,pword,loadHidden,unpword }}"></template>
+</view>
