@@ -65,6 +65,7 @@ Page({
     ins_l: '',
     chonseUpdate: false,
     chonseDelete: true,
+    language: ''  //  语义
   },
 
   /**
@@ -85,7 +86,16 @@ Page({
     } else {
       that._getBindingList(20, 0);
     }
-    
+
+    wx.request({
+      url: 'https://api.gizwits.com/app/scene',
+      method: 'GET',
+      header: that.data.head,
+      success(res) {
+        console.log(res);
+      }
+    })
+
   },
 
   /**
@@ -179,44 +189,6 @@ Page({
     // });
   },
 
-  _postScheduler(did) {
-    let that = this;
-    var url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' + 'OuvB3IxXvzl5vqP6p1T7anDYHKBpzFAZEipOlElbRwBWSsDMlNbX2GEVH59tpR-dcSV4W6np0lzOqjn5eUqga9lvRqEVUVgGZfMmjD5tf37PL_Iz_G3DAhXM5pzdenHwTOCeACAJES';
-    wx.request({
-      url: url,
-      data: {
-        touser: wx.getStorageSync('user').openid,
-        template_id: 'ho9RAP7GBHDJYg3EVHqiBgxSQmt1apwOpGAhLBCfgkI',
-        page: '/pages/smart/smart',
-        form_id: wx.getStorageSync('userInformation').formID,
-        data: {
-          "keyword1": {
-            "value": '测试发送消息',
-            "color": "#4a4a4a"
-          },
-          "keyword2": {
-            "value": '智能灯已开启',
-            "color": "#4a4a4a"
-          }
-        },
-        emphasis_keyword: 'keyword1.DATA'
-      },
-      method: 'POST',
-      success(res) {
-        that.setData({ switchButton: true });
-        //  发送数据
-        tools.sendData('c2s_write', that.data.did, that.data.switchButton);
-        wx.showToast({
-          title: '发送成功',
-          icon: 'success',
-          duration: 2000
-        });
-      },
-      fail(err) {
-      }
-    });
-  },
-
   _getBindingList(limit, skip) {
     var that = this;
     let options = wx.getStorageSync('options');
@@ -251,6 +223,24 @@ Page({
   chonseDid(e) {
     var that = this;
     that._login();
+    //  获取语义
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/semlist',
+      method: "POST",
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      success(res) {
+        let datas = res.data.data, i = 0;
+        for (i; i <= datas.length; i++) {
+          console.log(datas[i]);
+          that.setData({
+            language: datas[i].word
+          });
+        }
+      }
+    })
     that.setData({ gizwitsVisible: false });
     var did = e.currentTarget.dataset.did, index = e.currentTarget.dataset.index
     if (that.data.chonseDid === index) {
@@ -320,12 +310,40 @@ Page({
         //  获取服务器返回的信息
         wx.onSocketMessage((res) => {
           var noti = JSON.parse(res.data), _sendJson = {};
+          console.log(noti);
           switch (noti.cmd) {
             case 'subscribe_res':
               for (var i in noti.data.success) {
+                console.log();
                 that.setData({
                   did: noti.data.success[i].did
                 });
+              }
+            case 's2c_noti':
+              try {
+                console.log(noti.data.attrs.hardwareVersion, '+-+-+-+-');
+                let arr = new Array(768), i = 0, too = 40;
+                while (i < 768) {
+                  arr[i] = 0;
+                  i++;
+                }
+                var arrtoo = arr.slice(0);
+                console.log(too, arrtoo, '+-+-');
+                if (noti.data.attrs.hardwareVersion >= 10) {
+                  //  发送数据
+                  json = {
+                    "data": too.concat(arrtoo).splice(0, 768)
+                  };
+                  tools.sendData('c2s_write', that.data.did, json);
+                } else {
+                  //  发送数据
+                  json = {
+                    "data": too.concat(arrtoo).splice(0, 768)
+                  };
+                  tools.sendData('c2s_write', that.data.did, json);
+                }
+              } catch(e) {
+
               }
             case 'pong':
               break;
@@ -353,13 +371,6 @@ Page({
     let arr = new Array(768);
     that.setData({ socketOpen: true });
     //  发送数据开关 true : 打开  false : 关闭
-    const uid = wx.getStorageSync('wxuser').id;
-    const head = {
-      'content-type': 'application/json',
-      'content-type': 'application/x-www-form-urlencoded',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
-    };
     switch (e.detail.value) {
       case true:
         that.setData({ switchButton: true });
@@ -367,39 +378,17 @@ Page({
         json = {
           "onoffAll": that.data.switchButton,
         };
-        wx.request({
-          url: 'http://yuyin.ittun.com/public/index/dev/add',
-          method: "post",
-          header: head,
-          data: {
-            dev_id: wx.getStorageSync('options').gizwitsAppId,
-            uid: uid,
-            operation: that.data.switchButton
-          },
-          success(res) {
-          },
-        });
         tools.sendData('c2s_write', that.data.did, json);
         tools.Toast('打开成功', 'success');
+        that.getDev(that.data.switchButton);
         break;
       case false:
         that.setData({ switchButton: false });
+        that.getDev(that.data.switchButton);
         //  发送数据
         json = {
           "onoffAll": that.data.switchButton,
         };
-        wx.request({
-          url: 'http://yuyin.ittun.com/public/index/dev/add',
-          method: "post",
-          header: head,
-          data: {
-            dev_id: wx.getStorageSync('options').gizwitsAppId,
-            uid: uid,
-            operation: that.data.switchButton
-          },
-          success(res) {
-          },
-        });
         tools.sendData('c2s_write', that.data.did, json);
         tools.Toast('关闭成功', 'success');
         break;
@@ -407,10 +396,35 @@ Page({
         break;
     }
   },
+  //  记录操作
+  getDev(tools) {
+    const that = this;
+    const uid = wx.getStorageSync('wxuser').id;
+    const head = {
+      'content-type': 'application/json',
+      'content-type': 'application/x-www-form-urlencoded',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
+    };
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/add',
+      method: "post",
+      header: head,
+      data: {
+        dev_id: wx.getStorageSync('options').gizwitsAppId,
+        uid: uid,
+        operation: tools
+      },
+      success(res) {
+        if (res.data.data.repeat == 7) {
+          that.orderSign();
+        }
+      },
+    });
+  },
 
   specSocket(e) {
     var that = this, json = {};
-    
     let arr = new Array(768), i = 0, too;
     while (i < 768) {
       arr[i] = 0;
@@ -481,30 +495,8 @@ Page({
     }
   },
 
-  orderSign(e) {
+  orderSign() {
     let that = this;
-    // let countdown = 24 * 3600 * 5;
-    // let num = 5;
-    // num--;
-    // // // 立即显示还剩五天
-    // console.log("还剩余5天0小时0分0秒");
-    // // 倒计时
-    // var countdownTimer = setInterval(function () {
-    //   countdown -= 1;
-    //   var rest = countdown;
-    //   // 天
-    //   var days = parseInt(rest / (24 * 3600), 10);
-    //   rest -= days * 24 * 3600;
-    //   // 时
-    //   var hours = parseInt(rest / 3600, 10);
-    //   rest -= hours * 3600;
-    //   // 分
-    //   var minutes = parseInt(rest / 60, 10);
-    //   rest -= minutes * 60;
-    //   // 秒
-    //   var seconds = parseInt(rest, 10);
-    //   // console.log("还剩余" + days + "天" + hours + "小时" + minutes + "分" + seconds + "秒");
-    // }, 1e3);
     var url = urls.wxopen + urls.access_token;
     wx.request({
       url: url,
@@ -531,15 +523,8 @@ Page({
         //  发送数据
         tools.sendData('c2s_write', that.data.did, that.data.switchButton);
         tools.Toast('发送成功', 'success');
-      },
-      fail(err) {
-        console.log("push err")
-        console.log(err);
       }
     });
-    // if (num == 0) {
-    //   clearInterval(countdownTimer);
-    // };
   },
 
   tap_ch(e) {
@@ -563,67 +548,6 @@ Page({
       // staus = 2指屏幕滑动到右边的状态
       this.data.startmark = e.touches[0].pageX;
     }
-  },
-  tap_drag(e) {
-    /*
-     * 手指从左向右移动
-     * @newmark是指移动的最新点的x轴坐标 ， @mark是指原点x轴坐标
-     */
-    this.data.newmark = e.touches[0].pageX;
-    if (this.data.mark < this.data.newmark) {
-      if (this.data.staus == 1) {
-        if (this.data.windowWidth * 0.75 > Math.abs(this.data.newmark - this.data.startmark)) {
-          this.setData({
-            translate: 'transform: translateX(' + (this.data.newmark - this.data.startmark) + 'px)'
-          })
-        }
-      }
-    }
-    /*
-     * 手指从右向左移动
-     * @newmark是指移动的最新点的x轴坐标 ， @mark是指原点x轴坐标
-     */
-    if (this.data.mark > this.data.newmark) {
-      if (this.data.staus == 1 && (this.data.newmark - this.data.startmark) > 0) {
-        this.setData({
-          translate: 'transform: translateX(' + (this.data.newmark - this.data.startmark) + 'px)'
-        })
-      } else if (this.data.staus == 2 && this.data.startmark - this.data.newmark < this.data.windowWidth * 0.75) {
-        this.setData({
-          translate: 'transform: translateX(' + (this.data.newmark + this.data.windowWidth * 0.75 - this.data.startmark) + 'px)'
-        })
-      }
-    }
-    this.data.mark = this.data.newmark;
-  },
-  tap_end(e) {
-    if (this.data.staus == 1 && this.data.startmark < this.data.newmark) {
-      if (Math.abs(this.data.newmark - this.data.startmark) < (this.data.windowWidth * 0.2)) {
-        this.setData({
-          translate: 'transform: translateX(0px)'
-        })
-        this.data.staus = 1;
-      } else {
-        this.setData({
-          translate: 'transform: translateX(' + this.data.windowWidth * 0.75 + 'px)'
-        })
-        this.data.staus = 2;
-      }
-    } else {
-      if (Math.abs(this.data.newmark - this.data.startmark) < (this.data.windowWidth * 0.2)) {
-        this.setData({
-          translate: 'transform: translateX(' + this.data.windowWidth * 0.75 + 'px)'
-        })
-        this.data.staus = 2;
-      } else {
-        this.setData({
-          translate: 'transform: translateX(0px)'
-        })
-        this.data.staus = 1;
-      }
-    }
-    this.data.mark = 0;
-    this.data.newmark = 0;
   },
 
   onMarkMsgTap() {
@@ -751,7 +675,7 @@ Page({
               var myString = sqlStr.substring(0, 1);
             }
             switch (true) {
-              case myString == "开" || myString == '打':
+              case myString == "开" || myString == '打' || myString == s.data.language:
                 s.setData({ switchButton: true });
                 json = {
                   "onoffAll": s.data.switchButton,
@@ -760,7 +684,7 @@ Page({
                 tools.sendData('c2s_write', s.data.did, json);
                 tools.Toast('打开成功!', 'success');
                 break;
-              case myString == "关":
+              case myString == "关" || myString == s.data.language: 
                 s.setData({ switchButton: false });
                 json = {
                   "onoffAll": s.data.switchButton,

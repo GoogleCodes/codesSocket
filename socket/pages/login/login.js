@@ -46,9 +46,9 @@ Page({
     };
     wx.setStorageSync('userInformation', json);
 
-    
     tools.sendRrquest('login', 'POST', json, head).then((result) => {
-      if (result.data.error_code == 9020) { //  如果账号或者密码错误 提示错误
+       //  如果账号或者密码错误 提示错误
+      if (result.data.error_code == 9020) {
         tools.showModel('提示','账号或者密码错误',function(res) {
           that.setData({ loadHidden: true, });
         });
@@ -88,11 +88,11 @@ Page({
         tel: '13232800159'
       },
       success(res) {
+        console.log(res.data.data);
         wx.setStorageSync('wxuser', res.data.data)
       }
     })
     var userInfom = wx.getStorageSync('userInformation');
-    
     that.setData({
       uname: userInfom.username,
       pword: userInfom.password,

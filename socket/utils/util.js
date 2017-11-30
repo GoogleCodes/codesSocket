@@ -74,6 +74,9 @@ const storageJson = (json) => {
   wx.sendSocketMessage({
     //  对象转换字符串
     data: JSON.stringify(json),
+    success(res) {
+      console.log(res,'+-+-+-');
+    }
   })
 }
 
@@ -106,5 +109,4 @@ module.exports = {
   sendData: sendDataJson,
   Toast: _Toast,
   showModel: _goShowModel
-  
 }

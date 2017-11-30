@@ -3,10 +3,6 @@
   <import src="../../template/util/util.wxml" />
   <template is="pageBottom"></template>
   <view class="page-top" style="{{ translate }}" >
-    <!-- <view style="position: fixed;top: 45px;left: 0px;width: 15%;height: 81%;z-index: 10;" bindtouchmove="tap_drag" bindtouchend="tap_end" bindtouchstart="tap_start"></view> -->
-    <!--
-     bindtouchmove="tap_drag" bindtouchend="tap_end" bindtouchstart="tap_start" 
-    -->
     <view class="header-tab">
       <view bindtap="tap_ch" class='icon-liebiao iconfont fl'></view>
     </view>
