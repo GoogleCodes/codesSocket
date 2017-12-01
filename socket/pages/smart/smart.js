@@ -87,14 +87,7 @@ Page({
       that._getBindingList(20, 0);
     }
 
-    wx.request({
-      url: 'https://api.gizwits.com/app/scene',
-      method: 'GET',
-      header: that.data.head,
-      success(res) {
-        console.log(res);
-      }
-    })
+    
 
   },
 
@@ -322,23 +315,25 @@ Page({
             case 's2c_noti':
               try {
                 console.log(noti.data.attrs.hardwareVersion, '+-+-+-+-');
-                let arr = new Array(768), i = 0, too = 40;
+                let arr = new Array(768), i = 0, too = 64;
                 while (i < 768) {
                   arr[i] = 0;
                   i++;
                 }
                 var arrtoo = arr.slice(0);
-                console.log(too, arrtoo, '+-+-');
+                console.log(too.concat(arrtoo).splice(0, 768), arrtoo, '+-+-');
                 if (noti.data.attrs.hardwareVersion >= 10) {
                   //  发送数据
                   json = {
-                    "data": too.concat(arrtoo).splice(0, 768)
+                    "data": too.concat(arrtoo).splice(0, 768),
+                    "onoffAll": true,
                   };
                   tools.sendData('c2s_write', that.data.did, json);
                 } else {
                   //  发送数据
                   json = {
-                    "data": too.concat(arrtoo).splice(0, 768)
+                    "data": too.concat(arrtoo).splice(0, 768),
+                    "onoffAll": true,
                   };
                   tools.sendData('c2s_write', that.data.did, json);
                 }

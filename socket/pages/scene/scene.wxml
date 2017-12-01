@@ -1,15 +1,12 @@
 <!--pages/scene/scene.wxml-->
 
-<view class="bodyView">
-  <view class="changeText fl">
-    <label>{{ sceneSwitchText }}</label>
-  </view>
-  <view class="changeInput fr" style="float:right;">
-    <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" color="#6ba74f" />
-  </view>
+<button bindtap='creatScene'>创建情景</button>
 
+
+<view>
+  <text>定时情景</text>
   <view>
-    <view></view>
+    <text>情景名称：</text>
+    <text></text>
   </view>
-
 </view>

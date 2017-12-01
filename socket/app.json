@@ -8,6 +8,7 @@
     "pages/forget/forget",
     "pages/logs/logs",
     "template/util/util",
+    "pages/scene/scene",
     "pages/person/person"
   ],
   "window": {
