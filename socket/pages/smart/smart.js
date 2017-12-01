@@ -4,9 +4,6 @@ var tools = require('../../utils/util.js');
 let urls = require('../../utils/common/common.js');
 var app = new getApp();
 var times = null, ins = 0;
-
-console.log(urls.wxopen);
-
 Page({
   /**
    * 页面的初始数据
@@ -303,37 +300,37 @@ Page({
         //  获取服务器返回的信息
         wx.onSocketMessage((res) => {
           var noti = JSON.parse(res.data), _sendJson = {};
-          console.log(noti);
           switch (noti.cmd) {
             case 'subscribe_res':
               for (var i in noti.data.success) {
-                console.log();
                 that.setData({
                   did: noti.data.success[i].did
                 });
               }
             case 's2c_noti':
+              let arr = new Array(768), i = 0, too, num = 64;
+              while (i < 768) {
+                arr[i] = 0;
+                i++;
+              }
+              too = num.toString(16);
+              let s = parseInt(too);
+              let a = [];
+              var arrtoo = arr.slice(0);
+              a.push(s);
+              console.log(typeof s,a.concat(arrtoo).splice(0, 768));
               try {
                 console.log(noti.data.attrs.hardwareVersion, '+-+-+-+-');
-                let arr = new Array(768), i = 0, too = 64;
-                while (i < 768) {
-                  arr[i] = 0;
-                  i++;
-                }
-                var arrtoo = arr.slice(0);
-                console.log(too.concat(arrtoo).splice(0, 768), arrtoo, '+-+-');
                 if (noti.data.attrs.hardwareVersion >= 10) {
                   //  发送数据
                   json = {
-                    "data": too.concat(arrtoo).splice(0, 768),
-                    "onoffAll": true,
+                    "data": a.concat(arrtoo).splice(0, 768),
                   };
                   tools.sendData('c2s_write', that.data.did, json);
                 } else {
                   //  发送数据
                   json = {
-                    "data": too.concat(arrtoo).splice(0, 768),
-                    "onoffAll": true,
+                    "data": [0, 38, 65, 2, 1, 100, 111, 109, 101, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                   };
                   tools.sendData('c2s_write', that.data.did, json);
                 }
@@ -698,12 +695,12 @@ Page({
             cEditData.recodeIdentity = data.identitys;
             s.setData({ editData: cEditData });
           } else {
-            tools.showModel('提示', data.message);
+            tools.showModel('提示', data.message, () => {});
           }
           wx.hideToast();
         },
         fail(res) {  //  错误提示
-          tools.showModel('提示', '录音的姿势不对!');
+          tools.showModel('提示', '录音的姿势不对!', () => {});
           wx.hideToast();
         }
       });
