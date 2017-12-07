@@ -101,5 +101,4 @@ Page({
       wx.redirectTo({ url: '../smart/smart', })
     }
   },
-
 })

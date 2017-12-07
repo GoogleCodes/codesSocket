@@ -1,15 +1,18 @@
 <!--pages/reg/reg.wxml-->
- <view class="loginView">
+<view class="loginView">
   <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
     <view class='bodyView'>
+      <view class="iconfont icon-code fl"></view>
+      <input class='appidText fl' value='{{ name }}' name='name' placeholder='请输入名称' />
+    </view>
+    <view class='bodyView'>
       <view class="iconfont icon-user fl"></view>
-      <input class='appidText fl' bindblur='mobileInputEvent' value='{{ mobile }}' 
-      style="width: 150px" name='mobile' placeholder='请输入手机号码' focus='true' />
+      <input class='appidText fl' bindblur='mobileInputEvent' value='{{ mobile }}' style="width: 150px" name='mobile' placeholder='请输入手机号码' focus='true' />
       <button class="fr codeBtn" bindtap='getCodeNumbers' disabled='{{ disaCode }}'>{{ getCodeNumber }}</button>
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-code fl"></view>
-      <input type='password' class='appidText fl' value='{{ pword }}' name='code' placeholder='请输入验证码' />
+      <input class='appidText fl' value='{{ code }}' name='code' placeholder='请输入验证码' />
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-mima fl"></view>

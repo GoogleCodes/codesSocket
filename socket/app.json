@@ -6,10 +6,10 @@
     "pages/more/more",
     "pages/reg/reg",
     "pages/forget/forget",
-    "pages/logs/logs",
     "template/util/util",
+    "pages/person/person",
     "pages/scene/scene",
-    "pages/person/person"
+    "pages/logs/logs"
   ],
   "window": {
     "backgroundTextStyle": "light",

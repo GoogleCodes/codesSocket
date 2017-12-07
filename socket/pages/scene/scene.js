@@ -12,7 +12,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad(options) {
     const that = this;
     //  查询场景
     wx.request({
@@ -22,7 +22,7 @@ Page({
         'Content-Type': 'application/json',
         'Accept': ' application/json',
         'X-Gizwits-Application-Id': 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
-        'X-Gizwits-User-token': '8e1aa123f7314fba8dd874154faa1071',
+        'X-Gizwits-User-token': 'e8dcba65c4294c499f1e9b96e702856a',
       },
       success(res) {
         console.log(res.data);
@@ -31,6 +31,8 @@ Page({
         });
       }
     })
+
+
   },
 
   //  创建情景
@@ -72,7 +74,7 @@ Page({
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady() {
   
   },
 

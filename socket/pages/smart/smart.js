@@ -9,6 +9,10 @@ Page({
    * 页面的初始数据
    */
   data: {
+    imgUrls: [
+      'https://img.alicdn.com/tfs/TB1fknxexrI8KJjy0FpXXb5hVXa-760-460.png',
+      'https://img.alicdn.com/tfs/TB1fKrBewLD8KJjSszeXXaGRpXa-760-460.jpg',
+    ],
     open: false,
     mark: 0,
     newmark: 0,
@@ -83,15 +87,12 @@ Page({
     } else {
       that._getBindingList(20, 0);
     }
-
-    
-
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function (res) {
+  onReady(res) {
     // this.orderSign();
     let that = this;
     that.mapCtx = wx.createMapContext('myMap');
@@ -146,16 +147,16 @@ Page({
     wx.scanCode({
       success(res) {
         //  创建设备分享
-        tools.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then(function (result) {
+        tools.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then((result) => {
           console.log(result);
-        }, function (err) { });
+        }, (err) => { });
       },
     })
 
     // //  创建设备分享
-    tools.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then(function (result) {
+    tools.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then((result) => {
       console.log(result);
-    }, function (err) {
+    }, (err) => {
       console.log(err);
     });
 
@@ -188,7 +189,7 @@ Page({
       'X-Gizwits-Application-Id': options.gizwitsAppId,
       'X-Gizwits-User-token': options.token,
     };
-    tools.sendRrquest('bindings' + query, 'GET', '', head).then(function (result) {
+    tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
       that.setData({ listDevices: result.data.devices });
       var pKey = null;
       for (var i in result.data.devices) {
@@ -206,7 +207,7 @@ Page({
       }
       // that._GizwitsDevdata(that.data.options.did);
       // that._getGizwitsDataing(pKey);
-    }, function (err) { });
+    },(err) => { });
   },
 
   //  选中列表设备
@@ -224,7 +225,6 @@ Page({
       success(res) {
         let datas = res.data.data, i = 0;
         for (i; i <= datas.length; i++) {
-          console.log(datas[i]);
           that.setData({
             language: datas[i].word
           });
@@ -261,9 +261,6 @@ Page({
     //  创建Socket
     wx.connectSocket({
       url: 'wss://' + that.data.options.host + ':' + that.data.options.wss_port + '/ws/app/v1',
-      header: {
-        'content-type': 'application/json'
-      },
     });
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
@@ -291,7 +288,7 @@ Page({
           cmd: "subscribe_req",
           data: [{
             did: that.data.did,
-            passcode: 123456
+            passcode: 'IJLAAQTWBM'
           }]
         };
         that._sendJson(json);
@@ -307,36 +304,13 @@ Page({
                   did: noti.data.success[i].did
                 });
               }
-            case 's2c_noti':
-              let arr = new Array(768), i = 0, too, num = 64;
-              while (i < 768) {
-                arr[i] = 0;
-                i++;
-              }
-              too = num.toString(16);
-              let s = parseInt(too);
-              let a = [];
-              var arrtoo = arr.slice(0);
-              a.push(s);
-              console.log(typeof s,a.concat(arrtoo).splice(0, 768));
+            case 'c2s_write':
               try {
-                console.log(noti.data.attrs.hardwareVersion, '+-+-+-+-');
-                if (noti.data.attrs.hardwareVersion >= 10) {
-                  //  发送数据
-                  json = {
-                    "data": a.concat(arrtoo).splice(0, 768),
-                  };
-                  tools.sendData('c2s_write', that.data.did, json);
-                } else {
-                  //  发送数据
-                  json = {
-                    "data": [0, 38, 65, 2, 1, 100, 111, 109, 101, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                  };
-                  tools.sendData('c2s_write', that.data.did, json);
-                }
-              } catch(e) {
-
-              }
+                that.setData({
+                  switchButton: noti.data.attrs.onoffAll
+                });
+              } catch(e) {}
+              break;
             case 'pong':
               break;
           }
@@ -351,11 +325,48 @@ Page({
 
   //  拉动按钮
   sliderchange(e) {
-    let that = this, json = {
-      'hardwareVersion': e.detail.value,
-    };
-    tools.sendData('c2s_write', that.data.did, json);
+    let that = this;
+    let arr = [];
+    switch(true) {
+      case e.detail.value == 0:
+        break;
+      case e.detail.value == 33:
+        arr.push(0x00, 0x01, 0x40);
+        let json = {
+          'data': this.getArrays(arr),
+        };
+        tools.sendData('c2s_write', that.data.did, json);
+        break;
+      case e.detail.value == 66:
+        // arr.push(0x00, 0x01, 0x40);
+        arr.push(0,18,0x50,2, 65, 66, 67, 68, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0 + 1, 0, 0);
+        var json = {
+          'data': this.getArrays(arr),
+        };
+        tools.sendData('c2s_write', that.data.did, json);
+        break;
+      case e.detail.value == 100:
+        arr.push(0x00, 0x01, 0x99);
+        var json = {
+          'data': this.getArrays(arr),
+        };
+        tools.sendData('c2s_write', that.data.did, json);
+        break;
+      default:
+        break;
+    }
   },
+
+  getArrays(reqArr) {
+    let arrays = new Array(768), i = 0;
+    for (i; i <= 768; i++) {
+      arrays[i] = 0;
+    }
+    let arrtoo = arrays.slice(0);
+    let t = reqArr;
+    return t.concat(arrtoo).splice(0,768)
+  },
+
 
   //  智能灯开关
   chonseSocket(e) {
@@ -416,31 +427,28 @@ Page({
   },
 
   specSocket(e) {
-    var that = this, json = {};
-    let arr = new Array(768), i = 0, too;
-    while (i < 768) {
-      arr[i] = 0;
-      i++;
-    }
-    var arrtoo = arr.slice(0);
+    let arr = [], that = this, json = {};
+    console.log(arr.concat(Number('0x40')));
+    console.log(this.getArrays(tools.toStringTools('64')));
     that.setData({ socketOpen: true });
     //  发送数据开关 true : 打开  false : 关闭
     if (e.detail.value == true) {
+      arr.push(0x00, 0x01, 0x40)
+      that.getArrays(arr);
       that.setData({ switchSpec: true });
-      too = tools.toStringTools('true');
-      let aoo = too.concat(arrtoo).splice(0, 768);
       //  发送数据
       json = {
-        "data": too.concat(arrtoo).splice(0, 768)
+        "data": that.getArrays(arr)
       };
       tools.sendData('c2s_write', that.data.did, json);
       tools.Toast('打开成功', 'success');
     } else {
-      too = tools.toStringTools('false');
       that.setData({ switchSpec: false });
+      arr.push(0x00, 0x06, 0x50)
+      that.getArrays(arr);
       //  发送数据
       json = {
-        "data": too.concat(arrtoo).splice(0, 768)
+        "data": that.getArrays(arr)
       };
       tools.sendData('c2s_write', that.data.did, json);
       tools.Toast('关闭成功', 'success');
@@ -525,7 +533,7 @@ Page({
       this.data.open = false;
     } else {
       this.setData({
-        translate: 'transform: translateX(' + this.data.windowWidth * 0.75 + 'px)'
+        translate: 'transform: translateX(' + this.data.windowWidth * 0.5 + 'px)'
       })
       this.data.open = true;
     }

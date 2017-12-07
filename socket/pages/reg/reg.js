@@ -3,18 +3,15 @@
 var tools = require('../../utils/util.js');
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
     gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
     loadHidden: true,
     getCodeNumber: '获取验证码',
     disaCode: false,
-    mobile: '',          //  手机号码
-    code: '',           //  验证码
-    pword: '',          //  密码
+    name: 'Dome',           //  名称
+    mobile: '13232800159',         //  手机号码
+    code: '042053',           //  验证码
+    pword: '123123',          //  密码
     unpword: '',        //  重覆密码
     codeImages: '',     //  图片验证码,
     webcharName: '',    //  微信名称
@@ -42,7 +39,6 @@ Page({
         console.log(res);
       }
     })
-  
   },
 
   mobileInputEvent(e) {
@@ -62,7 +58,7 @@ Page({
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     //  获取token
-    tools.sendRrquest('request_token', 'POST', '', headToken).then(function (result) {
+    tools.sendRrquest('request_token', 'POST', '', headToken).then((result) => {
       that.setData({ token: result.data.token });
       //  获取图片验证码
       let head = {
@@ -72,7 +68,7 @@ Page({
         'X-Gizwits-Application-Id': that.data.gizwitsAppId,
       };
       //  获取图片验证码
-      tools.sendRrquest('verify/codes', 'GET', '', head).then(function (result) {
+      tools.sendRrquest('verify/codes', 'GET', '', head).then((result) => {
         console.log(result.data);
         that.setData({
           codeImages: result.data.captcha_url,
@@ -153,31 +149,17 @@ Page({
   ForgetForm(e) {
     let that = this;
     var json = {
-      'tel': '13232800159',
-      'name': '康屌丝',
-      'password': '123123',
+      'tel': e.detail.value.mobile,
+      'name': e.detail.value.name,
+      'password': e.detail.value.pword,
       'wxname': that.data.webcharName,
       'wximage': that.data.webcharImg
     };
-    wx.request({
-      url: 'http://yuyin.ittun.com/public/index/member/add',
-      header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      method: "POST",
-      data: json,
-      success(res) {
-        wx.showToast({
-          title: '注册成功！',
-          icon: 'success',
-          duration: 2000
-        });
-      }
-    })
-    return;
     //  验证
     switch (true) {
+      case e.detail.value.name == '':
+        tools.showModel('提示', '请输入名称');
+        return false;
       case e.detail.value.mobile == '':
         tools.showModel('提示', '请输入手机号码');
         return false;
@@ -188,31 +170,44 @@ Page({
         tools.showModel('提示', '密码为空');
         return false;
     }
-    
     var head = {
       'content-type': 'application/json',
       'Accept': 'application/json',
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     wx.setStorageSync('userInformation', json);
-    tools.sendRrquest('users', 'POST', json, head).then((result) => {
+    let options = {
+      'phone': e.detail.value.mobile,
+      'password': e.detail.value.pword,
+      "code": e.detail.value.code
+    };
+    tools.sendRrquest('users', 'POST', options, head).then((result) => {
       switch(true) {
         case result.data.error_code == 910:
           tools.showModel('提示', '验证码错误');
           break;
       }
+      wx.request({
+        url: 'http://yuyin.ittun.com/public/index/member/add',
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        method: "POST",
+        data: json,
+        success(res) {
+          wx.showToast({
+            title: '注册成功！',
+            icon: 'success',
+            duration: 2000
+          });
+        }
+      })
       wx.removeStorageSync("userInformation");
       wx.removeStorageSync("options");
       wx.redirectTo({ url: '../login/login', });
     });
 
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  
   },
 
 })

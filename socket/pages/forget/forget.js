@@ -12,11 +12,11 @@ Page({
     loadHidden: true,
     getCodeNumber: '获取验证码',
     disaCode: false,
-    phone: '',  //  手机号码
-    code: '', //  验证码
-    pword: '',  //  密码
-    unpword: '', //  重覆密码
-    codeImages: '',  //  图片验证码,
+    phone: '',          //  手机号码
+    code: '',           //  验证码
+    pword: '',          //  密码
+    unpword: '',        //  重覆密码
+    codeImages: '',     //  图片验证码,
     token: '',
     captcha_id: '',
   },
@@ -24,7 +24,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad(options) {
     let that = this;
     that.getToken();
   },
@@ -39,7 +39,7 @@ Page({
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     //  获取token
-    tools.sendRrquest('request_token', 'POST', '', headToken).then(function (result) {
+    tools.sendRrquest('request_token', 'POST', '', headToken).then((result) => {
       that.setData({ token: result.data.token });
       //  获取图片验证码
       let head = {
@@ -49,13 +49,34 @@ Page({
         'X-Gizwits-Application-Id': that.data.gizwitsAppId,
       };
       //  获取图片验证码
-      tools.sendRrquest('verify/codes', 'GET', '', head).then(function (result) {
+      tools.sendRrquest('verify/codes', 'GET', '', head).then((result) => {
         that.setData({ 
           codeImages: result.data.captcha_url,
           captcha_id: result.data.captcha_id
         });
       });
     });
+    /*
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/member/edit',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      method: "POST",
+      data: {
+        openid_f: wx.getStorageSync(key),
+        password: '',
+      },
+      success(res) {
+        wx.showToast({
+          title: '修改成功！',
+          icon: 'success',
+          duration: 2000
+        });
+      }
+    })*/
+
   },
 
   mobileInputEvent(e) {
@@ -71,7 +92,12 @@ Page({
     let that = this;
     let mobile = this.data.phone;
     let regMobile = /^1[3|4|5|8][0-9]\d{4,8}$/;
-    if (!regMobile.test(mobile)) {
+    if(mobile == '') {
+      wx.showToast({
+        title: '提示!请输入手机号码！'
+      })
+      return false;
+    } else if (!regMobile.test(mobile)) {
       wx.showToast({
         title: '手机号有误！'
       })
@@ -110,24 +136,24 @@ Page({
     that.data.phone = e.detail.value;
   },
 
-  ForgetForm (e) {
+  ForgetForm(e) {
     let that = this;
     //  验证
     switch (true) {
       case e.detail.value.phone == '':
-        tools.showModel('提示','请输入手机号码');
+        tools.showModel('提示','请输入手机号码',() => {});
         return false;
       case e.detail.value.code == '':
-        tools.showModel('提示', '验证码为空');
+        tools.showModel('提示', '验证码为空',() => { });
         return false;
       case e.detail.value.pword == '':
-        tools.showModel('提示', '密码为空');
+        tools.showModel('提示', '密码为空',() => { });
         return false;
       case e.detail.value.unpword == '':
-        tools.showModel('提示', '密码为空');
+        tools.showModel('提示', '密码为空',() => { });
         return false;
       case e.detail.value.unpword !== e.detail.value.pword:
-        tools.showModel('提示', '两个密码不相等');
+        tools.showModel('提示', '两个密码不相等',() => { });
         return false;
       default:
         break;
@@ -148,13 +174,6 @@ Page({
       wx.removeStorageSync("options");
       wx.redirectTo({ url: '../login/login', });
     });
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  
   },
 
 })

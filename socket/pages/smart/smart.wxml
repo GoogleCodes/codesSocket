@@ -2,67 +2,96 @@
   <!-- 导入模块 -->
   <import src="../../template/util/util.wxml" />
   <template is="pageBottom"></template>
+
   <view class="page-top" style="{{ translate }}" >
     <view class="header-tab">
       <view bindtap="tap_ch" class='icon-liebiao iconfont fl'></view>
+      <text>智能网关</text>
     </view>
+
+    <swiper hidden='true' indicator-dots="true" interval="2000" circular="true"
+    autoplay="true" indicator-color="rgba(101,101,101,1)" indicator-active-color="rgb(255,255,255)">
+      <block wx:for="{{ imgUrls }}">
+        <swiper-item>
+          <image src="{{ item }}" class="slide-image" />
+        </swiper-item>
+      </block>
+    </swiper>
+
     <!--smart.wxml-->
-    <view class="pushMsgFm" hidden='{{ gizwitsVisible }}'>
-      <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">视频解析所需的时间是：{{ ins_y }}秒</view>
-      <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">百度云识别的时间是：{{ ins_l }}秒</view>
-      <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
-        <view class="bodyView">
-          <view class="changeText">
-            <label>开关设置</label>
-          </view>
-          <view class="changeInput" style="float:right;" >
-            <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" color="#6ba74f" />
-          </view>
+    <view>
+      <view class="pushMsgFm" hidden='{{ gizwitsVisible }}'>
+        <view hidden='true'>
+          <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">视频解析所需的时间是：{{ ins_y }}秒</view>
+          <view style="line-height: 25px;margin-top: 10px;font-size: 14px;">百度云识别的时间是：{{ ins_l }}秒</view>
         </view>
-        <view class="bodyView">
-          <view class="changeText">
-            <label>情景模式</label>
+        <form name='pushMsgFm' report-submit bindsubmit='orderSign'>
+          <view class="bodyView">
+            <view class="changeText">
+              <view>照明灯</view>
+              <view>当前状态：
+                <text wx:if="{{ switchButton == false }}">关</text>
+                <text wx:elif="{{ switchButton == true }}">开</text>
+              </view>
+            </view>
+            <view class="changeInput" style="float:right;" >
+              <switch type="switch" checked="{{ switchButton }}" name="switchBtn" bindchange="chonseSocket" color="#6ba74f" />
+            </view>
           </view>
-          <view class="changeInput" style="float:right;" >
-            <switch type="switch" checked="{{ switchSpec }}" name="switchSpec" bindchange="specSocket" color="#6ba74f" />
+
+          <view class="bodyView">
+            <view class="changeText">
+              <view>情景模式</view>
+              <view>
+                <text>当前状态：</text>
+                <text>关</text>
+              </view>
+            </view>
+            <view class="changeInput" style="float:right;" >
+              <switch type="switch" checked="{{ switchSpec }}" name="switchSpec" bindchange="specSocket" color="#6ba74f" />
+            </view>
           </view>
-        </view>
-        <view class="section_gap" hidden='{{ true }}'>
-          <view class="body-view">
-            <slider bindchange="sliderchange" min="0" max="100" show-value />
+          <view class="section_gap">
+            <view style="line-height: 35px;margin: 0 10px;">
+              <text>窗帘：</text>
+            </view>
+            <view class="body-view">
+              <slider bindchange="sliderchange" step='33' />
+            </view>
           </view>
-        </view>
-        <!-- <label class="openMessage">{{ openMessage }}</label> -->
-        <view class="section">
-          <picker mode="selector" range="{{ array }}" value="{{ index }}" bindchange="bindPickerChange">
-            <view class="picker">当前选择：{{ array[index] }}</view>
-          </picker>
-        </view>
-        <button class="confirm" form-type="submit" hidden='true'>设置发送消息</button>
-      </form>
+          <!-- <label class="openMessage">{{ openMessage }}</label> -->
+          <view class="section">
+            <picker mode="selector" range="{{ array }}" value="{{ index }}" bindchange="bindPickerChange">
+              <view class="picker">当前选择：{{ array[index] }}</view>
+            </picker>
+          </view>
+          <button class="confirm" form-type="submit" hidden='true'>设置发送消息</button>
+        </form>
+      </view>
+      <view class='listDevices' hidden='{{ gizwitsListVisible }}'>
+        <view class="placeChonse">请先选择设备：</view>
+        <scroll-view scroll-y style="height:{{ eleHeight }}px;background:rgb(251, 249, 254);" scroll-top="10" enable-back-to-top="true">
+          <view wx:for="{{ listDevices }}" wx:key="did" class="scrollView">
+            <view wx:if="{{ item.is_online == true }}">
+              <view style="font-size: 14px;" bindtap='chonseDid' data-index="{{ index }}" data-did="{{ item.did }}" 
+                    class="view_li {{ chonseDid == index ? 'active' : '' }}">
+                <view style="margin-top: 4px;">did:{{ item.did }}</view>
+                <view>mac:{{ item.mac }}</view>
+              </view>
+              <view class="msg-menus" hidden='true'>
+                <view id='{{ item.did }}' class='menu-mark iconfont icon-weibiaoti2zhuanhuan' hidden='{{ chonseUpdate }}' bindtap='onMarkMsgTap'></view>
+              </view>
+              <view class="utils" hidden='{{ chonseDelete }}'>
+                <!-- <view id='{{ item.did }}' class='menu-marks iconfont icon-share fl' bindtap='_shareGizwits' data-did="{{ item.did }}"></view>  -->
+                <view id='{{ item.did }}' class='menu-marks iconfont icon-shanchu fl' bindtap='onDevicesDelete' data-did="{{ item.did }}"></view>
+                <view class="menu-marks iconfont icon-return fr" bindtap='goReturn'></view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
     </view>
-    <view class='listDevices' hidden='{{ gizwitsListVisible }}'>
-      <view class="placeChonse">请先选择设备：</view>
-      <scroll-view scroll-y style="height:{{ eleHeight }}px;background:rgb(251, 249, 254);" scroll-top="10" enable-back-to-top="true">
-        <view wx:for="{{ listDevices }}" wx:key="did" class="scrollView">
-          <view wx:if="{{ item.is_online == true }}">
-            <view style="font-size: 14px;" bindtap='chonseDid' data-index="{{ index }}" data-did="{{ item.did }}" 
-                  class="view_li {{ chonseDid == index ? 'active' : '' }}">
-              <view style="margin-top: 4px;">did:{{ item.did }}</view>
-              <view>mac:{{ item.mac }}</view>
-            </view>
-            <view class="msg-menus" hidden='true'>
-              <view id='{{ item.did }}' class='menu-mark iconfont icon-weibiaoti2zhuanhuan' hidden='{{ chonseUpdate }}' bindtap='onMarkMsgTap'></view>
-            </view>
-            <view class="utils" hidden='{{ chonseDelete }}'>
-              <!-- <view id='{{ item.did }}' class='menu-marks iconfont icon-share fl' bindtap='_shareGizwits' data-did="{{ item.did }}"></view>  -->
-              <view id='{{ item.did }}' class='menu-marks iconfont icon-shanchu fl' bindtap='onDevicesDelete' data-did="{{ item.did }}"></view>
-              <view class="menu-marks iconfont icon-return fr" bindtap='goReturn'></view>
-            </view>
-          </view>
-        </view>
-      </scroll-view>
-    </view>
+    
     <!-- 录音按钮 -->
     <view class="fixed-video">
       <button type="primary" bindtouchstart="startRecode" bindtouchend="endRecode" class="cxbtn" hover-class="primaryHover" hover-start-time="10" hover-stay-time="2000">按住录音</button>

@@ -9,38 +9,48 @@
 .header-tab {
   width: 100%;
   height: 45px;
-  background:#6ba74f;
-
+  background: rgb(255,255,255);
+  text-align: center;
+  line-height: 45px;
+  color: #333;
+  position: relative;
 }
 
 .page-top .pushMsgFm .bodyView {
   width: 100%;
-  height: 35px;
+  height: 50px;
   padding: 5px 0px;
   position: relative;
-  background: rgb(251, 249, 254);
+  background: rgb(255, 255, 255);
   margin-top: 10px;
   border: none;
   font-size: 0.8rem;
 }
 
+.page-top .slide-image {
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+}
+
 .page-top .pushMsgFm .section_gap {
-  height: 50px;
+  height: 80px;
   background: rgb(251, 249, 254);
   width: 100%;
-  line-height: 50px;
+  margin-top:10px;
+  line-height: 30px;
 }
 
 .changeText {
-  height: 35px;
-  line-height: 35px;
+  line-height: 25px;
   margin-left: 0.5rem;
   float: left;
   font-family: 'Segoe UI', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .bodyView .changeInput {
-  margin: 2px 0px 0px 10px;
+  margin: 10px 0px 0px 10px;
 }
 
 .bodyView .appidText {
@@ -129,14 +139,14 @@
 }
 
 .section {
-  margin: 10px 0px;
+  margin: 10px 0;
   height: 35px;
   line-height: 35px;
-  background: rgb(251, 249, 254);
+  background: rgb(255, 255, 255);
 }
 
 .section .picker {
-  padding: 0px 2.5%;
+  padding: 0 2.5%;
   font-size: 0.8rem;
 }
 
@@ -266,6 +276,10 @@
 .wc .icon-user::before {
   margin-right: 10px;
   font-size: 16px;
+}
+
+slider {
+  margin: 5px 25px;
 }
 
 /* listDevices end */

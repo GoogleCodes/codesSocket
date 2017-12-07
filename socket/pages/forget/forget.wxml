@@ -7,7 +7,7 @@
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-code fl"></view>
-      <input type='password' class='appidText fl' value='{{ code }}' name='code' placeholder='请输入验证码' />
+      <input class='appidText fl' value='{{ code }}' name='code' placeholder='请输入验证码' />
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-mima fl"></view>
@@ -15,7 +15,7 @@
     </view>
     <view class='bodyView'>
       <view class="iconfont icon-mima fl"></view>
-      <input type='password' class='appidText fl' value='{{ pword }}' name='pword' placeholder='请输入登录密码' />
+      <input type='password' class='appidText fl' value='{{ unpword }}' name='unpword' placeholder='请再输入密码' />
     </view>
     <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>重置登录</button>
   </form>

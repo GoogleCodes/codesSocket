@@ -109,7 +109,7 @@ page, .page {
   height: 100%;
   position: fixed;
   width: 750rpx;
-  background: rgb(255, 255, 255);
+  background: rgb(235, 235, 235);
   z-index: 0;
   transition: All 0.4s ease;
   box-shadow: 0px 1px 100px #ccc;
@@ -155,11 +155,13 @@ page, .page {
 
 .page-top .icon-liebiao {
   font-size: 60rpx;
-  height: 25px;
   line-height: 25px;
-  color: #fff;
+  color: #333;
   width: 25px;
   padding: 10px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 
 .page-top image {

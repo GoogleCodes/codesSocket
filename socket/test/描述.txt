@@ -1,0 +1,18 @@
+"tabBar": {
+  "position": "bottom",
+  "borderStyle": "#eee",
+  "background": "#fefefe",
+  "list": [
+    {
+      "pagePath": "pages/smart/smart",
+      "iconPath": "images/tabBar/img1.png",
+      "text": "首页",
+      "selectedIconPath": "images/tabBar/img1-1.png"
+    },{
+      "pagePath": "pages/smart/smart",
+      "iconPath": "images/tabBar/img1.png",
+      "text": "首页",
+      "selectedIconPath": "images/tabBar/img1-1.png"
+    }
+  ]
+}
