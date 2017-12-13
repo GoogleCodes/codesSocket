@@ -77,6 +77,7 @@ Page({
   onReady() {
     var that = this;
     //  获取用户信息
+    /*
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/member/getUser',
       method: "POST",
@@ -91,7 +92,7 @@ Page({
         console.log(res.data.data);
         wx.setStorageSync('wxuser', res.data.data)
       }
-    })
+    })*/
     var userInfom = wx.getStorageSync('userInformation');
     that.setData({
       uname: userInfom.username,

@@ -66,7 +66,8 @@ Page({
     ins_l: '',
     chonseUpdate: false,
     chonseDelete: true,
-    language: ''  //  语义
+    language: '',  //  语义,
+    sliceArrays: [],
   },
 
   /**
@@ -191,6 +192,7 @@ Page({
     };
     tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
       that.setData({ listDevices: result.data.devices });
+      console.log(that.data.listDevices);
       var pKey = null;
       for (var i in result.data.devices) {
         var device = result.data.devices[i];
@@ -215,6 +217,7 @@ Page({
     var that = this;
     that._login();
     //  获取语义
+    /*
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/dev/semlist',
       method: "POST",
@@ -230,7 +233,7 @@ Page({
           });
         }
       }
-    })
+    })*/
     that.setData({ gizwitsVisible: false });
     var did = e.currentTarget.dataset.did, index = e.currentTarget.dataset.index
     if (that.data.chonseDid === index) {
@@ -311,6 +314,16 @@ Page({
                 });
               } catch(e) {}
               break;
+            case 's2c_noti':
+              let a = noti.data.attrs.data.slice(18, 36)
+              that.setData({
+                sliceArrays: noti.data.attrs.data.slice(18, 36)
+              });
+              console.log(that.data.sliceArrays);
+              // let b = [0,18, 0x50];
+              // let c = b.concat(a);
+              // console.log(c, b, b.length);
+              break;
             case 'pong':
               break;
           }
@@ -329,6 +342,11 @@ Page({
     let arr = [];
     switch(true) {
       case e.detail.value == 0:
+        arr.push(0x00, 0x02, 0xA0, 0xFF);
+        var json = {
+          'data': this.getArrays(arr),
+        };
+        tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 33:
         arr.push(0x00, 0x01, 0x40);
@@ -338,15 +356,15 @@ Page({
         tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 66:
-        // arr.push(0x00, 0x01, 0x40);
-        arr.push(0,18,0x50,2, 65, 66, 67, 68, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0 + 1, 0, 0);
+        console.log(that.data.sliceArrays.pop());
+        arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 1, 1, 1);
         var json = {
           'data': this.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 100:
-        arr.push(0x00, 0x01, 0x99);
+        arr.push(0, 0x01, 0x10);
         var json = {
           'data': this.getArrays(arr),
         };
@@ -371,15 +389,17 @@ Page({
   //  智能灯开关
   chonseSocket(e) {
     var that = this, json = {};
-    let arr = new Array(768);
+    let arr = [];
     that.setData({ socketOpen: true });
     //  发送数据开关 true : 打开  false : 关闭
     switch (e.detail.value) {
       case true:
         that.setData({ switchButton: true });
         //  发送数据
+        // arr.push(0, 0x01, 0x50, 2, 0, 1, 1, 0, 0, 2, 1, 0, 0, 0, 0, 2, 0, 1, 1, 0, 0,);
+        arr.push(0x00, 0x01, 0x20);
         json = {
-          "onoffAll": that.data.switchButton,
+          'data': this.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         tools.Toast('打开成功', 'success');
@@ -389,8 +409,12 @@ Page({
         that.setData({ switchButton: false });
         that.getDev(that.data.switchButton);
         //  发送数据
+        // json = {
+        //   "onoffAll": that.data.switchButton,
+        // };
+        arr.push(0x00, 0x01, 0x01);
         json = {
-          "onoffAll": that.data.switchButton,
+          'data': this.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         tools.Toast('关闭成功', 'success');
@@ -409,6 +433,7 @@ Page({
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
     };
+    /*
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/dev/add',
       method: "post",
@@ -423,7 +448,7 @@ Page({
           that.orderSign();
         }
       },
-    });
+    });*/
   },
 
   specSocket(e) {
@@ -433,16 +458,18 @@ Page({
     that.setData({ socketOpen: true });
     //  发送数据开关 true : 打开  false : 关闭
     if (e.detail.value == true) {
-      arr.push(0x00, 0x01, 0x40)
+      // arr.push(0x00, 0x01, 0x01, 0x11, 0x01)
+      arr.push(0x00, 0xA1, 2, 1, 1, 0, 1, 1, 1)
       that.getArrays(arr);
       that.setData({ switchSpec: true });
       //  发送数据
       json = {
-        "data": that.getArrays(arr)
+        "raw": that.getArrays(arr),
       };
       tools.sendData('c2s_write', that.data.did, json);
       tools.Toast('打开成功', 'success');
     } else {
+      /*
       that.setData({ switchSpec: false });
       arr.push(0x00, 0x06, 0x50)
       that.getArrays(arr);
@@ -452,6 +479,7 @@ Page({
       };
       tools.sendData('c2s_write', that.data.did, json);
       tools.Toast('关闭成功', 'success');
+      */
     }
   },
 
