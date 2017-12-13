@@ -342,7 +342,7 @@ Page({
     let arr = [];
     switch(true) {
       case e.detail.value == 0:
-        arr.push(0x00, 0x02, 0xA0, 0xFF);
+        arr.push(0x00, 0x01, 0xA0, 0xFF);
         var json = {
           'data': this.getArrays(arr),
         };
@@ -459,12 +459,12 @@ Page({
     //  发送数据开关 true : 打开  false : 关闭
     if (e.detail.value == true) {
       // arr.push(0x00, 0x01, 0x01, 0x11, 0x01)
-      arr.push(0x00, 0xA1, 2, 1, 1, 0, 1, 1, 1)
+      arr.push(0x00, 0x01, 0xA2, 1, 1, 0, 1, 0x01, 0x01)
       that.getArrays(arr);
       that.setData({ switchSpec: true });
       //  发送数据
       json = {
-        "raw": that.getArrays(arr),
+        "data": that.getArrays(arr),
       };
       tools.sendData('c2s_write', that.data.did, json);
       tools.Toast('打开成功', 'success');
