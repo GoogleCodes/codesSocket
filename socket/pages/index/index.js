@@ -1,61 +1,66 @@
-//index.js
-
-var myUtils = require('../../utils/util.js');
-
-//获取应用实例
-var app = getApp()
+// pages/index/index.js
 Page({
+
+  /**
+   * 页面的初始数据
+   */
   data: {
-    messages: [],
+  
   },
-  onLoad: function () {
-    var that = this;
-    //调用应用实例的方法获取全局数据
-    app.getUserInfo(function(userInfo){
-      //更新数据
-      that.setData({
-        userInfo:userInfo
-      })
-    })
 
-    myUtils.utils.getConn('ws://localhost:8080/MySocket/websocket',function(res) { //  成功调用
-      console.log("请求成功！" + JSON.stringify(res));
-    },function(err) {  //  失败调用
-      console.log(err)
-    },function(err) {
-      
-    });
-
-    //  打开链接
-    myUtils.utils.getSocketOpen(function(res) {
-      console.log(res, "WebSocket连接已打开！" + JSON.stringify(res));
-    });
-
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+  
   },
-  //  收到消息
-  getMessage: function () {
-    var that = this;
-    //  向服务器发送消息
-    that.messages = [
-      { 
-        a: 1,
-        b: 2,
-      },
-      {
-        a: 3,
-        b: 4,
-      }
-    ];
-    myUtils.utils.setSaveMessages(JSON.stringify(that.messages));
 
-    //  接收服务器的信息
-    myUtils.utils.getServerMessage(that.data.messages,function(res) {
-      console.log(res);
-      that.setData({
-        messages: res.data
-      });
-      console.log(res.data);
-    });
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+  
+  },
 
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+  
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+  
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+  
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+  
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+  
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+  
   }
 })

@@ -342,7 +342,7 @@ Page({
     let arr = [];
     switch(true) {
       case e.detail.value == 0:
-        arr.push(0x00, 0x01, 0xA0, 0xFF);
+        arr.push(0x00, 0x02, 0xA0, 0xFF);
         var json = {
           'data': this.getArrays(arr),
         };
@@ -396,8 +396,7 @@ Page({
       case true:
         that.setData({ switchButton: true });
         //  发送数据
-        // arr.push(0, 0x01, 0x50, 2, 0, 1, 1, 0, 0, 2, 1, 0, 0, 0, 0, 2, 0, 1, 1, 0, 0,);
-        arr.push(0x00, 0x01, 0x20);
+        arr.push(0x00, 0x01, 0x14, 0x01, 0x01, 0x00, 0x01, 0x0F, 0x0B);
         json = {
           'data': this.getArrays(arr),
         };
@@ -458,8 +457,7 @@ Page({
     that.setData({ socketOpen: true });
     //  发送数据开关 true : 打开  false : 关闭
     if (e.detail.value == true) {
-      // arr.push(0x00, 0x01, 0x01, 0x11, 0x01)
-      arr.push(0x00, 0x01, 0xA2, 1, 1, 0, 1, 0x01, 0x01)
+      arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA1, 0x01, 0x01)
       that.getArrays(arr);
       that.setData({ switchSpec: true });
       //  发送数据
@@ -469,9 +467,8 @@ Page({
       tools.sendData('c2s_write', that.data.did, json);
       tools.Toast('打开成功', 'success');
     } else {
-      /*
       that.setData({ switchSpec: false });
-      arr.push(0x00, 0x06, 0x50)
+      arr.push(0x00, 0x08, 0x16, 0x02, 0x01, 0x01, 0x00, 0x01)
       that.getArrays(arr);
       //  发送数据
       json = {
@@ -479,7 +476,6 @@ Page({
       };
       tools.sendData('c2s_write', that.data.did, json);
       tools.Toast('关闭成功', 'success');
-      */
     }
   },
 
