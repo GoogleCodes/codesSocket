@@ -8,10 +8,10 @@ Page({
     loadHidden: true,
     getCodeNumber: '获取验证码',
     disaCode: false,
-    name: 'Dome',           //  名称
-    mobile: '13232800159',         //  手机号码
-    code: '042053',           //  验证码
-    pword: '123123',          //  密码
+    name: '',           //  名称
+    mobile: '',         //  手机号码
+    code: '',           //  验证码
+    pword: '',          //  密码
     unpword: '',        //  重覆密码
     codeImages: '',     //  图片验证码,
     webcharName: '',    //  微信名称
@@ -33,7 +33,7 @@ Page({
         'content-type': 'application/x-www-form-urlencoded'
       },
       data: {
-        tel: '13232800159'
+        tel: this.data.mobile
       },
       success(res) {
         console.log(res);
@@ -45,6 +45,7 @@ Page({
     this.setData({
       mobile: e.detail.value
     })
+    console.log(e);
   },
 
   //  获取Token

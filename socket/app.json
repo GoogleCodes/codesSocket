@@ -1,12 +1,13 @@
 {
   "pages": [
-    "pages/index/index",
     "pages/login/login",
     "pages/smart/smart",
+    "pages/index/index",
+    "pages/aboutme/aboutme",
+    "pages/forget/forget",
+    "pages/reg/reg",
     "pages/text/text",
     "pages/more/more",
-    "pages/reg/reg",
-    "pages/forget/forget",
     "template/util/util",
     "pages/person/person",
     "pages/scene/scene",
@@ -25,15 +26,15 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "iconPath": "images/tabBar/img1.png",
+        "iconPath": "images/tabBar/img1-1.png",
         "text": "首页",
-        "selectedIconPath": "images/tabBar/img1-1.png"
+        "selectedIconPath": "images/tabBar/img1.png"
       },
       {
         "pagePath": "pages/index/index",
-        "iconPath": "images/tabBar/img2.png",
+        "iconPath": "images/tabBar/img2-2.png",
         "text": "首页",
-        "selectedIconPath": "images/tabBar/img2-2.png"
+        "selectedIconPath": "images/tabBar/img2.png"
       },
       {
         "pagePath": "pages/index/index",
@@ -42,9 +43,9 @@
         "selectedIconPath": "images/tabBar/img3-3.png"
       },
       {
-        "pagePath": "pages/index/index",
+        "pagePath": "pages/aboutme/aboutme",
         "iconPath": "images/tabBar/img4.png",
-        "text": "首页",
+        "text": "我的",
         "selectedIconPath": "images/tabBar/img4-4.png"
       }
     ]

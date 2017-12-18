@@ -1,5 +1,30 @@
 /**app.wxss**/
 
+.block {display: block;}
+.fl {float: left;}
+.fl {float: right;}
+.f12 {font-size: 0.9rem;}
+.w100, .h100 {width: 100%;height: 100%;}
+/*改变谷歌滚动条的样式*/
+::selection{background:pink;}
+::-webkit-scrollbar{width:8px;height:6px;background:#ccc;}
+::-webkit-scrollbar-button{background-color:#e5e5e5;}
+/* ::-webkit-scrollbar-track{background:#999;}
+::-webkit-scrollbar-track-piece{background:#ccc}
+::-webkit-scrollbar-thumb{background:#666;}
+::-webkit-scrollbar-corner{background:#82AFFF;}
+::-webkit-scrollbar-resizer{background:#FF0BEE;} */
+scrollbar{-moz-appearance:none !important;background:rgb(0,255,0) !important;}
+scrollbarbutton{-moz-appearance:none !important;background-color:rgb(0,0,255) !important;}
+scrollbarbutton:hover{-moz-appearance:none !important;background-color:rgb(255,0,0) !important;}
+/* 隐藏上下箭头 */
+ scrollbarbutton{display:none !important;}
+/* 纵向滚动条宽度 */
+ scrollbar[orient="vertical"]{min-width:12px !important;}
+ /*
+ 	1366*768 1440*900 div---如果你是用fixed的div层的高度一定要控制在：520px以内
+ */
+
 .container {
   height: 100%;
   display: flex;
@@ -215,6 +240,7 @@ page, .page {
   border-radius: 5px;
   line-height: 40px;
   font-size: 14px;
+  color: #b3b3b3;
 }
 
 .loginView .codeImage {
@@ -246,15 +272,15 @@ page, .page {
 }
 
 .loginView button[type="primary"] {
-  width: 95%;
-  margin: 15px auto;
+  width: 80%;
+  margin: 55px auto;
   height: 40px;
   position: absolute;
   left: 0px;
   right: 0px;
   line-height: 40px;
   font-size: 14px;
-  background: #6ba74f;
+  background: #7cb242;
   color: #fff;
 }
 
@@ -351,3 +377,12 @@ page, .page {
 }
 
 /* end */
+
+
+/* logo start */
+.logo {
+  width: 209px;
+  height: 133px;
+  margin: 30px auto 0px; 
+}
+/* logo end */

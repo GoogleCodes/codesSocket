@@ -1,12 +1,12 @@
 /* pages/index/index.wxss */
 
 page {
-  background: #fbfbfb;
+  background: #eee;
 }
 
 .table-header {
   height: 35px;
-  margin: 10px 0px;
+  margin:  10px 0px;
   border-bottom: 1px solid #eee;
 }
 
@@ -23,3 +23,74 @@ page {
   height: 35px;
   color: #7cb242;
 }
+
+/* ul-view start */
+
+.ul-view {
+  overflow: hidden;
+  height: 100%;
+}
+
+.ul-view .li-view {
+  height: 70px;
+  margin: 10px auto 0;
+  background: #fff;
+  border-radius: 5px;
+  width: 95%;
+  overflow: hidden;
+  box-shadow: 1px 1px 10px #ccc;
+}
+
+.ul-view .li-view .pic-iview {
+  width: 24px;
+  height: 39px;
+  margin: 15px 20px;
+}
+
+.ul-view .li-view .pic1 {
+  width: 25px;
+  height: 39px;
+  margin: 15px 29px;
+}
+
+.ul-view .li-view .pic2 {
+  width: 42px;
+  height: 39px;
+}
+
+.ul-view .li-view .status-iview {
+  margin: 13px 0px;
+}
+
+.ul-view .li-view .arrow-iview {
+  width: 35.5px;
+  height: 35.5px;
+  margin: 16px 5px;
+}
+
+/* ul-view end */
+
+/* music-iview start */
+
+.music-iview {
+  position: fixed;
+  bottom: 25px;
+  left: 0px;
+  right: 0px;
+  margin: 0px auto;
+  width: 55px;
+  height: 55px;
+  background: #fff;
+  border-radius: 100%;
+  background: #fff;
+  z-index: -1;
+}
+
+.music-iview  image {
+  width: 25px;
+  height: 40px;
+  margin: 7px auto;
+  display: block;
+}
+
+/* music-iview end */

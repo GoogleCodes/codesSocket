@@ -1,12 +1,17 @@
 <!--pages/login/login.wxml-->
+
+<view class="logo">
+  <image src='../../../images/logo.png' style="width: 100%;height: 100%;"></image>
+</view>
+
 <view class="loginView">
   <form name='pushMsgFm' report-submit bindsubmit='loginForm'>
     <view class='bodyView' style="border-bottom: 1px solid #eee;">
-      <view class="iconfont icon-user fl"></view>
+      <!-- <view class="iconfont icon-user fl"></view> -->
       <input type='number' class='appidText fr' value='{{ uname }}' name='uname' placeholder='用户账号' focus='true' maxlength='11' />
     </view>
     <view class='bodyView'>
-      <view class="iconfont icon-mima fl"></view>
+      <!-- <view class="iconfont icon-mima fl"></view> -->
       <input type='password' class='appidText fr' value='{{ pword }}' name='pword' placeholder='用户密码' confirm-type='done' />
     </view>
     <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>登录</button>
@@ -19,4 +24,9 @@
       </navigator>
     </view>
   </form>
+</view>
+
+<view class="wechatLogin">
+  <image src="../../../images/img01.png" style="width: 100%;height: 100%;"></image>
+  <view class="line"></view>
 </view>

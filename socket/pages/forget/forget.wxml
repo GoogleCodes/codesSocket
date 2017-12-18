@@ -1,25 +1,22 @@
  <view class="loginView">
   <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
     <view class='bodyView'>
-      <view class="iconfont icon-user fl"></view>
+      <!-- <view class="iconfont icon-user fl"></view> -->
       <input type='number' bindblur='mobileInputEvent' class='appidText fl' value='{{ phone }}' style="width: 150px" name='phone' placeholder='请输入手机号码' focus='true' />
       <button class="fr codeBtn" bindtap='getCodeNumber' disabled='{{ disaCode }}'>{{ getCodeNumber }}</button>
     </view>
     <view class='bodyView'>
-      <view class="iconfont icon-code fl"></view>
+      <!-- <view class="iconfont icon-code fl"></view> -->
       <input class='appidText fl' value='{{ code }}' name='code' placeholder='请输入验证码' />
     </view>
     <view class='bodyView'>
-      <view class="iconfont icon-mima fl"></view>
+      <!-- <view class="iconfont icon-mima fl"></view> -->
       <input type='password' class='appidText fl' value='{{ pword }}' name='pword' placeholder='请输入登录密码' />
     </view>
     <view class='bodyView'>
-      <view class="iconfont icon-mima fl"></view>
+      <!-- <view class="iconfont icon-mima fl"></view> -->
       <input type='password' class='appidText fl' value='{{ unpword }}' name='unpword' placeholder='请再输入密码' />
     </view>
     <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>重置登录</button>
   </form>
 </view> 
-
-<!-- <import src="../../template/util/util.wxml" />
-<template is="utilInput" data="{{ phone,disaCode,getCodeNumber,code,pword,loadHidden,unpword,codeImages }}"></template> -->

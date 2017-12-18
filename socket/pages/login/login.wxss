@@ -1,7 +1,7 @@
 /* pages/login/login.wxss */
 
 .loginView {
-  margin: 0% 5%;
+  margin: 15% 5% auto;
   width: 90%;
 }
 
@@ -20,7 +20,7 @@
 }
 
 .loginView .appidText {
-  width: 90%;
+  width: 95%;
   height: 40px;
   font-size:14px;
   border-radius: 5px;
@@ -29,23 +29,23 @@
 }
 
 .loginView .labels {
-  margin-top: 55px;
+  margin: 55px 10% 0px;
 }
 
 .loginView .labels .viewLabel {
   height: 35px;
   line-height: 35px;
-  color: #6ba74f;
+  color: #b3b3b3;
   font-size: 28rpx;
 }
 
 .loginView button[type="primary"] {
-  width: 100%;
+  width: 80%;
   margin: 10px auto 0px;
   height: 40px;
   line-height: 40px;
   font-size: 16px;
-  background: #6ba74f;
+  background: #7cb242;
   color: #fff;
 }
 
@@ -53,3 +53,22 @@
   font-size: 1.2rpx;
   font-family: 'microsoft yahei';
 }
+
+/* wechatLogin start */
+.wechatLogin {
+  width: 30px;
+  height: 24.5px;
+  position: fixed;
+  bottom: 20px;
+  left: 0px;
+  right: 0px;
+  margin: 0px auto;
+}
+
+.wechatLogin .line {
+  width: 100%;
+  height: 1px;
+  background: #b3b3b3;
+}
+
+/* wechatLogin end */
