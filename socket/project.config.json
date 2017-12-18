@@ -10,7 +10,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "1.6.6",
 	"appid": "wx427aa2cee61883dd",
-	"projectname": "%E5%8F%B6%E7%BB%BF%E4%BD%93",
+	"projectname": "gitSocket",
 	"condition": {
 		"search": {
 			"current": -1,

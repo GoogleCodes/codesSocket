@@ -1,22 +1,21 @@
-
 let urls = require('common/common.js');
 
 let options = {
   formatTime(number) {  //  时间格式化
     var n = number * 1000;
     let date = new Date(n),
-        //  年份
-        year = date.getFullYear(),
-        //  月份
-        month = date.getMonth() + 1,
-        //  日期
-        day = date.getDate(),
-        //  小时
-        hour = date.getHours(),
-        //分钟
-        minute = date.getMinutes(),
-        //秒钟
-        second = date.getSeconds()
+      //  年份
+      year = date.getFullYear(),
+      //  月份
+      month = date.getMonth() + 1,
+      //  日期
+      day = date.getDate(),
+      //  小时
+      hour = date.getHours(),
+      //分钟
+      minute = date.getMinutes(),
+      //秒钟
+      second = date.getSeconds()
     return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':');
   },
   formatNumber(n) {  //  时间格式化

@@ -1,8 +1,8 @@
 {
   "pages": [
+    "pages/index/index",
     "pages/login/login",
     "pages/smart/smart",
-    "pages/index/index",
     "pages/text/text",
     "pages/more/more",
     "pages/reg/reg",

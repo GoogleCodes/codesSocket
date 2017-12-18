@@ -1,9 +1,12 @@
-// smart.js
-//  导入js
 var tools = require('../../utils/util.js');
 let urls = require('../../utils/common/common.js');
 var app = new getApp();
 var times = null, ins = 0;
+
+import { Main } from '../../utils/main.js'
+
+let main = new Main();
+
 Page({
   /**
    * 页面的初始数据
@@ -22,8 +25,6 @@ Page({
     staus: 1,
     translate: '',
     eleHeight: 0,
-    uname: '',
-    pword: '',
     voices: [],
     socketOpen: false,  //  开关
     options: {
@@ -76,7 +77,7 @@ Page({
   onLoad() {
     let that = this, limit = 20, skip = 0;
     wx.getSystemInfo({
-      success: function (res) {
+      success(res) {
         that.setData({
           eleHeight: res.windowHeight - 145,
         });
@@ -342,31 +343,33 @@ Page({
     let arr = [];
     switch(true) {
       case e.detail.value == 0:
-        arr.push(0x00, 0x02, 0xA0, 0xFF);
+        //  0xA0  获取子设备请求
+        arr.push(0x00, 0x02, 0xA0, 0x01);
         var json = {
-          'data': this.getArrays(arr),
+          'data': main.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 33:
         arr.push(0x00, 0x01, 0x40);
         let json = {
-          'data': this.getArrays(arr),
+          'data': main.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 66:
         console.log(that.data.sliceArrays.pop());
         arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 1, 1, 1);
+        // arr.push(0, 18, 0x44, 2);
         var json = {
-          'data': this.getArrays(arr),
+          'data': main.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 100:
-        arr.push(0, 0x01, 0x10);
+        arr.push(0x00, 0x03, 0x12, 0x01, 0x01, 0x00, 0x01);
         var json = {
-          'data': this.getArrays(arr),
+          'data': main.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
@@ -374,17 +377,6 @@ Page({
         break;
     }
   },
-
-  getArrays(reqArr) {
-    let arrays = new Array(768), i = 0;
-    for (i; i <= 768; i++) {
-      arrays[i] = 0;
-    }
-    let arrtoo = arrays.slice(0);
-    let t = reqArr;
-    return t.concat(arrtoo).splice(0,768)
-  },
-
 
   //  智能灯开关
   chonseSocket(e) {
@@ -398,10 +390,10 @@ Page({
         //  发送数据
         arr.push(0x00, 0x01, 0x14, 0x01, 0x01, 0x00, 0x01, 0x0F, 0x0B);
         json = {
-          'data': this.getArrays(arr),
+          'data': main.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
-        tools.Toast('打开成功', 'success');
+        main._Toast('打开成功', 'success');
         that.getDev(that.data.switchButton);
         break;
       case false:
@@ -413,10 +405,10 @@ Page({
         // };
         arr.push(0x00, 0x01, 0x01);
         json = {
-          'data': this.getArrays(arr),
+          'data': main.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
-        tools.Toast('关闭成功', 'success');
+        main._Toast('关闭成功', 'success');
         break;
       default:
         break;
@@ -452,30 +444,31 @@ Page({
 
   specSocket(e) {
     let arr = [], that = this, json = {};
-    console.log(arr.concat(Number('0x40')));
-    console.log(this.getArrays(tools.toStringTools('64')));
     that.setData({ socketOpen: true });
     //  发送数据开关 true : 打开  false : 关闭
     if (e.detail.value == true) {
-      arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA1, 0x01, 0x01)
-      that.getArrays(arr);
+      //  0xA1 开关操作（执行器、窗帘有效）
+      //  arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA2, 0x01, 0x01)
+      //  0xA2 百分比操作（窗帘有效）
+      arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA2, 0x01, 0x21)
+      main.getArrays(arr);
       that.setData({ switchSpec: true });
       //  发送数据
       json = {
-        "data": that.getArrays(arr),
+        "data": main.getArrays(arr),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      tools.Toast('打开成功', 'success');
+      main._Toast('打开成功', 'success');
     } else {
       that.setData({ switchSpec: false });
       arr.push(0x00, 0x08, 0x16, 0x02, 0x01, 0x01, 0x00, 0x01)
-      that.getArrays(arr);
+      main.getArrays(arr);
       //  发送数据
       json = {
-        "data": that.getArrays(arr)
+        "data": main.getArrays(arr)
       };
       tools.sendData('c2s_write', that.data.did, json);
-      tools.Toast('关闭成功', 'success');
+      main._Toast('关闭成功', 'success');
     }
   },
 
@@ -546,7 +539,7 @@ Page({
         that.setData({ switchButton: true });
         //  发送数据
         tools.sendData('c2s_write', that.data.did, that.data.switchButton);
-        tools.Toast('发送成功', 'success');
+        main._Toast('发送成功', 'success');
       }
     });
   },
@@ -632,7 +625,7 @@ Page({
       success(res) {
         var tempFilePath = res.tempFilePath;
         that.setData({ recodePath: tempFilePath, isSpeaking: true });
-        tools.Toast('录音成功', 'success');
+        main._Toast('录音成功', 'success');
         wx.getSavedFileList({
           success(res) {
             var voices = [];
@@ -679,10 +672,10 @@ Page({
           console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
           switch(true) {
             case res.data.toString() == error_text:
-              tools.Toast('语音识别失败!请重试!','success');
+              main._Toast('语音识别失败!请重试!','success');
               break;
             case res.statusCode == 404:
-              tools.Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
+              main._Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
               return;
           }
           var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
@@ -706,7 +699,7 @@ Page({
                 };
                 //  发送数据
                 tools.sendData('c2s_write', s.data.did, json);
-                tools.Toast('打开成功!', 'success');
+                main._Toast('打开成功!', 'success');
                 break;
               case myString == "关" || myString == s.data.language: 
                 s.setData({ switchButton: false });
@@ -715,7 +708,7 @@ Page({
                 };
                 //  发送数据
                 tools.sendData('c2s_write', s.data.did, json);
-                tools.Toast('关闭成功!', 'success');
+                main._Toast('关闭成功!', 'success');
                 break;
               default:
                 break;
@@ -727,12 +720,12 @@ Page({
             cEditData.recodeIdentity = data.identitys;
             s.setData({ editData: cEditData });
           } else {
-            tools.showModel('提示', data.message, () => {});
+            main._goShowModel('提示', data.message, () => {});
           }
           wx.hideToast();
         },
         fail(res) {  //  错误提示
-          tools.showModel('提示', '录音的姿势不对!', () => {});
+          main._goShowModel('提示', '录音的姿势不对!', () => {});
           wx.hideToast();
         }
       });

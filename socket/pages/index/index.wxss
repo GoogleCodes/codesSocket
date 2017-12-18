@@ -1,1 +1,25 @@
 /* pages/index/index.wxss */
+
+page {
+  background: #fbfbfb;
+}
+
+.table-header {
+  height: 35px;
+  margin: 10px 0px;
+  border-bottom: 1px solid #eee;
+}
+
+.table-header .tab {
+  float: left;
+  width: 25%;
+  text-align: center;
+  line-height: 35px;
+  color: #595757;
+  font-size: 30rpx;
+}
+
+.table-header .tab.active {
+  height: 35px;
+  color: #7cb242;
+}
