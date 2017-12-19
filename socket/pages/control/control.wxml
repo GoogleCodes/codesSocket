@@ -1,0 +1,17 @@
+<!--pages/control/control.wxml-->
+
+<view class="control-body">
+  <view class="control-title">网关：</view>
+
+  <view class="control-ul">
+    <view class="control-li">
+      <text class="fl iconfont icon-weibiaoti- block"></text>
+      <view class="li-main">
+        <view class="li-main-desc">智能网关</view>
+        <view class="li-main-desc" style='color: #b3b3b3;'>mac：5CCF7FAB71A5</view>
+      </view>
+    </view>
+
+  </view>
+
+</view>

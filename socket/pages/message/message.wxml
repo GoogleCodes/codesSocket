@@ -1,0 +1,44 @@
+<!--pages/message/message.wxml-->
+
+<view class="message-iview f12">
+  <view class="ul-iview">
+    <view class="li-iview" bindlongtap='chonseNetword'>
+      <text class="">网关：</text>
+      <text class="">mac：5CCF7FAB71A5</text>
+      <image src='../../../static/images/img11.png' hidden="{{ newWordShow }}" class="fr" style="width: 19px;height: 19px;"></image>
+    </view>
+
+    <view class="li-iview">
+      <text class="">点击分享</text>
+      <text class="iconfont icon-youbian fr"></text>
+    </view>
+
+    <view class="li-iview">
+      <text class="">软件版本号：</text>
+      <text style="margin-left: 25px;">1.0</text>
+    </view>
+
+    <view class="li-iview">
+      <text class="">硬件版本号：</text>
+      <text style="margin-left: 25px;">1.0</text>
+    </view>
+
+    <view class="li-iview">
+      <text class="">叶绿值：</text>
+      <text class="">XX</text>
+      <text class='fr' bindtap='goLayer'>❓</text>
+    </view>
+
+  </view>
+
+</view>
+
+<view class="layer" hidden='{{ layerShow }}'></view>
+<view class="layer-poper" hidden='{{ layerShow }}' style="top: {{ winTop }}px">
+  <image src="../../../static/images/img18.png" style="width: 52px;height: 52px;" class="block"></image>
+  <view style="color: #666;" class="layer-desc">
+    根据用户使用习惯自动计算， 后续推出积分兑换，敬请期待....
+  </view>
+  <view class="line"></view>
+  <button class="confirm" bindtap='cancelPop'>知道了</button>
+</view>

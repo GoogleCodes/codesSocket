@@ -50,6 +50,19 @@ class Main {
     });
   }
 
+  sendRrquest(url, method, data, header) {
+    return new Promise(function (resolve, reject) {
+      wx.request({
+        url: urls.purl + url,
+        data: data,
+        method: method,
+        header: header,
+        success: resolve,
+        fail: reject
+      })
+    });
+  }
+
 }
 
 export { Main }

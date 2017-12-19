@@ -1,0 +1,83 @@
+/* pages/message/message.wxss */
+
+page {
+  background: #f7f7f7;
+}
+
+/* message-iview start */
+.message-iview {
+
+}
+
+.message-iview .ul-iview {
+
+}
+
+.message-iview .ul-iview .li-iview {
+  height: 37px;
+  line-height: 37px;
+  width: 90%;
+  padding: 0 5%;
+  background: #fff;
+  margin: 10px 0;
+  color: #808080;
+}
+
+.message-iview .ul-iview .li-iview image {
+  margin: 8px 0;
+}
+
+/* message-iview end */
+
+/* layer-poper start */
+.layer {
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
+.layer-poper {
+  width: 95%;
+  margin: 0 auto;
+  border-radius: 5px;
+  background: #fff;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 10;
+}
+
+.layer-poper image {
+  margin: 0px auto;
+  padding: 20px 0px;
+}
+
+.layer-poper .layer-desc {
+  padding: 0 20px 10px;
+  line-height: 25px;
+  display: block;
+  font-size: 16px;
+}
+
+.layer-poper .line {
+  width: 85%;
+  height: 1px;
+  background: #f2f2f2;
+  margin: 0 auto 10px;
+}
+
+.layer-poper .confirm {
+  background: #fff;
+  width: 40%;
+  height: 40px;
+  line-height: 40px;
+  color: #f7931e;
+  border: 1px solid #f7931e;
+  overflow: hidden;
+  margin: 10px auto;
+}
+
+/* layer-poper end */

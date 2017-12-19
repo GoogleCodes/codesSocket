@@ -1,0 +1,31 @@
+/* pages/me/me.wxss */
+
+page {
+  background: #f7f7f7;
+}
+
+.me-iview .me-li-iview {
+  width: 90%;
+  height: 40px;
+  line-height: 35px;
+  background: #fff;
+  margin: 10px 0;
+  padding: 0 5% 0 8%;
+  position: relative;
+  color: #666;
+  border: 1px solid #e6e6e6;
+  border-left: none;
+  border-right:  none;
+}
+
+.me-iview .me-li-iview .small-icon {
+  color: #8cc63f;
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.me-iview .me-li-iview .icon-youbian {
+  position: absolute;
+  right: 20px;
+  top: 3px;
+}

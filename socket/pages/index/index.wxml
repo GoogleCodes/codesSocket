@@ -7,24 +7,26 @@
 </swiper>
 
 <view class="table-header" style="margin: 10px 0 0;background: #fff;box-shadow: 5px 1px 10px #ccc;">
-  <view wx:for="{{ list }}" class="tab {{ currentTab == item.id ? 'active': '' }}" data-current="{{ item.id }}" bindtap="selected">{{ item.tab }}</view>
-  <!-- <view class="tab {{ currentTab == 0 ? 'active': '' }}" data-current="0" bindtap="selected">点餐</view>
-  <view class="tab {{ currentTab == 1 ? 'active': '' }}" data-current="1" bindtap="selected">商家</view> -->
+  <!-- <view wx:for="{{ list }}" class="tab {{ currentTab == item.id ? 'active': '' }}" data-current="{{ item.id }}" bindtap="selected">{{ item.tab }}</view> -->
+  <view class="tab {{ currentTab == 0 ? 'active': '' }}" data-current="0" bindtap="selected">卧室</view>
+  <view class="tab {{ currentTab == 1 ? 'active': '' }}" data-current="1" bindtap="selected">厨房</view>
+  <view class="tab {{ currentTab == 2 ? 'active': '' }}" data-current="2" bindtap="selected">客厅</view>
+  <view class="tab {{ currentTab == 3 ? 'active': '' }}" data-current="3" bindtap="selected">厨房</view>
+  <view class="tab {{ currentTab == 4 ? 'active': '' }}" data-current="4" bindtap="selected">卫生间</view>
 </view>
 
-<swiper current="{{ currentTab }}" class="swiper-box" 
-duration="300" style="height: 100%;z-index: 1" bindchange="bindChange">
+<swiper current="{{ currentTab }}" class="swiper-box" duration="300" style="height: 100%;z-index: 1" bindchange="bindChange">
 
   <!-- <swiper-item>
     <view class="{{ selected ? 'hidden': 'show' }}">1232131</view>
   </swiper-item>  -->
 
-  <swiper-item>
+  <swiper-item style="height: auto;">
     <view class="{{ selected ? 'hidden': 'show' }}">
       <view class="ul-view">
         <view class="li-view">
           <view class="pic-iview fl pic1">
-            <image src="../../../images/img03.png" class="w100 h100"></image>
+            <image src="../../../static/images/img03.png" class="w100 h100"></image>
           </view>
           <view class="fl status-iview f12">
             <text class="block">照明灯</text>
@@ -32,14 +34,15 @@ duration="300" style="height: 100%;z-index: 1" bindchange="bindChange">
               <text class="block fr" style="color: #6aa84f;">关</text>
             </view>
           </view>
-          <view class="arrow-iview fr">
-            <image src="../../../images/img04.png" class="w100 h100"></image>
-          </view>
+          <navigator url="/pages/equipment/equipment">
+            <view class="arrow-iview fr">
+              <image src="../../../static/images/img04.png" class="w100 h100"></image>
+            </view>
+          </navigator>
         </view>
-
         <view class="li-view">
           <view class="pic-iview fl pic2">
-            <image src="../../../images/img05.png" class="w100 h100"></image>
+            <image src="../../../static/images/img05.png" class="w100 h100"></image>
           </view>
           <view class="fl status-iview f12">
             <text class="block">照明灯</text>
@@ -48,13 +51,13 @@ duration="300" style="height: 100%;z-index: 1" bindchange="bindChange">
             </view>
           </view>
           <view class="arrow-iview fr">
-            <image src="../../../images/img04.png" class="w100 h100"></image>
+            <image src="../../../static/images/img04.png" class="w100 h100"></image>
           </view>
         </view>
 
         <view class="li-view">
           <view class="pic-iview fl pic1">
-            <image src="../../../images/img06.png" class="w100 h100"></image>
+            <image src="../../../static/images/img06.png" class="w100 h100"></image>
           </view>
           <view class="fl status-iview f12">
             <text class="block">窗帘</text>
@@ -63,7 +66,7 @@ duration="300" style="height: 100%;z-index: 1" bindchange="bindChange">
             </view>
           </view>
           <view class="arrow-iview fr">
-            <image src="../../../images/img04.png" class="w100 h100"></image>
+            <image src="../../../static/images/img04.png" class="w100 h100"></image>
           </view>
         </view>
       </view>
@@ -71,11 +74,58 @@ duration="300" style="height: 100%;z-index: 1" bindchange="bindChange">
   </swiper-item>
   <swiper-item>
     <view class="{{ selected_is ? 'show' : 'hidden' }}">
-      <view class="nothing-con">暂时没有内容!</view>
+      <view class="ul-view">
+        <view class="li-view">
+          <view class="pic-iview fl pic1">
+            <image src="../../../static/images/img03.png" class="w100 h100"></image>
+          </view>
+          <view class="fl status-iview f12">
+            <text class="block">照明灯</text>
+            <view class="block" style="color: #b3b3b3">当前状态：
+              <text class="block fr" style="color: #6aa84f;">关</text>
+            </view>
+          </view>
+          <view class="arrow-iview fr">
+            <image src="../../../static/images/img04.png" class="w100 h100"></image>
+          </view>
+        </view>
+
+        <view class="li-view">
+          <view class="pic-iview fl pic2">
+            <image src="../../../static/images/img05.png" class="w100 h100"></image>
+          </view>
+          <view class="fl status-iview f12">
+            <text class="block">照明灯</text>
+            <view class="block" style="color: #b3b3b3">当前状态：
+              <text class="block fr" style="color: #6aa84f;">关</text>
+            </view>
+          </view>
+          <view class="arrow-iview fr">
+            <image src="../../../static/images/img04.png" class="w100 h100"></image>
+          </view>
+        </view>
+
+        <view class="li-view">
+          <view class="pic-iview fl pic1">
+            <image src="../../../static/images/img06.png" class="w100 h100"></image>
+          </view>
+          <view class="fl status-iview f12">
+            <text class="block">窗帘</text>
+            <view class="block" style="color: #b3b3b3">当前状态：
+              <text class="block fr" style="color: #6aa84f;">关</text>
+            </view>
+          </view>
+          <view class="arrow-iview fr">
+            <image src="../../../static/images/img04.png" class="w100 h100"></image>
+          </view>
+        </view>
+      </view>
     </view>
   </swiper-item>
-</swiper>
 
-<view class='music-iview'>
-  <image src="../../../images/img02.png" class="w100 h100"></image>
-</view>
+  <view class='music-iview'>
+    <navigator url='/pages/voice/voice' class="clear">
+      <image src="../../../static/images/img02.png" class="w100 h100"></image>
+    </navigator>
+  </view>
+</swiper>

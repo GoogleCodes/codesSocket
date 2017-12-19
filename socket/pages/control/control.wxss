@@ -1,0 +1,33 @@
+/* pages/control/control.wxss */
+
+
+.control-body {
+  padding: 0px 5%;
+}
+
+.control-body .control-title {
+  line-height: 40px;
+}
+
+.control-ul .control-li {
+  border-bottom: 1px dashed #eee;
+  overflow: hidden;
+  height: 50px;
+  line-height: 50px;
+}
+
+.control-ul .control-li .icon-weibiaoti- {
+  font-size: 25px;
+  margin: 0 10px;
+}
+
+.control-ul .control-li .li-main {
+  font-size: 14px;
+  float: left;
+  margin-top: 5px;
+}
+
+.control-ul .control-li .li-main .li-main-desc {
+  height: 20px;
+  line-height: 20px;
+}

@@ -1,0 +1,46 @@
+<!--pages/voice/voice.wxml-->
+
+<view class="voice-control">
+  <view style="margin-right: 10px;">
+    <view class="fr person">
+      <image src='../../../static/images/img15.png' style="width: 17px;height: 21px;"></image>
+    </view>
+    <view class="voice-userInput fr">用户输入指令...</view>
+  </view>
+
+  <view class="voice-ul">
+    <view class="voice-li">
+      <view class="voice-li-icon fl">
+        <image src="../../../static/images/img17.png" class="block" style="width: 14px;height: 25px;"></image>
+      </view>
+      <view class="fl f12" style="margin-left: 10px;">
+        <text>正在识别输入的指令。。。</text>
+      </view>
+    </view>
+
+    <view class="voice-li">
+      <view class="voice-li-icon fl">
+        <image src="../../../static/images/img17.png" class="block" style="width: 14px;height: 25px;"></image>
+      </view>
+      <view class="fl f12 tab" style="margin-left: 10px;">
+        <view>识别指令成功</view>
+        <view>客厅照明灯 开启</view>
+      </view>
+    </view>
+
+  </view>
+
+  <!-- voice-microphone start -->
+  <view class="voice-microphone">
+    <image src='../../../static/images/img16.png' style="width: 29px;height: 47px;"></image>
+  </view>
+  <!-- voice-microphone end -->
+
+  <!--save-voice start-->
+  <view class="save-voice">
+    <input type='text' placeholder='输入指令...' class="save-input fl"></input>
+    <button class="save-button fl">发送</button>
+  </view>
+  <!--save-voice end-->
+
+</view>

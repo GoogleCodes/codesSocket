@@ -12,7 +12,7 @@ page {
 
 .table-header .tab {
   float: left;
-  width: 25%;
+  width: 20%;
   text-align: center;
   line-height: 35px;
   color: #595757;

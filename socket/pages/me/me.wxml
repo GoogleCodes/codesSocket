@@ -1,0 +1,33 @@
+<!--pages/me/me.wxml-->
+
+<view class="me-iview f12">
+  <view class="me-li-iview">
+    <navigator url='/pages/control/control' hover-class="nav-hover">
+      <text class="iconfont icon-icon-test-copy small-icon"></text>
+      <text class="">智控中心</text>
+      <text class="iconfont icon-youbian fr go-icon"></text>
+    </navigator>
+  </view>
+
+  <view class="me-li-iview" bindtap='_shareGizwits'>
+    <text class="iconfont icon-saomiao small-icon"></text>
+    <text class="">接受分享</text>
+    <text class="iconfont icon-youbian fr"></text>
+  </view>
+
+  <view class="me-li-iview">
+    <navigator url='/pages/forget/forget' hover-class="nav-hover">
+      <text class="iconfont icon-mima1 small-icon"></text>
+      <text class="">修改密码</text>
+      <text class="iconfont icon-youbian fr"></text>
+    </navigator>
+  </view>
+
+  <view class="me-li-iview">
+    <navigator url='/pages/aboutme/aboutme' hover-class="nav-hover">
+      <text class="iconfont icon-icon-test small-icon"></text>
+      <text class="">关于我们</text>
+      <text class="iconfont icon-youbian fr"></text>
+    </navigator>
+  </view>
+</view>
