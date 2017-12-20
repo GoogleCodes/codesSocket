@@ -7,16 +7,25 @@ page {
 .table-header {
   height: 35px;
   margin:  10px 0px;
+  position: relative;
   border-bottom: 1px solid #eee;
 }
 
 .table-header .tab {
   float: left;
-  width: 20%;
+  width: 23%;
   text-align: center;
   line-height: 35px;
   color: #595757;
   font-size: 30rpx;
+}
+
+.table-header .icon-weibiaoti-9 {
+  position: absolute;
+  right: 13px;
+  top: 0px;
+  color: #7cb242;
+  line-height: 35px;
 }
 
 .table-header .tab.active {
@@ -73,7 +82,7 @@ page {
 /* music-iview start */
 
 .music-iview {
-  position: fixed;
+  position: absolute;
   bottom: 25px;
   left: 0px;
   right: 0px;
@@ -83,7 +92,6 @@ page {
   background: #fff;
   border-radius: 100%;
   background: #fff;
-  z-index: -1;
 }
 
 .music-iview  image {

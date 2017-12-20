@@ -23,9 +23,4 @@
 │   ├── reg                         // 注册
 │   ├── smart                       // 测试数据点
 ├── static                          // 静态资源，一般把不需要处理的文件可以放这里
-├── .babelrc                        // babelrc配置文件
-├── .editorconfig                   // 代码风格文件，前提是要你的编辑器支持
-├── .gitignore                      // 用于Git配置不需要加入版本管理的文件
-├── .postcssrc.js                   // autoprefixer的配置文件
-├── package.json                    // 项目配置文件
 </pre>

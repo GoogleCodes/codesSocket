@@ -1,4 +1,4 @@
-/* pages/equipment/equipment.wxss */
+/* pages/led/led.wxss */
 
 /* setFunction start */
 
@@ -142,7 +142,7 @@
 }
 
 .section_gap .body-view {
-  margin: 10% 5%;
+  margin: 10% 5% 0;
 }
 
 /* section_gap end */

@@ -1,3 +1,5 @@
+<!--pages/windows/windows.wxml-->
+
 <!--pages/equipment/equipment.wxml-->
 
 <view class="setFunction">
@@ -16,24 +18,33 @@
 </view>
 
 <view class="ul-iview">
-  <view class="li-iview active" bindtap='goGizwits'>
-    <image src="../../../static/images/img07.png" style="width: 49.5px;height: 61px;"></image>
+  <view class="li-iview active">
+    <image class="windows-iview" src="../../../static/images/img12.png" style="width: 40px;height: 50px;"></image>
   </view>
 
   <view class="li-iview">
-    <image src="../../../static/images/img08.png" style="width: 61.5px;height: 61px;"></image>
+    <image class="windows-iview" src="../../../static/images/img13.png" style="width: 40px;height: 50px;"></image>
   </view>
 
   <view class="li-iview">
-    <image src="../../../static/images/img09.png" style="width: 49.5px;height: 61px;"></image>
+    <image class="windows-iview" src="../../../static/images/img14.png" style="width: 40px;height: 50px;"></image>
   </view>
 </view>
 
 <view class="section_gap clear">
-  <view>光亮度</view>
+  <view>打开状态：</view>
   <view class="body-view">
     <slider style="height: 50px;z-index: -1" min="0" max="100" />
   </view>
 </view>
 
 <button class="carryOut" bindtap='carryout'>完成</button>
+
+<view class="layer" hidden='{{ layerShow }}'></view>
+<view class="layer-pop" style="top: {{ winTop }}px" hidden='{{ layerShow }}'>
+  <view class="layer-utils">
+    <button class="fl prve">正方向</button>
+    <button class="fr next">反方向</button>
+    <button class="saveData" bindtap='saveData'>保    存</button>
+  </view>
+</view>

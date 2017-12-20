@@ -1,12 +1,15 @@
 {
   "pages": [
-    "pages/message/message",
+    "pages/search/search",
+    "pages/index/index", 
+    "pages/smart/smart",
     "pages/equipment/equipment",
-    "pages/index/index",
+    "pages/led/led",
+    "pages/windows/windows",
+    "pages/message/message",
     "pages/share/share",
     "pages/voice/voice",
     "pages/me/me",
-    "pages/smart/smart",
     "pages/login/login",
     "pages/aboutme/aboutme",
     "pages/forget/forget",

@@ -1,12 +1,1 @@
 <!--pages/scene/scene.wxml-->
-
-<button bindtap='creatScene'>创建情景</button>
-
-
-<view>
-  <text>定时情景</text>
-  <view>
-    <text>情景名称：</text>
-    <text></text>
-  </view>
-</view>

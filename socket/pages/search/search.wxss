@@ -1,0 +1,129 @@
+/* pages/search/search.wxss */
+
+.section {
+  line-height: 40px;
+  overflow: hidden;
+  margin: 45px auto 0;
+  width: 92%;
+  position: relative;
+}
+
+.section .search-input {
+  height: 40px;
+  line-height: 40px;
+  padding-left: 10px;
+  border: 1px solid #f2f2f2;
+}
+
+.section .picker {
+  height: 40px;
+  line-height: 40px;
+  text-indent: 0.5em;
+  border: 1px solid #f2f2f2;
+}
+
+.section .iconfont {
+  font-size: 22px;
+  margin: 0px 0px;
+}
+
+.section .iconfont {
+  margin: 0 3px 0 2px;
+}
+
+.section .icon-weibiaoti-1 {
+  color: #ed1c24;
+}
+
+.section .icon-weibiaoti-2 {
+  color: #6aa84f;
+}
+
+.table-header {
+  width: 60%;
+  overflow: hidden;
+  margin: 70px auto 0;
+}
+
+.table-header .tab {
+  float: left;
+  width: 49%;
+  font-size: 0.9rem;
+  margin: 10px auto;
+  text-align: center;
+}
+
+.table-header .active {
+  color: #6aa84f;
+}
+
+.table-header .tab:first-child {
+  border-right: 1px solid #ccc;
+}
+
+/* ul-iview start */
+
+.ul-iview {
+  margin: 0 10%;
+  overflow: hidden;
+}
+
+.ul-iview .li-iview {
+  width: 31%;
+  height: 100%;
+  text-align: center;
+  margin: 10px 10px 0 0;
+  font-size: 14px;
+  line-height: 30px;
+}
+
+.ul-iview .li-iview:nth-child(3n) {
+  margin: 10px 0 0 0;
+}
+
+.ul-iview .li-iview .li-iview-con {
+  border: 1px solid #6aa84f;
+}
+
+.ul-iview .li-iview .iconfont {
+  font-size: 36px;
+  border: 1px solid #6aa84f;
+  margin: 10px;
+  padding: 18px 0px;
+  color: #808080;
+}
+
+@media all and (max-width: 360px) {
+  .ul-iview .li-iview {
+    margin: 10px 8px 0 0;
+  }
+
+  .ul-iview .li-iview .iconfont {
+    padding: 12px 0px;
+  }
+}
+
+@media all and (max-width: 320px) {
+  .ul-iview .li-iview {
+    margin: 10px 8px 0 0;
+  }
+
+  .ul-iview .li-iview .iconfont {
+    padding: 12/px 0px;
+  }
+}
+
+/* ul-iview end */
+
+
+/* saveData start */
+.saveData {
+  margin-top: 20px;
+  width: 60%;
+  height: 40px;
+  color: #fff;
+  line-height: 40px;
+  font-size: 14px;
+  background: #8cc63f;
+}
+/* saveData end */

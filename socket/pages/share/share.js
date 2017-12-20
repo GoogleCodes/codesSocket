@@ -19,7 +19,7 @@ Page({
       success(res) {
         console.log(res.windowHeight);
         that.setData({
-          winTop: (res.windowHeight - 231) / 2,
+          winTop: (res.windowHeight - 330) / 2,
         });
       },
     });

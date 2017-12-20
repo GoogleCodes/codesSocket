@@ -1,4 +1,5 @@
-<!--pages/equipment/equipment.wxml-->
+<!--pages/led/led.wxml-->
+
 
 <view class="setFunction">
   <image src="../../../static/images/img10.png" style="width: 100%;height: 100%;"></image>
@@ -30,10 +31,16 @@
 </view>
 
 <view class="section_gap clear">
-  <view>光亮度</view>
+  <view class="f12">光亮度：</view>
   <view class="body-view">
     <slider style="height: 50px;z-index: -1" min="0" max="100" />
   </view>
+
+  <view class="f12">色 温：</view>
+  <view class="body-view">
+    <slider style="height: 50px;z-index: -1" min="0" max="100" />
+  </view>
+
 </view>
 
 <button class="carryOut" bindtap='carryout'>完成</button>

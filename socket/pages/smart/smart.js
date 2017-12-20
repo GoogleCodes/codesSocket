@@ -199,12 +199,19 @@ Page({
         var device = result.data.devices[i];
         if (result.data.devices[i].is_online == true) {
           //  获取数据
+          let json = {
+            'did': device.did,  //  did
+            'host': device.host,  //  websocket 请求地址
+            'ws_port': device.ws_port, //  端口
+            'wss_port': device.wss_port, //  端口
+          };
           that.setData({
             'options.did': device.did,  //  did
             'options.host': device.host,  //  websocket 请求地址
             'options.ws_port': device.ws_port, //  端口
             'options.wss_port': device.wss_port, //  端口
           });
+          wx.setStorageSync('didJSon', json);
           pKey = device.product_key;
         }
       }

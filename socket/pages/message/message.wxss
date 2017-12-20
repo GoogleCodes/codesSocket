@@ -23,6 +23,10 @@ page {
   color: #808080;
 }
 
+.message-iview .ul-iview .li-iview .li-iview-hover {
+  background: #fff;
+}
+
 .message-iview .ul-iview .li-iview image {
   margin: 8px 0;
 }

@@ -7,7 +7,7 @@
 <view class="telphone">
   <view>
     <text class="block" style='color: #7cb242;'>如果您希望和叶绿体进行商业合作？</text>
-    <text class="block">请拨打：0757-22903337</text>
+    <text class="block" bindtap='wxPhoneCall'>请拨打：{{ Cooperation }}</text>
   </view>
 
   <view>

@@ -1,4 +1,4 @@
-// pages/equipment/equipment.js
+// pages/led/led.js
 
 var tools = require('../../utils/util.js');
 
@@ -42,7 +42,9 @@ Page({
   },
 
   carryout() {
-    
+    this.setData({
+      layerShow: false,
+    });
   },
 
 })

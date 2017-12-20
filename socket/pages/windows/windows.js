@@ -1,6 +1,4 @@
-// pages/equipment/equipment.js
-
-var tools = require('../../utils/util.js');
+// pages/windows/windows.js
 
 Page({
 
@@ -10,6 +8,7 @@ Page({
   data: {
     //  windowTop
     winTop: 0,
+    layerShow: true,
     switchButton: true,
   },
 
@@ -42,7 +41,15 @@ Page({
   },
 
   carryout() {
-    
+    this.setData({
+      layerShow: false,
+    });
+  },
+
+  saveData() {
+    this.setData({
+      layerShow: true,
+    });
   },
 
 })
