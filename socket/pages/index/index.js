@@ -19,11 +19,45 @@ Page({
     list:[
       {
         id: 0,
-        tab: '卧室'
+        tab: '卧室',
+        gizwits: [
+          {
+            id: 1,
+            types: 1,
+            name: '照明灯',
+            status: 'off'
+          },
+          {
+            id: 2,
+            types: 2,
+            name: '照明灯',
+            status: 'off'
+          },
+          {
+            id: 3,
+            types: 3,
+            name: '照明灯',
+            status: 'off'
+          }
+        ],
       },
       {
         id: 1,
-        tab: '厨房'
+        tab: '厨房',
+        gizwits: [
+          {
+            id: 1,
+            types: 1,
+            name: '照明灯',
+            status: 'off'
+          },
+          {
+            id: 2,
+            types: 2,
+            name: '照明灯',
+            status: 'off'
+          }
+        ],
       },
     ],
     _heartbeatInterval: 60,  //  心跳

@@ -19,16 +19,16 @@
 
 <swiper current="{{ currentTab }}" class="swiper-box" duration="300" style="margin-bottom:60px;height: {{ winHeight }}px;z-index: 1" bindchange="bindChange">
 
-  <swiper-item>
-    <view class="{{ selected ? 'hidden': 'show' }}">
+  <swiper-item wx:for="{{ list }}">
+    <view class="{{ selected ? 'hidden': 'show' }}" wx:for="{{ item.gizwits }}">
       <view class="ul-view">
-        <view class="li-view">
+
+        <view class="li-view" wx:if="{{ item.types == 1 }}">
           <view class="pic-iview fl pic1">
               <view class="iconfont  iconfont icon-leddeng"></view>
-             <!-- <image src="../../../static/images/img03.png" class="w100 h100"></image>  -->
           </view>
           <view class="fl status-iview f12">
-            <text class="block">照明灯</text>
+            <text class="block">{{ item.name }}</text>
             <view class="block" style="color: #b3b3b3">当前状态：
               <text class="block fr" style="color: #6aa84f;">关</text>
             </view>
@@ -39,13 +39,14 @@
             </view>
           </navigator>
         </view>
-        <view class="li-view">
+
+        <view class="li-view" wx:elif="{{ item.types == 2 }}">
           <view class="pic-iview fl pic2">
               <view class="iconfont icon-chuangliananzhuang"></view>
             <!-- <image src="../../../static/images/img05.png" class="w100 h100"></image> -->
           </view>
           <view class="fl status-iview f12">
-            <text class="block">照明灯</text>
+            <text class="block">窗帘</text>
             <view class="block" style="color: #b3b3b3">当前状态：
               <text class="block fr" style="color: #6aa84f;">关</text>
             </view>
@@ -57,13 +58,13 @@
           </navigator>
         </view>
 
-        <view class="li-view">
+        <view class="li-view" wx:elif="{{ item.types == 3 }}">
           <view class="pic-iview fl pic3">
               <view class="iconfont  iconfont icon-hekricon43"></view>
             <!-- <image src="../../../static/images/img06.png" class="w100 h100"></image> -->
           </view>
           <view class="fl status-iview f12">
-            <text class="block">窗帘</text>
+            <text class="block">LED</text>
             <view class="block" style="color: #b3b3b3">当前状态：
               <text class="block fr" style="color: #6aa84f;">关</text>
             </view>
@@ -74,11 +75,9 @@
             </view>
           </navigator>
         </view>
+
       </view>
     </view>
-  </swiper-item>
-  <swiper-item>
-    123123
   </swiper-item>
 
   <!-- 语音按钮 -->
