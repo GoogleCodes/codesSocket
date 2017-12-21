@@ -1,6 +1,8 @@
 // pages/equipment/equipment.js
 
 var tools = require('../../utils/util.js');
+import { Main } from '../../utils/main.js'
+let main = new Main();
 
 Page({
 
@@ -11,6 +13,7 @@ Page({
     //  windowTop
     winTop: 0,
     switchButton: true,
+    currentTabs: 0,
   },
 
   /**
@@ -20,29 +23,77 @@ Page({
     let that = this;
     wx.getSystemInfo({
       success(res) {
-        console.log(res.windowHeight);
         that.setData({
           winTop: (res.windowHeight - 225) / 2,
         });
       },
     });
+    this.mySon();
   },
 
-  goGizwits() {
-    let that = this;
-    that.setData({ switchButton: true });
-    //  获取did
-    const DID = wx.getStorageSync("didJSon");
-    console.log(DID.did);
+  //  获取自设备
+  mySon() {
+    let arr = [], storage = wx.getStorageSync("didJSon");;
+    arr.push(0x00, 0x02, 0xA0, 0x01);
     var json = {
-      'onoffAll': that.data.switchButton,
+      'data': main.getArrays(arr),
     };
-    //  发送数据
-    tools.sendData('c2s_write', DID.did, json);
+    tools.sendData('c2s_write', storage.did, json);
+  },
+
+  gizwits(e) {
+    let that = this, json = {}, arr = [];
+    //  获取did
+    const storage = wx.getStorageSync("didJSon");
+    if (this.data.currentTabs === e.target.dataset.current) {
+      return false;
+    } else {
+      that.setData({
+        currentTabs: e.target.dataset.current
+      })
+    }
+    switch(true) {
+      case e.target.dataset.current == 0:
+        arr.push(0x00, 0x01, 0x40);
+        json = {
+          'data': main.getArrays(arr),
+        };
+        tools.sendData('c2s_write', storage.did, json);
+        break;
+      case e.target.dataset.current == 1:
+        arr.push(0x00, 0x01, 0x40);
+        json = {
+          'data': main.getArrays(arr),
+        };
+        tools.sendData('c2s_write', storage.did, json);
+        break;
+      case e.target.dataset.current == 2:
+        arr.push(0x00, 0x01, 0x40);
+        json = {
+          'data': main.getArrays(arr),
+        };
+        tools.sendData('c2s_write', storage.did, json);
+        break; 
+    }
   },
 
   carryout() {
     
+  },
+
+  sliderchange(e) {
+    console.log(e.detail.value);
+    let num = e.detail.value, arr = [], json = {};
+    num.toString(16);
+    let f = "0x" + num.toString(16);
+    console.log("0x" + num.toString(16));
+    //  获取did
+    const storage = wx.getStorageSync("didJSon");
+    arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA2, 0x01, f)
+    json = {
+      'data': main.getArrays(arr),
+    };
+    tools.sendData('c2s_write', storage.did, json);
   },
 
 })

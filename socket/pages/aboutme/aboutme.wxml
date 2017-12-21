@@ -1,36 +1,42 @@
 <!--pages/aboutme/aboutme.wxml-->
 
-<view class="logo">
-  <image src='../../../static/images/logo.png' style="width: 100%;height: 100%;"></image>
-</view>
-
-<view class="telphone">
-  <view>
-    <text class="block" style='color: #7cb242;'>如果您希望和叶绿体进行商业合作？</text>
-    <text class="block" bindtap='wxPhoneCall'>请拨打：{{ Cooperation }}</text>
+<view class="marBtm60">
+  <view class="logo">
+    <image src='../../../static/images/logo.png' style="width: 100%;height: 100%;"></image>
   </view>
 
-  <view>
-    <text class="block" style='color: #7cb242;'>如果您对产品有任何疑问？</text>
-    <text class="block">请拨打：0757-22916661</text>
+  <view class="telphone">
+    <view>
+      <text class="block" style='color: #7cb242;'>如果您希望和叶绿体进行商业合作？</text>
+      <text class="block" bindtap='wxPhoneCall'>请拨打：{{ Cooperation }}</text>
+    </view>
+
+    <view>
+      <text class="block" style='color: #7cb242;'>如果您对产品有任何疑问？</text>
+      <text class="block">请拨打：0757-22916661</text>
+    </view>
+  </view>
+
+  <view class="ul-view f12">
+    <view class="li-view">
+      <text class="fl desc-view">邮箱：</text>
+      <text class="fl">contact@chlorop.com</text>
+    </view>
+    <view class="li-view">
+      <text class="fl desc-view">微信：</text>
+      <text class="fl">叶绿体（chlorop）</text>
+    </view>
+    <view class="li-view">
+      <text class="fl desc-view">公司网站：</text>
+      <text class="fl">www.chlorop.com</text>
+    </view>
+    <view class="li-view">
+      <text class="fl desc-view">公司地址：</text>
+      <text class="fl" style="width: 70%;">佛上市顺德区大良街道顺德创业产业园A座AF013A</text>
+    </view>
   </view>
 </view>
 
-<view class="ul-view f12">
-  <view class="li-view">
-    <text class="fl desc-view">邮箱：</text>
-    <text class="fl">contact@chlorop.com</text>
-  </view>
-  <view class="li-view">
-    <text class="fl desc-view">微信：</text>
-    <text class="fl">叶绿体（chlorop）</text>
-  </view>
-  <view class="li-view">
-    <text class="fl desc-view">公司网站：</text>
-    <text class="fl">www.chlorop.com</text>
-  </view>
-  <view class="li-view">
-    <text class="fl desc-view">公司地址：</text>
-    <text class="fl" style="width: 70%;">佛上市顺德区大良街道顺德创业产业园A座AF013A</text>
-  </view>
-</view>
+
+<import src="/pages/footer/footer.wxml" />
+<template is="footer" />

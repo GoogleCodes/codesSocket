@@ -5,7 +5,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    array: ['美国'],
+    array: ['吊灯','照明灯','台灯'],
     index: 0,
     currentTab: 0,
     winHeight: 0,

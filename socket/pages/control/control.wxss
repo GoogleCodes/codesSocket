@@ -10,7 +10,7 @@
 }
 
 .control-ul .control-li {
-  border-bottom: 1px dashed #eee;
+  border-bottom: 1px dashed #b3b3b3;
   overflow: hidden;
   height: 50px;
   line-height: 50px;

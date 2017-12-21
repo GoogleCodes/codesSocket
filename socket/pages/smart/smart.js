@@ -243,6 +243,7 @@ Page({
       }
     })*/
     that.setData({ gizwitsVisible: false });
+    console.log(e);
     var did = e.currentTarget.dataset.did, index = e.currentTarget.dataset.index
     if (that.data.chonseDid === index) {
       this.setData({ did: did, });
@@ -365,7 +366,6 @@ Page({
         tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 66:
-        console.log(that.data.sliceArrays.pop());
         arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 1, 1, 1);
         // arr.push(0, 18, 0x44, 2);
         var json = {

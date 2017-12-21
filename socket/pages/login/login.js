@@ -66,7 +66,7 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
-        wx.redirectTo({ url: '../smart/smart', });
+        wx.redirectTo({ url: '../index/index', });
       }
     });
   },
@@ -99,7 +99,7 @@ Page({
       pword: userInfom.password,
     });
     if (wx.getStorageSync('userInformation') !== '') {
-      wx.redirectTo({ url: '../smart/smart', })
+      wx.redirectTo({ url: '../index/index', })
     }
   },
 })

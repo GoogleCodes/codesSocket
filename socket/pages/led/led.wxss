@@ -46,11 +46,15 @@
 .ul-iview .li-iview {
   width: 103px;
   height: 103px;
-  float: left;
+  line-height: 82px;
   border: 1px solid #ccc;
+  text-align: center;
+  font-size: 59px;
+  color: #808080;
 }
 
 .ul-iview .active {
+  color: #8cc63f;
   border: 1px solid #8cc63f;
 }
 

@@ -1,46 +1,50 @@
 <!--pages/led/led.wxml-->
 
-
-<view class="setFunction">
-  <image src="../../../static/images/img10.png" style="width: 100%;height: 100%;"></image>
-</view>
-
-<view class="eq-iview">
-  <view class="eq-iview-left fl">设备名称：</view>
-  <view class="eq-iview-left fl">卧室灯</view>
-  <image src="../../../static/images/img11.png" style="width: 20px;height: 20px;"></image>
-</view>
-
-<view class="eq-iview">
-  <view class="eq-iview-left fl">设备编码：</view>
-  <view class="eq-iview-left fl">afwavasfaf</view>
-</view>
-
-<view class="ul-iview">
-  <view class="li-iview active" bindtap='goGizwits'>
-    <image src="../../../static/images/img07.png" style="width: 49.5px;height: 61px;"></image>
+<view class="marBtm60">
+  <view class="setFunction">
+    <image src="../../../static/images/img10.png" style="width: 100%;height: 100%;"></image>
   </view>
 
-  <view class="li-iview">
-    <image src="../../../static/images/img08.png" style="width: 61.5px;height: 61px;"></image>
+  <view class="eq-iview">
+    <view class="eq-iview-left fl">设备名称：</view>
+    <view class="eq-iview-left fl">卧室灯</view>
+    <image src="../../../static/images/img11.png" style="width: 20px;height: 20px;"></image>
   </view>
 
-  <view class="li-iview">
-    <image src="../../../static/images/img09.png" style="width: 49.5px;height: 61px;"></image>
+  <view class="eq-iview">
+    <view class="eq-iview-left fl">设备编码：</view>
+    <view class="eq-iview-left fl">afwavasfaf</view>
   </view>
+
+  <view class="ul-iview">
+    <view class="li-iview {{ currentTabs == 0 ? 'active' : '' }} fl iconfont icon-weibiaoti-6" 
+    data-current="0" bindtap='gizwits'>
+    </view>
+
+    <view class="li-iview {{ currentTabs == 1 ? 'active' : '' }} fl iconfont icon-weibiaoti-7" 
+    data-current="1" bindtap='gizwits'>
+    </view>
+
+    <view class="li-iview {{ currentTabs == 2 ? 'active' : '' }} fl iconfont icon-weibiaoti-8" 
+    data-current="2" bindtap='gizwits'>
+    </view>
+  </view>
+
+  <view class="section_gap clear">
+    <view class="f12">光亮度：</view>
+    <view class="body-view">
+      <slider style="height: 50px;z-index: -1" min="0" max="100" />
+    </view>
+
+    <view class="f12">色 温：</view>
+    <view class="body-view">
+      <slider style="height: 50px;z-index: -1" min="0" max="100" />
+    </view>
+
+  </view>
+
+  <button class="carryOut" bindtap='carryout'>完成</button>
 </view>
 
-<view class="section_gap clear">
-  <view class="f12">光亮度：</view>
-  <view class="body-view">
-    <slider style="height: 50px;z-index: -1" min="0" max="100" />
-  </view>
-
-  <view class="f12">色 温：</view>
-  <view class="body-view">
-    <slider style="height: 50px;z-index: -1" min="0" max="100" />
-  </view>
-
-</view>
-
-<button class="carryOut" bindtap='carryout'>完成</button>
+<import src="/pages/footer/footer.wxml" />
+<template is="footer" />

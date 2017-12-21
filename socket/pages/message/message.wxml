@@ -4,7 +4,7 @@
   <view class="ul-iview">
     <view class="li-iview" bindlongtap='chonseNetword'>
       <text class="">网关：</text>
-      <text class="">mac：5CCF7FAB71A5</text>
+      <text class="">mac：{{ deviceMac }}</text>
       <image src='../../../static/images/img11.png' hidden="{{ newWordShow }}" class="fr" style="width: 19px;height: 19px;"></image>
     </view>
 
@@ -17,7 +17,7 @@
 
     <view class="li-iview">
       <text class="">软件版本号：</text>
-      <text style="margin-left: 25px;">1.0</text>
+      <text style="margin-left: 25px;">{{ wifiVersion }}</text>
     </view>
 
     <view class="li-iview">
@@ -44,3 +44,6 @@
   <view class="line"></view>
   <button class="confirm" bindtap='cancelPop'>知道了</button>
 </view>
+
+<import src="/pages/footer/footer.wxml" />
+<template is="footer" />

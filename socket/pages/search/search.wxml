@@ -1,6 +1,6 @@
 <!--pages/search/search.wxml-->
 
-<view class="">
+<view class="marBtm60">
   <view class="section">
     <view class="section__title fl">区域：</view>
     <view hidden='{{ !pickerShow }}' class="fl" style="width: 65%;">
@@ -70,7 +70,8 @@
       456
     </swiper-item>
   </swiper>
-
   <button class="saveData">保 存</button>
-
 </view>
+
+<import src="/pages/footer/footer.wxml" />
+<template is="footer" />

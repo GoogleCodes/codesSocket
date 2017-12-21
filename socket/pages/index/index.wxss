@@ -5,27 +5,34 @@ page {
 }
 
 .table-header {
-  height: 35px;
+  height: 40px;
   margin:  10px 0px;
   position: relative;
+  background: #fff;
+  overflow: hidden;
   border-bottom: 1px solid #eee;
 }
 
-.table-header .tab {
-  float: left;
-  width: 23%;
-  text-align: center;
-  line-height: 35px;
-  color: #595757;
-  font-size: 30rpx;
+.recommend_scroll_x_box {
+  white-space: nowrap;
+  display: flex;
+  width: 100%;
 }
 
-.table-header .icon-weibiaoti-9 {
-  position: absolute;
-  right: 13px;
-  top: 0px;
+.recommend_scroll_x_box .tab {
+  width: 80px;
+  text-align: center;
+  line-height: 40px;
+  color: #595757;
+  font-size: 30rpx;
+  display: inline-block;
+  background: #fff;
+}
+
+.recommend_scroll_x_box .icon-weibiaoti-9 {
   color: #7cb242;
-  line-height: 35px;
+  line-height: 40px;
+  width: 50px;
 }
 
 .table-header .tab.active {
@@ -48,27 +55,48 @@ page {
   width: 95%;
   overflow: hidden;
   box-shadow: 1px 1px 10px #ccc;
+  position: relative;
 }
 
 .ul-view .li-view .pic-iview {
   width: 24px;
   height: 39px;
-  margin: 15px 20px;
+  position: absolute;
+  top: 3px;
+  left: 11px;
+}
+
+.ul-view .li-view .pic-iview .iconfont {
+  font-size: 50px;
+  color: #666;
+  text-align: center;
 }
 
 .ul-view .li-view .pic1 {
   width: 25px;
   height: 39px;
-  margin: 15px 29px;
+}
+
+.ul-view .li-view .pic1 .icon-leddeng {
+  font-size: 60px;
 }
 
 .ul-view .li-view .pic2 {
   width: 42px;
   height: 39px;
+  top: 8px;
+  left: 17px;
+}
+
+.ul-view .li-view .pic3 {
+  width: 42px;
+  height: 39px;
+  top: 5px;
+  left: 15px;
 }
 
 .ul-view .li-view .status-iview {
-  margin: 13px 0px;
+  margin: 13px 80px;
 }
 
 .ul-view .li-view .arrow-iview {

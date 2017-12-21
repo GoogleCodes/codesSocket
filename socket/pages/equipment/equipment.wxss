@@ -46,12 +46,10 @@
 .ul-iview .li-iview {
   width: 103px;
   height: 103px;
-  float: left;
+  line-height: 82px;
   border: 1px solid #ccc;
-}
-
-.ul-iview .active {
-  border: 1px solid #8cc63f;
+  text-align: center;
+  font-size: 59px;
 }
 
 .ul-iview .li-iview image {
@@ -108,7 +106,6 @@
   .ul-iview .li-iview .windows-iview {
     margin: 21px auto 0px;
   }
-  
 }
 
 @media all and (max-width: 320px) {
@@ -130,6 +127,11 @@
 
 .ul-iview .li-iview:last-child {
   margin: 0px;
+}
+
+.ul-iview .active {
+  border: 1px solid #8cc63f;
+  color: #8cc63f;
 }
 
 /* ul-iview end */
