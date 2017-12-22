@@ -26,12 +26,7 @@
   <swiper current="{{ currentTab }}" duration="300" style="height: {{ winHeight }}px" bindchange="bindChange">
     <swiper-item>
       <view class="ul-iview">
-        <view class="li-iview fl" wx:for="{{ equipment }}"  wx:for-index="i">
-          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' data-key='{{ i }}'></view>
-          </view>
-          <view>{{ item.name }}</view>
-        </view> 
+        
          <!-- <view class="li-iview fl" wx:for="{{ multiArray[1] }}" wx:for-index="i">
           <view class="li-iview-con {{ isTab ==  i ? 'active': '' }}">
             <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' 
@@ -39,59 +34,65 @@
           </view>
           <view>{{ item }}</view>
         </view>  -->
-        <!--
-        <view class="li-iview fl active">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-3"></view>
+        
+        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 1 }}">
+          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+            <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' 
+            data-key='{{ i }}' data-name='{{ item.name }}'></view>
           </view>
-          <view>吊灯</view>
+          <view>{{ item.name }}</view>
+        </view> 
+
+        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 2 }}">
+          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+            <view class="iconfont icon-weibiaoti-4" bindtap='selectEquipment' 
+            data-key='{{ i }}' data-name='{{ item.name }}'></view>
+          </view>
+          <view>{{ item.name }}</view>
         </view>
 
-        <view class="li-iview fl">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-4"></view>
+        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 3 }}">
+          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+            <view class="iconfont icon-weibiaoti-5" bindtap='selectEquipment' 
+            data-key='{{ i }}' data-name='{{ item.name }}'></view>
           </view>
-          <view>照明灯</view>
+          <view>{{ item.name }}</view>
         </view>
 
-        <view class="li-iview fl">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-5"></view>
+        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 4 }}">
+          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+            <view class="iconfont icon-weibiaoti-6" bindtap='selectEquipment' 
+            data-key='{{ i }}' data-name='{{ item.name }}'></view>
           </view>
-          <view>台灯</view>
+          <view>{{ item.name }}</view>
         </view>
 
-        <view class="li-iview fl">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-6"></view>
+        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 5 }}">
+          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+            <view class="iconfont icon-weibiaoti-7" bindtap='selectEquipment' 
+            data-key='{{ i }}' data-name='{{ item.name }}'></view>
           </view>
-          <view>台灯</view>
+          <view>{{ item.name }}</view>
         </view>
 
-        <view class="li-iview fl">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-7"></view>
+        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 6 }}">
+          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+            <view class="iconfont icon-weibiaoti-8" bindtap='selectEquipment' 
+            data-key='{{ i }}' data-name='{{ item.name }}'></view>
           </view>
-          <view>台灯</view>
+          <view>{{ item.name }}</view>
         </view>
 
-        <view class="li-iview fl">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-8"></view>
-          </view>
-          <view>台灯</view>
-        </view>
-        -->
       </view>
     </swiper-item>
 
     <swiper-item>
       <view class="ul-iview">
-        <view class="li-iview fl">
+        <view class="li-iview fl" wx:for="{{ spliceArray }}">
           <view class="li-iview-con">
             <view class="iconfont icon-weibiaoti-8"></view>
           </view>
-          <view>台灯</view>
+          <view>{{ item.name }}</view>
         </view>
       </view>
     </swiper-item>

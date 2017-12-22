@@ -5,33 +5,39 @@ Page({
    * 页面的初始数据
    */
   data: {
+    isChonse: false,
     objectArrays: [{
       id: 0,
-      name: '卧室',
-      multiArray: [
-        {
-          active: 1,
-          name: '吊灯',
-        }, {
-          active: 0,
-          name: '照明灯',
-        }
-      ]
+      name: '卧室'
     }, {
       id: 1,
-      name: '厨房',
-      multiArray: []
+      name: '厨房'
     }],
     equipment: [
       {
-        active: 1,
+        active: 0,
+        types: 1,
         name: '吊灯',
       }, {
         active: 0,
+        types: 2,
         name: '照明灯',
       }, {
         active: 0,
+        types: 3,
         name: '台灯',
+      }, {
+        active: 0,
+        types: 4,
+        name: '下拉窗帘',
+      }, {
+        active: 0,
+        types: 5,
+        name: '单向窗帘',
+      }, {
+        active: 0,
+        types: 6,
+        name: '双向窗帘',
       }
     ],
     spliceArray:[],
@@ -141,16 +147,25 @@ Page({
   },
 
   selectEquipment(e) {
-    let that = this;
+    console.log(e.currentTarget.dataset);
+    let that = this, arr = {};
     let index = e.currentTarget.dataset.key;
-    console.log(index);
-    if (this.data.equipment[index].active == 1) {
-      this.data.equipment[index].active = 0;
-    } else if (this.data.equipment[index].active == 0) {
+    if (this.data.equipment[index].active == 0) {
       this.data.equipment[index].active = 1;
+      arr = e.currentTarget.dataset;
+      this.data.spliceArray.push(arr);
+    } else if (this.data.equipment[index].active == 1) {
+      this.data.equipment[index].active = 0;
+      for (let i in this.data.spliceArray) {
+        if (this.data.spliceArray[i].key == index) {
+          this.data.spliceArray.splice(i, 1);
+        }
+      }
     }
+    console.log(this.data.spliceArray);
     this.setData({
-      equipment: this.data.equipment
+      equipment: this.data.equipment,
+      spliceArray: this.data.spliceArray
     });
   },
 
