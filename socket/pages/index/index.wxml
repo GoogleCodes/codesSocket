@@ -34,8 +34,8 @@
             </view>
           </view>
           <navigator url="/pages/equipment/equipment">
-            <view class="arrow-iview fr">
-               <image src="../../../static/images/img04.png" class="w100 h100"></image> 
+            <view class="arrow-iview fr iconfont icon-fruits-lemon">
+               <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image>  -->
             </view>
           </navigator>
         </view>
@@ -52,8 +52,8 @@
             </view>
           </view>
           <navigator url="/pages/led/led">
-            <view class="arrow-iview fr">
-               <image src="../../../static/images/img04.png" class="w100 h100"></image> 
+            <view class="arrow-iview fr iconfont icon-fruits-lemon">
+               <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image> -->
             </view>
           </navigator>
         </view>
@@ -70,8 +70,8 @@
             </view>
           </view>
           <navigator url="/pages/windows/windows">
-            <view class="arrow-iview fr">
-              <image src="../../../static/images/img04.png" class="w100 h100"></image>
+            <view class="arrow-iview fr iconfont icon-fruits-lemon">
+              <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image> -->
             </view>
           </navigator>
         </view>

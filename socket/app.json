@@ -1,12 +1,12 @@
 {
   "pages": [
+    "pages/search/search",
     "pages/index/index",
     "pages/me/me",
     "pages/footer/footer",
     "pages/login/login",
     "pages/smart/smart",
     "pages/message/message",
-    "pages/search/search",
     "pages/equipment/equipment",
     "pages/led/led",
     "pages/windows/windows",

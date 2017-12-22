@@ -3,7 +3,7 @@
 .section {
   line-height: 40px;
   overflow: hidden;
-  margin: 45px auto 0;
+  margin: 28px auto 0;
   width: 92%;
   position: relative;
 }
@@ -42,7 +42,7 @@
 .table-header {
   width: 60%;
   overflow: hidden;
-  margin: 70px auto 0;
+  margin: 15px auto 0;
 }
 
 .table-header .tab {
@@ -82,7 +82,15 @@
 }
 
 .ul-iview .li-iview .li-iview-con {
+  border: 1px solid #fff;
+}
+
+.ul-iview .li-iview .active {
   border: 1px solid #6aa84f;
+}
+
+.ul-iview .li-iview .active .iconfont {
+  color: #6aa84f;
 }
 
 .ul-iview .li-iview .iconfont {

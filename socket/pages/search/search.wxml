@@ -4,23 +4,42 @@
   <view class="section">
     <view class="section__title fl">区域：</view>
     <view hidden='{{ !pickerShow }}' class="fl" style="width: 65%;">
-      <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}" class="picker">
-        <view class="picker">{{array[index]}}</view>
-      </picker>
+        <picker range='{{ objectArrays }}' value='{{ index }}' range-key='name' class="picker"  bindchange="bindMultiPickerChange" bindcolumnchange="bindMultiPickerColumnChange">
+        <view>{{ objectArrays[index].name }}</view>
+      </picker> 
+        <!-- <picker mode="multiSelector" bindchange="bindMultiPickerChange" bindcolumnchange="bindMultiPickerColumnChange" value="{{ multiIndex }}" range="{{ multiArray }}" class="picker" >
+        <view class="picker">
+          {{ multiArray[0][multiIndex[0]] }}
+        </view>
+      </picker>   -->
     </view>
-    <input placeholder='吊灯' class="search-input fl"  hidden='{{ pickerShow }}'></input>
+    <input placeholder='吊灯' class="search-input fl" hidden='{{ pickerShow }}'></input>
     <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ pickerShow }}' bindtap='outputSet'></view>
     <view class='iconfont icon-weibiaoti-2 fr' hidden='{{ !pickerShow }}' bindtap='inputSet'></view>
   </view>
 
   <view class="table-header">
-    <view class="tab {{ currentTab == 0 ? 'active': '' }}" data-current="0" bindtap="selected">已选设备</view>
-    <view class="tab {{ currentTab == 1 ? 'active': '' }}" data-current="1" bindtap="selected">未选设备</view>
+    <view class="tab {{ currentTab == 0 ? 'active': '' }}" data-current="0" bindtap="selected">未选设备</view>
+    <view class="tab {{ currentTab == 1 ? 'active': '' }}" data-current="1" bindtap="selected">已选设备</view>
   </view>
 
   <swiper current="{{ currentTab }}" duration="300" style="height: {{ winHeight }}px" bindchange="bindChange">
     <swiper-item>
       <view class="ul-iview">
+        <view class="li-iview fl" wx:for="{{ equipment }}"  wx:for-index="i">
+          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+            <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' data-key='{{ i }}'></view>
+          </view>
+          <view>{{ item.name }}</view>
+        </view> 
+         <!-- <view class="li-iview fl" wx:for="{{ multiArray[1] }}" wx:for-index="i">
+          <view class="li-iview-con {{ isTab ==  i ? 'active': '' }}">
+            <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' 
+            data-equipment='{{ i }}' data-item="{{ item }}"></view>
+          </view>
+          <view>{{ item }}</view>
+        </view>  -->
+        <!--
         <view class="li-iview fl active">
           <view class="li-iview-con">
             <view class="iconfont icon-weibiaoti-3"></view>
@@ -62,12 +81,19 @@
           </view>
           <view>台灯</view>
         </view>
-
+        -->
       </view>
     </swiper-item>
 
     <swiper-item>
-      456
+      <view class="ul-iview">
+        <view class="li-iview fl">
+          <view class="li-iview-con">
+            <view class="iconfont icon-weibiaoti-8"></view>
+          </view>
+          <view>台灯</view>
+        </view>
+      </view>
     </swiper-item>
   </swiper>
   <button class="saveData">保 存</button>

@@ -76,7 +76,6 @@ Page({
 
   selected(e) {
     var that = this;
-    console.log(e);
     if (this.data.currentTab === e.target.dataset.current) {
       return false;
     } else {
