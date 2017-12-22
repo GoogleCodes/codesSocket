@@ -6,12 +6,14 @@ Page({
    */
   data: {
     isChonse: false,
-    objectArrays: [{
+    list: [{
       id: 0,
-      name: '卧室'
+      tab: '卧室',
+      gizwits: []
     }, {
       id: 1,
-      name: '厨房'
+      tab: '厨房',
+      gizwits: []
     }],
     equipment: [
       {
@@ -67,14 +69,19 @@ Page({
   },
 
   bindMultiPickerChange(e) {
-    console.log('picker发送选择改变，携带值为', e.detail.value)
+    // console.log('picker发送选择改变，携带值为', e.detail.value)
+    for(let i in this.data.list) {
+      if (e.detail.value == this.data.list[i].id) {
+        console.log(this.data.list[i].gizwits.concat(this.data.equipment));
+        console.log('picker发送选择改变，携带值为', e.detail.value)
+      }
+    }
     this.setData({
       multiIndex: e.detail.value
     })
   },
 
   bindMultiPickerColumnChange(e) {
-
     console.log('修改的列为', e.detail.column, '，值为', e.detail.value);
     var data = {
       objectArrays: this.data.objectArrays,
@@ -147,7 +154,6 @@ Page({
   },
 
   selectEquipment(e) {
-    console.log(e.currentTarget.dataset);
     let that = this, arr = {};
     let index = e.currentTarget.dataset.key;
     if (this.data.equipment[index].active == 0) {

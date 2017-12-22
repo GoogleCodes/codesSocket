@@ -101,6 +101,10 @@
   color: #808080;
 }
 
+.ul-iview .li-iview .icon-weibiaoti-8 {
+  font-size: 30px;
+}
+
 @media all and (max-width: 360px) {
   .ul-iview .li-iview {
     margin: 10px 8px 0 0;
