@@ -1,13 +1,13 @@
 /* pages/voice/voice.wxss */
 
 .voice-control {
-
+  overflow: hidden;
 }
 
 .voice-control .save-voice {
   margin: 0px 10px;
   position: absolute;
-  bottom: 20px;
+  bottom: 70px;
   width: 95%;
 }
 
@@ -56,10 +56,16 @@
   border: 1px solid #7cb242;
   border-radius: 100%;
   position: absolute;
-  bottom: 100px;
+  bottom: 140px;
   left: 0px;
   right: 0px;
+  text-align: center;
+  line-height: 71px;
   margin: 0px auto;
+}
+.voice-control .voice-microphone .iconfont {
+  font-size: 45px;
+  color: #7cb242;
 }
 
 .voice-control .voice-microphone image {

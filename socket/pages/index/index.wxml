@@ -17,7 +17,7 @@
   </scroll-view>
 </view>
 
-<swiper current="{{ currentTab }}" class="swiper-box" duration="300" style="margin-bottom:60px;height: {{ winHeight }}px;z-index: 1" bindchange="bindChange">
+<swiper current="{{ currentTab }}" class="swiper-box" duration="300" style="margin-bottom:30px;height: {{ winHeight }}px;z-index: 1" bindchange="bindChange">
 
   <swiper-item wx:for="{{ list }}">
     <view class="{{ selected ? 'hidden': 'show' }}" wx:for="{{ item.gizwits }}">
@@ -83,11 +83,12 @@
   <!-- 语音按钮 -->
   <view class='music-iview'>
     <navigator url='/pages/voice/voice' class="clear">
-      <image src="../../../static/images/img02.png" class="w100 h100"></image>
+      <view class="iconfont icon-weibiaoti-12"></view>
+      <!-- <image src="../../../static/images/img02.png" class="w100 h100"></image> -->
     </navigator>
   </view>
 
 </swiper>
 
-<import src="/pages/footer/footer.wxml" />
-<template is="footer" />
+<!-- <import src="/pages/footer/footer.wxml" />
+<template is="footer" /> -->

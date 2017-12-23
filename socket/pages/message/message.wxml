@@ -37,7 +37,8 @@
 
 <view class="layer" hidden='{{ layerShow }}'></view>
 <view class="layer-poper" hidden='{{ layerShow }}' style="top: {{ winTop }}px">
-  <image src="../../../static/images/img18.png" style="width: 52px;height: 52px;" class="block"></image>
+  <view class="iconfont icon-wenhao"></view>
+  <!-- <image src="../../../static/images/img18.png" style="width: 52px;height: 52px;" class="block"></image> -->
   <view style="color: #666;" class="layer-desc">
     根据用户使用习惯自动计算， 后续推出积分兑换，敬请期待....
   </view>
@@ -45,5 +46,5 @@
   <button class="confirm" bindtap='cancelPop'>知道了</button>
 </view>
 
-<import src="/pages/footer/footer.wxml" />
-<template is="footer" />
+<!-- <import src="/pages/footer/footer.wxml" />
+<template is="footer" /> -->

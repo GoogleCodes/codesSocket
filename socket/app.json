@@ -1,12 +1,13 @@
 {
   "pages": [
-    "pages/search/search",
     "pages/index/index",
+    "pages/scene/scene",
+    "pages/message/message",
+    "pages/search/search",
     "pages/me/me",
     "pages/footer/footer",
     "pages/login/login",
     "pages/smart/smart",
-    "pages/message/message",
     "pages/equipment/equipment",
     "pages/led/led",
     "pages/windows/windows",
@@ -19,7 +20,6 @@
     "pages/more/more",
     "template/util/util",
     "pages/person/person",
-    "pages/scene/scene",
     "pages/control/control",
     "pages/logs/logs"
   ],
@@ -28,5 +28,37 @@
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "叶绿体家居",
     "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "position": "bottom",
+    "borderStyle": "#eee",
+    "selectedColor": "#6aa84f",
+    "background": "#f8f8f8",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/images/tabBar/img1-1.png",
+        "text": "首页",
+        "selectedIconPath": "static/images/tabBar/img1.png"
+      },
+      {
+        "pagePath": "pages/scene/scene",
+        "iconPath": "static/images/tabBar/img2-2.png",
+        "text": "情景",
+        "selectedIconPath": "static/images/tabBar/img2.png"
+      },
+      {
+        "pagePath": "pages/message/message",
+        "iconPath": "static/images/tabBar/img3.png",
+        "text": "信息",
+        "selectedIconPath": "static/images/tabBar/img3-3.png"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "iconPath": "static/images/tabBar/img4.png",
+        "text": "我的",
+        "selectedIconPath": "static/images/tabBar/img4-4.png"
+      }
+    ]
   }
 }

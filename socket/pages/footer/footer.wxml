@@ -8,7 +8,7 @@
       </navigator>
     </view>
 
-    <view class="li-footer fl">
+    <view class="li-footer fl" bindtap='getSceneTo'>
       <navigator url='/pages/scene/scene'>
         <view class="iconfont icon-weibiaoti-10"></view>
         <view class="li-footer-text">情景</view>

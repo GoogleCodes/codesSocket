@@ -32,7 +32,8 @@
 
   <!-- voice-microphone start -->
   <view class="voice-microphone">
-    <image src='../../../static/images/img16.png' style="width: 29px;height: 47px;"></image>
+    <view class="iconfont icon-weibiaoti-12"></view>
+    <!-- <image src='../../../static/images/img16.png' style="width: 29px;height: 47px;"></image> -->
   </view>
   <!-- voice-microphone end -->
 
@@ -44,3 +45,6 @@
   <!--save-voice end-->
 
 </view>
+
+<!-- <import src="/pages/footer/footer.wxml" />
+<template is="footer" /> -->

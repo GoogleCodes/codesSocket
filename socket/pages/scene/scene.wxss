@@ -1,1 +1,37 @@
 /* pages/scene/scene.wxss */
+
+/* scene-body start */
+
+.scene-body {
+  height: 50px;
+  line-height: 40px;
+}
+
+.scene-body .scene-body-title {
+  height: 30px;
+  line-height: 30px;
+  background: #eee;
+  text-indent: 1em;
+}
+
+.scene-body .scene-delay, .scene-body .scene-realTime {
+  padding: 0% 2.5% 0;
+}
+
+.scene-delay .scene-li, .scene-realTime .scene-li {
+  border-bottom: 1px solid #eee;
+  overflow: hidden;
+  padding: 5px 0;
+}
+
+.scene-delay .scene-li .icon-slide-button,
+.scene-body .scene-realTime .scene-li .icon-slide-button {
+  font-size: 40rpx;
+}
+
+.scene-delay .scene-li .scene-text, .scene-realTime .scene-li .scene-text {
+  font-size: 39rpx;
+  margin-left: 12px;
+}
+
+/* scene-body end */

@@ -1,5 +1,26 @@
 <!--pages/scene/scene.wxml-->
 
+<view class="scene-body">
+  <view class="scene-body-title">情景模式开关</view>
+  <view class="scene-delay">
+    <view class="scene-li">
+      <view class="iconfont icon-slide-button fl"></view>
+      <view class="fl scene-text">开</view>
+      <switch bindchange="switchScene" class="fr" />
+    </view>
 
-<import src="/pages/footer/footer.wxml" />
-<template is="footer" />
+  </view>
+
+  <view class="scene-realTime">
+    <view class="scene-li" bindlongtap='switchDeleteScene'>
+      <view class="iconfont icon-slide-button fl"></view>
+      <view class="fl scene-text">删除情景(长按按钮)</view>
+      <!-- <switch class="fr" bindchange='switchDeleteScene' /> -->
+    </view>
+  </view>
+
+</view>
+
+
+<!-- <import src="/pages/footer/footer.wxml" />
+<template is="footer" /> -->

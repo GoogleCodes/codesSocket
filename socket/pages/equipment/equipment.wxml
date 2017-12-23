@@ -40,5 +40,5 @@
 </view>
 
 
-<import src="/pages/footer/footer.wxml" />
-<template is="footer" />
+<!-- <import src="/pages/footer/footer.wxml" />
+<template is="footer" /> -->

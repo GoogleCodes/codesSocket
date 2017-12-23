@@ -4,14 +4,17 @@
   <view class="control-title">网关：</view>
 
   <view class="control-ul">
-    <view class="control-li">
+    <view class="control-li" wx:for="{{ list }}">
       <text class="fl iconfont icon-weibiaoti- block"></text>
       <view class="li-main">
-        <view class="li-main-desc">智能网关</view>
-        <view class="li-main-desc" style='color: #b3b3b3;'>mac：5CCF7FAB71A5</view>
+        <view class="li-main-desc">{{ item.dev_alias }}</view>
+        <view class="li-main-desc" style='color: #b3b3b3;'>mac：{{ item.mac }}</view>
       </view>
     </view>
 
   </view>
 
 </view>
+
+<!-- <import src="/pages/footer/footer.wxml" />
+<template is="footer" /> -->

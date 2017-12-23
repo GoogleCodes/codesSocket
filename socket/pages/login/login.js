@@ -66,7 +66,9 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
-        wx.redirectTo({ url: '../index/index', });
+        wx.switchTab({
+          url: '../index/index',
+        })
       }
     });
   },

@@ -93,7 +93,7 @@ Page({
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2 + 120
+          winHeight: res.windowHeight / 2 + 80
         });
       },
     });
@@ -210,6 +210,8 @@ Page({
       'X-Gizwits-User-token': options.token,
     };
     tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
+      console.log(result.data.devices);
+      wx.setStorageSync('devices', result.data.devices);
       // that.setData({ listDevices: result.data.devices });
       // var pKey = null;
       for (var i in result.data.devices) {

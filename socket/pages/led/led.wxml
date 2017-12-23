@@ -46,5 +46,5 @@
   <button class="carryOut" bindtap='carryout'>完成</button>
 </view>
 
-<import src="/pages/footer/footer.wxml" />
-<template is="footer" />
+<!-- <import src="/pages/footer/footer.wxml" />
+<template is="footer" /> -->

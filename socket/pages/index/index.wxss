@@ -123,9 +123,16 @@ page {
   margin: 0px auto;
   width: 55px;
   height: 55px;
+  line-height: 55px;
   background: #fff;
   border-radius: 100%;
   background: #fff;
+  text-align: center;
+}
+
+.music-iview .iconfont {
+  font-size: 45px;
+  color: #7cb242;
 }
 
 .music-iview  image {

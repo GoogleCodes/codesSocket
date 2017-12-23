@@ -54,16 +54,25 @@ page {
   z-index: 10;
 }
 
+.layer-poper .icon-wenhao {
+  text-align: center;
+  line-height: 50px;
+  font-size: 60px;
+  color: #f7931e;
+  margin: 30px 0px; 
+}
+
 .layer-poper image {
   margin: 0px auto;
   padding: 20px 0px;
 }
 
 .layer-poper .layer-desc {
-  padding: 0 20px 10px;
+  padding: 0 20px 20px;
   line-height: 25px;
   display: block;
-  font-size: 16px;
+  text-align: justify;
+  font-size: 14px;
 }
 
 .layer-poper .line {
