@@ -8,7 +8,7 @@
 
 <view class="table-header">
   <scroll-view scroll-x="true" class="recommend_scroll_x_box">
-    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" bindtap="selected" wx:for="{{ list }}">{{ item.tab }}</view>
+    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
     <view class="tab" style="width: 50px;">
       <navigator url='/pages/search/search'>
         <view class="iconfont icon-weibiaoti-9"></view>
@@ -19,16 +19,15 @@
 
 <swiper current="{{ currentTab }}" class="swiper-box" duration="300" style="margin-bottom:30px;height: {{ winHeight }}px;z-index: 1" bindchange="bindChange">
 
-  <swiper-item wx:for="{{ list }}">
-    <view class="{{ selected ? 'hidden': 'show' }}" wx:for="{{ item.gizwits }}">
+  <swiper-item wx:for="{{ spliceArray }}">
+    <view class="{{ selected ? 'hidden': 'show' }}">
       <view class="ul-view">
-
-        <view class="li-view" wx:if="{{ item.types == 1 }}">
+        <view class="li-view" wx:if="{{ item.did == 0 }}">
           <view class="pic-iview fl pic1">
               <view class="iconfont  iconfont icon-leddeng"></view>
           </view>
           <view class="fl status-iview f12">
-            <text class="block">{{ item.name }}</text>
+            <text class="block">{{ item.dname }}</text>
             <view class="block" style="color: #b3b3b3">当前状态：
               <text class="block fr" style="color: #6aa84f;">关</text>
             </view>

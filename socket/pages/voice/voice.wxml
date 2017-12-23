@@ -8,7 +8,7 @@
     <view class="voice-userInput fr">用户输入指令...</view>
   </view>
 
-  <view class="voice-ul">
+  <view class="voice-ul" hidden='{{ voiceNow }}'>
     <view class="voice-li">
       <view class="voice-li-icon fl">
         <image src="../../../static/images/img17.png" class="block" style="width: 14px;height: 25px;"></image>
@@ -18,7 +18,7 @@
       </view>
     </view>
 
-    <view class="voice-li">
+    <view class="voice-li" hidden='{{ voiceDone }}'>
       <view class="voice-li-icon fl">
         <image src="../../../static/images/img17.png" class="block" style="width: 14px;height: 25px;"></image>
       </view>
@@ -31,16 +31,15 @@
   </view>
 
   <!-- voice-microphone start -->
-  <view class="voice-microphone">
+  <view class="voice-microphone" bindtouchstart="startRecode" bindtouchend="endRecode">
     <view class="iconfont icon-weibiaoti-12"></view>
-    <!-- <image src='../../../static/images/img16.png' style="width: 29px;height: 47px;"></image> -->
   </view>
   <!-- voice-microphone end -->
 
   <!--save-voice start-->
   <view class="save-voice">
-    <input type='text' placeholder='输入指令...' class="save-input fl"></input>
-    <button class="save-button fl">发送</button>
+    <input type='text' placeholder='输入指令...' bindblur='blurMessage' class="save-input fl" value='{{ voiceIMessage }}'></input>
+    <button class="save-button fl" bindtap='saveIMessage'>发送</button>
   </view>
   <!--save-voice end-->
 

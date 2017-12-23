@@ -4,7 +4,6 @@ var app = new getApp();
 var times = null, ins = 0;
 
 import { Main } from '../../utils/main.js'
-
 let main = new Main();
 
 Page({

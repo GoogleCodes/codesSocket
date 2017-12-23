@@ -31,7 +31,7 @@ Page({
     this.mySon();
   },
 
-  //  获取自设备
+  //  获取子设备
   mySon() {
     let arr = [], storage = wx.getStorageSync("didJSon");;
     arr.push(0x00, 0x02, 0xA0, 0x01);

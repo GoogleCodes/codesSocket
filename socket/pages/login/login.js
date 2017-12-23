@@ -13,6 +13,7 @@ Page({
     gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
     token: '',
     loadHidden: true,
+    uid: ''
   },
 
   loginForm(e) {
@@ -49,7 +50,7 @@ Page({
     tools.sendRrquest('login', 'POST', json, head).then((result) => {
        //  如果账号或者密码错误 提示错误
       if (result.data.error_code == 9020) {
-        tools.showModel('提示','账号或者密码错误',function(res) {
+        tools.showModel('提示','账号或者密码错误', (res) => {
           that.setData({ loadHidden: true, });
         });
         return false;
@@ -66,6 +67,7 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
+        console.log(this.data.uid);
         wx.switchTab({
           url: '../index/index',
         })
@@ -79,7 +81,6 @@ Page({
   onReady() {
     var that = this;
     //  获取用户信息
-    /*
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/member/getUser',
       method: "POST",
@@ -94,7 +95,7 @@ Page({
         console.log(res.data.data);
         wx.setStorageSync('wxuser', res.data.data)
       }
-    })*/
+    })
     var userInfom = wx.getStorageSync('userInformation');
     that.setData({
       uname: userInfom.username,

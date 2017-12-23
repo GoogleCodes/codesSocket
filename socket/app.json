@@ -1,9 +1,10 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/search/search",
+    "pages/voice/voice",
     "pages/scene/scene",
     "pages/message/message",
-    "pages/search/search",
     "pages/me/me",
     "pages/footer/footer",
     "pages/login/login",
@@ -12,7 +13,6 @@
     "pages/led/led",
     "pages/windows/windows",
     "pages/share/share",
-    "pages/voice/voice",
     "pages/aboutme/aboutme",
     "pages/forget/forget",
     "pages/reg/reg",

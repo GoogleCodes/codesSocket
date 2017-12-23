@@ -6,15 +6,7 @@ Page({
    */
   data: {
     isChonse: false,
-    list: [{
-      id: 0,
-      tab: '卧室',
-      gizwits: []
-    }, {
-      id: 1,
-      tab: '厨房',
-      gizwits: []
-    }],
+    list: [],
     equipment: [
       {
         active: 0,
@@ -52,13 +44,16 @@ Page({
     pickerShow: true,
     isTab: 0,
     array: [],
+    areaid: '',
+    //  增加区域
+    addAreaText: ''
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    const that = this;
+    let that = this;
     wx.getSystemInfo({
       success(res) {
         that.setData({
@@ -66,18 +61,68 @@ Page({
         });
       },
     });
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/getregion',
+      method: 'POST',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+      },
+      success(res) {
+        that.setData({
+          list: res.data.data,
+        });
+        console.log(that.data.list);
+      }
+    })
+
+  },
+
+  addArea(e) {
+    console.log(e.detail.value);
+    const that = this;
+    if (e.detail.value == '') {
+      wx.showToast({
+        title: '请输入内容',
+      })
+      return;
+    }
+    that.setData({
+      addAreaText: e.detail.value
+    });
+    
   },
 
   bindMultiPickerChange(e) {
-    // console.log('picker发送选择改变，携带值为', e.detail.value)
+    let that = this;
     for(let i in this.data.list) {
       if (e.detail.value == this.data.list[i].id) {
-        console.log(this.data.list[i].gizwits.concat(this.data.equipment));
         console.log('picker发送选择改变，携带值为', e.detail.value)
       }
     }
+
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+      method: 'POST',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+      },
+      success(res) {
+        that.setData({
+          spliceArray: res.data.data
+        });
+      }
+    });
+
     this.setData({
-      multiIndex: e.detail.value
+      index: e.detail.value
     })
   },
 
@@ -160,6 +205,25 @@ Page({
       this.data.equipment[index].active = 1;
       arr = e.currentTarget.dataset;
       this.data.spliceArray.push(arr);
+
+      wx.request({
+        url: 'http://yuyin.ittun.com/public/index/dev/adddev',
+        method: "POST",
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          uid: wx.getStorageSync('wxuser').id,
+          did: e.currentTarget.dataset.key,
+          dname: e.detail.value,
+          rid: 1
+        },
+        success(res) {
+          
+        }
+      })
+
     } else if (this.data.equipment[index].active == 1) {
       this.data.equipment[index].active = 0;
       for (let i in this.data.spliceArray) {
@@ -168,11 +232,58 @@ Page({
         }
       }
     }
-    console.log(this.data.spliceArray);
     this.setData({
       equipment: this.data.equipment,
       spliceArray: this.data.spliceArray
     });
+    wx.setStorageSync('spliceArray', this.data.spliceArray);
+  },
+
+  saveIMessage() {
+    if (this.data.addAreaText == "") {
+      wx.showToast({
+        title: '请输入内容',
+      })
+      return;
+    }
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/addregion',
+      method: "POST",
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+        name: this.data.addAreaText
+      },
+      success(res) {
+        that.setData({
+          areaid: res.data.data
+        })
+      }
+    })
+  },
+
+  onShow() {
+    let that = this;
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/getregion',
+      method: 'POST',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+      },
+      success(res) {
+        that.setData({
+          list: res.data.data,
+        });
+        console.log(that.data.list);
+      }
+    })
   },
 
 })

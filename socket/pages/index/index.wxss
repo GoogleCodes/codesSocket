@@ -117,7 +117,7 @@ page {
 
 .music-iview {
   position: absolute;
-  bottom: 25px;
+  bottom: 5px;
   left: 0px;
   right: 0px;
   margin: 0px auto;

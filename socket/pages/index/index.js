@@ -12,6 +12,8 @@ Page({
   data: {
     currentTab: 0,
     winHeight: 0,
+    tabArray: [],
+    spliceArray: [],
     imgUrls: [
       '../../../static/images/banner.png',
       'https://img.alicdn.com/tfs/TB1fKrBewLD8KJjSszeXXaGRpXa-760-460.jpg',
@@ -82,6 +84,25 @@ Page({
       that.setData({
         currentTab: e.target.dataset.current
       })
+
+      wx.request({
+        url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          id: e.target.dataset.id,
+          uid: wx.getStorageSync('wxuser').id,
+        },
+        success(res) {
+          that.setData({
+            spliceArray: res.data.data
+          });
+        }
+      });
+
     }
   },
 
@@ -103,6 +124,25 @@ Page({
     } else {
       that._getBindingList(20, 0);
     }
+
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/getregion',
+      method: 'POST',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+      },
+      success(res) {
+        that.setData({
+          tabArray: res.data.data,
+        });
+        console.log(that.data.list);
+      }
+    })
+
   },
 
   _login() {

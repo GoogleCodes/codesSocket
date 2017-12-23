@@ -5,6 +5,20 @@
   width: 90%;
 }
 
+.loginView .remenberPword {
+  text-align: center;
+  height: 20px;
+  margin: 20px auto 0;
+  width: 98px;
+  line-height: 20px;
+  color: #6ba74f;
+  font-size: 14px;
+}
+
+.loginView .remenberPword .iconfont {
+  font-size: 70rpx;
+}
+
 .bodyView {
   width: 100%;
   height: 40px;
@@ -30,6 +44,7 @@
 
 .loginView .labels {
   margin: 55px 10% 0px;
+  overflow: hidden;
 }
 
 .loginView .labels .viewLabel {
