@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/control/control",
     "pages/index/index",
     "pages/search/search",
     "pages/voice/voice",
@@ -20,7 +21,6 @@
     "pages/more/more",
     "template/util/util",
     "pages/person/person",
-    "pages/control/control",
     "pages/logs/logs"
   ],
   "window": {

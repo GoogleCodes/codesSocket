@@ -122,7 +122,7 @@ Page({
       wx.removeStorageSync('userInformation');
       wx.redirectTo({ url: '../login/login', });
     } else {
-      that._getBindingList(20, 0);
+      // that._getBindingList(20, 0);
     }
 
     wx.request({

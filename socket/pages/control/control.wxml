@@ -4,7 +4,7 @@
   <view class="control-title">网关：</view>
 
   <view class="control-ul">
-    <view class="control-li" wx:for="{{ list }}">
+    <view class="control-li" wx:for="{{ list }}" bindtap='goSelectDevice'>
       <text class="fl iconfont icon-weibiaoti- block"></text>
       <view class="li-main">
         <view class="li-main-desc">{{ item.dev_alias }}</view>
