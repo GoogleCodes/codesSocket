@@ -31,7 +31,7 @@
   </view>
 
   <!-- voice-microphone start -->
-  <view class="voice-microphone" bindtouchstart="startRecode" bindtouchend="endRecode">
+  <view class="voice-microphone" bindtouchstart="startRecode" bindtouchend="endRecode" hover-class='navGoHover'>
     <view class="iconfont icon-weibiaoti-12"></view>
   </view>
   <!-- voice-microphone end -->

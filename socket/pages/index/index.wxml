@@ -81,7 +81,7 @@
 
   <!-- 语音按钮 -->
   <view class='music-iview'>
-    <navigator url='/pages/voice/voice' class="clear">
+    <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'>
       <view class="iconfont icon-weibiaoti-12"></view>
       <!-- <image src="../../../static/images/img02.png" class="w100 h100"></image> -->
     </navigator>

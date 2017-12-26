@@ -82,14 +82,15 @@ Page({
   },
 
   sliderchange(e) {
-    console.log(e.detail.value);
     let num = e.detail.value, arr = [], json = {};
     num.toString(16);
     let f = "0x" + num.toString(16);
     console.log("0x" + num.toString(16));
     //  获取did
     const storage = wx.getStorageSync("didJSon");
-    arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA2, 0x01, f)
+    // arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA2, 0x01, f)
+    //  LED
+    arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA5, 0x06, f)
     json = {
       'data': main.getArrays(arr),
     };

@@ -78,31 +78,13 @@ Page({
 
   selected(e) {
     var that = this;
+    console.log(e.target.dataset);
     if (this.data.currentTab === e.target.dataset.current) {
       return false;
     } else {
       that.setData({
         currentTab: e.target.dataset.current
       })
-
-      wx.request({
-        url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-        method: 'POST',
-        header: {
-          'content-type': 'application/json',
-          'content-type': 'application/x-www-form-urlencoded'
-        },
-        data: {
-          id: e.target.dataset.id,
-          uid: wx.getStorageSync('wxuser').id,
-        },
-        success(res) {
-          that.setData({
-            spliceArray: res.data.data
-          });
-        }
-      });
-
     }
   },
 
@@ -122,7 +104,7 @@ Page({
       wx.removeStorageSync('userInformation');
       wx.redirectTo({ url: '../login/login', });
     } else {
-      // that._getBindingList(20, 0);
+      that._getBindingList(20, 0);
     }
 
     wx.request({
@@ -136,10 +118,26 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
       },
       success(res) {
+        wx.request({
+          url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded'
+          },
+          data: {
+            id: 1,
+            uid: wx.getStorageSync('wxuser').id,
+          },
+          success(res) {
+            that.setData({
+              spliceArray: res.data.data
+            });
+          }
+        });
         that.setData({
           tabArray: res.data.data,
         });
-        console.log(that.data.list);
       }
     })
 

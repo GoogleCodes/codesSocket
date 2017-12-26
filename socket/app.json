@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/control/control",
     "pages/index/index",
+    "pages/smart/smart",
     "pages/search/search",
     "pages/voice/voice",
     "pages/scene/scene",
@@ -9,7 +9,6 @@
     "pages/me/me",
     "pages/footer/footer",
     "pages/login/login",
-    "pages/smart/smart",
     "pages/equipment/equipment",
     "pages/led/led",
     "pages/windows/windows",
@@ -21,6 +20,7 @@
     "pages/more/more",
     "template/util/util",
     "pages/person/person",
+    "pages/control/control",
     "pages/logs/logs"
   ],
   "window": {

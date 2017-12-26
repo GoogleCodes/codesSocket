@@ -15,6 +15,8 @@ Page({
     scenelist: [],
     arrays: [],
     sceneids: [],
+    isTrueScene: true,
+    sceneArray: []
   },
 
   /**
@@ -47,7 +49,7 @@ Page({
     wx.showLoading({
       title: '加载中。。。',
     })
-    let arr = [], json = {};
+    let arr = [], json = {}, that = this;
     arr.push(0x00, 0x01, 0x40);
     json = {
       'data': main.getArrays(arr),
@@ -64,12 +66,25 @@ Page({
         let arrID = data.data.attrs.data;
         //  获取情景貌似ID
         let sceneID = arr.splice(4,1);
+        if (sceneID == 0) {
+          that.setData({
+            isTrueScene: true,
+          });
+        } else if (sceneID == 1) {
+          that.setData({
+            isTrueScene: false,
+          });
+        }
         this.data.arrays.push(arr.splice(4, 18));
         this.setData({
           arrays: this.data.arrays,
           sceneid: sceneID
         });
-        console.log(this.data.arrays, '+-+-+-+-+-');
+        let brr = JSON.parse(res.data);
+        let thatArr = brr.data.attrs.data.splice(4, 18);
+        that.setData({
+          sceneArray: thatArr
+        });
       } catch(e) {
         
       }
@@ -79,10 +94,14 @@ Page({
 
   switchScene(e) {
     let arr = [], that = this, json = {};
-    arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 1, 1, 1);
+    console.log(that.data.sceneArray);
+    // arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 1, 1, 1);
+    arr.push(0, 18, 0x50);
+    let count = arr.concat(that.data.sceneArray)
+    console.log(count);
     if (e.detail.value == true) {
       json = {
-        'data': main.getArrays(arr),
+        'data': main.getArrays(count),
       };
       tools.sendData('c2s_write', did, json);
       wx.onSocketMessage((res) => {

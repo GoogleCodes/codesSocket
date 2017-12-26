@@ -62,21 +62,27 @@ Page({
     wx.showToast();
     setTimeout(() => {
       wx.uploadFile({
-        url: 'https://www.chlorop.com.cn/yuyin/public/index/index/zhen',
+        //  https://www.chlorop.com.cn/yuyin/public/index/index/zhen
+        url: 'http://yuyin.ittun.com/public/index/dev/zhen',
         filePath: s.data.recodePath,
         method: "POST",
-        name: 'abc',
+        name: 'silk',
         header: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
         },
         formData: {
-          'lan': s.data.arrayCharset, // 'zh',
+          'lan': 'zh' //s.data.arrayCharset, // 'zh',
         },
         header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success(res) {
+          s.setData({ voiceNow: true });
           var error_text = '语音识别失败';
           console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
+          let b = JSON.parse(res.data);
+          for (let i in b.yuyin) {
+            console.log(b.yuyin[i]); 
+          }
           switch (true) {
             case res.data.toString() == error_text:
               main._Toast('语音识别失败!请重试!', 'success');
@@ -90,8 +96,8 @@ Page({
             ins_y: options.time1,
             ins_l: options.time2,
           });
-          for (var i in options) {
-            var sqlStr = options[i].toString();
+          for (var i in options.yuyin) {
+            var sqlStr = options.yuyin[i];
             s.setData({
               openMessage: sqlStr,
             });
@@ -99,7 +105,7 @@ Page({
               var myString = sqlStr.substring(0, 1);
             }
             switch (true) {
-              case myString == "开" || myString == '打' || myString == s.data.language:
+              case myString == "开" || myString == '打':
                 s.setData({ switchButton: true });
                 json = {
                   "onoffAll": s.data.switchButton,
@@ -152,7 +158,7 @@ Page({
   },
 
   saveIMessage(e) {
-    console.log(e);
+    console.log(e, this.data.voiceIMessage);
   }
 
 })

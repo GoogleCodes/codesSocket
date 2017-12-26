@@ -8,6 +8,7 @@
 .w100 {width: 100%;} 
 .h100 {height: 100%;}
 .marBtm60 {margin-bottom: 60px;}
+.navGoHover:hover {background: #fff;border-radius: 100%;}
 /*改变谷歌滚动条的样式*/
 ::selection{background:pink;}
 ::-webkit-scrollbar{width:8px;height:6px;background:#ccc;}

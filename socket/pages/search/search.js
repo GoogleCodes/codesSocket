@@ -1,4 +1,9 @@
 // pages/search/search.js
+
+var tools = require('../../utils/util.js');
+import { Main } from '../../utils/main.js'
+let main = new Main();
+
 Page({
 
   /**
@@ -34,7 +39,7 @@ Page({
         name: '双向窗帘',
       }
     ],
-    spliceArray:[],
+    spliceArray: [],
     index: 0,
     multiArray: [['卧室', '厨房'], []],
     multiIndex: [0, 0],
@@ -46,7 +51,9 @@ Page({
     array: [],
     areaid: '',
     //  增加区域
-    addAreaText: ''
+    addAreaText: '',
+    //  设备总数
+    equipmentArray: []
   },
 
   /**
@@ -57,10 +64,41 @@ Page({
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2
+          winHeight: res.windowHeight / 2 + 100
         });
       },
     });
+
+    let arr = [];
+    arr.push(0x00, 0x02, 0xA0, 0xFF);
+    var json = {
+      'data': main.getArrays(arr),
+    };
+    tools.sendData('c2s_write', wx.getStorageSync('didJSon').did, json);
+    wx.onSocketMessage((res) => {
+      try {
+        let jsonData = JSON.parse(res.data);
+        let k = jsonData.data.attrs.data;
+        let last = null, brr = [], json = {};
+        for (let i in k) {
+          last = k.splice(4, 21);
+          if (last.indexOf(1) == 0) {
+            json = {
+              sdid: last.splice(0, 4),
+              active: 0,
+            };
+            brr.push(json);
+            brr.concat(that.data.array);
+            that.setData({
+              array: brr
+            });
+            wx.setStorageSync('gizwits', that.data.array);
+          }
+        }
+        console.log(that.data.array);
+      } catch (e) { }
+    })
+
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/dev/getregion',
       method: 'POST',
@@ -93,17 +131,16 @@ Page({
     that.setData({
       addAreaText: e.detail.value
     });
-    
+
   },
 
   bindMultiPickerChange(e) {
     let that = this;
-    for(let i in this.data.list) {
+    for (let i in this.data.list) {
       if (e.detail.value == this.data.list[i].id) {
         console.log('picker发送选择改变，携带值为', e.detail.value)
       }
     }
-
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/dev/getdev',
       method: 'POST',
@@ -120,7 +157,6 @@ Page({
         });
       }
     });
-
     this.setData({
       index: e.detail.value
     })
@@ -201,11 +237,11 @@ Page({
   selectEquipment(e) {
     let that = this, arr = {};
     let index = e.currentTarget.dataset.key;
-    if (this.data.equipment[index].active == 0) {
-      this.data.equipment[index].active = 1;
+    if (this.data.array[index].active == 0) {
+      this.data.array[index].active = 1;
+
       arr = e.currentTarget.dataset;
       this.data.spliceArray.push(arr);
-
       wx.request({
         url: 'http://yuyin.ittun.com/public/index/dev/adddev',
         method: "POST",
@@ -216,16 +252,16 @@ Page({
         data: {
           uid: wx.getStorageSync('wxuser').id,
           did: e.currentTarget.dataset.key,
-          dname: e.detail.value,
+          dname: e.target.dataset.name,
           rid: 1
         },
         success(res) {
-          
+          console.log(res);
         }
       })
 
-    } else if (this.data.equipment[index].active == 1) {
-      this.data.equipment[index].active = 0;
+    } else if (this.data.array[index].active == 1) {
+      this.data.array[index].active = 0;
       for (let i in this.data.spliceArray) {
         if (this.data.spliceArray[i].key == index) {
           this.data.spliceArray.splice(i, 1);
@@ -233,7 +269,7 @@ Page({
       }
     }
     this.setData({
-      equipment: this.data.equipment,
+      array: this.data.array,
       spliceArray: this.data.spliceArray
     });
     wx.setStorageSync('spliceArray', this.data.spliceArray);

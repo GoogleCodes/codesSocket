@@ -190,4 +190,10 @@ Page({
     })
   },
 
+  Selecteding() {
+    wx.switchTab({
+      url: '../index/index',
+    })
+  }
+
 })
