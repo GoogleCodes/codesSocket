@@ -25,7 +25,9 @@ Page({
     this.setData({
       sdid: options.sdid
     });
-    console.log(JSON.parse(that.data.sdid));
+    let sdid = JSON.parse(that.data.sdid);
+    let arr = [0xA2,0x01];
+    console.log(sdid.concat(arr));
     wx.getSystemInfo({
       success(res) {
         that.setData({
