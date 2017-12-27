@@ -32,7 +32,7 @@
               <text class="block fr" style="color: #6aa84f;">关</text>
             </view>
           </view>
-          <navigator url="/pages/equipment/equipment">
+          <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}">
             <view class="arrow-iview fr iconfont icon-fruits-lemon">
                <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image>  -->
             </view>

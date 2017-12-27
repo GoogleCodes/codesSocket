@@ -150,10 +150,11 @@ Page({
       },
       data: {
         uid: wx.getStorageSync('wxuser').id,
+        rid: e.target.dataset.id,
       },
       success(res) {
         that.setData({
-          spliceArray: res.data.data
+          array: res.data.data
         });
       }
     });
@@ -239,9 +240,12 @@ Page({
     let index = e.currentTarget.dataset.key;
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
-
-      arr = e.currentTarget.dataset;
+      arr = {
+        key: e.currentTarget.dataset.key,
+        sdid: e.currentTarget.dataset.sdid,
+      };
       this.data.spliceArray.push(arr);
+      
       wx.request({
         url: 'http://yuyin.ittun.com/public/index/dev/adddev',
         method: "POST",
@@ -252,8 +256,8 @@ Page({
         data: {
           uid: wx.getStorageSync('wxuser').id,
           did: e.currentTarget.dataset.key,
-          dname: e.target.dataset.name,
-          rid: 1
+          dname: JSON.stringify(e.currentTarget.dataset.sdid),
+          rid: 7,
         },
         success(res) {
           console.log(res);

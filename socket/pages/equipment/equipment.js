@@ -14,6 +14,7 @@ Page({
     winTop: 0,
     switchButton: true,
     currentTabs: 0,
+    sdid: [],
   },
 
   /**
@@ -21,6 +22,10 @@ Page({
    */
   onLoad(options) {
     let that = this;
+    this.setData({
+      sdid: options.sdid
+    });
+    console.log(JSON.parse(that.data.sdid));
     wx.getSystemInfo({
       success(res) {
         that.setData({

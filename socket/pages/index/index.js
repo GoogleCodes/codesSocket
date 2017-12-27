@@ -18,7 +18,7 @@ Page({
       '../../../static/images/banner.png',
       'https://img.alicdn.com/tfs/TB1fKrBewLD8KJjSszeXXaGRpXa-760-460.jpg',
     ],
-    list:[
+    list: [
       {
         id: 0,
         tab: '卧室',
@@ -226,7 +226,7 @@ Page({
       that._sendJson(options);
     }, heartbeatInterval);
   },
-  
+
   go() {
     console.log(123123);
   },

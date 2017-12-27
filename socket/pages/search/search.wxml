@@ -31,7 +31,7 @@
           <view class="li-iview-con">
             <view class="iconfont icon-weibiaoti-3"></view>
           </view>
-          <view>{{ item.sdid }}</view>
+          <view>{{ item.dname }}</view>
         </view>
         <!--
         <view class="li-iview fl" wx:for="{{ spliceArray }}" wx:if="{{ item.did == 1 }}">
@@ -86,7 +86,7 @@
         <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i">
           <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
             <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' 
-            data-key='{{ i }}' data-name='{{ item.name }}' data-types='{{ item.types }}'></view>
+            data-key='{{ i }}' data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
           </view>
           <view>{{ item.sdid }} {{ item.active }}</view>
         </view> 
