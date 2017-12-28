@@ -50,6 +50,7 @@ Page({
       wx.setStorageSync('devices', result.data.devices);
       // that.setData({ listDevices: result.data.devices });
       // var pKey = null;
+      let devices = wx.getStorageSync('devices');
       for (var i in result.data.devices) {
         var device = result.data.devices[i];
         if (result.data.devices[i].is_online == true) {
@@ -66,7 +67,6 @@ Page({
             'wss_port': device.wss_port, //  端口
           };
           wx.setStorageSync('didJSon', json);
-          console.log(that.data.host, that.data.wss_port);
         }
       }
       // that._GizwitsDevdata(that.data.options.did);
@@ -75,7 +75,7 @@ Page({
     }, (err) => { });
   },
 
-  _login() {
+  _login(did) {
     let that = this, json = {};
     wx.showLoading({ title: '' })
     //  创建Socket
@@ -96,7 +96,6 @@ Page({
           auto_subscribe: true
         }
       };
-      console.log(json, options);
       that._startPing();
       that._sendJson(json);
     });
@@ -108,7 +107,7 @@ Page({
         json = {
           cmd: "subscribe_req",
           data: [{
-            did: that.data.did,
+            did: did,
             passcode: 'IJLAAQTWBM'
           }]
         };
@@ -122,7 +121,7 @@ Page({
             case 'subscribe_res':
               for (var i in noti.data.success) {
                 that.setData({
-                  did: noti.data.success[i].did
+                  did: did
                 });
               }
             case 'c2s_write':
@@ -141,7 +140,7 @@ Page({
         });
       } else {
         if (data.data.msg == "M2M socket has closed, please login again!") {
-          that._login();
+          that._login(did);
         }
       }
     });
@@ -183,11 +182,13 @@ Page({
     tools.storageJSONS(json);
   },
 
-  goSelectDevice() {
-    this._login();
-    wx.switchTab({
-      url: '../index/index',
-    })
+  goSelectDevice(e) {
+    console.log(e.currentTarget.dataset.did);
+    let did = e.currentTarget.dataset.did;
+    this._login(did);
+    // wx.switchTab({
+    //   url: '../index/index',
+    // })
   },
 
   Selecteding() {

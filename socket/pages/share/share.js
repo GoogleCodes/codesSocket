@@ -26,15 +26,51 @@ Page({
   },
 
   longChose() {
+    if (this.data.cancel == false) {
+      this.setData({
+        cancel: true,
+      });
+    } else if (this.data.cancel == true) {
+      this.setData({
+        cancel: false,
+      });
+    }
+  },
+
+  clickChonse() {
     this.setData({
-      cancel: false,
+      cancel: true,
     });
   },
 
   addShare() {
-    this.setData({
-      layer: false,
-    });
+    let that = this;
+    let options = wx.getStorageSync('options');
+    var head = {
+      'content-type': 'application/json',
+      'X-Gizwits-Application-Id': options.gizwitsAppId,
+      'X-Gizwits-User-token': options.token,
+    };
+    wx.request({
+      url: 'https://api.gizwits.com/app/sharing',
+      method: "POST",
+      header: head,
+      data: {
+        "type": 0,
+        "did": "zGYs6YQLz2ySjLqLoFqWFB",
+        "phone": "13250672958",
+      },
+      success(res) {
+        that.setData({
+          layer: true,
+        });
+        wx.showModal({
+          title: '警告!',
+          content: res.data.error_message,
+        })
+      }
+    })
+
   },
 
   cancenLayer() {
