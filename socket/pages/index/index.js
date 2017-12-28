@@ -68,6 +68,7 @@ Page({
       'attrs': 'attrs_v4',
       'custom': 'custom'
     },
+    tabId: 0,
     wechatOpenId: 'kceshi1',  //  测试:kceshi1
     gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',
     did: '',
@@ -76,9 +77,37 @@ Page({
     wss_port: 0, //  端口
   },
 
+  bindChange(e) {
+    let that = this;
+    this.setData({
+      currentTab: e.detail.current
+    });
+    for (let i in this.data.tabArray) {
+      if (i == e.detail.current) {
+        wx.request({
+          url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+          method: 'POST',
+          header: {
+            'content-type': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded'
+          },
+          data: {
+            rid: that.data.tabArray[i].id,
+            uid: wx.getStorageSync('wxuser').id,
+          },
+          success(res) {
+            that.setData({
+              spliceArray: res.data.data
+            });
+          }
+        });
+      }
+    }
+    
+  },
+
   selected(e) {
     var that = this;
-    console.log(e.target.dataset);
     if (this.data.currentTab === e.target.dataset.current) {
       return false;
     } else {
@@ -86,6 +115,24 @@ Page({
         currentTab: e.target.dataset.current
       })
     }
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+      method: 'POST',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        rid: e.target.dataset.id,
+        uid: wx.getStorageSync('wxuser').id,
+      },
+      success(res) {
+        that.setData({
+          spliceArray: res.data.data,
+          tabId: e.target.dataset.id
+        });
+      }
+    });
   },
 
   /**
@@ -96,17 +143,20 @@ Page({
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2 + 80
+          winHeight: res.windowHeight / 2
         });
       },
     });
     if (wx.getStorageSync('options') == '') {
       wx.removeStorageSync('userInformation');
       wx.redirectTo({ url: '../login/login', });
-    } else {
-      that._getBindingList(20, 0);
     }
+    this._getBindingList(20, 0);
+    // this.getIndexGizwits();
+  },
 
+  getIndexGizwits(id) {
+    let that = this;
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/dev/getregion',
       method: 'POST',
@@ -126,7 +176,7 @@ Page({
             'content-type': 'application/x-www-form-urlencoded'
           },
           data: {
-            id: 1,
+            rid: id,
             uid: wx.getStorageSync('wxuser').id,
           },
           success(res) {
@@ -140,7 +190,11 @@ Page({
         });
       }
     })
+  },
 
+  onShow() {
+    let that = this;
+    this.getIndexGizwits(8);
   },
 
   _login() {
@@ -229,13 +283,6 @@ Page({
 
   go() {
     console.log(123123);
-  },
-
-  bindChange(e) {
-    var that = this;
-    that.setData({
-      currentTab: e.detail.current
-    });
   },
 
   _getBindingList(limit, skip) {

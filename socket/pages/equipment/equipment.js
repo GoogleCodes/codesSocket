@@ -13,7 +13,7 @@ Page({
     //  windowTop
     winTop: 0,
     switchButton: true,
-    currentTabs: 0,
+    currentTabs: -1,
     sdid: [],
   },
 
@@ -25,9 +25,7 @@ Page({
     this.setData({
       sdid: options.sdid
     });
-    let sdid = JSON.parse(that.data.sdid);
-    let arr = [0xA2,0x01];
-    console.log(sdid.concat(arr));
+    
     wx.getSystemInfo({
       success(res) {
         that.setData({
@@ -49,7 +47,8 @@ Page({
   },
 
   gizwits(e) {
-    let that = this, json = {}, arr = [];
+    let that = this, json = {}, arr = [], brr = [], count = null;
+    let sdid = JSON.parse(that.data.sdid);
     //  获取did
     const storage = wx.getStorageSync("didJSon");
     if (this.data.currentTabs === e.target.dataset.current) {
@@ -61,27 +60,54 @@ Page({
     }
     switch(true) {
       case e.target.dataset.current == 0:
-        arr.push(0x00, 0x01, 0x40);
+        brr = [0xA2, 0x01, 0x01];
+        arr.push(0x00, 0x08, 0xA2);
+        count = arr.concat(sdid.concat(brr));
         json = {
-          'data': main.getArrays(arr),
+          'data': main.getArrays(count),
         };
         tools.sendData('c2s_write', storage.did, json);
         break;
       case e.target.dataset.current == 1:
-        arr.push(0x00, 0x01, 0x40);
+        brr = [0xA2, 0x01, 0x01];
+        arr.push(0x00, 0x08, 0xA2);
+        count = arr.concat(sdid.concat(brr));
         json = {
-          'data': main.getArrays(arr),
+          'data': main.getArrays(count),
         };
         tools.sendData('c2s_write', storage.did, json);
         break;
       case e.target.dataset.current == 2:
-        arr.push(0x00, 0x01, 0x40);
+        //  LED
+        brr = [0xA5, 0x06, 0x01];
+        arr.push(0x00, 0x08, 0xA2);
+        count = arr.concat(sdid.concat(brr));
         json = {
-          'data': main.getArrays(arr),
+          'data': main.getArrays(count),
         };
         tools.sendData('c2s_write', storage.did, json);
-        break; 
+        break;
+      default:
+        break;
     }
+    wx.onSocketMessage((res) => {
+      try {
+        let data = JSON.parse(res.data).data.attrs.data;
+        if (data.splice(9, 1).toString() == 1) {
+          console.log(1);
+          wx.showToast({
+            title: '控制成功!!',
+          })
+        } else if (data.splice(9, 1).toString() == 1) {
+          console.log(2);
+          wx.showToast({
+            title: '控制失败!!',
+          })
+        }
+      } catch(e) {
+        
+      }
+    })
   },
 
   carryout() {
@@ -90,17 +116,16 @@ Page({
 
   sliderchange(e) {
     let num = e.detail.value, arr = [], json = {};
-    num.toString(16);
-    let f = "0x" + num.toString(16);
-    console.log("0x" + num.toString(16));
+    let sdid = JSON.parse(this.data.sdid);
+    let brr = [0xA5, 0x06, num];
+    //  控制码
+    arr.push(0x00, 0x08, 0xA2)
+    let count = arr.concat(sdid.concat(brr));
+    json = {
+      'data': main.getArrays(count),
+    };
     //  获取did
     const storage = wx.getStorageSync("didJSon");
-    // arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA2, 0x01, f)
-    //  LED
-    arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA5, 0x06, f)
-    json = {
-      'data': main.getArrays(arr),
-    };
     tools.sendData('c2s_write', storage.did, json);
   },
 

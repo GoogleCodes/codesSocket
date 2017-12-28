@@ -57,4 +57,22 @@ Page({
     // });
   },
 
+  //  登出
+  backLogin() {
+    wx.showModal({
+      title: '提示',
+      content: "你确定要退出登录???",
+      showCancel: true,
+      success(res) {
+        if (res.confirm == true) {
+          wx.closeSocket({})  //  关闭websocket
+          //  清除缓存
+          wx.removeStorageSync('options');
+          wx.removeStorageSync('userInformation');
+          wx.redirectTo({ url: '../login/login', })
+        }
+      }
+    });
+  },
+
 })

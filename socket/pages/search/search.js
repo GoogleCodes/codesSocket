@@ -49,7 +49,7 @@ Page({
     pickerShow: true,
     isTab: 0,
     array: [],
-    areaid: '',
+    areaid: -1,
     //  增加区域
     addAreaText: '',
     //  设备总数
@@ -113,7 +113,6 @@ Page({
         that.setData({
           list: res.data.data,
         });
-        console.log(that.data.list);
       }
     })
 
@@ -136,11 +135,16 @@ Page({
 
   bindMultiPickerChange(e) {
     let that = this;
-    for (let i in this.data.list) {
-      if (e.detail.value == this.data.list[i].id) {
-        console.log('picker发送选择改变，携带值为', e.detail.value)
+    for(let i in that.data.list) {
+      if (e.detail.value == i) {
+        that.setData({
+          areaid: that.data.list[i].id
+        });
       }
     }
+    this.setData({
+      index: e.detail.value,
+    })
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/dev/getdev',
       method: 'POST',
@@ -150,17 +154,46 @@ Page({
       },
       data: {
         uid: wx.getStorageSync('wxuser').id,
-        rid: e.target.dataset.id,
+        rid: that.data.areaid,
       },
       success(res) {
-        that.setData({
-          array: res.data.data
-        });
+        if(res.data.code == 1) {
+          that.setData({
+            spliceArray: res.data.data
+          });
+          wx.onSocketMessage((res) => {
+            try {
+              let jsonData = JSON.parse(res.data);
+              let k = jsonData.data.attrs.data;
+              let last = null, brr = [], json = {};
+              for (let i in k) {
+                last = k.splice(4, 21);
+                if (last.indexOf(1) == 0) {
+                  json = {
+                    sdid: last.splice(0, 4),
+                    active: 0,
+                  };
+                  brr.push(json);
+                  brr.concat(that.data.array);
+                  that.setData({
+                    array: brr,
+                  });
+                  wx.setStorageSync('gizwits', that.data.array);
+                }
+              }
+            } catch (e) { }
+          })
+        } else if(res.data.code == 0) {
+          that.setData({
+            spliceArray: []
+          });
+          wx.showToast({
+            title: res.data.msg,
+          })
+        }
+        console.log(that.data.array);
       }
     });
-    this.setData({
-      index: e.detail.value
-    })
   },
 
   bindMultiPickerColumnChange(e) {
@@ -169,7 +202,6 @@ Page({
       objectArrays: this.data.objectArrays,
       index: this.data.index
     };
-    console.log(data);
     data.multiIndex[e.detail.column] = e.detail.value;
     switch (e.detail.column) {
       case 0:
@@ -238,6 +270,18 @@ Page({
   selectEquipment(e) {
     let that = this, arr = {};
     let index = e.currentTarget.dataset.key;
+    if(that.data.areaid == -1) {
+      wx.showToast({
+        title: '请选择区域!',
+      })
+      return false;
+    }
+    let json = {
+      uid: wx.getStorageSync('wxuser').id,
+      did: JSON.stringify(e.currentTarget.dataset.sdid),
+      dname: JSON.stringify(e.currentTarget.dataset.sdid),
+      rid: that.data.areaid,
+    };
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
       arr = {
@@ -253,14 +297,11 @@ Page({
           'content-type': 'application/json',
           'content-type': 'application/x-www-form-urlencoded'
         },
-        data: {
-          uid: wx.getStorageSync('wxuser').id,
-          did: e.currentTarget.dataset.key,
-          dname: JSON.stringify(e.currentTarget.dataset.sdid),
-          rid: 7,
-        },
+        data: json,
         success(res) {
-          console.log(res);
+          wx.showToast({
+            title: res.data.msg,
+          })
         }
       })
 

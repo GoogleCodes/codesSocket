@@ -4,7 +4,7 @@
   <view class="section">
     <view class="section__title fl">区域：</view>
     <view hidden='{{ !pickerShow }}' class="fl" style="width: 65%;">
-        <picker range='{{ list }}' value='{{ index }}' data-id='{{ list[index].id }}' range-key='name' class="picker"  bindchange="bindMultiPickerChange">
+        <picker range='{{ list }}' value='{{ index }}' data-id='{{ list[index].id }}' range-key='id' range-key='name' class="picker"  bindchange="bindMultiPickerChange">
         <view>{{ list[index].name }}</view>
       </picker> 
         <!-- <picker mode="multiSelector" bindchange="bindMultiPickerChange" bindcolumnchange="bindMultiPickerColumnChange" value="{{ multiIndex }}" range="{{ multiArray }}" class="picker" >
@@ -27,7 +27,7 @@
     
      <swiper-item>
       <view class="ul-iview">
-        <view class="li-iview fl" wx:for="{{ array }}" wx:if="{{ item.did == 0 }}">
+        <view class="li-iview fl" wx:for="{{ spliceArray }}">
           <view class="li-iview-con">
             <view class="iconfont icon-weibiaoti-3"></view>
           </view>
@@ -88,7 +88,7 @@
             <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' 
             data-key='{{ i }}' data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
           </view>
-          <view>{{ item.sdid }} {{ item.active }}</view>
+          <view>{{ item.sdid }}</view>
         </view> 
         <!--
         

@@ -17,14 +17,16 @@
   </scroll-view>
 </view>
 
-<swiper current="{{ currentTab }}" class="swiper-box" duration="300" style="margin-bottom:30px;height: {{ winHeight }}px;z-index: 1" bindchange="bindChange">
+<swiper class="swiper-box" 
+        duration="300" bindchange="bindChange"  current="{{ currentTab }}"
+        style="margin-bottom: 85px;height: 90%;z-index: 1;">
 
-  <swiper-item wx:for="{{ spliceArray }}">
+  <swiper-item wx:for="{{ tabArray }}" data-rid="{{ item.id }}">
     <view class="{{ selected ? 'hidden': 'show' }}">
       <view class="ul-view">
-        <view class="li-view" wx:if="{{ item.did == 0 }}">
+        <view class="li-view" wx:for="{{ spliceArray }}">
           <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-leddeng"></view>
+            <view class="iconfont  iconfont icon-leddeng"></view>
           </view>
           <view class="fl status-iview f12">
             <text class="block">{{ item.dname }}</text>
@@ -34,60 +36,26 @@
           </view>
           <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}">
             <view class="arrow-iview fr iconfont icon-fruits-lemon">
-               <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image>  -->
+              <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image>  -->
             </view>
           </navigator>
         </view>
-
-        <view class="li-view" wx:elif="{{ item.types == 2 }}">
-          <view class="pic-iview fl pic2">
-              <view class="iconfont icon-chuangliananzhuang"></view>
-            <!-- <image src="../../../static/images/img05.png" class="w100 h100"></image> -->
-          </view>
-          <view class="fl status-iview f12">
-            <text class="block">窗帘</text>
-            <view class="block" style="color: #b3b3b3">当前状态：
-              <text class="block fr" style="color: #6aa84f;">关</text>
-            </view>
-          </view>
-          <navigator url="/pages/led/led">
-            <view class="arrow-iview fr iconfont icon-fruits-lemon">
-               <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image> -->
-            </view>
-          </navigator>
-        </view>
-
-        <view class="li-view" wx:elif="{{ item.types == 3 }}">
-          <view class="pic-iview fl pic3">
-              <view class="iconfont  iconfont icon-hekricon43"></view>
-            <!-- <image src="../../../static/images/img06.png" class="w100 h100"></image> -->
-          </view>
-          <view class="fl status-iview f12">
-            <text class="block">LED</text>
-            <view class="block" style="color: #b3b3b3">当前状态：
-              <text class="block fr" style="color: #6aa84f;">关</text>
-            </view>
-          </view>
-          <navigator url="/pages/windows/windows">
-            <view class="arrow-iview fr iconfont icon-fruits-lemon">
-              <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image> -->
-            </view>
-          </navigator>
-        </view>
-
       </view>
     </view>
   </swiper-item>
 
-  <!-- 语音按钮 -->
-  <view class='music-iview'>
-    <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'>
-      <view class="iconfont icon-weibiaoti-12"></view>
-      <!-- <image src="../../../static/images/img02.png" class="w100 h100"></image> -->
-    </navigator>
-  </view>
-
 </swiper>
+
+
+<!-- 语音按钮 -->
+<view class='music-iview'>
+  <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'>
+    <view class="iconfont icon-weibiaoti-12"></view>
+    <!-- <image src="../../../static/images/img02.png" class="w100 h100"></image> -->
+  </navigator>
+</view>
+
+
 
 <!-- <import src="/pages/footer/footer.wxml" />
 <template is="footer" /> -->
