@@ -78,72 +78,83 @@ Page({
   _login(did) {
     let that = this, json = {};
     wx.showLoading({ title: '' })
+    let devices = wx.getStorageSync('devices'), i;
+
     //  创建Socket
-    wx.connectSocket({
-      url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
-    });
-    //  监听 WebSocket 连接事件
-    wx.onSocketOpen((res) => {
-      var options = wx.getStorageSync('options');
-      json = {
-        cmd: "login_req",
-        data: {
-          appid: options.gizwitsAppId,
-          uid: options.uid,
-          token: options.token,
-          p0_type: that.data.json.attrs,
-          heartbeat_interval: 180,
-          auto_subscribe: true
-        }
-      };
-      that._startPing();
-      that._sendJson(json);
-    });
-    wx.onSocketMessage((res) => {
-      wx.hideLoading();
-      var data = JSON.parse(res.data);
-      if (data.data.success == true) {
-        //  链接socket
-        json = {
-          cmd: "subscribe_req",
-          data: [{
-            did: did,
-            passcode: 'IJLAAQTWBM'
-          }]
-        };
-        that._sendJson(json);
-        //  读取数据
-        // that.getJSON('c2s_read', that.data.did);
-        //  获取服务器返回的信息
+    // wx.connectSocket({
+    //   url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
+    // });
+    for (i in devices) {
+      if (devices[i].did == did) {
+        //  监听 WebSocket 连接事件
+        // wx.onSocketOpen((res) => {
+        //   var options = wx.getStorageSync('options');
+        //   json = {
+        //     cmd: "login_req",
+        //     data: {
+        //       appid: options.gizwitsAppId,
+        //       uid: options.uid,
+        //       token: options.token,
+        //       p0_type: that.data.json.attrs,
+        //       heartbeat_interval: 180,
+        //       auto_subscribe: true
+        //     }
+        //   };
+        //   that._startPing();
+        //   that._sendJson(json);
+        // });
+
         wx.onSocketMessage((res) => {
-          var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
-          switch (noti.cmd) {
-            case 'subscribe_res':
-              for (var i in noti.data.success) {
-                that.setData({
-                  did: did
-                });
+          console.log(res)
+          wx.hideLoading();
+          var data = JSON.parse(res.data);
+          if (data.data.success == true) {
+            //  链接socket
+            json = {
+              cmd: "subscribe_req",
+              data: [{
+                did: did,
+                passcode: '' // IJLAAQTWBM
+              }]
+            };
+            that._sendJson(json);
+            //  读取数据
+            // that.getJSON('c2s_read', that.data.did);
+            //  获取服务器返回的信息
+            wx.onSocketMessage((res) => {
+              var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
+              console.log(noti)
+              switch (noti.cmd) {
+                case 'subscribe_res':
+                  for (var i in noti.data.success) {
+                    that.setData({
+                      did: did
+                    });
+                  }
+                case 'c2s_write':
+                  break;
+                case 's2c_noti':
+                  // arr.push(0x00, 0x01, 0x40);
+                  // let json = {
+                  //   'data': main.getArrays(arr),
+                  // };
+                  // tools.sendData('c2s_write', that.data.did, json); 
+                  // let a = noti.data.attrs.data.slice(18, 36)
+                  break;
+                case 'pong':
+                  break;
               }
-            case 'c2s_write':
-              break;
-            case 's2c_noti':
-              // arr.push(0x00, 0x01, 0x40);
-              // let json = {
-              //   'data': main.getArrays(arr),
-              // };
-              // tools.sendData('c2s_write', that.data.did, json); 
-              // let a = noti.data.attrs.data.slice(18, 36)
-              break;
-            case 'pong':
-              break;
+            });
+          } else {
+            if (data.data.msg == "M2M socket has closed, please login again!") {
+              that._login(did);
+            }
           }
         });
-      } else {
-        if (data.data.msg == "M2M socket has closed, please login again!") {
-          that._login(did);
-        }
+
       }
-    });
+    }
+
   },
 
   //  心跳开始
@@ -183,7 +194,6 @@ Page({
   },
 
   goSelectDevice(e) {
-    console.log(e.currentTarget.dataset.did);
     let did = e.currentTarget.dataset.did;
     this._login(did);
     // wx.switchTab({
