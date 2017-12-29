@@ -3,6 +3,7 @@
 var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
+let did = wx.getStorageSync('did');
 
 Page({
 
@@ -15,6 +16,7 @@ Page({
     switchButton: true,
     currentTabs: -1,
     sdid: [],
+    weibiao: true,
   },
 
   /**
@@ -38,12 +40,12 @@ Page({
 
   //  获取子设备
   mySon() {
-    let arr = [], storage = wx.getStorageSync("didJSon");;
+    let arr = [], storage = wx.getStorageSync("didJSon");
     arr.push(0x00, 0x02, 0xA0, 0x01);
     var json = {
       'data': main.getArrays(arr),
     };
-    tools.sendData('c2s_write', storage.did, json);
+    tools.sendData('c2s_write', did, json);
   },
 
   gizwits(e) {
@@ -66,7 +68,7 @@ Page({
         json = {
           'data': main.getArrays(count),
         };
-        tools.sendData('c2s_write', storage.did, json);
+        tools.sendData('c2s_write', did, json);
         break;
       case e.target.dataset.current == 1:
         brr = [0xA2, 0x01, 0x01];
@@ -75,7 +77,7 @@ Page({
         json = {
           'data': main.getArrays(count),
         };
-        tools.sendData('c2s_write', storage.did, json);
+        tools.sendData('c2s_write', did, json);
         break;
       case e.target.dataset.current == 2:
         //  LED
@@ -85,7 +87,7 @@ Page({
         json = {
           'data': main.getArrays(count),
         };
-        tools.sendData('c2s_write', storage.did, json);
+        tools.sendData('c2s_write', did, json);
         break;
       default:
         break;
@@ -126,7 +128,19 @@ Page({
     };
     //  获取did
     const storage = wx.getStorageSync("didJSon");
-    tools.sendData('c2s_write', storage.did, json);
+    tools.sendData('c2s_write', did, json);
   },
+
+  updateDeviceName() {
+    if (this.data.weibiao == true) {
+      this.setData({
+        weibiao: false,
+      });
+    } else if (this.data.weibiao == false) {
+      this.setData({
+        weibiao: true,
+      });
+    }
+  }
 
 })

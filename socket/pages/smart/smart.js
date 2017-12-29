@@ -112,7 +112,7 @@ Page({
       content: "你确定要退出登录???",
       showCancel: true,
       success(res) {
-        if(res.confirm == true) {
+        if (res.confirm == true) {
           wx.closeSocket({})  //  关闭websocket
           //  清除缓存
           wx.removeStorageSync('options');
@@ -217,7 +217,7 @@ Page({
       }
       // that._GizwitsDevdata(that.data.options.did);
       // that._getGizwitsDataing(pKey);
-    },(err) => { });
+    }, (err) => { });
   },
 
   //  选中列表设备
@@ -321,7 +321,7 @@ Page({
                 that.setData({
                   switchButton: noti.data.attrs.onoffAll
                 });
-              } catch(e) {}
+              } catch (e) { }
               break;
             case 's2c_noti':
               let a = noti.data.attrs.data.slice(18, 36)
@@ -330,7 +330,7 @@ Page({
               });
               let k = [0, 67, 161, 3, 1, 0, 0, 2, 0, 15, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 2, 1, 15, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 3, 0, 15, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
               let count = 1;
-              count *= 2; 
+              count *= 2;
               let brr = [];
               let last = null;
               let json = {};
@@ -364,7 +364,7 @@ Page({
   sliderchange(e) {
     let that = this;
     let arr = [];
-    switch(true) {
+    switch (true) {
       case e.detail.value == 0:
         //  0xA0  获取子设备请求
         arr.push(0x00, 0x02, 0xA0, 0x01);
@@ -692,9 +692,9 @@ Page({
         success(res) {
           var error_text = '语音识别失败';
           console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
-          switch(true) {
+          switch (true) {
             case res.data.toString() == error_text:
-              main._Toast('语音识别失败!请重试!','success');
+              main._Toast('语音识别失败!请重试!', 'success');
               break;
             case res.statusCode == 404:
               main._Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
@@ -723,7 +723,7 @@ Page({
                 tools.sendData('c2s_write', s.data.did, json);
                 main._Toast('打开成功!', 'success');
                 break;
-              case myString == "关" || myString == s.data.language: 
+              case myString == "关" || myString == s.data.language:
                 s.setData({ switchButton: false });
                 json = {
                   "onoffAll": s.data.switchButton,
@@ -742,12 +742,12 @@ Page({
             cEditData.recodeIdentity = data.identitys;
             s.setData({ editData: cEditData });
           } else {
-            main._goShowModel('提示', data.message, () => {});
+            main._goShowModel('提示', data.message, () => { });
           }
           wx.hideToast();
         },
         fail(res) {  //  错误提示
-          main._goShowModel('提示', '录音的姿势不对!', () => {});
+          main._goShowModel('提示', '录音的姿势不对!', () => { });
           wx.hideToast();
         }
       });

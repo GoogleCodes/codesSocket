@@ -321,6 +321,7 @@ Page({
   },
 
   saveIMessage() {
+    let that = this;
     if (this.data.addAreaText == "") {
       wx.showToast({
         title: '请输入内容',
@@ -344,9 +345,16 @@ Page({
         })
       }
     })
+    wx.showToast({
+      title: '请假成功',
+    })
+    this.setData({
+      pickerShow: true
+    });
+    this.onLoad();
   },
 
-  onShow() {
+  getRegion() {
     let that = this;
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/dev/getregion',
@@ -365,6 +373,10 @@ Page({
         console.log(that.data.list);
       }
     })
+  },
+
+  onShow() {
+    this.getRegion();
   },
 
 })

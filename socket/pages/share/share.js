@@ -57,8 +57,8 @@ Page({
       header: head,
       data: {
         "type": 0,
-        "did": "zGYs6YQLz2ySjLqLoFqWFB",
-        "phone": "13250672958",
+        "did": "C4SB5KnvrsDWqUPxnRg4Cg",
+        "phone": "13630017088",
       },
       success(res) {
         that.setData({

@@ -3,7 +3,7 @@
 <!-- share-main start -->
 <view class="share-main">
   <text class="share-title">分享名单：</text>
-  <view class="ul-share f12" bindlongtap='longChose'>
+  <view class="ul-share f12" bindtap='longChose'>
     <view class="li-share">
       <view class="p-share fl">
         <text>名称：</text>

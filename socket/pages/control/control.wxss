@@ -2,7 +2,7 @@
 
 
 .control-body {
-  padding: 0px 5%;
+  padding: 0px 5% 10%;
 }
 
 .control-body .control-title {

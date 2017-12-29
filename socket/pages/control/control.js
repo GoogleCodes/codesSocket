@@ -33,7 +33,6 @@ Page({
     this.setData({
       list: wx.getStorageSync('devices')
     });
-
     this._getBindingList(20, 0);
   },
 
@@ -79,33 +78,31 @@ Page({
     let that = this, json = {};
     wx.showLoading({ title: '' })
     let devices = wx.getStorageSync('devices'), i;
-
     //  创建Socket
-    // wx.connectSocket({
-    //   url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
-    // });
+    wx.connectSocket({
+      url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
+    });
+    //  监听 WebSocket 连接事件
+    wx.onSocketOpen((res) => {
+      var options = wx.getStorageSync('options');
+      json = {
+        cmd: "login_req",
+        data: {
+          appid: options.gizwitsAppId,
+          uid: options.uid,
+          token: options.token,
+          p0_type: that.data.json.attrs,
+          heartbeat_interval: 180,
+          auto_subscribe: true
+        }
+      };
+      that._startPing();
+      that._sendJson(json);
+    });
     for (i in devices) {
       if (devices[i].did == did) {
-        //  监听 WebSocket 连接事件
-        // wx.onSocketOpen((res) => {
-        //   var options = wx.getStorageSync('options');
-        //   json = {
-        //     cmd: "login_req",
-        //     data: {
-        //       appid: options.gizwitsAppId,
-        //       uid: options.uid,
-        //       token: options.token,
-        //       p0_type: that.data.json.attrs,
-        //       heartbeat_interval: 180,
-        //       auto_subscribe: true
-        //     }
-        //   };
-        //   that._startPing();
-        //   that._sendJson(json);
-        // });
-
         wx.onSocketMessage((res) => {
-          console.log(res)
+          console.log(i, res)
           wx.hideLoading();
           var data = JSON.parse(res.data);
           if (data.data.success == true) {
@@ -195,10 +192,11 @@ Page({
 
   goSelectDevice(e) {
     let did = e.currentTarget.dataset.did;
+    wx.setStorageSync('did', did);
     this._login(did);
-    // wx.switchTab({
-    //   url: '../index/index',
-    // })
+    wx.switchTab({
+      url: '../index/index',
+    })
   },
 
   Selecteding() {

@@ -168,6 +168,7 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
       },
       success(res) {
+        console.log(res.data.data[0].id);
         wx.request({
           url: 'http://yuyin.ittun.com/public/index/dev/getdev',
           method: 'POST',
@@ -176,7 +177,7 @@ Page({
             'content-type': 'application/x-www-form-urlencoded'
           },
           data: {
-            rid: id,
+            rid: res.data.data[0].id,
             uid: wx.getStorageSync('wxuser').id,
           },
           success(res) {
@@ -218,7 +219,6 @@ Page({
           auto_subscribe: true
         }
       };
-      console.log(json, options);
       that._startPing();
       that._sendJson(json);
     });
@@ -281,10 +281,6 @@ Page({
     }, heartbeatInterval);
   },
 
-  go() {
-    console.log(123123);
-  },
-
   _getBindingList(limit, skip) {
     var that = this;
     let options = wx.getStorageSync('options');
@@ -296,7 +292,6 @@ Page({
     };
     tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
       wx.setStorageSync('devices', result.data.devices);
-      // that.setData({ listDevices: result.data.devices });
       // var pKey = null;
       for (var i in result.data.devices) {
         var device = result.data.devices[i];
@@ -314,7 +309,6 @@ Page({
             'wss_port': device.wss_port, //  端口
           };
           wx.setStorageSync('didJSon', json);
-          console.log(that.data.host, that.data.wss_port);
         }
       }
       // that._GizwitsDevdata(that.data.options.did);

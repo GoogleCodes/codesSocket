@@ -13,8 +13,8 @@
 /* setFunction end */
 
 .eq-iview {
-  height: 4rem;
-  line-height: 4rem;
+  height: 3.5rem;
+  line-height: 3.5rem;
   display: block;
   margin: 0px 10% 0;
   border-bottom: 1px solid #ccc;
@@ -34,6 +34,10 @@
 .eq-iview .eq-iview-left {
   color: #666;
   font-size: 0.9rem;
+}
+
+.eq-iview .icon-weibiaoti-1 {
+  color: #ed1c24;
 }
 
 /* ul-iview start */
