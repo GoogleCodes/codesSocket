@@ -12,7 +12,7 @@
 
     </view>
 
-    <view class="scene-realTime">
+    <view class="scene-realTime" hidden='{{ true }}'>
       <view class="scene-li" bindlongtap='switchDeleteScene'>
         <view class="iconfont icon-slide-button fl"></view>
         <view class="fl scene-text">删除情景(长按按钮)</view>

@@ -93,13 +93,15 @@ Page({
     let mobile = this.data.phone;
     let regMobile = /^1[3|4|5|8][0-9]\d{4,8}$/;
     if(mobile == '') {
-      wx.showToast({
-        title: '提示!请输入手机号码！'
+      wx.showModal({
+        title: '提示!',
+        content: '请输入手机号码！',
       })
       return false;
     } else if (!regMobile.test(mobile)) {
-      wx.showToast({
-        title: '手机号有误！'
+      wx.showModal({
+        title: '提示!',
+        content: '手机号有误！',
       })
       return false;
     }

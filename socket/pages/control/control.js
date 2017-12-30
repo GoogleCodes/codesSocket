@@ -17,6 +17,7 @@ Page({
       'attrs': 'attrs_v4',
       'custom': 'custom'
     },
+    options: wx.getStorageSync('options'),
     wechatOpenId: 'kceshi1',  //  测试:kceshi1
     gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',
     did: '',
@@ -29,26 +30,22 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    console.log(wx.getStorageSync('devices'));
-    this.setData({
-      list: wx.getStorageSync('devices')
-    });
     this._getBindingList(20, 0);
   },
 
   _getBindingList(limit, skip) {
     var that = this;
-    let options = wx.getStorageSync('options');
     let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
     var head = {
       'content-type': 'application/json',
-      'X-Gizwits-Application-Id': options.gizwitsAppId,
-      'X-Gizwits-User-token': options.token,
+      'X-Gizwits-Application-Id': that.data.options.gizwitsAppId,
+      'X-Gizwits-User-token': that.data.options.token,
     };
     tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
+      that.setData({
+        list: result.data.devices
+      });
       wx.setStorageSync('devices', result.data.devices);
-      // that.setData({ listDevices: result.data.devices });
-      // var pKey = null;
       let devices = wx.getStorageSync('devices');
       for (var i in result.data.devices) {
         var device = result.data.devices[i];
@@ -68,8 +65,6 @@ Page({
           wx.setStorageSync('didJSon', json);
         }
       }
-      // that._GizwitsDevdata(that.data.options.did);
-      // that._getGizwitsDataing(pKey);
       // that._login();
     }, (err) => { });
   },
@@ -77,20 +72,48 @@ Page({
   _login(did) {
     let that = this, json = {};
     wx.showLoading({ title: '' })
-    let devices = wx.getStorageSync('devices'), i;
+
+
+    // wx.onSocketClose(() => {
+    //   wx.closeSocket();
+    // });
+
+    // var socketOpen = false;
     //  创建Socket
-    wx.connectSocket({
-      url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
-    });
+    // wx.connectSocket({
+    //   url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
+    // });
+
+    //  链接socket
+    json = {
+      cmd: "subscribe_req",
+      data: [{
+        did: did,
+        passcode: '' // IJLAAQTWBM
+      }]
+    };
+    that._sendJson(json);
+
+    wx.onSocketMessage((res) => {
+      var data = JSON.parse(res.data);
+      console.log(data);
+      let arr = [0x00, 0x02, 0xA0, 0xFF];
+      var json = {
+        'data': main.getArrays(arr),
+      };
+      tools.sendData('c2s_write', did, json);
+    })
+
+    /*
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
-      var options = wx.getStorageSync('options');
+      // socketOpen = true;
       json = {
         cmd: "login_req",
         data: {
-          appid: options.gizwitsAppId,
-          uid: options.uid,
-          token: options.token,
+          appid: that.data.options.gizwitsAppId,
+          uid: that.data.options.uid,
+          token: that.data.options.token,
           p0_type: that.data.json.attrs,
           heartbeat_interval: 180,
           auto_subscribe: true
@@ -99,58 +122,45 @@ Page({
       that._startPing();
       that._sendJson(json);
     });
-    for (i in devices) {
-      if (devices[i].did == did) {
+
+    wx.onSocketMessage((res) => {
+      wx.hideLoading();
+      var data = JSON.parse(res.data);
+      if (data.data.success == true) {
+        //  链接socket
+        json = {
+          cmd: "subscribe_req",
+          data: [{
+            did: did,
+            passcode: '' // IJLAAQTWBM
+          }]
+        };
+        that._sendJson(json);
+        //  获取服务器返回的信息
         wx.onSocketMessage((res) => {
-          console.log(i, res)
-          wx.hideLoading();
-          var data = JSON.parse(res.data);
-          if (data.data.success == true) {
-            //  链接socket
-            json = {
-              cmd: "subscribe_req",
-              data: [{
-                did: did,
-                passcode: '' // IJLAAQTWBM
-              }]
-            };
-            that._sendJson(json);
-            //  读取数据
-            // that.getJSON('c2s_read', that.data.did);
-            //  获取服务器返回的信息
-            wx.onSocketMessage((res) => {
-              var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
-              console.log(noti)
-              switch (noti.cmd) {
-                case 'subscribe_res':
-                  for (var i in noti.data.success) {
-                    that.setData({
-                      did: did
-                    });
-                  }
-                case 'c2s_write':
-                  break;
-                case 's2c_noti':
-                  // arr.push(0x00, 0x01, 0x40);
-                  // let json = {
-                  //   'data': main.getArrays(arr),
-                  // };
-                  // tools.sendData('c2s_write', that.data.did, json); 
-                  // let a = noti.data.attrs.data.slice(18, 36)
-                  break;
-                case 'pong':
-                  break;
-              }
-            });
-          } else {
-            if (data.data.msg == "M2M socket has closed, please login again!") {
-              that._login(did);
-            }
+          var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
+          switch (noti.cmd) {
+            case 'subscribe_res':
+              let arr = [0x00, 0x02, 0xA0, 0xFF];
+              var json = {
+                'data': main.getArrays(arr),
+              };
+              tools.sendData('c2s_write', did, json);
+              break;
+            case 'c2s_write':
+              break;
+            case 's2c_noti':
+              break;
+            case 'pong':
+              break;
           }
         });
-
+      } else {
+        if (data.data.msg == "M2M socket has closed, please login again!") {
+          that._login(did);
+        }
       }
-    }
+    });*/
 
   },
 
@@ -194,9 +204,12 @@ Page({
     let did = e.currentTarget.dataset.did;
     wx.setStorageSync('did', did);
     this._login(did);
-    wx.switchTab({
-      url: '../index/index',
-    })
+    setTimeout(() => {
+      wx.switchTab({
+        url: '../index/index',
+      })
+    }, 1000);
+    
   },
 
   Selecteding() {

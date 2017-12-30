@@ -9,7 +9,13 @@ Page({
    * 页面的初始数据
    */
   data: {
-  
+    code: '',
+    head: {
+      'Content-Type': 'application/json',
+      'Accept': ' application/json',
+      'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
+      'X-Gizwits-User-token': wx.getStorageSync('options').token,
+    },
   },
 
   /**
@@ -23,19 +29,28 @@ Page({
     let that = this, code = "adc1b95729864eecb02cd614cd305abc";
     wx.scanCode({
       success(res) {
+        console.log(res.result.substring(16,48));
+        that.setData({
+          code: res.result
+        });
         //  创建设备分享
-        main.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then((result) => {
-          console.log(result);
-        }, (err) => { });
+        wx.request({
+          url: 'https://api.gizwits.com/app/sharing/code/' + res.result.substring(16, 45),
+          method: "POST",
+          header: that.data.head,
+          success(result) {
+            if (result.data.error_code == 9084) {
+              wx.showModal({
+                title: '警告!',
+                content: "共享记录未找到！", // result.data.error_message,
+              })
+              return false;
+            }
+          },
+
+        })
       },
     })
-
-    // //  创建设备分享
-    main.sendRrquest('sharing/code/' + code, 'POST', '', that.data.head).then((result) => {
-      console.log(result);
-    }, (err) => {
-      console.log(err);
-    });
 
     // var options = {
     //   "type": 0,

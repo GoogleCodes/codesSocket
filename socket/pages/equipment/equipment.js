@@ -3,7 +3,6 @@
 var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
-let did = wx.getStorageSync('did');
 
 Page({
 
@@ -27,7 +26,6 @@ Page({
     this.setData({
       sdid: options.sdid
     });
-    
     wx.getSystemInfo({
       success(res) {
         that.setData({
@@ -35,12 +33,17 @@ Page({
         });
       },
     });
+  },
+
+  onShow() {
+    let that = this;
     this.mySon();
   },
 
   //  获取子设备
   mySon() {
     let arr = [], storage = wx.getStorageSync("didJSon");
+    let did = wx.getStorageSync('did');
     arr.push(0x00, 0x02, 0xA0, 0x01);
     var json = {
       'data': main.getArrays(arr),
@@ -50,6 +53,7 @@ Page({
 
   gizwits(e) {
     let that = this, json = {}, arr = [], brr = [], count = null;
+    let did = wx.getStorageSync('did');
     let sdid = JSON.parse(that.data.sdid);
     //  获取did
     const storage = wx.getStorageSync("didJSon");
@@ -117,6 +121,7 @@ Page({
   },
 
   sliderchange(e) {
+    let did = wx.getStorageSync('did');
     let num = e.detail.value, arr = [], json = {};
     let sdid = JSON.parse(this.data.sdid);
     let brr = [0xA5, 0x06, num];

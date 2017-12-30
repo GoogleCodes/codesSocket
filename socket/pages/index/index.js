@@ -153,6 +153,7 @@ Page({
     }
     this._getBindingList(20, 0);
     // this.getIndexGizwits();
+
   },
 
   getIndexGizwits(id) {
@@ -168,7 +169,6 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
       },
       success(res) {
-        console.log(res.data.data[0].id);
         wx.request({
           url: 'http://yuyin.ittun.com/public/index/dev/getdev',
           method: 'POST',
@@ -201,10 +201,12 @@ Page({
   _login() {
     let that = this, json = {};
     wx.showLoading({ title: '' })
+
     //  创建Socket
     wx.connectSocket({
       url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
     });
+
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
       var options = wx.getStorageSync('options');
@@ -222,6 +224,9 @@ Page({
       that._startPing();
       that._sendJson(json);
     });
+    wx.hideLoading();
+
+    //  获取服务器返回的信息
     wx.onSocketMessage((res) => {
       wx.hideLoading();
       var data = JSON.parse(res.data);
