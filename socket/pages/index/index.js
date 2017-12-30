@@ -12,6 +12,7 @@ Page({
   data: {
     currentTab: 0,
     winHeight: 0,
+    docHeight: 0,
     tabArray: [],
     spliceArray: [],
     imgUrls: [
@@ -75,10 +76,21 @@ Page({
     host: '', //  websocket 请求地址 sandbox.gizwits.com
     ws_port: 0, //  端口
     wss_port: 0, //  端口
+    hasRefesh: false,
+  },
+
+  refesh(e) {
+    console.log(e)
+    var that = this;
+    that.setData({
+      hasRefesh: true,
+    });
+    this.getIndexGizwits();
   },
 
   bindChange(e) {
     let that = this;
+    console.log(e);
     this.setData({
       currentTab: e.detail.current
     });
@@ -143,7 +155,8 @@ Page({
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2
+          winHeight: res.windowHeight / 2,
+          docHeight: res.windowHeight
         });
       },
     });
@@ -156,7 +169,7 @@ Page({
 
   },
 
-  getIndexGizwits(id) {
+  getIndexGizwits() {
     let that = this;
     wx.request({
       url: 'http://yuyin.ittun.com/public/index/dev/getregion',
@@ -169,6 +182,11 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
       },
       success(res) {
+        setTimeout(() => {
+          that.setData({
+            hasRefesh: false,
+          });
+        }, 500);
         wx.request({
           url: 'http://yuyin.ittun.com/public/index/dev/getdev',
           method: 'POST',
@@ -195,7 +213,7 @@ Page({
 
   onShow() {
     let that = this;
-    this.getIndexGizwits(8);
+    this.getIndexGizwits();
   },
 
   _login() {

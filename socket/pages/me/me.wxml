@@ -32,7 +32,7 @@
   </view>
 
   <view class="me-li-iview" bindtap='backLogin'>
-    <text class="iconfont icon-icon-test small-icon"></text>
+    <text class="iconfont icon-icon-test1 small-icon"></text>
     <text class="">退出登录</text>
     <text class="iconfont icon-youbian fr"></text>
   </view>

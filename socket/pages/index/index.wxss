@@ -4,6 +4,25 @@ page {
   background: #eee;
 }
 
+/* scrollTop start */
+
+.scrollTop {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: center;
+  justify-content: center;
+  height: 70px;
+  background: #fff;
+}
+
+.scrollTop .icon-weibiaoti-4 {
+  font-size: 100rpx;
+  color: #7cb242;
+}
+
+/* scrollTop end */
+
 .table-header {
   height: 40px;
   margin:  10px 0px;
@@ -128,7 +147,7 @@ page {
   bottom: 10px;
   right: 0px;
   left: 0px;
-  z-index: 10
+  z-index: 10;
 }
 
 .music-iview .iconfont {
