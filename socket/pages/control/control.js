@@ -13,6 +13,7 @@ Page({
     list: [],
     _heartbeatInterval: 60,  //  心跳
     _heartbeatTimerId: undefined,  //  心跳
+    socketOpen: false,  //  WebSocket 开关
     json: {
       'attrs': 'attrs_v4',
       'custom': 'custom'
@@ -69,45 +70,28 @@ Page({
     }, (err) => { });
   },
 
+  goConnSocket() {
+    let that = this;
+    //  创建Socket
+    wx.connectSocket({
+      url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
+      success(res) {
+        console.log(res);
+      },
+      fail(err) {
+        console.log(err);
+      }
+    });
+  },
+
   _login(did) {
     let that = this, json = {};
     wx.showLoading({ title: '' })
-
-
-    // wx.onSocketClose(() => {
-    //   wx.closeSocket();
-    // });
-
-    // var socketOpen = false;
-    //  创建Socket
-    // wx.connectSocket({
-    //   url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
-    // });
-
-    //  链接socket
-    json = {
-      cmd: "subscribe_req",
-      data: [{
-        did: did,
-        passcode: '' // IJLAAQTWBM
-      }]
-    };
-    that._sendJson(json);
-
-    wx.onSocketMessage((res) => {
-      var data = JSON.parse(res.data);
-      console.log(data);
-      let arr = [0x00, 0x02, 0xA0, 0xFF];
-      var json = {
-        'data': main.getArrays(arr),
-      };
-      tools.sendData('c2s_write', did, json);
-    })
-
-    /*
+    //  调用连接socket
+    that.goConnSocket();
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
-      // socketOpen = true;
+      that.setData({ socketOpen: true });
       json = {
         cmd: "login_req",
         data: {
@@ -135,32 +119,16 @@ Page({
             passcode: '' // IJLAAQTWBM
           }]
         };
+        //  发送数据
         that._sendJson(json);
         //  获取服务器返回的信息
-        wx.onSocketMessage((res) => {
-          var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
-          switch (noti.cmd) {
-            case 'subscribe_res':
-              let arr = [0x00, 0x02, 0xA0, 0xFF];
-              var json = {
-                'data': main.getArrays(arr),
-              };
-              tools.sendData('c2s_write', did, json);
-              break;
-            case 'c2s_write':
-              break;
-            case 's2c_noti':
-              break;
-            case 'pong':
-              break;
-          }
-        });
+        that.getServiceBack(did);
       } else {
         if (data.data.msg == "M2M socket has closed, please login again!") {
           that._login(did);
         }
       }
-    });*/
+    });
 
   },
 
@@ -209,13 +177,35 @@ Page({
         url: '../index/index',
       })
     }, 1000);
-    
   },
 
   Selecteding() {
     wx.switchTab({
       url: '../index/index',
     })
+  },
+
+  //  获取服务器返回的信息
+  getServiceBack(did) {
+    let that = this;
+    wx.onSocketMessage((res) => {
+      var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
+      switch (noti.cmd) {
+        case 'subscribe_res':
+          let arr = [0x00, 0x02, 0xA0, 0xFF];
+          var json = {
+            'data': main.getArrays(arr),
+          };
+          tools.sendData('c2s_write', did, json);
+          break;
+        case 'c2s_write':
+          break;
+        case 's2c_noti':
+          break;
+        case 'pong':
+          break;
+      }
+    });
   }
 
 })

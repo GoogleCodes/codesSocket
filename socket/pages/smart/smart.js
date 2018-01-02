@@ -243,7 +243,6 @@ Page({
       }
     })*/
     that.setData({ gizwitsVisible: false });
-    console.log(e);
     var did = e.currentTarget.dataset.did, index = e.currentTarget.dataset.index
     if (that.data.chonseDid === index) {
       this.setData({ did: did, });

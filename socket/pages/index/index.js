@@ -15,6 +15,7 @@ Page({
     docHeight: 0,
     tabArray: [],
     spliceArray: [],
+    socketOpen: false,  //  WebSocket 开关
     imgUrls: [
       '../../../static/images/banner.png',
       'https://img.alicdn.com/tfs/TB1fKrBewLD8KJjSszeXXaGRpXa-760-460.jpg',
@@ -164,7 +165,7 @@ Page({
       wx.removeStorageSync('userInformation');
       wx.redirectTo({ url: '../login/login', });
     }
-    this._getBindingList(20, 0);
+    // this._getBindingList(20, 0);
     // this.getIndexGizwits();
 
   },
@@ -227,6 +228,10 @@ Page({
 
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
+      that.setData({ socketOpen: true });
+      wx.showToast({
+        title: 'WebSocket打开成功！',
+      })
       var options = wx.getStorageSync('options');
       json = {
         cmd: "login_req",

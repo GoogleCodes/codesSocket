@@ -59,11 +59,7 @@
     </navigator>
   </view>
 
-
-
   <!-- <import src="/pages/footer/footer.wxml" />
 <template is="footer" /> -->
-
-
 
 </scroll-view>

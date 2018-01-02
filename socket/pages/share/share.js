@@ -1,4 +1,7 @@
 // pages/share/share.js
+
+const did = wx.getStorageSync('did');
+
 Page({
 
   /**
@@ -8,6 +11,8 @@ Page({
     cancel: true,
     top: 0,
     layer: true,
+    did: "",
+    devices: wx.getStorageSync('devices')
   },
 
   /**
@@ -17,7 +22,6 @@ Page({
     let that = this;
     wx.getSystemInfo({
       success(res) {
-        console.log(res.windowHeight);
         that.setData({
           winTop: (res.windowHeight - 330) / 2,
         });
@@ -25,15 +29,23 @@ Page({
     });
   },
 
-  longChose() {
-    if (this.data.cancel == false) {
-      this.setData({
-        cancel: true,
-      });
-    } else if (this.data.cancel == true) {
-      this.setData({
-        cancel: false,
-      });
+  longChose(e) {
+    this.setData({
+      did: e.currentTarget.dataset.did
+    });
+    switch(true) {
+      case this.data.cancel == false:
+        this.setData({
+          cancel: true,
+        });
+        break;
+      case this.data.cancel == true:
+        this.setData({
+          cancel: false,
+        });
+        break;
+      default:
+        break;
     }
   },
 
@@ -57,7 +69,7 @@ Page({
       header: head,
       data: {
         "type": 0,
-        "did": "C4SB5KnvrsDWqUPxnRg4Cg",
+        "did": that.data.did,
         "phone": "13630017088",
       },
       success(res) {

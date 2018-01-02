@@ -4,6 +4,7 @@
 
 .scene-body {
   height: 50px;
+  font-size: 0.9rem;
   line-height: 40px;
 }
 
@@ -30,7 +31,6 @@
 }
 
 .scene-delay .scene-li .scene-text, .scene-realTime .scene-li .scene-text {
-  font-size: 39rpx;
   margin-left: 12px;
 }
 

@@ -3,7 +3,8 @@
 var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
-const did = wx.getStorageSync('didJSon').did;
+// const did = wx.getStorageSync('didJSon').did;
+const did = wx.getStorageSync('did');
 
 Page({
 
@@ -148,13 +149,6 @@ Page({
         })
       }
     })
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-  
   },
 
 })

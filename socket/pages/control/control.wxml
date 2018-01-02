@@ -4,14 +4,17 @@
   <view class="control-title">网关：</view>
 
   <view class="control-ul">
-    <view class="control-li" wx:for="{{ list }}" 
-      data-did="{{item.did }}" data-host="{{ item.host }}" 
+    <view class="control-li" wx:for="{{ list }}" data-did="{{item.did }}" data-host="{{ item.host }}" 
       data-wssport="{{ item.wss_port }}" bindtap='goSelectDevice'>
       <text class="fl iconfont icon-weibiaoti- block"></text>
       <view class="li-main">
         <view class="li-main-desc">{{ item.dev_alias }}</view>
         <view class="li-main-desc" style='color: #b3b3b3;'>mac：{{ item.mac }}</view>
       </view>
+      <view class="fr" wx:if="{{ item.role == 'guest' }}">访客</view>
+      <view class="fr" wx:elif="{{ item.role == 'owner' }}">拥有者</view>
+      <view class="fr" wx:elif="{{ item.role == 'special' }}">首绑用户</view>
+      <view class="fr" wx:elif="{{ item.role == 'normal' }}">普通用户</view>
     </view>
   </view>
 

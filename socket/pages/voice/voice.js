@@ -5,6 +5,8 @@ var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
 
+const did = wx.getStorageSync('did');
+
 Page({
 
   /**
@@ -15,6 +17,7 @@ Page({
     voiceNow: true,
     //  识别成功
     voiceDone: true,
+    voiceOpen: true,
     //  输入的指令
     voiceIMessage: ''
   },
@@ -22,7 +25,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad(options) {
   
   },
 
@@ -80,9 +83,6 @@ Page({
           var error_text = '语音识别失败';
           console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
           let b = JSON.parse(res.data);
-          for (let i in b.yuyin) {
-            console.log(b.yuyin[i]); 
-          }
           switch (true) {
             case res.data.toString() == error_text:
               main._Toast('语音识别失败!请重试!', 'success');
@@ -110,8 +110,11 @@ Page({
                 json = {
                   "onoffAll": s.data.switchButton,
                 };
+                s.setData({
+                  voiceOpen: false,
+                })
                 //  发送数据
-                tools.sendData('c2s_write', s.data.did, json);
+                tools.sendData('c2s_write', did, json);
                 main._Toast('打开成功!', 'success');
                 break;
               case myString == "关" || myString == s.data.language:
@@ -120,15 +123,12 @@ Page({
                   "onoffAll": s.data.switchButton,
                 };
                 //  发送数据
-                tools.sendData('c2s_write', s.data.did, json);
+                tools.sendData('c2s_write', did, json);
                 main._Toast('关闭成功!', 'success');
                 break;
               default:
                 break;
             }
-            s.setData({
-              voiceDone: false,
-            })
           }
           var str = res.data;
           if (data.states == 1) {
@@ -158,7 +158,49 @@ Page({
   },
 
   saveIMessage(e) {
-    console.log(e, this.data.voiceIMessage);
+    let that = this, json = {};
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/semlist',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      method: "POST",
+      success(res) {
+        let arr = [], i;
+        arr = res.data.data
+        for (i in arr) {
+          console.log(arr[i]);
+        }
+      }
+    })
+    if (this.data.voiceIMessage == "打开灯") {
+      json = {
+        "onoffAll": true,
+      };
+      that.setData({
+        voiceOpen: false,
+        voiceDone: true,
+      })
+      //  发送数据
+      tools.sendData('c2s_write', did, json);
+      wx.showToast({
+        title: '打开成功！',
+      })
+    } else if (this.data.voiceIMessage == "关闭灯") {
+      json = {
+        "onoffAll": false,
+      };
+      that.setData({
+        voiceOpen: true,
+        voiceDone: false,
+      })
+      wx.showToast({
+        title: '关闭成功！',
+      })
+      //  发送数据
+      tools.sendData('c2s_write', did, json);
+    }
   }
 
 })

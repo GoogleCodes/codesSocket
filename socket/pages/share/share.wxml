@@ -3,15 +3,15 @@
 <!-- share-main start -->
 <view class="share-main">
   <text class="share-title">分享名单：</text>
-  <view class="ul-share f12" bindtap='longChose'>
+  <view class="ul-share f12" bindtap='longChose' wx:for="{{ devices }}" data-did="{{ item.did }}">
     <view class="li-share">
       <view class="p-share fl">
         <text>名称：</text>
-        <text>客户名称客户名称客</text>
+        <text>{{ item.dev_alias }}</text>
       </view>
       <view class="p-share fl">
         <text>网关：</text>
-        <text>fafafafa</text>
+        <text>{{ item.mac }}</text>
       </view>
       <image class="cancel" hidden='{{ cancel }}' src='../../../static/images/img11.png'></image>
     </view>

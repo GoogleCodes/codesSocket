@@ -8,13 +8,23 @@
     <view class="voice-userInput fr">用户输入指令...</view>
   </view>
 
-  <view class="voice-ul" hidden='{{ voiceNow }}'>
-    <view class="voice-li">
+  <view class="voice-ul">
+    <view class="voice-li" hidden='{{ voiceNow }}'>
       <view class="voice-li-icon fl">
         <image src="../../../static/images/img17.png" class="block" style="width: 14px;height: 25px;"></image>
       </view>
       <view class="fl f12" style="margin-left: 10px;">
         <text>正在识别输入的指令。。。</text>
+      </view>
+    </view>
+
+    <view class="voice-li" hidden='{{ voiceOpen }}'>
+      <view class="voice-li-icon fl">
+        <image src="../../../static/images/img17.png" class="block" style="width: 14px;height: 25px;"></image>
+      </view>
+      <view class="fl f12 tab" style="margin-left: 10px;">
+        <view>识别指令成功</view>
+        <view>客厅照明灯 开启</view>
       </view>
     </view>
 
@@ -24,7 +34,7 @@
       </view>
       <view class="fl f12 tab" style="margin-left: 10px;">
         <view>识别指令成功</view>
-        <view>客厅照明灯 开启</view>
+        <view>客厅照明灯 关启</view>
       </view>
     </view>
 
