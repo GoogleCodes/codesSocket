@@ -1,8 +1,8 @@
-<scroll-view scroll-y="true" style="height: {{ docHeight }}px;" bindscrolltoupper="refesh">
+<!-- <scroll-view scroll-y="true" style="height: {{ docHeight }}px;" bindscrolltoupper="refesh">
   <view class="scrollTop" wx:if="{{ hasRefesh }}">
     <text class="iconfont icon-weibiaoti-4"></text>
     <text style="font-size: 36rpx;padding-left: 10px;">刷新中...</text>
-  </view>
+  </view> -->
 
   <swiper indicator-dots="true" interval="2000" style="height: 150px" circular="true" autoplay="true" indicator-color="rgba(101,101,101,1)" indicator-active-color="rgb(255,255,255)">
     <block wx:for="{{ imgUrls }}">
@@ -15,12 +15,10 @@
   <view class="table-header">
     <scroll-view scroll-x="true" class="recommend_scroll_x_box">
       <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
-      <view class="tab" style="width: 50px;">
-        <navigator url='/pages/search/search'>
-          <view class="iconfont icon-weibiaoti-9"></view>
-        </navigator>
-      </view>
     </scroll-view>
+    <navigator url='/pages/search/search' class="setting">
+      <view class="iconfont icon-weibiaoti-9"></view>
+    </navigator>
   </view>
 
   <swiper class="swiper-box" duration="300" bindchange="bindChange" current="{{ currentTab }}" 
@@ -30,16 +28,20 @@
       <view class="{{ selected ? 'hidden': 'show' }}">
         <view class="ul-view">
           <view class="li-view" wx:for="{{ spliceArray }}">
-            <view class="pic-iview fl pic1">
+            <view class="pic-iview fl pic1" wx:if="{{ status == 0 }}">
               <view class="iconfont  iconfont icon-leddeng"></view>
+            </view>
+            <view class="pic-iview fl pic1" wx:elif="{{ status == 1 }}">
+              <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
             </view>
             <view class="fl status-iview f12">
               <text class="block">{{ item.dname }}</text>
               <view class="block" style="color: #b3b3b3">当前状态：
-                <text class="block fr" style="color: #6aa84f;">关</text>
+                <text class="block fr" style="color: #6aa84f;" wx:if="{{ status == 1 }}">打开</text>
+                <text class="block fr" style="color: #6aa84f;" wx:elif="{{ status == 0 }}">关闭</text>
               </view>
             </view>
-            <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}">
+            <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}&id={{ item.id }}">
               <view class="arrow-iview fr iconfont icon-fruits-lemon">
                 <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image>  -->
               </view>
@@ -62,4 +64,4 @@
   <!-- <import src="/pages/footer/footer.wxml" />
 <template is="footer" /> -->
 
-</scroll-view>
+<!-- </scroll-view> -->

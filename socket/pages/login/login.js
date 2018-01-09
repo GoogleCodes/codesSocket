@@ -92,7 +92,6 @@ Page({
         tel: '13232800159'
       },
       success(res) {
-        console.log(res.data.data);
         wx.setStorageSync('wxuser', res.data.data)
       }
     })

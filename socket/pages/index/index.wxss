@@ -32,10 +32,25 @@ page {
   border-bottom: 1px solid #eee;
 }
 
+.table-header .setting {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background: #fff;
+  box-shadow: 1px 1px 10px #595757;
+}
+
+.table-header .setting .icon-weibiaoti-9 {
+  color: #7cb242;
+  line-height: 40px;
+  width: 50px;
+  text-align: center;
+}
+
 .recommend_scroll_x_box {
   white-space: nowrap;
   display: flex;
-  width: 100%;
+  width: 85%;
 }
 
 .recommend_scroll_x_box .tab {
@@ -46,12 +61,6 @@ page {
   font-size: 30rpx;
   display: inline-block;
   background: #fff;
-}
-
-.recommend_scroll_x_box .icon-weibiaoti-9 {
-  color: #7cb242;
-  line-height: 40px;
-  width: 50px;
 }
 
 .table-header .tab.active {
@@ -83,6 +92,12 @@ page {
   position: absolute;
   top: 3px;
   left: 11px;
+}
+
+.icon-fruits-lemon {
+  position: absolute;
+  right: 0px;
+  top: 0px;
 }
 
 .ul-view .li-view .pic-iview .iconfont {

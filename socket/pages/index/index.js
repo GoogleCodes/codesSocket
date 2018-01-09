@@ -14,11 +14,11 @@ Page({
     winHeight: 0,
     docHeight: 0,
     tabArray: [],
+    status: 0, //  开关状态
     spliceArray: [],
     socketOpen: false,  //  WebSocket 开关
     imgUrls: [
-      '../../../static/images/banner.png',
-      'https://img.alicdn.com/tfs/TB1fKrBewLD8KJjSszeXXaGRpXa-760-460.jpg',
+      'https://www.getcodeing.com/static/images/banner.png',
     ],
     list: [
       {
@@ -156,7 +156,7 @@ Page({
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2,
+          winHeight: res.windowHeight / 1,
           docHeight: res.windowHeight
         });
       },
@@ -165,7 +165,7 @@ Page({
       wx.removeStorageSync('userInformation');
       wx.redirectTo({ url: '../login/login', });
     }
-    // this._getBindingList(20, 0);
+    this._getBindingList(20, 0);
     // this.getIndexGizwits();
 
   },
@@ -200,6 +200,7 @@ Page({
             uid: wx.getStorageSync('wxuser').id,
           },
           success(res) {
+            console.log(res.data.data);
             that.setData({
               spliceArray: res.data.data
             });

@@ -7,7 +7,7 @@
   <view class="eq-iview" bindtap='updateDeviceName'>
     <view class="eq-iview-left fl">设备名称：</view>
     <view class="eq-iview-left fl">卧室灯</view>
-    <view class="iconfont icon-weibiaoti-1 fr" hidden='{{ weibiao }}'></view>
+    <view class="iconfont icon-weibiaoti-1 fr" bindtap='deleteGizwits' hidden='{{ weibiao }}'></view>
     <!-- <image src="../../../static/images/img11.png" style="width: 20px;height: 20px;"></image> -->
   </view>
 

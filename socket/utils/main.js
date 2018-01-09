@@ -63,6 +63,15 @@ class Main {
     });
   }
 
+  getSocketResponse(callback) {
+    wx.onSocketMessage((res) => {
+      try {
+        let data = JSON.parse(res.data).data.attrs.data;
+        return callback(data);
+      } catch (e) { }
+    })
+  }
+
 }
 
 export { Main }

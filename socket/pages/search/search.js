@@ -11,34 +11,6 @@ Page({
    */
   data: {
     isChonse: false,
-    list: [],
-    equipment: [
-      {
-        active: 0,
-        types: 1,
-        name: '吊灯',
-      }, {
-        active: 0,
-        types: 2,
-        name: '照明灯',
-      }, {
-        active: 0,
-        types: 3,
-        name: '台灯',
-      }, {
-        active: 0,
-        types: 4,
-        name: '下拉窗帘',
-      }, {
-        active: 0,
-        types: 5,
-        name: '单向窗帘',
-      }, {
-        active: 0,
-        types: 6,
-        name: '双向窗帘',
-      }
-    ],
     spliceArray: [],
     index: 0,
     multiArray: [['卧室', '厨房'], []],
@@ -75,28 +47,25 @@ Page({
       'data': main.getArrays(arr),
     };
     tools.sendData('c2s_write', wx.getStorageSync('didJSon').did, json);
-    wx.onSocketMessage((res) => {
-      try {
-        let jsonData = JSON.parse(res.data);
-        let k = jsonData.data.attrs.data;
-        let last = null, brr = [], json = {};
-        for (let i in k) {
-          last = k.splice(4, 21);
-          if (last.indexOf(1) == 0) {
-            json = {
-              sdid: last.splice(0, 4),
-              active: 0,
-            };
-            brr.push(json);
-            brr.concat(that.data.array);
-            that.setData({
-              array: brr
-            });
-            wx.setStorageSync('gizwits', that.data.array);
-          }
+
+    main.getSocketResponse((data) => {
+      let k = data;
+      let last = null, brr = [], json = {};
+      for (let i in k) {
+        last = k.splice(4, 21);
+        if (last.indexOf(1) == 0) {
+          json = {
+            sdid: last.splice(0, 4),
+            active: 0,
+          };
+          brr.push(json);
+          brr.concat(that.data.array);
+          that.setData({
+            array: brr
+          });
+          wx.setStorageSync('gizwits', that.data.array);
         }
-        console.log(that.data.array);
-      } catch (e) { }
+      }
     })
 
     wx.request({
@@ -119,7 +88,6 @@ Page({
   },
 
   addArea(e) {
-    console.log(e.detail.value);
     const that = this;
     if (e.detail.value == '') {
       wx.showToast({
@@ -191,7 +159,6 @@ Page({
             title: res.data.msg,
           })
         }
-        console.log(that.data.array);
       }
     });
   },
@@ -346,7 +313,7 @@ Page({
       }
     })
     wx.showToast({
-      title: '请假成功',
+      title: '请求成功',
     })
     this.setData({
       pickerShow: true
