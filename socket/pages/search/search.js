@@ -338,7 +338,7 @@ Page({
       return;
     }
     wx.request({
-      url: 'https://api.gizwits.com/app/group/5a55c9d4d5b4b0046f0f2b97/devices?show_detail=1',
+      url: 'https://api.gizwits.com/app/group/'+  +'/devices?show_detail=1',
       method: "POST",
       header: {
         'Accept': 'application/json',
@@ -347,8 +347,8 @@ Page({
         'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
       },
       data: {
-        uid: wx.getStorageSync('wxuser').id,
-        name: this.data.addAreaText
+        // uid: wx.getStorageSync('wxuser').id,
+        // name: this.data.addAreaText
       },
       success(res) {
         that.setData({
