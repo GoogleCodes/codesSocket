@@ -22,6 +22,8 @@ Page({
     voiceIMessage: '',
     sceneName: [],
     arrays: [],
+    voices: [],
+    recodePath: ''
   },
 
   /**
@@ -46,7 +48,10 @@ Page({
               var createTime = new Date(res.fileList[i].createTime)
               //  将音频大小B转为KB  
               var size = (res.fileList[i].size / 1024).toFixed(2);
-              var voice = { filePath: res.fileList[i].filePath, createTime: createTime, size: size };
+              var voice = { 
+                filePath: res.fileList[i].filePath, 
+                createTime: createTime, size: size 
+              };
               voices = voices.concat(voice);
             }
             that.setData({ voices: voices })
@@ -61,30 +66,32 @@ Page({
 
   endRecode(e) {
     var s = this;
+
     s.setData({ voiceNow: false });
     wx.stopRecord();
     s.setData({ isSpeaking: false });
     wx.showToast();
     setTimeout(() => {
+
+      console.log(s.data.recodePath, "s.data.recodePath");
+
       wx.uploadFile({
-        //  https://www.chlorop.com.cn/yuyin/public/index/index/zhen
         url: 'http://yuyin.ittun.com/public/index/dev/zhen',
         filePath: s.data.recodePath,
         method: "POST",
         name: 'silk',
         header: {
           'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT',
           'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
         },
         formData: {
           'lan': 'zh' //s.data.arrayCharset, // 'zh',
         },
-        header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success(res) {
           s.setData({ voiceNow: true });
           var error_text = '语音识别失败';
           console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
-          let b = JSON.parse(res.data);
           switch (true) {
             case res.data.toString() == error_text:
               main._Toast('语音识别失败!请重试!', 'success');

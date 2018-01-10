@@ -29,20 +29,21 @@ Page({
     let that = this, code = "adc1b95729864eecb02cd614cd305abc";
     wx.scanCode({
       success(res) {
-        console.log(res.result.substring(16,48));
+        console.log(res.result);
         that.setData({
-          code: res.result
+          code: res.result.substring(16, 48)
         });
         //  创建设备分享
         wx.request({
-          url: 'https://api.gizwits.com/app/sharing/code/' + res.result.substring(16, 45),
+          url: 'https://api.gizwits.com/app/sharing/code/' + that.data.code,
           method: "POST",
           header: that.data.head,
           success(result) {
+            console.log(result.data);
             if (result.data.error_code == 9084) {
               wx.showModal({
                 title: '警告!',
-                content: "共享记录未找到！", // result.data.error_message,
+                content: result.data.error_message, // "共享记录未找到！", // result.data.error_message,
               })
               return false;
             }

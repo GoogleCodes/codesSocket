@@ -1,8 +1,8 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/control/control",
     "pages/smart/smart",
+    "pages/control/control",
     "pages/search/search",
     "pages/voice/voice",
     "pages/scene/scene",

@@ -1,6 +1,6 @@
 // pages/share/share.js
 
-const did = wx.getStorageSync('did');
+const did = wx.getStorageSync('didJSon').did;
 
 Page({
 
@@ -30,19 +30,23 @@ Page({
   },
 
   longChose(e) {
-    this.setData({
-      did: e.currentTarget.dataset.did
-    });
+    let that = this;
     switch(true) {
       case this.data.cancel == false:
-        this.setData({
+        that.setData({
           cancel: true,
         });
+        that.setData({ did: '' });
+        console.log(that.data.did);
         break;
       case this.data.cancel == true:
         this.setData({
           cancel: false,
         });
+        that.setData({
+          did: e.currentTarget.dataset.did
+        });
+        console.log(that.data.did);
         break;
       default:
         break;
@@ -57,6 +61,25 @@ Page({
 
   addShare() {
     let that = this;
+    if (that.data.did == '') {
+
+      wx.showActionSheet({
+        itemList: ['A', 'B', 'C'],
+        success(res) {
+          console.log(res.tapIndex)
+        },
+        fail(res) {
+          console.log(res.errMsg)
+        }
+      })
+      
+      wx.showToast({
+        title: '请选择分享设备',
+        mask: true,
+        duration: 3000,
+      })
+      return false;
+    }
     let options = wx.getStorageSync('options');
     var head = {
       'content-type': 'application/json',

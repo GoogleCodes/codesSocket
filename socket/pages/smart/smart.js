@@ -89,6 +89,7 @@ Page({
     } else {
       that._getBindingList(20, 0);
     }
+
   },
 
   /**
@@ -676,28 +677,29 @@ Page({
     wx.showToast();
     setTimeout(() => {
       wx.uploadFile({
-        url: 'https://www.chlorop.com.cn/yuyin/public/index/index/zhen',
+        url: 'http://yuyin.ittun.com/public/index/dev/zhen',
         filePath: s.data.recodePath,
         method: "POST",
-        name: 'abc',
+        name: 'silk',
         header: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
         },
         formData: {
-          'lan': s.data.arrayCharset, // 'zh',
+          'lan': 'zh', // 'zh',
         },
         header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success(res) {
+          console.log(res);
           var error_text = '语音识别失败';
-          console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
+          console.log("返回的东西是：", res.data.toString() == error_text, res.data);
           switch (true) {
             case res.data.toString() == error_text:
               main._Toast('语音识别失败!请重试!', 'success');
               break;
             case res.statusCode == 404:
               main._Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
-              return;
+              break;
           }
           var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
           s.setData({

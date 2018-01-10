@@ -20,50 +20,7 @@ Page({
     imgUrls: [
       'https://www.getcodeing.com/static/images/banner.png',
     ],
-    list: [
-      {
-        id: 0,
-        tab: '卧室',
-        gizwits: [
-          {
-            id: 1,
-            types: 1,
-            name: '照明灯',
-            status: 'off'
-          },
-          {
-            id: 2,
-            types: 2,
-            name: '照明灯',
-            status: 'off'
-          },
-          {
-            id: 3,
-            types: 3,
-            name: '照明灯',
-            status: 'off'
-          }
-        ],
-      },
-      {
-        id: 1,
-        tab: '厨房',
-        gizwits: [
-          {
-            id: 1,
-            types: 1,
-            name: '照明灯',
-            status: 'off'
-          },
-          {
-            id: 2,
-            types: 2,
-            name: '照明灯',
-            status: 'off'
-          }
-        ],
-      },
-    ],
+    list: [],
     _heartbeatInterval: 60,  //  心跳
     _heartbeatTimerId: undefined,  //  心跳
     json: {
@@ -81,7 +38,6 @@ Page({
   },
 
   refesh(e) {
-    console.log(e)
     var that = this;
     that.setData({
       hasRefesh: true,
@@ -91,36 +47,53 @@ Page({
 
   bindChange(e) {
     let that = this;
-    console.log(e);
     this.setData({
       currentTab: e.detail.current
     });
     for (let i in this.data.tabArray) {
       if (i == e.detail.current) {
+        // wx.request({
+        //   url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+        //   method: 'POST',
+        //   header: {
+        //     'content-type': 'application/json',
+        //     'content-type': 'application/x-www-form-urlencoded'
+        //   },
+        //   data: {
+        //     rid: that.data.tabArray[i].id,
+        //     uid: wx.getStorageSync('wxuser').id,
+        //   },
+        //   success(res) {
+        //     that.setData({
+        //       spliceArray: res.data.data
+        //     });
+        //   }
+        // });
         wx.request({
-          url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-          method: 'POST',
+          url: 'https://api.gizwits.com/app/group/' + that.data.tabArray[i].id + '/devices',
+          method: 'GET',
           header: {
-            'content-type': 'application/json',
-            'content-type': 'application/x-www-form-urlencoded'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Gizwits-User-token': wx.getStorageSync('options').token,
+            'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
           },
-          data: {
-            rid: that.data.tabArray[i].id,
-            uid: wx.getStorageSync('wxuser').id,
-          },
+          data: {},
           success(res) {
             that.setData({
-              spliceArray: res.data.data
+              spliceArray: res.data,
             });
+            console.log(that.data.spliceArray);
           }
         });
       }
     }
-    
+
   },
 
   selected(e) {
     var that = this;
+    console.log(e.target.dataset);
     if (this.data.currentTab === e.target.dataset.current) {
       return false;
     } else {
@@ -129,21 +102,24 @@ Page({
       })
     }
     wx.request({
-      url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-      method: 'POST',
+      url: 'https://api.gizwits.com/app/group/' + e.target.dataset.id +'/devices',
+      method: 'GET',
       header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Gizwits-User-token': wx.getStorageSync('options').token,
+        'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
       },
       data: {
-        rid: e.target.dataset.id,
-        uid: wx.getStorageSync('wxuser').id,
+        // rid: e.target.dataset.id,
+        // uid: wx.getStorageSync('wxuser').id,
       },
       success(res) {
         that.setData({
-          spliceArray: res.data.data,
+          spliceArray: res.data,
           tabId: e.target.dataset.id
         });
+        console.log(that.data.spliceArray);
       }
     });
   },
@@ -173,14 +149,16 @@ Page({
   getIndexGizwits() {
     let that = this;
     wx.request({
-      url: 'http://yuyin.ittun.com/public/index/dev/getregion',
-      method: 'POST',
+      url: 'https://api.gizwits.com/app/group',
+      method: 'GET',
       header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Gizwits-User-token': wx.getStorageSync('options').token,
+        'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
       },
       data: {
-        uid: wx.getStorageSync('wxuser').id,
+        
       },
       success(res) {
         setTimeout(() => {
@@ -188,26 +166,23 @@ Page({
             hasRefesh: false,
           });
         }, 500);
+        that.setData({
+          tabArray: res.data,
+        });
         wx.request({
-          url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-          method: 'POST',
+          url: 'https://api.gizwits.com/app/group/'+ res.data[0].id +'/devices',
+          method: 'GET',
           header: {
-            'content-type': 'application/json',
-            'content-type': 'application/x-www-form-urlencoded'
-          },
-          data: {
-            rid: res.data.data[0].id,
-            uid: wx.getStorageSync('wxuser').id,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Gizwits-User-token': wx.getStorageSync('options').token,
+            'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
           },
           success(res) {
-            console.log(res.data.data);
             that.setData({
-              spliceArray: res.data.data
+              spliceArray: res.data
             });
           }
-        });
-        that.setData({
-          tabArray: res.data.data,
         });
       }
     })
