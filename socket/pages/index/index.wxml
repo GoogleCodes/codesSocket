@@ -19,7 +19,7 @@
       wx:for="{{ tabArray }}"
       data-id='{{ item.id }}'>{{ item.group_name }}</view>
     </scroll-view>
-    <navigator url='/pages/search/search' class="setting">
+    <navigator url='/pages/search/search?did={{ did }}' class="setting">
       <view class="iconfont icon-weibiaoti-9"></view>
     </navigator>
   </view>

@@ -15,7 +15,6 @@ Page({
     index: 0,
     multiArray: [['卧室', '厨房'], []],
     multiIndex: [0, 0],
-    index: 0,
     currentTab: 0,
     winHeight: 0,
     pickerShow: true,
@@ -30,6 +29,13 @@ Page({
       'Content-Type': 'application/json',
       'Accept': ' application/json',
     },
+    did: "",
+    header: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Gizwits-User-token': wx.getStorageSync('options').token,
+      'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
+    }
   },
 
   /**
@@ -37,13 +43,16 @@ Page({
    */
   onLoad(options) {
     let that = this;
+
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2 + 100
+          winHeight: res.windowHeight / 2 + 100,
+          did: options.did,
         });
       },
     });
+    console.log(that.data.did);
 
     let arr = [];
     arr.push(0x00, 0x02, 0xA0, 0xFF);
@@ -96,12 +105,7 @@ Page({
     wx.request({
       url: 'https://api.gizwits.com/app/group',
       method: 'GET',
-      header: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Gizwits-User-token': wx.getStorageSync('options').token,
-        'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
-      },
+      header: that.data.header,
       data: {},
       success(res) {
         that.setData({
@@ -128,33 +132,26 @@ Page({
 
   bindMultiPickerChange(e) {
     let that = this;
+    let id = '';
     for(let i in that.data.list) {
       if (e.detail.value == i) {
         that.setData({
           areaid: that.data.list[i].id
-        });
+        })
       }
     }
     this.setData({
       index: e.detail.value,
     })
-
     wx.request({
-      url: 'https://api.gizwits.com/app/group/' + e.currentTarget.dataset.id +'/devices',
-      header: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Gizwits-User-token': wx.getStorageSync('options').token,
-        'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
-      },
+      url: 'https://api.gizwits.com/app/group/' + that.data.areaid + '/devices',
+      header: that.data.header,
       success(res) {
         that.setData({
           spliceArray: res.data
         });
-        console.log(that.data.spliceArray);
       }
     })
-
     // wx.request({
     //   url: 'http://yuyin.ittun.com/public/index/dev/getdev',
     //   method: 'POST',
@@ -285,11 +282,10 @@ Page({
       })
       return false;
     }
+    let brr = [];
+    brr.push(that.data.did);
     let json = {
-      uid: wx.getStorageSync('wxuser').id,
-      did: JSON.stringify(e.currentTarget.dataset.sdid),
-      dname: JSON.stringify(e.currentTarget.dataset.sdid),
-      rid: that.data.areaid,
+      dids: brr,
     };
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
@@ -300,12 +296,9 @@ Page({
       this.data.spliceArray.push(arr);
       
       wx.request({
-        url: 'http://yuyin.ittun.com/public/index/dev/adddev',
+        url: 'https://api.gizwits.com/app/group/' + that.data.areaid +'/devices?show_detail=1',
         method: "POST",
-        header: {
-          'content-type': 'application/json',
-          'content-type': 'application/x-www-form-urlencoded'
-        },
+        header: that.data.header,
         data: json,
         success(res) {
           wx.showToast({
@@ -337,25 +330,25 @@ Page({
       })
       return;
     }
-    wx.request({
-      url: 'https://api.gizwits.com/app/group/'+  +'/devices?show_detail=1',
-      method: "POST",
-      header: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Gizwits-User-token': wx.getStorageSync('options').token,
-        'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
-      },
-      data: {
-        // uid: wx.getStorageSync('wxuser').id,
-        // name: this.data.addAreaText
-      },
-      success(res) {
-        that.setData({
-          areaid: res.data.data
+    let devices = wx.getStorageSync('devices');
+    for (let i in devices) {
+      if (that.data.did == devices[i].did) {
+        wx.request({
+          url: 'https://api.gizwits.com/app/group',
+          method: "POST",
+          header: that.data.header,
+          data: {
+            "product_key": devices[i].product_key,
+            "group_name": that.data.addAreaText
+          },
+          success(res) {
+            that.setData({
+              areaid: res.data.data
+            })
+          }
         })
       }
-    })
+    }
     wx.showToast({
       title: '请求成功',
     })
@@ -365,29 +358,24 @@ Page({
     this.onLoad();
   },
 
-  // getRegion() {
-  //   let that = this;
-  //   wx.request({
-  //     url: 'http://yuyin.ittun.com/public/index/dev/getregion',
-  //     method: 'POST',
-  //     header: {
-  //       'content-type': 'application/json',
-  //       'content-type': 'application/x-www-form-urlencoded'
-  //     },
-  //     data: {
-  //       uid: wx.getStorageSync('wxuser').id,
-  //     },
-  //     success(res) {
-  //       that.setData({
-  //         list: res.data.data,
-  //       });
-  //       console.log(that.data.list);
-  //     }
-  //   })
-  // },
+  getRegion() {
+    let that = this;
+    wx.request({
+      url: 'https://api.gizwits.com/app/group',
+      method: 'GET',
+      header: that.data.header,
+      data: {},
+      success(res) {
+        that.setData({
+          list: res.data,
+        });
+        console.log(that.data.list);
+      }
+    })
+  },
 
   onShow() {
-    // this.getRegion();
+    this.getRegion();
   },
 
 })

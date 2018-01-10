@@ -4,9 +4,9 @@
   <view class="section">
     <view class="section__title fl">区域：</view>
     <view hidden='{{ !pickerShow }}' class="fl" style="width: 65%;">
-      <picker range='{{ list }}' value='{{ index }}' data-id='{{ list[index].id }}' range-key='id' range-key='group_name' class="picker"  bindchange="bindMultiPickerChange">
+      <picker range='{{ list }}' value='{{ index }}' data-id='{{ list[index].id }}'  range-key='group_name' class="picker"  bindchange="bindMultiPickerChange">
         <view>{{ list[index].group_name }}</view>
-      </picker> 
+      </picker>
         <!-- <picker mode="multiSelector" bindchange="bindMultiPickerChange" bindcolumnchange="bindMultiPickerColumnChange" value="{{ multiIndex }}" range="{{ multiArray }}" class="picker" >
         <view class="picker">
           {{ multiArray[0][multiIndex[0]] }}

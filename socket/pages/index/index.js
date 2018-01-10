@@ -35,6 +35,7 @@ Page({
     ws_port: 0, //  端口
     wss_port: 0, //  端口
     hasRefesh: false,
+    product_key: "",
   },
 
   refesh(e) {
@@ -302,6 +303,7 @@ Page({
         if (result.data.devices[i].is_online == true) {
           that.setData({
             did: device.did,
+            product_key: device.product_key,
             host: device.host,
             wss_port: device.wss_port,
           });
