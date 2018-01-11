@@ -52,7 +52,6 @@ Page({
         });
       },
     });
-    console.log(that.data.did);
 
     let arr = [];
     arr.push(0x00, 0x02, 0xA0, 0xFF);
@@ -100,7 +99,11 @@ Page({
     // })
 
     
+    this.selectGroup();
+    
+  },
 
+  selectGroup() {
     //  查询分组
     wx.request({
       url: 'https://api.gizwits.com/app/group',
@@ -273,6 +276,36 @@ Page({
     });
   },
 
+  deleteGroup() {
+    let that = this;
+    wx.showModal({
+      title: '警告',
+      content: '你确定要删除当前区域吗?',
+      success(res) {
+        if (res.cancel == false && res.confirm == true) {
+          wx.request({
+            url: 'https://api.gizwits.com/app/group/' + that.data.areaid,
+            method: "DELETE",
+            header: that.data.header,
+            data: {},
+            success(res) {
+              wx.showToast({
+                title: '删除成功!',
+                duration: 2000,
+              })
+              wx.switchTab({
+                url: '../index/index',
+              })
+            }
+          })
+        } else if (res.cancel == true && res.confirm == false) {
+          return false;
+        }
+      }
+    })
+    
+  },
+
   selectEquipment(e) {
     let that = this, arr = {};
     let index = e.currentTarget.dataset.key;
@@ -285,13 +318,13 @@ Page({
     let brr = [];
     brr.push(that.data.did);
     let json = {
-      dids: brr,
+      dids: '123',
     };
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
       arr = {
         key: e.currentTarget.dataset.key,
-        sdid: e.currentTarget.dataset.sdid,
+        dids: e.currentTarget.dataset.sdid,
       };
       this.data.spliceArray.push(arr);
       
@@ -345,17 +378,22 @@ Page({
             that.setData({
               areaid: res.data.data
             })
+            wx.showToast({
+              title: '增加成功',
+              duration: 2000,
+            })
           }
         })
       }
     }
-    wx.showToast({
-      title: '请求成功',
-    })
     this.setData({
       pickerShow: true
     });
-    this.onLoad();
+    setTimeout(() => {
+      wx.switchTab({
+        url: '../index/index',
+      })
+    }, 500)
   },
 
   getRegion() {
@@ -369,7 +407,6 @@ Page({
         that.setData({
           list: res.data,
         });
-        console.log(that.data.list);
       }
     })
   },

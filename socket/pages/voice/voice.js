@@ -66,15 +66,12 @@ Page({
 
   endRecode(e) {
     var s = this;
-
     s.setData({ voiceNow: false });
     wx.stopRecord();
     s.setData({ isSpeaking: false });
     wx.showToast();
     setTimeout(() => {
-
       console.log(s.data.recodePath, "s.data.recodePath");
-
       wx.uploadFile({
         url: 'http://yuyin.ittun.com/public/index/dev/zhen',
         filePath: s.data.recodePath,

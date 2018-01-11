@@ -4,7 +4,7 @@
   line-height: 40px;
   overflow: hidden;
   margin: 28px auto 0;
-  width: 92%;
+  width: 98%;
   position: relative;
 }
 

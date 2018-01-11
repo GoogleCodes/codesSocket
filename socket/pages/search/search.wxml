@@ -16,6 +16,7 @@
     <input placeholder='请输入要增加的区域' class="search-input fl" value='{{ addAreaText }}' bindblur='addArea' hidden='{{ pickerShow }}'></input>
     <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ pickerShow }}' bindtap='outputSet'></view>
     <view class='iconfont icon-weibiaoti-2 fr' hidden='{{ !pickerShow }}' bindtap='inputSet'></view>
+    <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ !pickerShow }}' bindtap='deleteGroup'></view>
   </view>
 
   <view class="table-header">
