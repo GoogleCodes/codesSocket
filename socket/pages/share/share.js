@@ -12,6 +12,12 @@ Page({
     top: 0,
     layer: true,
     did: "",
+    head: {
+      'Content-Type': 'application/json',
+      'Accept': ' application/json',
+      'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
+      'X-Gizwits-User-token': wx.getStorageSync('options').token,
+    },
     devices: wx.getStorageSync('devices')
   },
 
@@ -31,25 +37,27 @@ Page({
 
   longChose(e) {
     let that = this;
-    switch(true) {
-      case this.data.cancel == false:
-        that.setData({
-          cancel: true,
-        });
-        that.setData({ did: '' });
-        console.log(that.data.did);
-        break;
-      case this.data.cancel == true:
-        this.setData({
-          cancel: false,
-        });
-        that.setData({
-          did: e.currentTarget.dataset.did
-        });
-        console.log(that.data.did);
-        break;
-      default:
-        break;
+    for (let i in that.data.devices) {
+      if (that.data.devices[i].did == e.currentTarget.dataset.did) {
+        switch (true) {
+          case that.data.cancel == false:
+            that.setData({
+              cancel: true,
+            });
+            that.setData({ did: '' });
+            break;
+          case that.data.cancel == true:
+            this.setData({
+              cancel: false,
+            });
+            that.setData({
+              did: e.currentTarget.dataset.did
+            });
+            break;
+          default:
+            break;
+        }
+      }
     }
   },
 
@@ -61,18 +69,7 @@ Page({
 
   addShare() {
     let that = this;
-    if (that.data.did == '') {
-
-      wx.showActionSheet({
-        itemList: ['A', 'B', 'C'],
-        success(res) {
-          console.log(res.tapIndex)
-        },
-        fail(res) {
-          console.log(res.errMsg)
-        }
-      })
-      
+    if (that.data.did == '') {      
       wx.showToast({
         title: '请选择分享设备',
         mask: true,
@@ -91,11 +88,34 @@ Page({
       method: "POST",
       header: head,
       data: {
-        "type": 0,
+        "type": 1,
         "did": that.data.did,
-        "phone": "13630017088",
+        "phone": "13250672958",
       },
       success(res) {
+        if (res.data.error_code == 9081) {
+          wx.showToast({
+            icon: "loading",
+            title: res.data.error_message,
+            duration: 2300,
+          })
+          return false;
+        }
+        let code = res.data.qr_content;
+        code = code.substring(16, 48)
+        //  创建设备分享
+        wx.request({
+          url: 'https://api.gizwits.com/app/sharing/code/' + code,
+          method: "POST",
+          header: that.data.head,
+          success(result) {
+            wx.showModal({
+              title: '警告!',
+              content: result.data.error_message,
+            })
+          },
+        })
+        return;
         that.setData({
           layer: true,
         });

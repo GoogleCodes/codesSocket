@@ -2,13 +2,16 @@
 
 var tools = require('../../utils/util.js');
 
+import { Main } from '../../utils/main.js'
+let main = new Main();
+
 Page({
   /**
    * 页面的初始数据
    */
   data: {
-    uname: '13630017088', // 13250672958 || 13630017088
-    pword: '654321', // 123456789 || 654321
+    uname: '13232800159', // 13250672958 || 13630017088 || 13232800159
+    pword: '123123', // 123456789 || 654321
     wechatOpenId: 'kceshi1',
     gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
     token: '',
@@ -68,6 +71,9 @@ Page({
           token: result.data.token,
         });
         console.log(this.data.uid);
+
+        that.getUser(that.data.username);
+
         wx.switchTab({
           url: '../index/index',
         })
@@ -81,27 +87,36 @@ Page({
   onReady() {
     var that = this;
     //  获取用户信息
-    wx.request({
-      url: 'http://yuyin.ittun.com/public/index/member/getUser',
-      method: "POST",
-      header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      data: {
-        tel: '13232800159'
-      },
-      success(res) {
-        wx.setStorageSync('wxuser', res.data.data)
-      }
-    })
     var userInfom = wx.getStorageSync('userInformation');
     that.setData({
       uname: userInfom.username,
       pword: userInfom.password,
     });
-    if (wx.getStorageSync('userInformation') !== '') {
-      wx.redirectTo({ url: '../index/index', })
+    that.getUser(that.data.uname);
+
+    if (userInfom !== '') {
+      wx.switchTab({ url: '../index/index', })
     }
   },
+
+  getUser(tel) {
+
+    main.ajax({
+      data: {
+        url: 'member/getUser',
+        method: "POST",
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          tel: tel
+        },
+      }
+    }).then((res) => {
+      wx.setStorageSync('wxuser', res.data.data)
+    });
+    
+  }
+
 })

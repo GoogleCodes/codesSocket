@@ -1,3 +1,5 @@
+let urls = require('common/common.js');
+
 class Main {
   
   constructor() {
@@ -48,6 +50,27 @@ class Main {
         success(res)
       }
     });
+  }
+
+  goPages(url) {
+    setTimeout(() => {
+      wx.switchTab({
+        url: url,
+      })
+    }, 500)
+  }
+
+  ajax({ data }) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: urls.serviceUri + data.url,
+        data: data.data,
+        method: data.method,
+        header: data.header,
+        success: resolve,
+        fail: reject
+      })
+    })
   }
 
   sendRrquest(url, method, data, header) {

@@ -19,9 +19,6 @@ Page({
     sdid: [],
     weibiao: true,
     id: 0,
-    dev_alias: '',
-    did: '',
-    product_key: ''
   },
 
   /**
@@ -30,11 +27,10 @@ Page({
   onLoad(options) {
     let that = this;
     this.setData({
-      did: options.did,
-      product_key: options.product_key,
-      dev_alias: options.dev_alias
+      sdid: options.sdid,
+      id: options.id
     });
-    console.log(that.data.did, that.data.product_key, that.data.dev_alias);
+    console.log(this.data.id);
     wx.getSystemInfo({
       success(res) {
         that.setData({
@@ -76,9 +72,8 @@ Page({
                 },
                 success(res) {
                   let data = res.data.data;
-                  for(let i in data) {
+                  for (let i in data) {
                     if (that.data.id == data[i].id) {
-                      console.log(typeof that.data.sdid);
                       wx.request({
                         url: 'http://yuyin.ittun.com/public/index/dev/deldev',
                         header: {
@@ -88,20 +83,20 @@ Page({
                         method: 'POST',
                         data: {
                           uid: wx.getStorageSync('wxuser').id,
-                          did: that.data.sdid
+                          rid: data[i].rid
                         },
                         success(res) {
+                          console.log(res.data);
                           setTimeout(() => {
                             wx.switchTab({
                               url: '../index/index',
                             })
                           }, 500)
-                          return false;
                         }
                       })
                     }
                   }
-                  
+
                 }
               });
             }
@@ -138,7 +133,7 @@ Page({
         currentTabs: e.target.dataset.current
       })
     }
-    switch(true) {
+    switch (true) {
       case e.target.dataset.current == 0:
         brr = [0xA2, 0x01, 0x01];
         arr.push(0x00, 0x08, 0xA2);

@@ -46,31 +46,21 @@ Page({
                 content: result.data.error_message, // "共享记录未找到！", // result.data.error_message,
               })
               return false;
+            } else {
+              wx.showModal({
+                title: '提示~~~',
+                content: "分享成功!",
+              })
+              setTimeout(() => {
+                wx.switchTab({
+                  url: '../index/index',
+                })
+              }, 500)
             }
           },
-
         })
       },
     })
-
-    // var options = {
-    //   "type": 0,
-    //   "did": that.data.options.did,
-    //   "uid": wx.getStorageSync('options').uid,
-    // };
-    // tools.sendRrquest('sharing', 'POST', options, that.data.head).then(function (result) {
-    //   console.log(result);
-    // }, function (err) {
-    //   console.log(err);
-    // });
-
-    //  查询分享设备
-    // var sharing_type = 1, status = 0;
-    // tools.sendRrquest('sharing?sharing_type=' + sharing_type + '&status=' + status + '', 'GET', '', that.data.head).then(function (result) {
-    //   console.log(result.data);
-    // }, function (err) {
-    //   console.log(err);
-    // });
   },
 
   //  登出

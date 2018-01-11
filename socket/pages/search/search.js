@@ -15,6 +15,7 @@ Page({
     index: 0,
     multiArray: [['卧室', '厨房'], []],
     multiIndex: [0, 0],
+    index: 0,
     currentTab: 0,
     winHeight: 0,
     pickerShow: true,
@@ -25,17 +26,10 @@ Page({
     addAreaText: '',
     //  设备总数
     equipmentArray: [],
-    head: {
-      'Content-Type': 'application/json',
-      'Accept': ' application/json',
+    headers: {
+      'content-type': 'application/json',
+      'content-type': 'application/x-www-form-urlencoded'
     },
-    did: "",
-    header: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-Gizwits-User-token': wx.getStorageSync('options').token,
-      'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
-    }
   },
 
   /**
@@ -43,16 +37,13 @@ Page({
    */
   onLoad(options) {
     let that = this;
-
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2 + 100,
-          did: options.did,
+          winHeight: res.windowHeight / 2 + 100
         });
       },
     });
-
     let arr = [];
     arr.push(0x00, 0x02, 0xA0, 0xFF);
     var json = {
@@ -80,42 +71,22 @@ Page({
       }
     })
 
-    // wx.request({
-    //   url: 'http://yuyin.ittun.com/public/index/dev/getregion',
-    //   method: 'POST',
-    //   header: {
-    //     'content-type': 'application/json',
-    //     'content-type': 'application/x-www-form-urlencoded'
-    //   },
-    //   data: {
-    //     uid: wx.getStorageSync('wxuser').id,
-    //   },
-    //   success(res) {
-    //     that.setData({
-    //       list: res.data.data,
-    //     });
-    //     console.log(that.data.list);
-    //   }
-    // })
-
-    
-    this.selectGroup();
-    
-  },
-
-  selectGroup() {
-    //  查询分组
-    wx.request({
-      url: 'https://api.gizwits.com/app/group',
-      method: 'GET',
-      header: that.data.header,
-      data: {},
-      success(res) {
-        that.setData({
-          list: res.data,
-        });
-        console.log(that.data.list);
+    main.ajax({
+      data: {
+        url: 'dev/getregion',
+        method: 'POST',
+        header: that.data.headers,
+        data: {
+          uid: wx.getStorageSync('wxuser').id,
+        },
       }
+    }).then((res) => {
+      that.setData({
+        list: res.data.data,
+      });
+      that.setData({
+        areaid : that.data.list[0].id
+      });
     })
   },
 
@@ -123,7 +94,7 @@ Page({
     const that = this;
     if (e.detail.value == '') {
       wx.showToast({
-        title: '请输入内容', //  2953309853
+        title: '请输入内容',
       })
       return;
     }
@@ -135,74 +106,61 @@ Page({
 
   bindMultiPickerChange(e) {
     let that = this;
-    let id = '';
-    for(let i in that.data.list) {
+    for (let i in that.data.list) {
       if (e.detail.value == i) {
         that.setData({
           areaid: that.data.list[i].id
-        })
+        });
       }
     }
     this.setData({
       index: e.detail.value,
     })
     wx.request({
-      url: 'https://api.gizwits.com/app/group/' + that.data.areaid + '/devices',
-      header: that.data.header,
+      url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+      method: 'POST',
+      header: that.data.headers,
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+        rid: that.data.areaid,
+      },
       success(res) {
-        that.setData({
-          spliceArray: res.data
-        });
+        if (res.data.code == 1) {
+          that.setData({
+            spliceArray: res.data.data
+          });
+          wx.onSocketMessage((res) => {
+            try {
+              let jsonData = JSON.parse(res.data);
+              let k = jsonData.data.attrs.data;
+              let last = null, brr = [], json = {};
+              for (let i in k) {
+                last = k.splice(4, 21);
+                if (last.indexOf(1) == 0) {
+                  json = {
+                    sdid: last.splice(0, 4),
+                    active: 0,
+                  };
+                  brr.push(json);
+                  brr.concat(that.data.array);
+                  that.setData({
+                    array: brr,
+                  });
+                  wx.setStorageSync('gizwits', that.data.array);
+                }
+              }
+            } catch (e) { }
+          })
+        } else if (res.data.code == 0) {
+          that.setData({
+            spliceArray: []
+          });
+          wx.showToast({
+            title: "暂时没有设备！",
+          })
+        }
       }
-    })
-    // wx.request({
-    //   url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-    //   method: 'POST',
-    //   header: {
-    //     'content-type': 'application/json',
-    //     'content-type': 'application/x-www-form-urlencoded'
-    //   },
-    //   data: {
-    //     uid: wx.getStorageSync('wxuser').id,
-    //     rid: that.data.areaid,
-    //   },
-    //   success(res) {
-    //     if(res.data.code == 1) {
-    //       that.setData({
-    //         spliceArray: res.data.data
-    //       });
-    //       wx.onSocketMessage((res) => {
-    //         try {
-    //           let jsonData = JSON.parse(res.data);
-    //           let k = jsonData.data.attrs.data;
-    //           let last = null, brr = [], json = {};
-    //           for (let i in k) {
-    //             last = k.splice(4, 21);
-    //             if (last.indexOf(1) == 0) {
-    //               json = {
-    //                 sdid: last.splice(0, 4),
-    //                 active: 0,
-    //               };
-    //               brr.push(json);
-    //               brr.concat(that.data.array);
-    //               that.setData({
-    //                 array: brr,
-    //               });
-    //               wx.setStorageSync('gizwits', that.data.array);
-    //             }
-    //           }
-    //         } catch (e) { }
-    //       })
-    //     } else if(res.data.code == 0) {
-    //       that.setData({
-    //         spliceArray: []
-    //       });
-    //       wx.showToast({
-    //         title: res.data.msg,
-    //       })
-    //     }
-    //   }
-    // });
+    });
   },
 
   bindMultiPickerColumnChange(e) {
@@ -279,64 +237,78 @@ Page({
   deleteGroup() {
     let that = this;
     wx.showModal({
-      title: '警告',
-      content: '你确定要删除当前区域吗?',
+      title: '警告!',
+      content: '是否要删除当前选择的区域！',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
           wx.request({
-            url: 'https://api.gizwits.com/app/group/' + that.data.areaid,
-            method: "DELETE",
-            header: that.data.header,
-            data: {},
+            url: 'http://yuyin.ittun.com/public/index/dev/delregion',
+            method: 'POST',
+            header: {
+              'content-type': 'application/json',
+              'content-type': 'application/x-www-form-urlencoded'
+            },
+            data: {
+              id: that.data.areaid,
+              uid: wx.getStorageSync('wxuser').id,
+            },
             success(res) {
               wx.showToast({
-                title: '删除成功!',
-                duration: 2000,
+                title: '已经成功删除',
+                duration: 2500,
               })
-              wx.switchTab({
-                url: '../index/index',
-              })
-            }
+              setTimeout(() => {
+                wx.switchTab({
+                  url: '../index/index',
+                })
+              }, 500);
+            },
           })
         } else if (res.cancel == true && res.confirm == false) {
           return false;
         }
-      }
+      },
     })
-    
   },
 
   selectEquipment(e) {
     let that = this, arr = {};
     let index = e.currentTarget.dataset.key;
-    if(that.data.areaid == -1) {
+    if (that.data.areaid == -1) {
       wx.showToast({
         title: '请选择区域!',
       })
       return false;
     }
-    let brr = [];
-    brr.push(that.data.did);
     let json = {
-      dids: '123',
+      uid: wx.getStorageSync('wxuser').id,
+      did: JSON.stringify(e.currentTarget.dataset.sdid),
+      dname: JSON.stringify(e.currentTarget.dataset.sdid),
+      rid: that.data.areaid,
     };
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
       arr = {
         key: e.currentTarget.dataset.key,
-        dids: e.currentTarget.dataset.sdid,
+        sdid: e.currentTarget.dataset.sdid,
       };
       this.data.spliceArray.push(arr);
-      
+
       wx.request({
-        url: 'https://api.gizwits.com/app/group/' + that.data.areaid +'/devices?show_detail=1',
+        url: 'http://yuyin.ittun.com/public/index/dev/adddev',
         method: "POST",
-        header: that.data.header,
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
         data: json,
         success(res) {
           wx.showToast({
             title: res.data.msg,
           })
+
+          main.goPages('../index/index');
+
         }
       })
 
@@ -363,50 +335,51 @@ Page({
       })
       return;
     }
-    let devices = wx.getStorageSync('devices');
-    for (let i in devices) {
-      if (that.data.did == devices[i].did) {
-        wx.request({
-          url: 'https://api.gizwits.com/app/group',
-          method: "POST",
-          header: that.data.header,
-          data: {
-            "product_key": devices[i].product_key,
-            "group_name": that.data.addAreaText
-          },
-          success(res) {
-            that.setData({
-              areaid: res.data.data
-            })
-            wx.showToast({
-              title: '增加成功',
-              duration: 2000,
-            })
-          }
+
+    wx.request({
+      url: 'http://yuyin.ittun.com/public/index/dev/addregion',
+      method: "POST",
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+        name: this.data.addAreaText
+      },
+      success(res) {
+        that.setData({
+          areaid: res.data.data
         })
+        main.goPages('../index/index');
       }
-    }
+    })
+    wx.showToast({
+      title: '请求成功',
+    })
     this.setData({
       pickerShow: true
     });
-    setTimeout(() => {
-      wx.switchTab({
-        url: '../index/index',
-      })
-    }, 500)
+    this.onLoad();
   },
 
   getRegion() {
     let that = this;
     wx.request({
-      url: 'https://api.gizwits.com/app/group',
-      method: 'GET',
-      header: that.data.header,
-      data: {},
+      url: 'http://yuyin.ittun.com/public/index/dev/getregion',
+      method: 'POST',
+      header: {
+        'content-type': 'application/json',
+        'content-type': 'application/x-www-form-urlencoded'
+      },
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+      },
       success(res) {
         that.setData({
-          list: res.data,
+          list: res.data.data,
         });
+        console.log(that.data.list);
       }
     })
   },

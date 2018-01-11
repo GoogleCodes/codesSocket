@@ -6,10 +6,18 @@ page {
 
 /* share-main start */
 
+.share-main {
+  margin: 0 0 50px;
+}
+
 .share-main .share-title {
   margin: 0 20px;
   line-height: 50px;
   font-size: 14px;
+}
+
+.share-main .ul-share {
+  height:60px;
 }
 
 .share-main .ul-share .li-share {
@@ -29,6 +37,11 @@ page {
   position: absolute;
   right: 10px;
   top: 15px;
+  display: none;
+}
+
+.share-main .ul-share .li-share .active {
+  display: block;
 }
 
 .share-main .addShare {

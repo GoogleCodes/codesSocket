@@ -13,7 +13,7 @@
         <text>网关：</text>
         <text>{{ item.mac }}</text>
       </view>
-      <image class="cancel" hidden='{{ cancel }}' src='../../../static/images/img11.png'></image>
+      <image class="cancel {{ did == item.did ? 'active' : '' }}"src='../../../static/images/img11.png'></image>
     </view>
   </view>
   <button class="addShare f12" bindtap='addShare'>增加分享</button>

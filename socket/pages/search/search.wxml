@@ -4,9 +4,9 @@
   <view class="section">
     <view class="section__title fl">区域：</view>
     <view hidden='{{ !pickerShow }}' class="fl" style="width: 65%;">
-      <picker range='{{ list }}' value='{{ index }}' data-id='{{ list[index].id }}'  range-key='group_name' class="picker"  bindchange="bindMultiPickerChange">
-        <view>{{ list[index].group_name }}</view>
-      </picker>
+        <picker range='{{ list }}' value='{{ index }}' data-id='{{ list[index].id }}' range-key='id' range-key='name' class="picker"  bindchange="bindMultiPickerChange">
+        <view>{{ list[index].name }}</view>
+      </picker> 
         <!-- <picker mode="multiSelector" bindchange="bindMultiPickerChange" bindcolumnchange="bindMultiPickerColumnChange" value="{{ multiIndex }}" range="{{ multiArray }}" class="picker" >
         <view class="picker">
           {{ multiArray[0][multiIndex[0]] }}
@@ -15,8 +15,8 @@
     </view>
     <input placeholder='请输入要增加的区域' class="search-input fl" value='{{ addAreaText }}' bindblur='addArea' hidden='{{ pickerShow }}'></input>
     <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ pickerShow }}' bindtap='outputSet'></view>
-    <view class='iconfont icon-weibiaoti-2 fr' hidden='{{ !pickerShow }}' bindtap='inputSet'></view>
     <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ !pickerShow }}' bindtap='deleteGroup'></view>
+    <view class='iconfont icon-weibiaoti-2 fr' hidden='{{ !pickerShow }}' bindtap='inputSet'></view>
   </view>
 
   <view class="table-header">
@@ -32,7 +32,7 @@
           <view class="li-iview-con">
             <view class="iconfont icon-weibiaoti-3"></view>
           </view>
-          <view>{{ item.verbose_name }}</view>
+          <view>{{ item.dname }}</view>
         </view>
         <!--
         <view class="li-iview fl" wx:for="{{ spliceArray }}" wx:if="{{ item.did == 1 }}">

@@ -166,8 +166,8 @@ page {
 }
 
 .music-iview .iconfont {
-  font-size: 45px;
-  color: #7cb242;
+  font-size: 40px;
+  color: #b3b3b3;
 }
 
 .music-iview  image {

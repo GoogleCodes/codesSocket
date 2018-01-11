@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/login/login",
     "pages/index/index",
     "pages/smart/smart",
     "pages/control/control",
@@ -9,7 +10,6 @@
     "pages/message/message",
     "pages/me/me",
     "pages/footer/footer",
-    "pages/login/login",
     "pages/forget/forget",
     "pages/equipment/equipment",
     "pages/led/led",
