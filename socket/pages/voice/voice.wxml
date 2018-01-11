@@ -41,10 +41,10 @@
   </view>
 
   <!-- voice-microphone start -->
-  <view class="voice-microphone" bindtouchstart="startRecode" bindtouchend="endRecode" hover-class='navGoHover'>
-    <view class="iconfont icon-weibiaoti-12"></view>
+  <view class="voice-microphone" bindtouchstart="startRecode" bindtouchend="endRecode"  hover-class='hover-save-voice'>
+    <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
   </view>
-  <!-- voice-microphone end -->
+  <!-- voice-microphone end youcai0234  -->
 
   <!--save-voice start-->
   <view class="save-voice">

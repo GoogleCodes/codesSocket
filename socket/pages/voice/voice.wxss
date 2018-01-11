@@ -11,6 +11,7 @@
   width: 95%;
 }
 
+
 .voice-control .save-voice .save-input {
   border: 1px solid #ccc;
   border-right: none;
@@ -54,7 +55,8 @@
 .voice-control .voice-microphone {
   width: 71px;
   height: 71px;
-  border: 1px solid #7cb242;
+  border: 1px solid #b3b3b3;
+  background: #fff;
   border-radius: 100%;
   position: absolute;
   bottom: 70px;
@@ -64,8 +66,18 @@
   line-height: 71px;
   margin: 0px auto;
 }
+
+.voice-control .hover-save-voice {
+  border: 1px solid #7cb242;
+  box-shadow: 1px 1px 10px #ccc;
+}
+
 .voice-control .voice-microphone .iconfont {
   font-size: 45px;
+  color: #b3b3b3;
+}
+
+.voice-control .voice-microphone .hover-icon {
   color: #7cb242;
 }
 

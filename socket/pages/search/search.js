@@ -40,7 +40,7 @@ Page({
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2 + 100
+          winHeight: res.windowHeight / 2
         });
       },
     });
@@ -50,7 +50,6 @@ Page({
       'data': main.getArrays(arr),
     };
     tools.sendData('c2s_write', wx.getStorageSync('didJSon').did, json);
-
     main.getSocketResponse((data) => {
       let k = data;
       let last = null, brr = [], json = {};
@@ -88,6 +87,7 @@ Page({
         areaid : that.data.list[0].id
       });
     })
+
   },
 
   addArea(e) {
@@ -116,51 +116,50 @@ Page({
     this.setData({
       index: e.detail.value,
     })
-    wx.request({
-      url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-      method: 'POST',
-      header: that.data.headers,
+
+    main.ajax({
       data: {
-        uid: wx.getStorageSync('wxuser').id,
-        rid: that.data.areaid,
-      },
-      success(res) {
-        if (res.data.code == 1) {
-          that.setData({
-            spliceArray: res.data.data
-          });
-          wx.onSocketMessage((res) => {
-            try {
-              let jsonData = JSON.parse(res.data);
-              let k = jsonData.data.attrs.data;
-              let last = null, brr = [], json = {};
-              for (let i in k) {
-                last = k.splice(4, 21);
-                if (last.indexOf(1) == 0) {
-                  json = {
-                    sdid: last.splice(0, 4),
-                    active: 0,
-                  };
-                  brr.push(json);
-                  brr.concat(that.data.array);
-                  that.setData({
-                    array: brr,
-                  });
-                  wx.setStorageSync('gizwits', that.data.array);
-                }
-              }
-            } catch (e) { }
-          })
-        } else if (res.data.code == 0) {
-          that.setData({
-            spliceArray: []
-          });
-          wx.showToast({
-            title: "暂时没有设备！",
-          })
+        url: 'dev/getdev',
+        method: 'POST',
+        header: that.data.headers,
+        data: {
+          uid: wx.getStorageSync('wxuser').id,
+          rid: that.data.areaid,
         }
       }
-    });
+    }).then((res) => {
+      if (res.data.code == 1) {
+        that.setData({
+          spliceArray: res.data.data
+        });
+        main.getSocketResponse((k) => {
+          let last = null, brr = [], json = {};
+          for (let i in k) {
+            last = k.splice(4, 21);
+            if (last.indexOf(1) == 0) {
+              json = {
+                sdid: last.splice(0, 4),
+                active: 0,
+              };
+              brr.push(json);
+              brr.concat(that.data.array);
+              that.setData({
+                array: brr,
+              });
+              wx.setStorageSync('gizwits', that.data.array);
+            }
+          }
+        })
+      } else if (res.data.code == 0) {
+        that.setData({
+          spliceArray: []
+        });
+        wx.showToast({
+          title: "暂时没有设备！",
+        })
+      }
+    })
+
   },
 
   bindMultiPickerColumnChange(e) {
@@ -236,6 +235,13 @@ Page({
 
   deleteGroup() {
     let that = this;
+    if (that.data.areaid == -1) {
+      wx.showToast({
+        title: '请选择区域!',
+        duration: 2000,
+      })
+      return false;
+    }
     wx.showModal({
       title: '警告!',
       content: '是否要删除当前选择的区域！',
@@ -306,7 +312,9 @@ Page({
           wx.showToast({
             title: res.data.msg,
           })
-
+          that.setData({
+            currentTab: 0
+          });
           main.goPages('../index/index');
 
         }

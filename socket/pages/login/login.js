@@ -70,13 +70,13 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
-        console.log(this.data.uid);
 
-        that.getUser(that.data.username);
+        that.getUser(that.data.uname);
 
         wx.switchTab({
           url: '../index/index',
         })
+
       }
     });
   },

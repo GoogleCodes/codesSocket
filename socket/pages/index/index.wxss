@@ -170,6 +170,10 @@ page {
   color: #b3b3b3;
 }
 
+.music-iview .hover-icon {
+  color: #6aa84f;
+}
+
 .music-iview  image {
   width: 25px;
   height: 40px;
