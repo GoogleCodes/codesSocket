@@ -3,8 +3,8 @@
 <!-- share-main start -->
 <view class="share-main">
   <text class="share-title">分享名单：</text>
-  <view class="ul-share f12" bindtap='longChose' wx:for="{{ devices }}" data-did="{{ item.did }}">
-    <view class="li-share">
+  <view class="ul-share f12" wx:for="{{ devices }}">
+    <view class="li-share" bindtap='longChose' data-did="{{ item.did }}">
       <view class="p-share fl">
         <text>名称：</text>
         <text>{{ item.dev_alias }}</text>
@@ -13,7 +13,8 @@
         <text>网关：</text>
         <text>{{ item.mac }}</text>
       </view>
-      <image class="cancel {{ did == item.did ? 'active' : '' }}"src='../../../static/images/img11.png'></image>
+      <view class="iconfont icon-weibiaoti-1 fr cancel {{ did == item.did ? 'active' : '' }}"></view>
+      <!-- <image class="cancel {{ did == item.did ? 'active' : '' }}" src='../../../static/images/img11.png'></image> -->
     </view>
   </view>
   <button class="addShare f12" bindtap='addShare'>增加分享</button>

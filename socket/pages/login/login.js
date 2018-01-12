@@ -44,6 +44,7 @@ Page({
       formID: fId,
       fromObject: fObj,
     };
+    that.getUser(that.data.uname);
     var head = {
       'content-type': 'application/json',
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
@@ -70,13 +71,9 @@ Page({
           uid: result.data.uid,
           token: result.data.token,
         });
-
-        that.getUser(that.data.uname);
-
         wx.switchTab({
           url: '../index/index',
         })
-
       }
     });
   },
@@ -92,6 +89,7 @@ Page({
       uname: userInfom.username,
       pword: userInfom.password,
     });
+    console.log(that.data.uname, "that.data.uname");
     that.getUser(that.data.uname);
 
     if (userInfom !== '') {

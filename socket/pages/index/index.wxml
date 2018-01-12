@@ -24,21 +24,23 @@
   <swiper class="swiper-box" duration="300" bindchange="bindChange" current="{{ currentTab }}" 
   style="margin-bottom: 85px;height: {{ winHeight }}px;z-index: 1;">
 
-    <swiper-item wx:for="{{ tabArray }}" data-rid="{{ item.id }}">
+    <swiper-item wx:for="{{ tabArray }}">
       <view class="{{ selected ? 'hidden': 'show' }}">
         <view class="ul-view">
           <view class="li-view" wx:for="{{ spliceArray }}">
-            <view class="pic-iview fl pic1" wx:if="{{ status == 0 }}">
+            <view class="pic-iview fl pic1" wx:if="{{ status == false }}">
               <view class="iconfont  iconfont icon-leddeng"></view>
             </view>
-            <view class="pic-iview fl pic1" wx:elif="{{ status == 1 }}">
+            <view class="pic-iview fl pic1" wx:elif="{{ status == true }}">
               <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
             </view>
             <view class="fl status-iview f12">
-              <text class="block">{{ item.dname }}</text>
-              <view class="block" style="color: #b3b3b3">当前状态：
-                <text class="block fr" style="color: #6aa84f;" wx:if="{{ status == 1 }}">打开</text>
-                <text class="block fr" style="color: #6aa84f;" wx:elif="{{ status == 0 }}">关闭</text>
+            <view class="block" style='color: #b3b3b3' bindtap='operating' 
+                    data-id='{{ item.id }}' data-sdid='{{ item.dname }}' data-areaid='{{ areaid }}'>
+                <text class="block">{{ item.dname }}</text>
+                <text>当前状态：</text>
+                <text class="block fr" style='color: #6aa84f;' wx:if='{{ status == true }}'>打开</text>
+                <text class="block fr" style='color: #6aa84f;' wx:elif='{{ status == false }}'>关闭</text>
               </view>
             </view>
             <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}&id={{ item.id }}">

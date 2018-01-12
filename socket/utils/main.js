@@ -95,6 +95,11 @@ class Main {
     })
   }
 
+  IndexDemo(str) {
+    var s = sqlStr.indexOf(str);
+    return s;
+  }
+
 }
 
 export { Main }

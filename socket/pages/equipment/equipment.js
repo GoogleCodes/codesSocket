@@ -30,7 +30,6 @@ Page({
       sdid: options.sdid,
       id: options.id
     });
-    console.log(this.data.id);
     wx.getSystemInfo({
       success(res) {
         that.setData({

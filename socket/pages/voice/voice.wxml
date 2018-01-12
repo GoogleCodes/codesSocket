@@ -24,7 +24,7 @@
       </view>
       <view class="fl f12 tab" style="margin-left: 10px;">
         <view>识别指令成功</view>
-        <view>客厅照明灯 开启</view>
+        <view>{{ openMessage }} 开启</view>
       </view>
     </view>
 
@@ -34,7 +34,7 @@
       </view>
       <view class="fl f12 tab" style="margin-left: 10px;">
         <view>识别指令成功</view>
-        <view>客厅照明灯 关启</view>
+        <view>{{ openMessage }} 关启</view>
       </view>
     </view>
 
@@ -48,8 +48,17 @@
 
   <!--save-voice start-->
   <view class="save-voice">
-    <input type='text' placeholder='输入指令...' bindblur='blurMessage' class="save-input fl" value='{{ voiceIMessage }}'></input>
+  
+    <input 
+      type='text' 
+      placeholder='输入指令...' 
+      bindblur='blurMessage' 
+      bindconfirm='saveIMessage' 
+      class="save-input fl" 
+      value='{{ voiceIMessage }}'></input>
+
     <button class="save-button fl" bindtap='saveIMessage'>发送</button>
+
   </view>
   <!--save-voice end-->
 

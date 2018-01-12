@@ -3,6 +3,7 @@
 var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
+let did = wx.getStorageSync('didJSon').did;
 
 Page({
 
@@ -14,7 +15,7 @@ Page({
     winHeight: 0,
     docHeight: 0,
     tabArray: [],
-    status: 0, //  开关状态
+    status: false, //  开关状态
     spliceArray: [],
     socketOpen: false,  //  WebSocket 开关
     imgUrls: [
@@ -35,6 +36,7 @@ Page({
     ws_port: 0, //  端口
     wss_port: 0, //  端口
     hasRefesh: false,
+    areaid: '', //  区域ID
   },
 
   refesh(e) {
@@ -48,31 +50,31 @@ Page({
 
   bindChange(e) {
     let that = this;
-    console.log(e);
     this.setData({
       currentTab: e.detail.current
     });
-    for (let i in this.data.tabArray) {
-      if (i == e.detail.current) {
-        wx.request({
-          url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-          method: 'POST',
-          header: {
-            'content-type': 'application/json',
-            'content-type': 'application/x-www-form-urlencoded'
-          },
-          data: {
-            rid: that.data.tabArray[i].id,
-            uid: wx.getStorageSync('wxuser').id,
-          },
-          success(res) {
-            that.setData({
-              spliceArray: res.data.data
-            });
-          }
-        });
-      }
-    }
+    // for (let i in this.data.tabArray) {
+    //   // if (i == e.detail.current) {
+    //   //   wx.request({
+    //   //     url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+    //   //     method: 'POST',
+    //   //     header: {
+    //   //       'content-type': 'application/json',
+    //   //       'content-type': 'application/x-www-form-urlencoded'
+    //   //     },
+    //   //     data: {
+    //   //       rid: that.data.tabArray[i].id,
+    //   //       uid: wx.getStorageSync('wxuser').id,
+    //   //     },
+    //   //     success(res) {
+    //   //       that.setData({
+    //   //         spliceArray: res.data.data,
+    //   //         areaid: that.data.tabArray[i].id,
+    //   //       });
+    //   //     }
+    //   //   });
+    //   // }
+    // }
 
   },
 
@@ -85,23 +87,25 @@ Page({
         currentTab: e.target.dataset.current
       })
     }
-    wx.request({
-      url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-      method: 'POST',
-      header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
-      },
+    main.ajax({
       data: {
-        rid: e.target.dataset.id,
-        uid: wx.getStorageSync('wxuser').id,
-      },
-      success(res) {
-        that.setData({
-          spliceArray: res.data.data,
-          tabId: e.target.dataset.id
-        });
+        url: 'dev/getdev',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          rid: e.target.dataset.id,
+          uid: wx.getStorageSync('wxuser').id,
+        }
       }
+    }).then((res) => {
+      that.setData({
+        spliceArray: res.data.data,
+        tabId: e.target.dataset.id,
+        areaid: e.target.dataset.id,
+      });
     });
   },
 
@@ -118,11 +122,13 @@ Page({
         });
       },
     });
-    if (wx.getStorageSync('options') == '') {
+    if (wx.getStorageSync('options') == '' || wx.getStorageSync('wxuser') == '') {
       wx.removeStorageSync('userInformation');
+      wx.removeStorageSync('wxuser');
       wx.redirectTo({ url: '../login/login', });
     }
     this._getBindingList(20, 0);
+    
     // this.getIndexGizwits();
 
   },
@@ -145,6 +151,7 @@ Page({
       that.setData({
         tabArray: res.data.data,
       });
+      wx.setStorageSync('tabArray', that.data.tabArray);
       main.ajax({
         data: {
           url: 'dev/getdev',
@@ -160,8 +167,10 @@ Page({
         }
       }).then((res) => {
         that.setData({
-          spliceArray: res.data.data
+          spliceArray: res.data.data,
+          areaid: that.data.tabArray[0].id,
         });
+        wx.setStorageSync('spliceArray', that.data.spliceArray);
       });
     });
   },
@@ -169,6 +178,66 @@ Page({
   onShow() {
     let that = this;
     this.getIndexGizwits();
+  },
+
+  operating(e) {
+    let that = this;
+    let id = e.currentTarget.dataset.id;
+    let ids = '';
+    let sdid = JSON.parse(e.currentTarget.dataset.sdid);
+    let arr = [], json = {};
+    let brr = [], count = '';
+
+    let areaid = e.currentTarget.dataset.areaid;
+    let areaiding = '';
+    try {
+      for (let i in that.data.tabArray) {
+        if (areaid == that.data.tabArray[i].id) {
+          areaiding = that.data.tabArray[i].id;
+          for (let i in that.data.spliceArray) {
+
+            function socketGo(array1, array2) {
+              count = array2.concat(sdid.concat(array1));
+              json = {
+                'data': main.getArrays(count),
+              };
+              tools.sendData('c2s_write', did, json);
+              main.getSocketResponse((data) => {
+                if (that.data.status == false) {
+                  that.setData({
+                    status: true,
+                  });
+                } else if (that.data.status == true) {
+                  that.setData({
+                    status: false,
+                  });
+                }
+              })
+            }
+
+            if (id == that.data.spliceArray[i].id) {
+
+              if (that.data.status == false) {
+                let array1 = [0xA1, 0x01, 0x01];
+                let array2 = [0x00, 0x08, 0xA2];
+                socketGo(array1, array2);
+              } else if (that.data.status == true) {
+                let array1 = [0xA1, 0x01, 0x00];
+                let array2 = [0x00, 0x08, 0xA2];
+                socketGo(array1, array2);
+              }
+
+            } else {
+              return false;
+            }
+          }
+        } else {
+          return false;
+        }
+      }
+    } catch(e) {
+
+    }
   },
 
   _login() {

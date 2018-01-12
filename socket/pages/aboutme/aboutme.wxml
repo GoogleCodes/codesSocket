@@ -2,7 +2,7 @@
 
 <view class="marBtm60">
   <view class="logo">
-    <image src='../../../static/images/logo.png' style="width: 100%;height: 100%;"></image>
+    <image src='https://www.getcodeing.com/static/images/logo.png' style="width: 100%;height: 100%;"></image>
   </view>
 
   <view class="telphone">

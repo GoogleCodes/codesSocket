@@ -19,11 +19,16 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '',
+    voiceIMessage: '大厅',
     sceneName: [],
     arrays: [],
     voices: [],
-    recodePath: ''
+    recodePath: '',
+    headers: {
+      'content-type': 'application/json',
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+
   },
 
   /**
@@ -70,90 +75,110 @@ Page({
     wx.stopRecord();
     s.setData({ isSpeaking: false });
     wx.showToast();
-    setTimeout(() => {
-      console.log(s.data.recodePath, "s.data.recodePath");
-      wx.uploadFile({
-        url: 'http://yuyin.ittun.com/public/index/dev/zhen',
-        filePath: s.data.recodePath,
-        method: "POST",
-        name: 'silk',
-        header: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT',
-          'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
-        },
-        formData: {
-          'lan': 'zh' //s.data.arrayCharset, // 'zh',
-        },
-        success(res) {
-          s.setData({ voiceNow: true });
-          var error_text = '语音识别失败';
-          console.log("返回的东西是：", res.data.toString() == error_text, res.data.toString());
-          switch (true) {
-            case res.data.toString() == error_text:
-              main._Toast('语音识别失败!请重试!', 'success');
-              break;
-            case res.statusCode == 404:
-              main._Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
-              return;
-          }
-          var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
-          s.setData({
-            ins_y: options.time1,
-            ins_l: options.time2,
-          });
-          for (var i in options.yuyin) {
-            var sqlStr = options.yuyin[i];
-            s.setData({
-              openMessage: sqlStr,
-            });
-            if (typeof (sqlStr) == "string") {
-              var myString = sqlStr.substring(0, 1);
-            }
+    try {
+      setTimeout(() => {
+        console.log(s.data.recodePath, "s.data.recodePath");
+        wx.uploadFile({
+          url: 'http://yuyin.ittun.com/public/index/dev/zhen',
+          filePath: s.data.recodePath,
+          method: "POST",
+          name: 'silk',
+          header: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT',
+            'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
+          },
+          formData: {
+            'lan': 'zh' //s.data.arrayCharset, // 'zh',
+          },
+          success(res) {
+            s.setData({ voiceNow: true });
+            var error_text = '语音识别失败';
+            console.log("返回的东西是：", JSON.parse(res.data), "options...");
             switch (true) {
-              case myString == "开" || myString == '打':
-                s.setData({ switchButton: true });
-                json = {
-                  "onoffAll": s.data.switchButton,
-                };
-                s.setData({
-                  voiceOpen: false,
-                })
-                //  发送数据
-                tools.sendData('c2s_write', did, json);
-                main._Toast('打开成功!', 'success');
+              case res.data.toString() == error_text:
+                main._Toast('语音识别失败!请重试!', 'success');
                 break;
-              case myString == "关" || myString == s.data.language:
-                s.setData({ switchButton: false });
-                json = {
-                  "onoffAll": s.data.switchButton,
-                };
-                //  发送数据
-                tools.sendData('c2s_write', did, json);
-                main._Toast('关闭成功!', 'success');
-                break;
-              default:
-                break;
+              case res.statusCode == 404:
+                main._Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
+                return;
             }
+            var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
+            console.log(options, "options...");
+            s.setData({
+              ins_y: options.time1,
+              ins_l: options.time2,
+            });
+            for (var i in options.yuyin) {
+              var sqlStr = options.yuyin[i];
+
+              s.setData({
+                openMessage: sqlStr.trim(),
+              });
+
+              function IndexDemo(str) {
+                var s = sqlStr.indexOf(str);
+                return s;
+              }
+
+              console.log(IndexDemo('开'));
+
+              // if (typeof (sqlStr) == "string") {
+              //   var myString = sqlStr.substring(0, 1);
+              // }
+              switch (true) {
+                case IndexDemo('开') == 0 || IndexDemo('打') == 0://myString == "开" || myString == '打':
+                  let tabArray = wx.getStorageSync('tabArray');
+                  for (let i in tabArray) {
+                    if (IndexDemo(tabArray[i].name) == 0) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  }
+                  s.setData({ switchButton: true });
+                  json = {
+                    "onoffAll": s.data.switchButton,
+                  };
+                  s.setData({
+                    voiceOpen: false,
+                  })
+                  //  发送数据
+                  tools.sendData('c2s_write', did, json);
+                  main._Toast('打开成功!', 'success');
+                  break;
+                case IndexDemo('关') == 0://myString == "关" || myString == s.data.language:
+                  s.setData({ switchButton: false });
+                  json = {
+                    "onoffAll": s.data.switchButton,
+                  };
+                  //  发送数据
+                  tools.sendData('c2s_write', did, json);
+                  main._Toast('关闭成功!', 'success');
+                  break;
+                default:
+                  break;
+              }
+            }
+            if (data.states == 1) {
+              var cEditData = s.data.editData;
+              cEditData.recodeIdentity = data.identitys;
+              s.setData({ editData: cEditData });
+            } else {
+              main._goShowModel('提示', data.message, () => { });
+            }
+            wx.hideToast();
+          },
+          fail(res) {
+            s.setData({ voiceNow: true });
+            //  错误提示
+            main._goShowModel('提示', '录音的姿势不对!', () => { });
+            wx.hideToast();
           }
-          var str = res.data;
-          if (data.states == 1) {
-            var cEditData = s.data.editData;
-            cEditData.recodeIdentity = data.identitys;
-            s.setData({ editData: cEditData });
-          } else {
-            main._goShowModel('提示', data.message, () => { });
-          }
-          wx.hideToast();
-        },
-        fail(res) {
-          s.setData({ voiceNow: true });  
-          //  错误提示
-          main._goShowModel('提示', '录音的姿势不对!', () => { });
-          wx.hideToast();
-        }
-      });
-    }, 1000)
+        });
+      }, 1000)
+    } catch(e) {}
+    
   },
 
   blurMessage(e) {
@@ -170,13 +195,14 @@ Page({
       'data': main.getArrays(arr),
     };
     tools.sendData('c2s_write', did, json);
-
     main.getSocketResponse((data) => {
-      that.data.arrays = attrs.splice(4, 18);
+      that.data.arrays = data.splice(4, 18);
+      let arraysName = that.data.arrays;
       that.setData({
         arrays: that.data.arrays
       });
-      let a = that.data.arrays.splice(1, 3);
+      let a = arraysName.splice(1, 3);
+      console.log(that.data.arrays, 'that.data.arrays');
       let sceneName = [];
       sceneName = sceneName.concat(a)
       let str = '';
@@ -186,58 +212,88 @@ Page({
       that.setData({
         sceneName: str
       });
+      console.log(that.data.sceneName);
     })
 
   },
   
+  webScene(arrays1, arrays2) {
+    let count = null, json = {};
+    count = arrays1.concat(arrays2);
+    json = {
+      'data': main.getArrays(count),
+    };
+    tools.sendData('c2s_write', did, json);
+
+    main.getSocketResponse((data) => {
+      let arr = data.splice(3, 1);
+      if (arr == 1) {
+        wx.showToast({
+          title: '操作成功!',
+        })
+      } else if (arr == 0) {
+        wx.showToast({
+          title: '操作失败!',
+        })
+      }
+    });
+  },
+
   saveIMessage(e) {
     let that = this, json = {};
     let arr = [], brr = [], list = [], sdid = null;
     let rid = null;
 
-    if (that.data.voiceIMessage == that.data.sceneName) {
+    function IndexDemo(str1, str2) {
+      var s = str2.indexOf(str1);
+      return s;
+    }
+
+    if (IndexDemo('打开', that.data.voiceIMessage) == 0) {
+      if (that.data.voiceIMessage == that.data.sceneName) {
+        console.log(1);
+      }
+    } else {
+      console.log(2);
+    }
+    
+    if (that.data.voiceIMessage == "打开" + that.data.sceneName) {
+
+      that.data.arrays[14] = 2;
       arr.push(0, 18, 0x50);
-      let count = null;
-      count = arr.concat(that.data.arrays);
-      json = {
-        'data': main.getArrays(count),
-      };
-      tools.sendData('c2s_write', did, json);
+      that.webScene(arr, that.data.arrays);
 
-      main.getSocketResponse((data) => {
-        let arr = data.splice(3,1);
-        if (arr == 1) {
-          wx.showToast({
-            title: '操作成功!',
-          })
-        } else if (arr == 0) {
-          wx.showToast({
-            title: '操作失败!',
-          })
-        }
-      });
+    } else if (that.data.voiceIMessage == "关闭" + that.data.sceneName) {
 
-    };
+      that.data.arrays[14] = 0;
+      arr.push(0, 18, 0x50);
+      that.webScene(arr, that.data.arrays);
 
-    wx.request({
-      url: 'http://yuyin.ittun.com/public/index/dev/getregion',
-      method: 'POST',
-      header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
-      },
+    }
+
+    main.ajax({
       data: {
-        uid: wx.getStorageSync('wxuser').id,
-      },
-      success(res) {
-        let region = res.data.data;
-        for (let i in region) {
-          if (that.data.voiceIMessage == region[i].name) {
-            rid = region[i].id;
-          }
+        url: 'dev/getregion',
+        method: 'POST',
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          uid: wx.getStorageSync('wxuser').id,
+        },
+      }
+    }).then((res) => {
+      let region = res.data.data;
+      for (let i in region) {
+        if (that.data.voiceIMessage == region[i].name) {
+          rid = region[i].id;
         }
-        wx.request({
-          url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+      }
+
+      main.ajax({
+        data: {
+          url: 'dev/getdev',
           method: 'POST',
           header: {
             'content-type': 'application/json',
@@ -247,60 +303,92 @@ Page({
             rid: rid,
             uid: wx.getStorageSync('wxuser').id,
           },
-          success(res) {
-            list = res.data.data;
-            for (let i in list) {
-              if (rid == list[i].rid) {
-                sdid = list[i].did;
-                if (typeof sdid == 'string') {
-                  sdid = JSON.parse(sdid)
-                }
-                brr = [0xA2, 0x01, 0x01];
-                arr.push(0x00, 0x08, 0xA2);
-                let count = arr.concat(sdid.concat(brr));
-                json = {
-                  'data': main.getArrays(count),
-                };
-                count = "";
-                tools.sendData('c2s_write', did, json);
-
-                main.getSocketResponse((data) => {
-                  conosole.log(data);
-                });
-
-              }
+        }
+      }).then((res) => {
+        list = res.data.data;
+        let listID = '';
+        for (let i in list) {
+          listID = list[i].rid;
+          if (rid == list[i].rid) {
+            sdid = list[i].did;
+            if (typeof sdid == 'string') {
+              sdid = JSON.parse(sdid)
             }
+            brr = [0xA2, 0x01, 0x01];
+            arr.push(0x00, 0x08, 0xA2);
+            let count = arr.concat(sdid.concat(brr));
+            json = {
+              'data': main.getArrays(count),
+            };
+            count = "";
+            tools.sendData('c2s_write', did, json);
+
+            main.getSocketResponse((data) => {
+              conosole.log(data);
+            });
+
           }
-        });
-      }
+        }
+      })    
+
+
     })
-    // if (this.data.voiceIMessage == "打开灯") {
-    //   json = {
-    //     "onoffAll": true,
-    //   };
-    //   that.setData({
-    //     voiceOpen: false,
-    //     voiceDone: true,
-    //   })
-    //   //  发送数据
-    //   tools.sendData('c2s_write', did, json);
-    //   wx.showToast({
-    //     title: '打开成功！',
-    //   })
-    // } else if (this.data.voiceIMessage == "关闭灯") {
-    //   json = {
-    //     "onoffAll": false,
-    //   };
-    //   that.setData({
-    //     voiceOpen: true,
-    //     voiceDone: false,
-    //   })
-    //   wx.showToast({
-    //     title: '关闭成功！',
-    //   })
-    //   //  发送数据
-    //   tools.sendData('c2s_write', did, json);
-    // }
+
+    // wx.request({
+    //   url: 'http://yuyin.ittun.com/public/index/dev/getregion',
+    //   method: 'POST',
+    //   header: {
+    //     'content-type': 'application/json',
+    //     'content-type': 'application/x-www-form-urlencoded'
+    //   },
+    //   data: {
+    //     uid: wx.getStorageSync('wxuser').id,
+    //   },
+    //   success(res) {
+    //     let region = res.data.data;
+    //     for (let i in region) {
+    //       if (that.data.voiceIMessage == region[i].name) {
+    //         rid = region[i].id;
+    //       }
+    //     }
+    //     wx.request({
+    //       url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+    //       method: 'POST',
+    //       header: {
+    //         'content-type': 'application/json',
+    //         'content-type': 'application/x-www-form-urlencoded'
+    //       },
+    //       data: {
+    //         rid: rid,
+    //         uid: wx.getStorageSync('wxuser').id,
+    //       },
+    //       success(res) {
+    //         list = res.data.data;
+    //         for (let i in list) {
+    //           if (rid == list[i].rid) {
+    //             sdid = list[i].did;
+    //             if (typeof sdid == 'string') {
+    //               sdid = JSON.parse(sdid)
+    //             }
+    //             brr = [0xA2, 0x01, 0x01];
+    //             arr.push(0x00, 0x08, 0xA2);
+    //             let count = arr.concat(sdid.concat(brr));
+    //             json = {
+    //               'data': main.getArrays(count),
+    //             };
+    //             count = "";
+    //             tools.sendData('c2s_write', did, json);
+
+    //             main.getSocketResponse((data) => {
+    //               conosole.log(data);
+    //             });
+
+    //           }
+    //         }
+    //       }
+    //     });
+    //   }
+    // })
   }
 
 })

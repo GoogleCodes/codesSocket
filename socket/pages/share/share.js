@@ -37,6 +37,7 @@ Page({
 
   longChose(e) {
     let that = this;
+    console.log('longChose....');
     for (let i in that.data.devices) {
       if (that.data.devices[i].did == e.currentTarget.dataset.did) {
         switch (true) {
@@ -83,6 +84,7 @@ Page({
       'X-Gizwits-Application-Id': options.gizwitsAppId,
       'X-Gizwits-User-token': options.token,
     };
+    let wxuser = wx.getStorageSync('wxuser');
     wx.request({
       url: 'https://api.gizwits.com/app/sharing',
       method: "POST",
@@ -90,14 +92,13 @@ Page({
       data: {
         "type": 1,
         "did": that.data.did,
-        "phone": "13250672958",
+        "phone": wxuser.tel,
       },
       success(res) {
         if (res.data.error_code == 9081) {
-          wx.showToast({
-            icon: "loading",
-            title: res.data.error_message,
-            duration: 2300,
+          wx.showModal({
+            title: '警告!',
+            content: '客人或普通用户不能共享设备',
           })
           return false;
         }
@@ -115,14 +116,9 @@ Page({
             })
           },
         })
-        return;
         that.setData({
           layer: true,
         });
-        wx.showModal({
-          title: '警告!',
-          content: res.data.error_message,
-        })
       }
     })
 
