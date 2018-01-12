@@ -19,7 +19,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '大厅',
+    voiceIMessage: '打开大厅',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -182,7 +182,6 @@ Page({
   },
 
   blurMessage(e) {
-    console.log(e.detail.value);
     this.setData({
       voiceIMessage: e.detail.value
     });
@@ -249,14 +248,6 @@ Page({
       return s;
     }
 
-    if (IndexDemo('打开', that.data.voiceIMessage) == 0) {
-      if (that.data.voiceIMessage == that.data.sceneName) {
-        console.log(1);
-      }
-    } else {
-      console.log(2);
-    }
-    
     if (that.data.voiceIMessage == "打开" + that.data.sceneName) {
 
       that.data.arrays[14] = 2;
@@ -270,6 +261,9 @@ Page({
       that.webScene(arr, that.data.arrays);
 
     }
+
+    let tabArray = wx.getStorageSync('tabArray');
+    let spliceArray = wx.getStorageSync('spliceArray');
 
     main.ajax({
       data: {
@@ -285,110 +279,86 @@ Page({
       }
     }).then((res) => {
       let region = res.data.data;
+
       for (let i in region) {
-        if (that.data.voiceIMessage == region[i].name) {
-          rid = region[i].id;
-        }
-      }
+        for (let y in tabArray) {
+          if (region[i].id == tabArray[y].id) {
+            rid = region[i].id;
+            main.ajax({
+              data: {
+                url: 'dev/getdev',
+                method: 'POST',
+                header: {
+                  'content-type': 'application/json',
+                  'content-type': 'application/x-www-form-urlencoded'
+                },
+                data: {
+                  rid: rid,
+                  uid: wx.getStorageSync('wxuser').id,
+                },
+              }
+            }).then((res) => {
+              list = res.data.data;
+              for (let a in list) {
+                for (let b in spliceArray) {
+                  if (list[a].id == spliceArray[b].id) {
+                    if (IndexDemo('打开', that.data.voiceIMessage) == 0) {
+                      sdid = list[i].did;
+                      if (typeof sdid == 'string') {
+                        sdid = JSON.parse(sdid)
+                      }
+                      brr = [0xA2, 0x01, 0x01];
+                      arr.push(0x00, 0x08, 0xA2);
+                      let count = arr.concat(sdid.concat(brr));
+                      json = {
+                        'data': main.getArrays(count),
+                      };
+                      count = "";
+                      tools.sendData('c2s_write', did, json);
+                    } else if (IndexDemo('关闭', that.data.voiceIMessage) == 0) {
+                      console.log(2);
+                    } else {
+                      console.log(3);
+                      return false;
+                    }
+                  }
+                }
+              }
 
-      main.ajax({
-        data: {
-          url: 'dev/getdev',
-          method: 'POST',
-          header: {
-            'content-type': 'application/json',
-            'content-type': 'application/x-www-form-urlencoded'
-          },
-          data: {
-            rid: rid,
-            uid: wx.getStorageSync('wxuser').id,
-          },
-        }
-      }).then((res) => {
-        list = res.data.data;
-        let listID = '';
-        for (let i in list) {
-          listID = list[i].rid;
-          if (rid == list[i].rid) {
-            sdid = list[i].did;
-            if (typeof sdid == 'string') {
-              sdid = JSON.parse(sdid)
-            }
-            brr = [0xA2, 0x01, 0x01];
-            arr.push(0x00, 0x08, 0xA2);
-            let count = arr.concat(sdid.concat(brr));
-            json = {
-              'data': main.getArrays(count),
-            };
-            count = "";
-            tools.sendData('c2s_write', did, json);
+              main.getSocketResponse((data) => {
+                conosole.log(data);
+              });
 
-            main.getSocketResponse((data) => {
-              conosole.log(data);
             });
-
+          } else {
+            return false;
           }
         }
-      })    
-
-
+      }
     })
 
-    // wx.request({
-    //   url: 'http://yuyin.ittun.com/public/index/dev/getregion',
-    //   method: 'POST',
-    //   header: {
-    //     'content-type': 'application/json',
-    //     'content-type': 'application/x-www-form-urlencoded'
-    //   },
+    // main.ajax({
     //   data: {
-    //     uid: wx.getStorageSync('wxuser').id,
-    //   },
-    //   success(res) {
-    //     let region = res.data.data;
-    //     for (let i in region) {
-    //       if (that.data.voiceIMessage == region[i].name) {
-    //         rid = region[i].id;
-    //       }
-    //     }
-    //     wx.request({
-    //       url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-    //       method: 'POST',
-    //       header: {
-    //         'content-type': 'application/json',
-    //         'content-type': 'application/x-www-form-urlencoded'
-    //       },
-    //       data: {
-    //         rid: rid,
-    //         uid: wx.getStorageSync('wxuser').id,
-    //       },
-    //       success(res) {
-    //         list = res.data.data;
-    //         for (let i in list) {
-    //           if (rid == list[i].rid) {
-    //             sdid = list[i].did;
-    //             if (typeof sdid == 'string') {
-    //               sdid = JSON.parse(sdid)
-    //             }
-    //             brr = [0xA2, 0x01, 0x01];
-    //             arr.push(0x00, 0x08, 0xA2);
-    //             let count = arr.concat(sdid.concat(brr));
-    //             json = {
-    //               'data': main.getArrays(count),
-    //             };
-    //             count = "";
-    //             tools.sendData('c2s_write', did, json);
-
-    //             main.getSocketResponse((data) => {
-    //               conosole.log(data);
-    //             });
-
-    //           }
-    //         }
-    //       }
-    //     });
+    //     url: 'dev/getdev',
+    //     method: 'POST',
+    //     header: {
+    //       'content-type': 'application/json',
+    //       'content-type': 'application/x-www-form-urlencoded'
+    //     },
+    //     data: {
+    //       rid: rid,
+    //       uid: wx.getStorageSync('wxuser').id,
+    //     },
     //   }
-    // })
+    // }).then((res) => {
+    //   list = res.data.data;
+    //   for (let i in list) {
+    //     if (rid == list[i].rid) {
+          
+    //     }
+    //   }
+    // }) 
+
   }
 
 })
