@@ -110,10 +110,13 @@ Page({
           method: "POST",
           header: that.data.head,
           success(result) {
-            wx.showModal({
-              title: '警告!',
-              content: result.data.error_message,
-            })
+            if (result.data.error_code == 9080) {
+              wx.showModal({
+                title: '警告!',
+                content: '不能共享设备给自己'
+              })
+              return false;
+            }
           },
         })
         that.setData({

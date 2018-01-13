@@ -49,7 +49,7 @@ Page({
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     wx.setStorageSync('userInformation', json);
-
+    that.getUser(that.data.uname);
     tools.sendRrquest('login', 'POST', json, head).then((result) => {
        //  如果账号或者密码错误 提示错误
       if (result.data.error_code == 9020) {
@@ -58,7 +58,6 @@ Page({
         });
         return false;
       } else {
-        that.getUser(that.data.uname);
         //  登录成功后向后台发送一条消息记录
         that.setData({ loadHidden: true, });
         var options = {
@@ -111,8 +110,16 @@ Page({
         },
       }
     }).then((res) => {
-      wx.setStorageSync('wxuser', res.data.data)
-      console.log(wx.getStorageSync('wxuser'));
+      if (res.statusCode == 404) {
+        wx.showToast({
+          title: '服务器关闭了!',
+          duration: 1500,
+        })
+        return false;
+      } else if (res.statusCode == 200) {
+        wx.setStorageSync('wxuser', res.data.data)
+        console.log(wx.getStorageSync('wxuser'));
+      }
     });
     
   }

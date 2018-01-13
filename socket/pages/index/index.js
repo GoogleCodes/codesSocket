@@ -148,6 +148,13 @@ Page({
         },
       }
     }).then((res) => {
+      if (res.statusCode == 404) {
+        wx.showToast({
+          title: '服务器关闭了!',
+          duration: 1500,
+        })
+        return false;
+      }
       that.setData({
         tabArray: res.data.data,
       });
