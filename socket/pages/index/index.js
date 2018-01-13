@@ -37,6 +37,8 @@ Page({
     wss_port: 0, //  端口
     hasRefesh: false,
     areaid: '', //  区域ID
+    deviceID: '', //  设备ID,
+    tabArrayID: '',
   },
 
   refesh(e) {
@@ -53,28 +55,30 @@ Page({
     this.setData({
       currentTab: e.detail.current
     });
-    // for (let i in this.data.tabArray) {
-    //   // if (i == e.detail.current) {
-    //   //   wx.request({
-    //   //     url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-    //   //     method: 'POST',
-    //   //     header: {
-    //   //       'content-type': 'application/json',
-    //   //       'content-type': 'application/x-www-form-urlencoded'
-    //   //     },
-    //   //     data: {
-    //   //       rid: that.data.tabArray[i].id,
-    //   //       uid: wx.getStorageSync('wxuser').id,
-    //   //     },
-    //   //     success(res) {
-    //   //       that.setData({
-    //   //         spliceArray: res.data.data,
-    //   //         areaid: that.data.tabArray[i].id,
-    //   //       });
-    //   //     }
-    //   //   });
-    //   // }
-    // }
+    for (let i in that.data.tabArray) {
+      if (i == that.data.currentTab) {
+        main.ajax({
+          data: {
+            url: 'dev/getdev',
+            method: 'POST',
+            header: {
+              'content-type': 'application/json',
+              'content-type': 'application/x-www-form-urlencoded'
+            },
+            data: {
+              rid: that.data.tabArray[i].id,
+              uid: wx.getStorageSync('wxuser').id,
+            },
+          }
+        }).then((res) => {
+          that.setData({
+            spliceArray: res.data.data,
+            areaid: that.data.tabArray[i].id,
+          });
+        });
+
+      }
+    }
 
   },
 
@@ -117,20 +121,16 @@ Page({
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 1,
+          winHeight: res.windowHeight / 2,
           docHeight: res.windowHeight
         });
       },
     });
-    if (wx.getStorageSync('options') == '' || wx.getStorageSync('wxuser') == '') {
+    if (wx.getStorageSync('options') == '') {
       wx.removeStorageSync('userInformation');
       wx.removeStorageSync('wxuser');
       wx.redirectTo({ url: '../login/login', });
     }
-    this._getBindingList(20, 0);
-    
-    // this.getIndexGizwits();
-
   },
 
   getIndexGizwits() {
@@ -177,46 +177,53 @@ Page({
 
   onShow() {
     let that = this;
-    this.getIndexGizwits();
+    setTimeout(() => {
+      that.getIndexGizwits();
+    }, 1500)
+  },
+
+  onReady() {
+    let that = this;
+    setTimeout(() => {
+      that.getIndexGizwits();
+    }, 1500)
+    this._getBindingList(20, 0);
   },
 
   operating(e) {
     let that = this;
+
     let id = e.currentTarget.dataset.id;
     let ids = '';
     let sdid = JSON.parse(e.currentTarget.dataset.sdid);
     let arr = [], json = {};
     let brr = [], count = '';
-
+    
     let areaid = e.currentTarget.dataset.areaid;
     let areaiding = '';
+
+    function socketGo(array1, array2) {
+      count = array2.concat(sdid.concat(array1));
+      json = {
+        'data': main.getArrays(count),
+      };
+      tools.sendData('c2s_write', did, json);
+      main.getSocketResponse((data) => { })
+    }
+
     try {
       for (let i in that.data.tabArray) {
         if (areaid == that.data.tabArray[i].id) {
-          areaiding = that.data.tabArray[i].id;
-          for (let i in that.data.spliceArray) {
+          that.setData({
+            tabArrayID: that.data.tabArray[i].id
+          });
+          for (let y in that.data.spliceArray) {
 
-            function socketGo(array1, array2) {
-              count = array2.concat(sdid.concat(array1));
-              json = {
-                'data': main.getArrays(count),
-              };
-              tools.sendData('c2s_write', did, json);
-              main.getSocketResponse((data) => {
-                if (that.data.status == false) {
-                  that.setData({
-                    status: true,
-                  });
-                } else if (that.data.status == true) {
-                  that.setData({
-                    status: false,
-                  });
-                }
-              })
-            }
-
-            if (id == that.data.spliceArray[i].id) {
-
+            if (id == that.data.spliceArray[y].id && areaid == that.data.tabArrayID) {
+              console.log(id, that.data.spliceArray[y].id);
+              that.setData({
+                deviceID: that.data.spliceArray[y].id
+              });
               if (that.data.status == false) {
                 let array1 = [0xA1, 0x01, 0x01];
                 let array2 = [0x00, 0x08, 0xA2];
@@ -226,15 +233,12 @@ Page({
                 let array2 = [0x00, 0x08, 0xA2];
                 socketGo(array1, array2);
               }
-
-            } else {
-              return false;
             }
+
           }
-        } else {
-          return false;
         }
       }
+
     } catch(e) {
 
     }
@@ -369,7 +373,7 @@ Page({
       }
       // that._GizwitsDevdata(that.data.options.did);
       // that._getGizwitsDataing(pKey);
-      that._login();
+      // that._login();
     }, (err) => { });
   },
 

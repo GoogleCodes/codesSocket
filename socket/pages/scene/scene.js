@@ -3,8 +3,8 @@
 var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
-const did = wx.getStorageSync('didJSon').did;
-// const did = wx.getStorageSync('did');
+// const did = wx.getStorageSync('didJSon').did;
+const did = wx.getStorageSync('did');
 
 Page({
 

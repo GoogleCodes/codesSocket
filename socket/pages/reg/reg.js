@@ -156,21 +156,22 @@ Page({
       'wxname': that.data.webcharName,
       'wximage': that.data.webcharImg
     };
+
     //  验证
-    switch (true) {
-      case e.detail.value.name == '':
-        tools.showModel('提示', '请输入名称');
-        return false;
-      case e.detail.value.mobile == '':
-        tools.showModel('提示', '请输入手机号码');
-        return false;
-      case e.detail.value.code == '':
-        tools.showModel('提示', '验证码为空');
-        return false;
-      case e.detail.value.pword == '':
-        tools.showModel('提示', '密码为空');
-        return false;
-    }
+    // switch (true) {
+    //   case e.detail.value.name == '':
+    //     tools.showModel('提示', '请输入名称');
+    //     return false;
+    //   case e.detail.value.mobile == '':
+    //     tools.showModel('提示', '请输入手机号码');
+    //     return false;
+    //   case e.detail.value.code == '':
+    //     tools.showModel('提示', '验证码为空');
+    //     return false;
+    //   case e.detail.value.pword == '':
+    //     tools.showModel('提示', '密码为空');
+    //     return false;
+    // }
     var head = {
       'content-type': 'application/json',
       'Accept': 'application/json',

@@ -5,7 +5,8 @@ var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
 
-const did = wx.getStorageSync('didJSon').did;
+// const did = wx.getStorageSync('didJSon').did;
+const did = wx.getStorageSync('did');
 
 Page({
 
@@ -109,56 +110,56 @@ Page({
               ins_y: options.time1,
               ins_l: options.time2,
             });
+
             for (var i in options.yuyin) {
               var sqlStr = options.yuyin[i];
-
-              s.setData({
-                openMessage: sqlStr.trim(),
-              });
 
               function IndexDemo(str) {
                 var s = sqlStr.indexOf(str);
                 return s;
               }
 
-              console.log(IndexDemo('开'));
+              s.setData({
+                openMessage: sqlStr,
+              });
+
+              let tabArray = wx.getStorageSync('tabArray');
+              if (IndexDemo('打开全部灯') || IndexDemo('打') || IndexDemo('打开')) {
+                s.setData({
+                  voiceOpen: false,
+                  voiceDone: true,
+                })
+                //  发送数据
+                tools.sendData('c2s_write', did, {
+                  "onoffAll": true,
+                });
+                main.getSocketResponse((res) => {
+                  console.log(res, 'data...');
+                })
+                wx.showToast({
+                  title: '打开成功',
+                  duration: 1500,
+                })
+                return false;
+              } else if (IndexDemo('关闭全部灯') || IndexDemo('关') || IndexDemo('关闭')) {
+                s.setData({
+                  voiceOpen: true,
+                  voiceDone: false,
+                })
+                //  发送数据
+                tools.sendData('c2s_write', did, {
+                  "onoffAll": false,
+                });
+                wx.showToast({
+                  title: '关闭成功',
+                  duration: 1500,
+                })
+                return false;
+              }
 
               // if (typeof (sqlStr) == "string") {
               //   var myString = sqlStr.substring(0, 1);
               // }
-              switch (true) {
-                case IndexDemo('开') == 0 || IndexDemo('打') == 0://myString == "开" || myString == '打':
-                  let tabArray = wx.getStorageSync('tabArray');
-                  for (let i in tabArray) {
-                    if (IndexDemo(tabArray[i].name) == 0) {
-                      return true;
-                    } else {
-                      return false;
-                    }
-                  }
-                  s.setData({ switchButton: true });
-                  json = {
-                    "onoffAll": s.data.switchButton,
-                  };
-                  s.setData({
-                    voiceOpen: false,
-                  })
-                  //  发送数据
-                  tools.sendData('c2s_write', did, json);
-                  main._Toast('打开成功!', 'success');
-                  break;
-                case IndexDemo('关') == 0://myString == "关" || myString == s.data.language:
-                  s.setData({ switchButton: false });
-                  json = {
-                    "onoffAll": s.data.switchButton,
-                  };
-                  //  发送数据
-                  tools.sendData('c2s_write', did, json);
-                  main._Toast('关闭成功!', 'success');
-                  break;
-                default:
-                  break;
-              }
             }
             if (data.states == 1) {
               var cEditData = s.data.editData;

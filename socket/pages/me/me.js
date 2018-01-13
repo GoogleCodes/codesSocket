@@ -39,24 +39,35 @@ Page({
           method: "POST",
           header: that.data.head,
           success(result) {
-            console.log(result.data);
-            if (result.data.error_code == 9084) {
-              wx.showModal({
-                title: '警告!',
-                content: result.data.error_message, // "共享记录未找到！", // result.data.error_message,
-              })
-              return false;
-            } else {
-              wx.showModal({
-                title: '提示~~~',
-                content: "分享成功!",
-              })
-              setTimeout(() => {
-                wx.switchTab({
-                  url: '../index/index',
+            switch(true) {
+              case result.data.error_code == 9084:
+                wx.showModal({
+                  title: '警告!',
+                  content: '共享记录未找到！', // "共享记录未找到！", // result.data.error_message,
                 })
-              }, 500)
+                return false;
+              case result.data.error_code == 9088:
+                wx.showModal({
+                  title: '警告!',
+                  content: '共享记录过期!', // "共享记录未找到！", // result.data.error_message,
+                })
+                return false;
+              case result.data.error_code == 9083:
+                wx.showModal({
+                  title: '警告!',
+                  content: '客人已经绑定到设备!', // "共享记录未找到！", // result.data.error_message,
+                })
+                return false;
             }
+            wx.showModal({
+              title: '提示~~~',
+              content: "分享成功!",
+            })
+            setTimeout(() => {
+              wx.switchTab({
+                url: '../index/index',
+              })
+            }, 500)
           },
         })
       },
@@ -74,6 +85,7 @@ Page({
           wx.closeSocket({})  //  关闭websocket
           //  清除缓存
           wx.removeStorageSync('options');
+          wx.removeStorageSync('wxuser');
           wx.removeStorageSync('userInformation');
           wx.redirectTo({ url: '../login/login', })
         }

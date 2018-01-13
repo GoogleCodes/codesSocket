@@ -4,43 +4,45 @@
     <text style="font-size: 36rpx;padding-left: 10px;">刷新中...</text>
   </view> -->
 
-  <swiper indicator-dots="true" interval="2000" style="height: 150px" circular="true" autoplay="true" indicator-color="rgba(101,101,101,1)" indicator-active-color="rgb(255,255,255)">
-    <block wx:for="{{ imgUrls }}">
-      <swiper-item>
-        <image src="{{ item }}" class="slide-image" style='width: 100%;height: 100%;' />
-      </swiper-item>
-    </block>
-  </swiper>
+<swiper indicator-dots="true" interval="2000" style="height: 150px" circular="true" autoplay="true" indicator-color="rgba(101,101,101,1)" indicator-active-color="rgb(255,255,255)">
+  <block wx:for="{{ imgUrls }}">
+    <swiper-item>
+      <image src="{{ item }}" class="slide-image" style='width: 100%;height: 100%;' />
+    </swiper-item>
+  </block>
+</swiper>
 
-  <view class="table-header">
-    <scroll-view scroll-x="true" class="recommend_scroll_x_box">
-      <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
-    </scroll-view>
-    <navigator url='/pages/search/search' class="setting">
-      <view class="iconfont icon-weibiaoti-9"></view>
-    </navigator>
-  </view>
+<view class="table-header">
+  <scroll-view scroll-x="true" class="recommend_scroll_x_box">
+    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
+  </scroll-view>
+  <navigator url='/pages/search/search' class="setting">
+    <view class="iconfont icon-weibiaoti-9"></view>
+  </navigator>
+</view>
+
+<view>
 
   <swiper class="swiper-box" duration="300" bindchange="bindChange" current="{{ currentTab }}" 
-  style="margin-bottom: 85px;height: {{ winHeight }}px;z-index: 1;">
+  style="height: {{ winHeight }}px;z-index: 1;margin-bottom: 90px;">
 
     <swiper-item wx:for="{{ tabArray }}">
-      <view class="{{ selected ? 'hidden': 'show' }}">
+      <view class="{{ selected ? 'hidden': 'show' }}" style="height: 100%;overflow-y: auto;">
         <view class="ul-view">
+
           <view class="li-view" wx:for="{{ spliceArray }}">
-            <view class="pic-iview fl pic1" wx:if="{{ status == false }}">
-              <view class="iconfont  iconfont icon-leddeng"></view>
+            <view class="pic-iview fl pic1">
+              <view class="iconfont  iconfont icon-leddeng {{deviceID == item.id && areaid == tabArrayID ? 'status' : '' }}"></view>
             </view>
-            <view class="pic-iview fl pic1" wx:elif="{{ status == true }}">
-              <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
-            </view>
+            <!-- <view class="pic-iview fl pic1" wx:elif="{{ status == true }}">
+                <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
+              </view> -->
             <view class="fl status-iview f12">
-            <view class="block" style='color: #b3b3b3' bindtap='operating' 
-                    data-id='{{ item.id }}' data-sdid='{{ item.dname }}' data-areaid='{{ areaid }}'>
+              <view class="block" style='color: #b3b3b3' bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.dname }}' data-areaid='{{ areaid }}'>
                 <text class="block">{{ item.dname }}</text>
                 <text>当前状态：</text>
-                <text class="block fr" style='color: #6aa84f;' wx:if='{{ status == true }}'>打开</text>
-                <text class="block fr" style='color: #6aa84f;' wx:elif='{{ status == false }}'>关闭</text>
+                <text class="block fr" style='color: #6aa84f;' wx:if='{{ deviceID == item.id }}'>打开</text>
+                <text class="block fr" style='color: #6aa84f;' wx:elif='{{ deviceID !== item.id }}'>关闭</text>
               </view>
             </view>
             <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}&id={{ item.id }}">
@@ -49,21 +51,24 @@
               </view>
             </navigator>
           </view>
+
         </view>
       </view>
     </swiper-item>
-
   </swiper>
 
-  <!-- 语音按钮 -->
-  <view class='music-iview'>
-    <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'>
-      <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
-      <!-- <image src="../../../static/images/img02.png" class="w100 h100"></image> -->
-    </navigator>
-  </view>
+</view>
 
-  <!-- <import src="/pages/footer/footer.wxml" />
+
+<!-- 语音按钮 -->
+<view class='music-iview'>
+  <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'>
+    <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
+    <!-- <image src="../../../static/images/img02.png" class="w100 h100"></image> -->
+  </navigator>
+</view>
+
+<!-- <import src="/pages/footer/footer.wxml" />
 <template is="footer" /> -->
 
 <!-- </scroll-view> -->

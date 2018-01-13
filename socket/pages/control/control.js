@@ -34,61 +34,48 @@ Page({
     this._getBindingList(20, 0);
   },
 
+  onReady() {
+    //  调用连接socket
+    this.goConnSocket();
+  },
+
   _getBindingList(limit, skip) {
     var that = this;
-    let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
-    var head = {
-      'content-type': 'application/json',
-      'X-Gizwits-Application-Id': that.data.options.gizwitsAppId,
-      'X-Gizwits-User-token': that.data.options.token,
-    };
-    tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
-      that.setData({
-        list: result.data.devices
-      });
-      wx.setStorageSync('devices', result.data.devices);
-      let devices = wx.getStorageSync('devices');
-      for (var i in result.data.devices) {
-        var device = result.data.devices[i];
-        if (result.data.devices[i].is_online == true) {
-          that.setData({
-            did: device.did,
-            host: device.host,
-            wss_port: device.wss_port,
-          });
-          //  获取数据
-          let json = {
-            'did': device.did,  //  did
-            'host': device.host,  //  websocket 请求地址
-            'ws_port': device.ws_port, //  端口
-            'wss_port': device.wss_port, //  端口
-          };
-          wx.setStorageSync('didJSon', json);
-        }
+    that.setData({
+      list: wx.getStorageSync('devices')
+    });
+    for (let i in that.data.list) {
+      var device = that.data.list[i];
+      if (that.data.list[i].is_online == true) {
+        that.setData({
+          did: device.did,
+          host: device.host,
+          wss_port: device.wss_port,
+        });
+        //  获取数据
+        let json = {
+          'did': device.did,  //  did
+          'host': device.host,  //  websocket 请求地址
+          'ws_port': device.ws_port, //  端口
+          'wss_port': device.wss_port, //  端口
+        };
+        wx.setStorageSync('didJSon', json);
       }
-      // that._login();
-    }, (err) => { });
+    }
   },
 
   goConnSocket() {
-    let that = this;
+    let that = this, json = {};
     //  创建Socket
     wx.connectSocket({
       url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
       success(res) {
         console.log(res);
-      },
-      fail(err) {
+      },fail(err) {
         console.log(err);
       }
     });
-  },
 
-  _login(did) {
-    let that = this, json = {};
-    wx.showLoading({ title: '' })
-    //  调用连接socket
-    that.goConnSocket();
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
       that.setData({ socketOpen: true });
@@ -105,29 +92,90 @@ Page({
       };
       that._startPing();
       that._sendJson(json);
-    });
 
-    wx.onSocketMessage((res) => {
-      wx.hideLoading();
-      var data = JSON.parse(res.data);
-      if (data.data.success == true) {
+      let option = {}, arr = [];
+      for (let i in that.data.list) {
+        option = {
+          did: that.data.list[i].did,
+        }
+        arr.push(option);
+      }
+      wx.onSocketMessage((res) => {
+        wx.hideLoading();
+        var data = JSON.parse(res.data);
         //  链接socket
         json = {
           cmd: "subscribe_req",
-          data: [{
-            did: did,
-            passcode: '' // IJLAAQTWBM
-          }]
+          data: arr
         };
         //  发送数据
         that._sendJson(json);
         //  获取服务器返回的信息
-        that.getServiceBack(did);
-      } else {
-        if (data.data.msg == "M2M socket has closed, please login again!") {
-          that._login(did);
-        }
+        that.getServiceBack();
+      });
+
+    });
+
+  },
+
+  goSelectDevice(e) {
+    let did = e.currentTarget.dataset.did;
+    wx.setStorageSync('did', did);
+    this._login(did);
+    // this._login(did);
+    // setTimeout(() => {
+    //   wx.switchTab({
+    //     url: '../index/index',
+    //   })
+    // }, 1000);
+  },
+
+  _login(did) {
+    let that = this, json = {};
+    wx.showLoading({ title: '' })
+    wx.setStorageSync('did', did);
+    let arr = [0x00, 0x02, 0xA0, 0xFF];
+    json = {
+      'data': main.getArrays(arr),
+    };
+    tools.sendData('c2s_write', did, json);
+
+    wx.onSocketMessage((res) => {
+      let noti = JSON.parse(res.data).cmd;
+      wx.hideLoading();
+      switch (noti) {
+        case 'subscribe_res':
+          break;
+        case 'c2s_write':
+          break;
+        case 's2c_noti':
+          setTimeout(() => {
+            wx.switchTab({
+              url: '../index/index',
+            })
+          }, 500);
+          break;
+        case 'pong':
+          break;
       }
+
+      // var data = JSON.parse(res.data);
+      // //  链接socket
+      // json = {
+      //   cmd: "subscribe_req",
+      //   data: arr
+      // };
+      // //  发送数据
+      // that._sendJson(json);
+      //  获取服务器返回的信息
+      // that.getServiceBack();
+      // if (data.data.success == true) {
+        
+      // } else {
+      //   if (data.data.msg == "M2M socket has closed, please login again!") {
+      //     that._login(did);
+      //   }
+      // }
     });
 
   },
@@ -153,6 +201,7 @@ Page({
       //  对象转换字符串
       data: JSON.stringify(json),
     })
+    console.log(123123123);
   },
 
   getJSON(cmd, dids, names) {
@@ -168,17 +217,6 @@ Page({
     tools.storageJSONS(json);
   },
 
-  goSelectDevice(e) {
-    let did = e.currentTarget.dataset.did;
-    wx.setStorageSync('did', did);
-    this._login(did);
-    setTimeout(() => {
-      wx.switchTab({
-        url: '../index/index',
-      })
-    }, 1000);
-  },
-
   Selecteding() {
     wx.switchTab({
       url: '../index/index',
@@ -186,19 +224,21 @@ Page({
   },
 
   //  获取服务器返回的信息
-  getServiceBack(did) {
+  getServiceBack() {
     let that = this;
     wx.onSocketMessage((res) => {
       var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
       switch (noti.cmd) {
         case 'subscribe_res':
-          let arr = [0x00, 0x02, 0xA0, 0xFF];
-          var json = {
-            'data': main.getArrays(arr),
-          };
-          tools.sendData('c2s_write', did, json);
+          console.log(JSON.parse(res.data));
+          // let arr = [0x00, 0x02, 0xA0, 0xFF];
+          // var json = {
+          //   'data': main.getArrays(arr),
+          // };
+          // tools.sendData('c2s_write', did, json);
           break;
         case 'c2s_write':
+
           break;
         case 's2c_noti':
           break;

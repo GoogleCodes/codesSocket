@@ -11,13 +11,15 @@
 .navGoHover:hover {background: #fff;border-radius: 100%;}
 /*改变谷歌滚动条的样式*/
 ::selection{background:pink;}
-::-webkit-scrollbar{width:8px;height:6px;background:#ccc;}
-/* ::-webkit-scrollbar-button{background-color:#e5e5e5;} */
-/* ::-webkit-scrollbar-track{background:#999;}
+::-webkit-scrollbar{width:1px;height:6px;background:#ccc;}
+::-webkit-scrollbar-button{background-color:#e5e5e5;}
+/* 
+::-webkit-scrollbar-track{background:#999;}
 ::-webkit-scrollbar-track-piece{background:#ccc}
 ::-webkit-scrollbar-thumb{background:#666;}
 ::-webkit-scrollbar-corner{background:#82AFFF;}
-::-webkit-scrollbar-resizer{background:#FF0BEE;} */
+::-webkit-scrollbar-resizer{background:#FF0BEE;}
+
 /* scrollbar{-moz-appearance:none !important;background:rgb(0,255,0) !important;}
 scrollbarbutton{-moz-appearance:none !important;background-color:rgb(0,0,255) !important;}
 scrollbarbutton:hover{-moz-appearance:none !important;background-color:rgb(255,0,0) !important;} */

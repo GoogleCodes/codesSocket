@@ -95,6 +95,15 @@ class Main {
     })
   }
 
+
+  getSaveMessage(callback) {
+    wx.onSocketMessage((res) => {
+      try {
+        callback()
+      } catch(e) {}
+    })
+  }
+
   IndexDemo(str) {
     var s = sqlStr.indexOf(str);
     return s;

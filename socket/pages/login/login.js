@@ -10,8 +10,8 @@ Page({
    * 页面的初始数据
    */
   data: {
-    uname: '13232800159', // 13250672958 || 13630017088 || 13232800159
-    pword: '123123', // 123456789 || 654321
+    uname: '13630017088', // 13250672958 || 13630017088 || 13232800159
+    pword: '654321', // 123456789 || 654321
     wechatOpenId: 'kceshi1',
     gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
     token: '',
@@ -44,7 +44,6 @@ Page({
       formID: fId,
       fromObject: fObj,
     };
-    that.getUser(that.data.uname);
     var head = {
       'content-type': 'application/json',
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
@@ -59,6 +58,7 @@ Page({
         });
         return false;
       } else {
+        that.getUser(that.data.uname);
         //  登录成功后向后台发送一条消息记录
         that.setData({ loadHidden: true, });
         var options = {
@@ -89,7 +89,6 @@ Page({
       uname: userInfom.username,
       pword: userInfom.password,
     });
-    console.log(that.data.uname, "that.data.uname");
     that.getUser(that.data.uname);
 
     if (userInfom !== '') {
@@ -113,6 +112,7 @@ Page({
       }
     }).then((res) => {
       wx.setStorageSync('wxuser', res.data.data)
+      console.log(wx.getStorageSync('wxuser'));
     });
     
   }
