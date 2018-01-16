@@ -21,6 +21,21 @@
   position: relative;
 }
 
+.eq-iview .device_name {
+  margin: 15px 0 0;
+  font-size: 14px;
+  width: 100%;
+  z-index: -1;
+}
+
+.eq-iview .device_name .device_name_input {
+  border: 1px solid #ccc;
+  height: 35px;
+  width: 95%;
+  text-indent: 1em;
+  padding-left: 11px;
+}
+
 .eq-iview:nth-child(2n) {
   margin: 20px 10% 0;
 }
@@ -38,6 +53,11 @@
 
 .eq-iview .icon-weibiaoti-1 {
   color: #ed1c24;
+  font-size: 20px;
+  z-index: 1;
+  position: absolute;
+  top: 7px;
+  right: 7px;
 }
 
 /* ul-iview start */

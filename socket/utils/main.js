@@ -60,15 +60,30 @@ class Main {
     }, 500)
   }
 
-  ajax({ data }) {
+  ajax(data) {
     return new Promise((resolve, reject) => {
       wx.request({
         url: urls.serviceUri + data.url,
         data: data.data,
         method: data.method,
-        header: data.header,
-        success: resolve,
-        fail: reject
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        success(res) {
+          if (res.statusCode == 404) {
+            wx.showToast({
+              title: '服务器关闭了!',
+              duration: 1500,
+            })
+            return false;
+          } else if (res.statusCode == 200) {
+            resolve(res.data)
+          }
+        },
+        fail(err) {
+          reject(err)
+        }
       })
     })
   }
@@ -108,6 +123,37 @@ class Main {
     var s = sqlStr.indexOf(str);
     return s;
   }
+
+  /*                      中文转unicode                          */
+
+  unicode(str) {
+    var value = '';
+    for (var i = 0; i < str.length; i++) {
+      value += '\\u' + this.left_zero_4(parseInt(str.charCodeAt(i)).toString(16));
+    }
+    console.log(value);
+    return value;
+  }
+
+  left_zero_4(str) {
+    if (str != null && str != '' && str != 'undefined') {
+      if (str.length == 2) {
+        return '00' + str;
+      }
+    }
+    return str;
+  }
+
+  unicode1(str) {
+    var value = '';
+    for (var i = 0; i < str.length; i++)
+      value += '&#' + str.charCodeAt(i) + ';';
+    console.log(value);
+    return value;
+  }
+  
+  /*                      中文转unicode                          */
+
 
 }
 

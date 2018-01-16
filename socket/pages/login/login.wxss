@@ -80,6 +80,14 @@
   margin: 0px auto;
 }
 
+.wechatLogin .icon-weixin {
+  color: rgb(42,161,48);
+  font-size: 28px;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
 .wechatLogin .line {
   width: 100%;
   height: 1px;

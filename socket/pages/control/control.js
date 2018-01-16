@@ -25,6 +25,8 @@ Page({
     host: '', //  websocket 请求地址 sandbox.gizwits.com
     ws_port: 0, //  端口
     wss_port: 0, //  端口
+    isOnList: [],
+    isOffList: [],
   },
 
   /**
@@ -44,13 +46,19 @@ Page({
     that.setData({
       list: wx.getStorageSync('devices')
     });
+    wx.showLoading({
+      title: '获取中...',
+    })
     for (let i in that.data.list) {
       var device = that.data.list[i];
       if (that.data.list[i].is_online == true) {
+        let arr = [];
+        arr.push(that.data.list[i]);
         that.setData({
           did: device.did,
           host: device.host,
           wss_port: device.wss_port,
+          isOnList: that.data.isOnList.concat(arr)
         });
         //  获取数据
         let json = {
@@ -59,8 +67,29 @@ Page({
           'ws_port': device.ws_port, //  端口
           'wss_port': device.wss_port, //  端口
         };
+        // console.log(that.data.isOnList[i]);
         wx.setStorageSync('didJSon', json);
       }
+      if (that.data.list[i].is_online == false) {
+        let arr = [];
+        arr.push(that.data.list[i]);
+        that.setData({
+          did: device.did,
+          host: device.host,
+          wss_port: device.wss_port,
+          isOffList: that.data.isOffList.concat(arr)
+        });
+        //  获取数据
+        let json = {
+          'did': device.did,  //  did
+          'host': device.host,  //  websocket 请求地址
+          'ws_port': device.ws_port, //  端口
+          'wss_port': device.wss_port, //  端口
+        };
+        // console.log(that.data.isOffList);
+        wx.setStorageSync('didJSon', json);
+      }
+      wx.hideLoading();
     }
   },
 
@@ -75,6 +104,10 @@ Page({
         console.log(err);
       }
     });
+
+    wx.onSocketError((res) => {
+      console.log('WebSocket连接打开失败，请检查！')
+    })
 
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
@@ -121,13 +154,8 @@ Page({
   goSelectDevice(e) {
     let did = e.currentTarget.dataset.did;
     wx.setStorageSync('did', did);
+    console.log(did, 'did...');
     this._login(did);
-    // this._login(did);
-    // setTimeout(() => {
-    //   wx.switchTab({
-    //     url: '../index/index',
-    //   })
-    // }, 1000);
   },
 
   _login(did) {
@@ -139,7 +167,7 @@ Page({
       'data': main.getArrays(arr),
     };
     tools.sendData('c2s_write', did, json);
-
+    
     wx.onSocketMessage((res) => {
       let noti = JSON.parse(res.data).cmd;
       wx.hideLoading();
@@ -154,6 +182,9 @@ Page({
               url: '../index/index',
             })
           }, 500);
+          break;
+        case 'c2s_read':
+
           break;
         case 'pong':
           break;
@@ -201,7 +232,6 @@ Page({
       //  对象转换字符串
       data: JSON.stringify(json),
     })
-    console.log(123123123);
   },
 
   getJSON(cmd, dids, names) {
@@ -230,7 +260,6 @@ Page({
       var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
       switch (noti.cmd) {
         case 'subscribe_res':
-          console.log(JSON.parse(res.data));
           // let arr = [0x00, 0x02, 0xA0, 0xFF];
           // var json = {
           //   'data': main.getArrays(arr),
@@ -238,7 +267,6 @@ Page({
           // tools.sendData('c2s_write', did, json);
           break;
         case 'c2s_write':
-
           break;
         case 's2c_noti':
           break;

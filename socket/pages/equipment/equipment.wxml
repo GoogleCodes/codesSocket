@@ -4,11 +4,15 @@
     <image src="../../../static/images/img10.png" style="width: 100%;height: 100%;"></image>
   </view>
 
-  <view class="eq-iview" bindtap='updateDeviceName'>
-    <view class="eq-iview-left fl">设备名称：</view>
-    <view class="eq-iview-left fl">卧室灯</view>
+  <view class="eq-iview">
+    <view class="fl" hidden='{{ !weibiao }}' bindtap='updateDeviceName'>
+      <view class="eq-iview-left fl">设备名称：</view>
+      <view class="eq-iview-left fl">卧室灯</view>
+    </view>
+     <view class="fl device_name" hidden='{{ weibiao }}'>
+      <input class="device_name_input" placeholder='请输入设备名称' bindblur='blurInputDate' value='{{ blurInputText }}'></input>
+    </view> 
     <view class="iconfont icon-weibiaoti-1 fr" bindtap='deleteGizwits' hidden='{{ weibiao }}'></view>
-    <!-- <image src="../../../static/images/img11.png" style="width: 20px;height: 20px;"></image> -->
   </view>
 
   <view class="eq-iview">

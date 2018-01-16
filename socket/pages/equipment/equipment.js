@@ -2,7 +2,7 @@
 
 var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
-let main = new Main();
+let $ = new Main();
 
 const did = wx.getStorageSync('didJSon').did;
 
@@ -19,6 +19,8 @@ Page({
     sdid: [],
     weibiao: true,
     id: 0,
+    blurInputText: '',
+    did: '',
   },
 
   /**
@@ -28,7 +30,8 @@ Page({
     let that = this;
     this.setData({
       sdid: options.sdid,
-      id: options.id
+      id: options.id,
+      did: wx.getStorageSync('did')
     });
     wx.getSystemInfo({
       success(res) {
@@ -46,7 +49,6 @@ Page({
       content: '您确定要删除这个设备吗?',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
-
           wx.request({
             url: 'http://yuyin.ittun.com/public/index/dev/getregion',
             method: 'POST',
@@ -117,7 +119,7 @@ Page({
     let arr = [];
     arr.push(0x00, 0x02, 0xA0, 0x01);
     var json = {
-      'data': main.getArrays(arr),
+      'data': $.getArrays(arr),
     };
     tools.sendData('c2s_write', did, json);
   },
@@ -138,7 +140,7 @@ Page({
         arr.push(0x00, 0x08, 0xA2);
         count = arr.concat(sdid.concat(brr));
         json = {
-          'data': main.getArrays(count),
+          'data': $.getArrays(count),
         };
         tools.sendData('c2s_write', did, json);
         break;
@@ -147,7 +149,7 @@ Page({
         arr.push(0x00, 0x08, 0xA2);
         count = arr.concat(sdid.concat(brr));
         json = {
-          'data': main.getArrays(count),
+          'data': $.getArrays(count),
         };
         tools.sendData('c2s_write', did, json);
         break;
@@ -157,7 +159,7 @@ Page({
         arr.push(0x00, 0x08, 0xA2);
         count = arr.concat(sdid.concat(brr));
         json = {
-          'data': main.getArrays(count),
+          'data': $.getArrays(count),
         };
         tools.sendData('c2s_write', did, json);
         break;
@@ -165,7 +167,7 @@ Page({
         break;
     }
 
-    main.getSocketResponse((data) => {
+    $.getSocketResponse((data) => {
       if (data.splice(9, 1).toString() == 1) {
         wx.showToast({
           title: '控制成功!!',
@@ -188,7 +190,7 @@ Page({
     arr.push(0x00, 0x08, 0xA2)
     let count = arr.concat(sdid.concat(brr));
     json = {
-      'data': main.getArrays(count),
+      'data': $.getArrays(count),
     };
     //  获取did
     const storage = wx.getStorageSync("didJSon");
@@ -196,15 +198,67 @@ Page({
   },
 
   updateDeviceName() {
-    if (this.data.weibiao == true) {
-      this.setData({
+    let that = this;
+    if (that.data.weibiao == true) {
+      that.setData({
         weibiao: false,
       });
-    } else if (this.data.weibiao == false) {
-      this.setData({
+    } else if (that.data.weibiao == false) {
+      that.setData({
         weibiao: true,
       });
     }
+  },
+
+  blurInputDate(e) {
+    let that = this;
+    let arr = [], json = {};
+
+    let nameLength = [1];
+    let nameContent = [60];
+    let did = JSON.parse(that.data.sdid);
+    let count = nameLength.concat(nameContent);
+
+    arr.push(0x00, 0x02, 0x14);
+
+    let a = did.concat(count);
+    let b = arr.concat(a);
+
+    json = {
+      'data': $.getArrays(b),
+    };
+    tools.sendData('c2s_write', that.data.did, json);
+
+    let deviceName = e.detail.value;
+
+    if (that.data.weibiao == true) {
+      that.setData({
+        weibiao: false,
+      });
+    } else if (that.data.weibiao == false) {
+      that.setData({
+        weibiao: true,
+      });
+    }
+
+    $.getSocketResponse((res) => {
+      console.log(res.splice(3, 1));
+      let data = res.splice(3, 1);
+      if (data == 1) {
+        wx.showToast({
+          title: '修改成功!',
+          duration: 2000
+        })
+        return false;
+      } else if (data == 0) {
+        wx.showToast({
+          title: '修改失败!',
+          duration: 2000
+        })
+        return false;
+      }
+    })
+
   }
 
 })

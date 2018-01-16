@@ -8,6 +8,7 @@ page {
 
 .share-main {
   margin: 0 0 50px;
+  padding: 0 0 50px;
 }
 
 .share-main .share-title {
@@ -17,7 +18,7 @@ page {
 }
 
 .share-main .ul-share {
-  height:60px;
+  height: 60px;
 }
 
 .share-main .ul-share .li-share {
@@ -25,15 +26,21 @@ page {
   line-height: 48px;
   background: #fff;
   position: relative;
+  clear: both;
 }
+
+ .share-main .ul-share .li-share .p-share:first-child {
+  width: 40%;
+} 
 
 .share-main .ul-share .li-share .p-share {
   margin: 0 0 0 12px;
+  /* width: 46%; */
 }
 
 .share-main .ul-share .li-share .cancel {
   position: absolute;
-  right: 10px;
+  right: -10px;
   color: rgb(237, 27, 36);
   display: none;
 }
@@ -97,7 +104,7 @@ page {
 }
 
 .layer-code .code-desc {
-  text-align: center
+  text-align: center;
 }
 
 /* layer end */

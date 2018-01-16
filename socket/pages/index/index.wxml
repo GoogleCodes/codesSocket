@@ -32,17 +32,22 @@
 
           <view class="li-view" wx:for="{{ spliceArray }}">
             <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-leddeng {{deviceID == item.id && areaid == tabArrayID ? 'status' : '' }}"></view>
+              <view class="iconfont  iconfont icon-leddeng {{deviceID == item.id && areaid == tabArrayID && status ==  true ? 'status' : '' }}"></view>
             </view>
             <!-- <view class="pic-iview fl pic1" wx:elif="{{ status == true }}">
                 <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
               </view> -->
             <view class="fl status-iview f12">
-              <view class="block" style='color: #b3b3b3' bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.dname }}' data-areaid='{{ areaid }}'>
+              <view class="block" style='color: #b3b3b3' bindtap='operating' 
+                data-id='{{ item.id }}' 
+                data-sdid='{{ item.dname }}' 
+                data-areaid='{{ areaid }}'>
                 <text class="block">{{ item.dname }}</text>
                 <text>当前状态：</text>
-                <text class="block fr" style='color: #6aa84f;' wx:if='{{ deviceID == item.id }}'>打开</text>
-                <text class="block fr" style='color: #6aa84f;' wx:elif='{{ deviceID !== item.id }}'>关闭</text>
+                <text class="block fr" style='color: #6aa84f;' 
+                wx:if='{{ item.status ==  0 }}'>关闭</text>
+                <text class="block fr" style='color: #6aa84f;' 
+                wx:elif='{{ deviceID == item.id && areaid == tabArrayID && item.status ==  1 }}'>打开</text> 
               </view>
             </view>
             <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}&id={{ item.id }}">

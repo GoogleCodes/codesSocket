@@ -3,18 +3,39 @@
 <view class="control-body">
   <view class="control-title">网关：</view>
 
+  <view>在线的设备：</view>
   <view class="control-ul">
-    <view class="control-li" wx:for="{{ list }}" data-did="{{item.did }}" data-host="{{ item.host }}" 
-      data-wssport="{{ item.wss_port }}" bindtap='goSelectDevice'>
-      <text class="fl iconfont icon-weibiaoti- block"></text>
-      <view class="li-main">
-        <view class="li-main-desc">{{ item.dev_alias }}</view>
-        <view class="li-main-desc" style='color: #b3b3b3;'>mac：{{ item.mac }}</view>
+    <view class="control-li" wx:for="{{ isOnList }}" data-did="{{item.did }}" data-host="{{ item.host }}" data-wssport="{{ item.wss_port }}" bindtap='goSelectDevice'>
+      <view>
+        <text class="fl iconfont icon-weibiaoti- block" style="color: #7cb242;"></text>
+        <view class="li-main">
+          <view class="li-main-desc" style="color: #7cb242;">{{ item.did }}</view>
+          <view class="li-main-desc" style='color: #7cb242;'>mac：{{ item.mac }}</view>
+        </view>
+        <view class="fr" wx:if="{{ item.role == 'guest' }}">访客</view>
+        <view class="fr" wx:elif="{{ item.role == 'owner' }}">拥有者</view>
+        <view class="fr" wx:elif="{{ item.role == 'special' }}">首绑用户</view>
+        <view class="fr" wx:elif="{{ item.role == 'normal' }}">普通用户</view>
       </view>
-      <view class="fr" wx:if="{{ item.role == 'guest' }}">访客</view>
-      <view class="fr" wx:elif="{{ item.role == 'owner' }}">拥有者</view>
-      <view class="fr" wx:elif="{{ item.role == 'special' }}">首绑用户</view>
-      <view class="fr" wx:elif="{{ item.role == 'normal' }}">普通用户</view>
+
+    </view>
+  </view>
+
+  <view style="margin-top: 30px;">不在线的设备：</view>
+  <view class="control-ul">
+    <view class="control-li" wx:for="{{ isOffList }}" data-did="{{item.did }}" data-host="{{ item.host }}" data-wssport="{{ item.wss_port }}" bindtap='goSelectDevice'>
+      <view wx:if="{{ item.is_online == false }}">
+        <text class="fl iconfont icon-weibiaoti- block"></text>
+        <view class="li-main">
+          <view class="li-main-desc">{{ item.dev_alias }}</view>
+          <view class="li-main-desc" style='color: #b3b3b3;'>mac：{{ item.mac }}</view>
+        </view>
+        <view class="fr" wx:if="{{ item.role == 'guest' }}">访客</view>
+        <view class="fr" wx:elif="{{ item.role == 'owner' }}">拥有者</view>
+        <view class="fr" wx:elif="{{ item.role == 'special' }}">首绑用户</view>
+        <view class="fr" wx:elif="{{ item.role == 'normal' }}">普通用户</view>
+      </view>
+
     </view>
   </view>
 

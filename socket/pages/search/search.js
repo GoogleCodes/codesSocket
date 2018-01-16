@@ -2,7 +2,9 @@
 
 var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
-let main = new Main();
+let $ = new Main();
+
+const did = wx.getStorageSync('didJSon').did;
 
 Page({
 
@@ -30,12 +32,18 @@ Page({
       'content-type': 'application/json',
       'content-type': 'application/x-www-form-urlencoded'
     },
+    did: '',
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+
+    this.setData({
+      did: wx.getStorageSync('did')
+    });
+
     let that = this;
     wx.getSystemInfo({
       success(res) {
@@ -44,13 +52,16 @@ Page({
         });
       },
     });
+
+
     let arr = [];
     arr.push(0x00, 0x02, 0xA0, 0xFF);
     var json = {
-      'data': main.getArrays(arr),
+      'data': $.getArrays(arr),
     };
-    tools.sendData('c2s_write', wx.getStorageSync('didJSon').did, json);
-    main.getSocketResponse((data) => {
+    tools.sendData('c2s_write', that.data.did, json);
+
+    $.getSocketResponse((data) => {
       let k = data;
       let last = null, brr = [], json = {};
       for (let i in k) {
@@ -70,22 +81,34 @@ Page({
       }
     })
 
-    main.ajax({
+    $.ajax({
+      url: 'dev/getregion',
+      method: 'POST',
       data: {
-        url: 'dev/getregion',
+        uid: wx.getStorageSync('wxuser').id,
+      },
+    }).then((res) => {
+      that.setData({
+        list: res.data,
+      });
+      that.setData({
+        areaid: that.data.list[0].id
+      });
+      $.ajax({
+        url: 'dev/getdev',
         method: 'POST',
         header: that.data.headers,
         data: {
           uid: wx.getStorageSync('wxuser').id,
-        },
-      }
-    }).then((res) => {
-      that.setData({
-        list: res.data.data,
-      });
-      that.setData({
-        areaid : that.data.list[0].id
-      });
+          rid: that.data.areaid,
+        }
+      }).then((res) => {
+        if (res.code == 1) {
+          that.setData({
+            spliceArray: res.data
+          });
+        }
+      })
     })
 
   },
@@ -117,22 +140,20 @@ Page({
       index: e.detail.value,
     })
 
-    main.ajax({
+    $.ajax({
+      url: 'dev/getdev',
+      method: 'POST',
       data: {
-        url: 'dev/getdev',
-        method: 'POST',
-        header: that.data.headers,
-        data: {
-          uid: wx.getStorageSync('wxuser').id,
-          rid: that.data.areaid,
-        }
+        uid: wx.getStorageSync('wxuser').id,
+        rid: that.data.areaid,
       }
     }).then((res) => {
-      if (res.data.code == 1) {
+      if (res.code == 1) {
         that.setData({
-          spliceArray: res.data.data
+          spliceArray: res.data
         });
-        main.getSocketResponse((k) => {
+        console.log(that.data.spliceArray);
+        $.getSocketResponse((k) => {
           let last = null, brr = [], json = {};
           for (let i in k) {
             last = k.splice(4, 21);
@@ -150,7 +171,7 @@ Page({
             }
           }
         })
-      } else if (res.data.code == 0) {
+      } else if (res.code == 0) {
         that.setData({
           spliceArray: []
         });
@@ -247,33 +268,42 @@ Page({
       content: '是否要删除当前选择的区域！',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
-          wx.request({
-            url: 'http://yuyin.ittun.com/public/index/dev/delregion',
+          $.ajax({
+            url: 'dev/delregion',
             method: 'POST',
-            header: {
-              'content-type': 'application/json',
-              'content-type': 'application/x-www-form-urlencoded'
-            },
             data: {
               id: that.data.areaid,
               uid: wx.getStorageSync('wxuser').id,
             },
-            success(res) {
-              wx.showToast({
-                title: '已经成功删除',
-                duration: 2500,
+          }).then((res) => {
+            wx.showToast({
+              title: '已经成功删除',
+              duration: 2500,
+            })
+            setTimeout(() => {
+              wx.switchTab({
+                url: '../index/index',
               })
-              setTimeout(() => {
-                wx.switchTab({
-                  url: '../index/index',
-                })
-              }, 500);
-            },
+            }, 500);
           })
         } else if (res.cancel == true && res.confirm == false) {
           return false;
         }
       },
+    })
+  },
+
+  deleteDevice(e) {
+    let json = {
+      uid: wx.getStorageSync('wxuser').id,
+      did: e.currentTarget.dataset.did
+    };
+    $.ajax({
+      url: 'dev/adddev',
+      method: "POST",
+      data: json,
+    }).then((ers) => {
+      console.log(res.data);
     })
   },
 
@@ -299,25 +329,19 @@ Page({
         sdid: e.currentTarget.dataset.sdid,
       };
       this.data.spliceArray.push(arr);
-
-      wx.request({
-        url: 'http://yuyin.ittun.com/public/index/dev/adddev',
+      
+      $.ajax({
+        url: 'dev/adddev',
         method: "POST",
-        header: {
-          'content-type': 'application/json',
-          'content-type': 'application/x-www-form-urlencoded'
-        },
         data: json,
-        success(res) {
-          wx.showToast({
-            title: res.data.msg,
-          })
-          that.setData({
-            currentTab: 0
-          });
-          main.goPages('../index/index');
-
-        }
+      }).then((res) => {
+        wx.showToast({
+          title: res.data.msg,
+        })
+        that.setData({
+          currentTab: 0
+        });
+        $.goPages('../index/index');
       })
 
     } else if (this.data.array[index].active == 1) {
@@ -344,24 +368,20 @@ Page({
       return;
     }
 
-    wx.request({
-      url: 'http://yuyin.ittun.com/public/index/dev/addregion',
+    $.ajax({
+      url: 'dev/addregion',
       method: "POST",
-      header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
-      },
       data: {
         uid: wx.getStorageSync('wxuser').id,
         name: this.data.addAreaText
       },
-      success(res) {
-        that.setData({
-          areaid: res.data.data
-        })
-        main.goPages('../index/index');
-      }
+    }).then((res) => {
+      that.setData({
+        areaid: res.data.data
+      })
+      $.goPages('../index/index');
     })
+
     wx.showToast({
       title: '请求成功',
     })
@@ -373,23 +393,19 @@ Page({
 
   getRegion() {
     let that = this;
-    wx.request({
-      url: 'http://yuyin.ittun.com/public/index/dev/getregion',
+
+    $.ajax({
+      url: 'dev/getregion',
       method: 'POST',
-      header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
-      },
       data: {
         uid: wx.getStorageSync('wxuser').id,
       },
-      success(res) {
-        that.setData({
-          list: res.data.data,
-        });
-        console.log(that.data.list);
-      }
+    }).then((res) => {
+      that.setData({
+        list: res.data,
+      });
     })
+    
   },
 
   onShow() {

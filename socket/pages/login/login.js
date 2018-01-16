@@ -50,6 +50,7 @@ Page({
     };
     wx.setStorageSync('userInformation', json);
     that.getUser(that.data.uname);
+
     tools.sendRrquest('login', 'POST', json, head).then((result) => {
        //  如果账号或者密码错误 提示错误
       if (result.data.error_code == 9020) {
@@ -96,30 +97,14 @@ Page({
   },
 
   getUser(tel) {
-
     main.ajax({
+      url: 'member/getUser',
+      method: "POST",
       data: {
-        url: 'member/getUser',
-        method: "POST",
-        header: {
-          'content-type': 'application/json',
-          'content-type': 'application/x-www-form-urlencoded'
-        },
-        data: {
-          tel: tel
-        },
-      }
+        tel: tel
+      },
     }).then((res) => {
-      if (res.statusCode == 404) {
-        wx.showToast({
-          title: '服务器关闭了!',
-          duration: 1500,
-        })
-        return false;
-      } else if (res.statusCode == 200) {
-        wx.setStorageSync('wxuser', res.data.data)
-        console.log(wx.getStorageSync('wxuser'));
-      }
+      wx.setStorageSync('wxuser', res.data)
     });
     
   }

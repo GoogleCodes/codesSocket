@@ -13,7 +13,7 @@
   line-height: 40px;
   padding-left: 10px;
   font-size: 16px;
-  width: 180px;
+  width: 210px;
   border: 1px solid #f2f2f2;
 }
 
@@ -22,6 +22,13 @@
   line-height: 40px;
   text-indent: 0.5em;
   border: 1px solid #f2f2f2;
+}
+
+.icon-sanjiaoxing-down {
+  position: absolute;
+  right: 0px;
+  top: 3px;
+  color: #ccc;
 }
 
 .section .iconfont {
@@ -107,6 +114,18 @@
   font-size: 30px;
 }
 
+@media all and (max-width: 414px) {
+  .section .search-input {
+    width: 285px;
+  }
+}
+
+@media all and (max-width: 375px) {
+  .section .search-input {
+    width: 240px;
+  }
+}
+
 @media all and (max-width: 360px) {
   .ul-iview .li-iview {
     margin: 10px 8px 0 0;
@@ -118,6 +137,11 @@
 }
 
 @media all and (max-width: 320px) {
+
+  .section .search-input {
+    width: 210px;
+  }
+
   .ul-iview .li-iview {
     margin: 10px 8px 0 0;
   }
@@ -125,6 +149,7 @@
   .ul-iview .li-iview .iconfont {
     padding: 12/px 0px;
   }
+  
 }
 
 /* ul-iview end */

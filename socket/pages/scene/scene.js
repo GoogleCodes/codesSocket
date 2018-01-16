@@ -4,7 +4,7 @@ var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
 // const did = wx.getStorageSync('didJSon').did;
-const did = wx.getStorageSync('did');
+// const did = wx.getStorageSync('did');
 
 Page({
 
@@ -17,13 +17,17 @@ Page({
     arrays: [],
     sceneids: [],
     isTrueScene: true,
-    sceneArray: []
+    sceneArray: [],
+    did: "",
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    this.setData({
+      did: wx.getStorageSync('did')
+    });
     this.getSceneTo();
   },
 
@@ -37,7 +41,7 @@ Page({
     json = {
       'data': main.getArrays(arr),
     };
-    tools.sendData('c2s_write', did, json);
+    tools.sendData('c2s_write', that.data.did, json);
     setTimeout(() => {
       wx.hideLoading();
     }, 500)
@@ -85,7 +89,7 @@ Page({
       json = {
         'data': main.getArrays(count),
       };
-      tools.sendData('c2s_write', did, json);
+      tools.sendData('c2s_write', that.data.did, json);
       wx.onSocketMessage((res) => {
         try {
           let data = JSON.parse(res.data);
@@ -112,7 +116,7 @@ Page({
       json = {
         'data': main.getArrays(count),
       };
-      tools.sendData('c2s_write', did, json);
+      tools.sendData('c2s_write', that.data.did, json);
       return;
     }
   },
@@ -127,7 +131,7 @@ Page({
         json = {
           'data': main.getArrays(arr.concat(that.data.sceneid)),
         };
-        tools.sendData('c2s_write', did, json);
+        tools.sendData('c2s_write', that.data.did, json);
         wx.onSocketMessage((res) => {
           try {
             let data = JSON.parse(res.data);

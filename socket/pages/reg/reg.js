@@ -2,6 +2,9 @@
 
 var tools = require('../../utils/util.js');
 
+import { Main } from '../../utils/main.js'
+let $ = new Main();
+
 Page({
   data: {
     gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
@@ -25,20 +28,6 @@ Page({
    */
   onLoad(options) {
     this.getToken();
-    wx.request({
-      url: 'http://yuyin.ittun.com/public/index/member/getUser',
-      method: "POST",
-      header: {
-        'content-type': 'application/json',
-        'content-type': 'application/x-www-form-urlencoded'
-      },
-      data: {
-        tel: this.data.mobile
-      },
-      success(res) {
-        console.log(res);
-      }
-    })
   },
 
   mobileInputEvent(e) {
@@ -158,20 +147,20 @@ Page({
     };
 
     //  验证
-    // switch (true) {
-    //   case e.detail.value.name == '':
-    //     tools.showModel('提示', '请输入名称');
-    //     return false;
-    //   case e.detail.value.mobile == '':
-    //     tools.showModel('提示', '请输入手机号码');
-    //     return false;
-    //   case e.detail.value.code == '':
-    //     tools.showModel('提示', '验证码为空');
-    //     return false;
-    //   case e.detail.value.pword == '':
-    //     tools.showModel('提示', '密码为空');
-    //     return false;
-    // }
+    switch (true) {
+      case e.detail.value.name == '':
+        tools.showModel('提示', '请输入名称');
+        return false;
+      case e.detail.value.mobile == '':
+        tools.showModel('提示', '请输入手机号码');
+        return false;
+      case e.detail.value.code == '':
+        tools.showModel('提示', '验证码为空');
+        return false;
+      case e.detail.value.pword == '':
+        tools.showModel('提示', '密码为空');
+        return false;
+    }
     var head = {
       'content-type': 'application/json',
       'Accept': 'application/json',
@@ -189,22 +178,19 @@ Page({
           tools.showModel('提示', '验证码错误');
           break;
       }
-      wx.request({
-        url: 'http://yuyin.ittun.com/public/index/member/add',
-        header: {
-          'content-type': 'application/json',
-          'content-type': 'application/x-www-form-urlencoded'
-        },
+
+      $.ajax({
+        url: 'member/add',
         method: "POST",
         data: json,
-        success(res) {
-          wx.showToast({
-            title: '注册成功！',
-            icon: 'success',
-            duration: 2000
-          });
-        }
+      }).then((res) => {
+        wx.showToast({
+          title: '注册成功！',
+          icon: 'success',
+          duration: 2000
+        });
       })
+
       wx.removeStorageSync("userInformation");
       wx.removeStorageSync("options");
       wx.redirectTo({ url: '../login/login', });

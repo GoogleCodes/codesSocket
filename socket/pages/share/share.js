@@ -18,7 +18,7 @@ Page({
       'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
       'X-Gizwits-User-token': wx.getStorageSync('options').token,
     },
-    devices: wx.getStorageSync('devices')
+    devices: wx.getStorageSync('devices'),
   },
 
   /**
@@ -37,7 +37,6 @@ Page({
 
   longChose(e) {
     let that = this;
-    console.log('longChose....');
     for (let i in that.data.devices) {
       if (that.data.devices[i].did == e.currentTarget.dataset.did) {
         switch (true) {

@@ -6,7 +6,6 @@ import { Main } from '../../utils/main.js'
 let main = new Main();
 
 // const did = wx.getStorageSync('didJSon').did;
-const did = wx.getStorageSync('did');
 
 Page({
 
@@ -20,7 +19,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '打开大厅',
+    voiceIMessage: '全部',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -28,7 +27,8 @@ Page({
     headers: {
       'content-type': 'application/json',
       'content-type': 'application/x-www-form-urlencoded'
-    }
+    },
+    did: ''
 
   },
 
@@ -36,6 +36,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    this.setData({
+      did: wx.getStorageSync('did')
+    });
     this.getScene();
   },
 
@@ -80,7 +83,7 @@ Page({
       setTimeout(() => {
         console.log(s.data.recodePath, "s.data.recodePath");
         wx.uploadFile({
-          url: 'http://yuyin.ittun.com/public/index/dev/zhen',
+          url: 'http://www.getcodeing.com/public/index/dev/zhen',
           filePath: s.data.recodePath,
           method: "POST",
           name: 'silk',
@@ -111,26 +114,26 @@ Page({
               ins_l: options.time2,
             });
 
+            function IndexDemo(str1, str2) {
+              var s = str2.indexOf(str1);
+              return s;
+            }
+
             for (var i in options.yuyin) {
               var sqlStr = options.yuyin[i];
-
-              function IndexDemo(str) {
-                var s = sqlStr.indexOf(str);
-                return s;
-              }
 
               s.setData({
                 openMessage: sqlStr,
               });
 
               let tabArray = wx.getStorageSync('tabArray');
-              if (IndexDemo('打开全部灯') || IndexDemo('打') || IndexDemo('打开')) {
+              if (IndexDemo('打开全部灯', sqlStr) || IndexDemo('打', sqlStr) || IndexDemo('打开', sqlStr)) {
                 s.setData({
                   voiceOpen: false,
                   voiceDone: true,
                 })
                 //  发送数据
-                tools.sendData('c2s_write', did, {
+                tools.sendData('c2s_write', that.data.id, {
                   "onoffAll": true,
                 });
                 main.getSocketResponse((res) => {
@@ -141,13 +144,13 @@ Page({
                   duration: 1500,
                 })
                 return false;
-              } else if (IndexDemo('关闭全部灯') || IndexDemo('关') || IndexDemo('关闭')) {
+              } else if (IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr)) {
                 s.setData({
                   voiceOpen: true,
                   voiceDone: false,
                 })
                 //  发送数据
-                tools.sendData('c2s_write', did, {
+                tools.sendData('c2s_write', that.data.did, {
                   "onoffAll": false,
                 });
                 wx.showToast({
@@ -194,7 +197,7 @@ Page({
     json = {
       'data': main.getArrays(arr),
     };
-    tools.sendData('c2s_write', did, json);
+    tools.sendData('c2s_write', that.data.did, json);
     main.getSocketResponse((data) => {
       that.data.arrays = data.splice(4, 18);
       let arraysName = that.data.arrays;
@@ -202,7 +205,6 @@ Page({
         arrays: that.data.arrays
       });
       let a = arraysName.splice(1, 3);
-      console.log(that.data.arrays, 'that.data.arrays');
       let sceneName = [];
       sceneName = sceneName.concat(a)
       let str = '';
@@ -223,7 +225,7 @@ Page({
     json = {
       'data': main.getArrays(count),
     };
-    tools.sendData('c2s_write', did, json);
+    tools.sendData('c2s_write', that.data.did, json);
 
     main.getSocketResponse((data) => {
       let arr = data.splice(3, 1);
@@ -267,39 +269,26 @@ Page({
     let spliceArray = wx.getStorageSync('spliceArray');
 
     main.ajax({
+      url: 'dev/getregion',
+      method: 'POST',
       data: {
-        url: 'dev/getregion',
-        method: 'POST',
-        header: {
-          'content-type': 'application/json',
-          'content-type': 'application/x-www-form-urlencoded'
-        },
-        data: {
-          uid: wx.getStorageSync('wxuser').id,
-        },
-      }
+        uid: wx.getStorageSync('wxuser').id,
+      },
     }).then((res) => {
-      let region = res.data.data;
-
+      let region = res.data;
       for (let i in region) {
         for (let y in tabArray) {
           if (region[i].id == tabArray[y].id) {
             rid = region[i].id;
             main.ajax({
+              url: 'dev/getdev',
+              method: 'POST',
               data: {
-                url: 'dev/getdev',
-                method: 'POST',
-                header: {
-                  'content-type': 'application/json',
-                  'content-type': 'application/x-www-form-urlencoded'
-                },
-                data: {
-                  rid: rid,
-                  uid: wx.getStorageSync('wxuser').id,
-                },
-              }
+                rid: rid,
+                uid: wx.getStorageSync('wxuser').id,
+              },
             }).then((res) => {
-              list = res.data.data;
+              list = res.data;
               for (let a in list) {
                 for (let b in spliceArray) {
                   if (list[a].id == spliceArray[b].id) {
@@ -315,7 +304,19 @@ Page({
                         'data': main.getArrays(count),
                       };
                       count = "";
-                      tools.sendData('c2s_write', did, json);
+                      tools.sendData('c2s_write', that.data.did, json);
+                    } else if (IndexDemo('全部打开', that.data.voiceIMessage) == 0) {
+                      //  发送数据
+                      tools.sendData('c2s_write', that.data.did, {
+                        "onoffAll": true,
+                      });
+                      main._Toast('打开成功!', 'success');
+                    } else if (IndexDemo('关闭全部', that.data.voiceIMessage) == 0) {
+                      //  发送数据
+                      tools.sendData('c2s_write',that.data.did, {
+                        "onoffAll": false,
+                      });
+                      main._Toast('关闭成功!', 'success');
                     } else if (IndexDemo('关闭', that.data.voiceIMessage) == 0) {
                       console.log(2);
                     } else {
