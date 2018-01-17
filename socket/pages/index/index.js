@@ -40,11 +40,11 @@ Page({
     deviceID: '', //  设备ID,
     tabArrayID: '',
     didList: [],
-    statusText: '关闭'
+    statusText: '关闭',
+    currentItem: 0,
   },
 
   refesh(e) {
-    console.log(e)
     var that = this;
     that.setData({
       hasRefesh: true,
@@ -108,10 +108,13 @@ Page({
    */
   onLoad(options) {
     const that = this;
+    this.setData({
+      did: wx.getStorageSync('did')
+    });
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2,
+          winHeight: res.windowHeight,
           docHeight: res.windowHeight
         });
       },
@@ -162,9 +165,7 @@ Page({
       title: '加载中...',
     })
     let that = this;
-    setTimeout(() => {
-      that.getIndexGizwits();
-    }, 1000)
+    
     this._getBindingList(20, 0);
   },
 
@@ -172,18 +173,15 @@ Page({
     // let that = this;
     // setTimeout(() => {
     //   that.getIndexGizwits();
-    // }, 1500)
+    // }, 500)
   },
 
   operating(e) {
     let that = this;
-
     let id = e.currentTarget.dataset.id;
-    let ids = '';
     let sdid = JSON.parse(e.currentTarget.dataset.sdid);
     let arr = [], json = {};
     let brr = [], count = '';
-
     let areaid = e.currentTarget.dataset.areaid;
     let areaiding = '';
 
@@ -192,11 +190,14 @@ Page({
       json = {
         'data': $.getArrays(count),
       };
-      tools.sendData('c2s_write', did, json);
+      tools.sendData('c2s_write', that.data.did, json);
       $.getSocketResponse((data) => {
         console.log(data);
       })
     }
+
+    that.setData({
+    });
 
     try {
       for (let i in that.data.tabArray) {
@@ -205,10 +206,12 @@ Page({
             tabArrayID: that.data.tabArray[i].id
           });
           for (let y in that.data.spliceArray) {
-
-            if (id == that.data.spliceArray[y].id && areaid == that.data.tabArrayID) {
+            console.log(id == that.data.spliceArray[y].id && areaid == that.data.tabArrayID);
+            if (id == that.data.spliceArray[y].id) {
+              console.log(that.data.spliceArray[y].id);
               that.setData({
-                deviceID: that.data.spliceArray[y].id
+                deviceID: id,
+                currentItem: id
               });
               if (that.data.status == false) {
                 let array1 = [0xA1, 0x01, 0x01];
@@ -216,7 +219,7 @@ Page({
                 socketGo(array1, array2);
                 that.setData({
                   status: true,
-                  statusText: '开启'
+                  statusText: '开启',
                 });
 
                 $.ajax({
@@ -239,7 +242,7 @@ Page({
                 socketGo(array1, array2);
                 that.setData({
                   status: false,
-                  statusText: '开启'
+                  statusText: '关闭'
                 });
                 return true;
               }
@@ -257,7 +260,7 @@ Page({
   _login() {
     let that = this, json = {};
     wx.showLoading({ title: '' })
-
+    var options = wx.getStorageSync('options');
     //  创建Socket
     wx.connectSocket({
       url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
@@ -266,7 +269,6 @@ Page({
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
       that.setData({ socketOpen: true });
-      var options = wx.getStorageSync('options');
       json = {
         cmd: "login_req",
         data: {
@@ -289,15 +291,14 @@ Page({
       var data = JSON.parse(res.data);
       try {
         if (data.data.success == true) {
-          console.log(data);
           //  链接socket
-          json = {
-            cmd: "subscribe_req",
-            data: that.data.didList
-          };
-          that._sendJson(json);
-          //  读取数据
-          that.getJSON('c2s_read', that.data.did);
+          // json = {
+          //   cmd: "subscribe_req",
+          //   data: that.data.didList
+          // };
+          // that._sendJson(json);
+          //  读取数据1
+          // that.getJSON('c2s_read', that.data.did);
 
           //  获取服务器返回的信息
           // wx.onSocketMessage((res) => {
@@ -335,7 +336,7 @@ Page({
           }
         }
       } catch(e) {
-        console.log(e);
+
       }
     });
   },
@@ -355,30 +356,27 @@ Page({
   _getBindingList(limit, skip) {
     var that = this;
     wx.hideLoading();
-    let options = wx.getStorageSync('options');
-    let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
-    var head = {
-      'content-type': 'application/json',
-      'X-Gizwits-Application-Id': options.gizwitsAppId,
-      'X-Gizwits-User-token': options.token,
-    };
-    tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
-      wx.setStorageSync('devices', result.data.devices);
+    // let options = wx.getStorageSync('options');
+    // let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
+    // var head = {
+    //   'content-type': 'application/json',
+    //   'X-Gizwits-Application-Id': options.gizwitsAppId,
+    //   'X-Gizwits-User-token': options.token,
+    // };
+    // tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
+      // wx.setStorageSync('devices', result.data.devices);
+      let devices = wx.getStorageSync('devices');
       let json = {}, arr = [];
-      for (var i in result.data.devices) {
-        var device = result.data.devices[i];
-
+      for (var i in devices) {
+        var device = devices[i];
         json = {
           did: device.did,
         };
-
         arr.push(json);
-
         that.setData({
           didList: that.data.didList.concat(arr)
         });
-
-        if (result.data.devices[i].is_online == true) {
+        if (devices[i].is_online == true) {
           that.setData({
             did: device.did,
             host: device.host,
@@ -394,11 +392,17 @@ Page({
           wx.setStorageSync('didJSon', json);
         }
       }
-
-      // that._GizwitsDevdata(that.data.options.did);
-      // that._getGizwitsDataing(pKey);
       that._login();
-    }, (err) => { });
+      for (let i in that.data.didList) {
+        let did = wx.getStorageSync('did');
+        if (that.data.didList[i].did == did) {
+          setTimeout(() => {
+            that.getIndexGizwits();
+          }, 500)
+          return true;
+        }
+      }
+    // }, (err) => { });
   },
 
   /**

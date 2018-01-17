@@ -81,6 +81,7 @@ Page({
 
   switchScene(e) {
     let arr = [], that = this, json = {};
+    console.log(that.data.did);
     // arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 10, 1, 1);
     arr.push(0, 18, 0x50);
     let count = null;

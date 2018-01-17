@@ -3,7 +3,7 @@
 var tools = require('../../utils/util.js');
 
 import { Main } from '../../utils/main.js'
-let main = new Main();
+let $ = new Main();
 
 Page({
   /**
@@ -16,7 +16,11 @@ Page({
     gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
     token: '',
     loadHidden: true,
-    uid: ''
+    uid: '',
+    json: {
+      'attrs': 'attrs_v4',
+      'custom': 'custom'
+    },
   },
 
   loginForm(e) {
@@ -44,14 +48,14 @@ Page({
       formID: fId,
       fromObject: fObj,
     };
-    var head = {
-      'content-type': 'application/json',
-      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
-    };
+
     wx.setStorageSync('userInformation', json);
     that.getUser(that.data.uname);
 
-    tools.sendRrquest('login', 'POST', json, head).then((result) => {
+    tools.sendRrquest('login', 'POST', json, {
+      'content-type': 'application/json',
+      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
+    }).then((result) => {
        //  如果账号或者密码错误 提示错误
       if (result.data.error_code == 9020) {
         tools.showModel('提示','账号或者密码错误', (res) => {
@@ -67,6 +71,9 @@ Page({
           gizwitsAppId: that.data.gizwitsAppId
         };
         wx.setStorageSync('options', options);
+
+        that._getBindingList(20, 0);
+
         that.setData({
           uid: result.data.uid,
           token: result.data.token,
@@ -77,6 +84,41 @@ Page({
       }
     });
   },
+
+  _getBindingList(limit, skip) {
+    var that = this;
+    let options = wx.getStorageSync('options');
+    let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
+    let json = {}, arr = [], pson = {};
+    if (options !== "") {
+      tools.sendRrquest('bindings' + query, 'GET', '', {
+        'content-type': 'application/json',
+        'X-Gizwits-Application-Id': options.gizwitsAppId,
+        'X-Gizwits-User-token': options.token,
+      }).then((result) => {
+        wx.setStorageSync('devices', result.data.devices);
+        for (var i in result.data.devices) {
+          var device = result.data.devices[i];
+          json = {
+            did: device.did,
+          };
+          arr.push(json);
+          if (result.data.devices[i].is_online == true) {
+            //  获取数据
+            pson = {
+              'did': device.did,  //  did
+              'host': device.host,  //  websocket 请求地址
+              'ws_port': device.ws_port, //  端口
+              'wss_port': device.wss_port, //  端口
+            };
+            wx.setStorageSync('didJSon', json);
+          }
+        }
+      }, (err) => { });
+    }
+
+  },
+
 
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -90,14 +132,42 @@ Page({
       pword: userInfom.password,
     });
     that.getUser(that.data.uname);
-
+    that._getBindingList(20, 0);
     if (userInfom !== '') {
       wx.switchTab({ url: '../index/index', })
     }
   },
 
+  _login(host, port) {
+    let that = this, json = {};
+    //  获取options缓存数据
+    var options = wx.getStorageSync('options');
+    //  开启提示加载中。。。
+    wx.showLoading({ title: '' })
+    //  创建Socket
+    wx.connectSocket({
+      url: 'wss://' + host + ':' + port + '/ws/app/v1',
+    });
+    //  监听 WebSocket 连接事件
+    wx.onSocketOpen((res) => {
+      json = {
+        cmd: "login_req",
+        data: {
+          appid: options.gizwitsAppId,
+          uid: options.uid,
+          token: options.token,
+          p0_type: that.data.json.attrs,
+          heartbeat_interval: 180,
+          auto_subscribe: true
+        }
+      };
+      that._startPing();
+      that._sendJson(json);
+    });
+  },
+
   getUser(tel) {
-    main.ajax({
+    $.ajax({
       url: 'member/getUser',
       method: "POST",
       data: {
@@ -107,6 +177,29 @@ Page({
       wx.setStorageSync('wxuser', res.data)
     });
     
-  }
+  },
+
+  /**
+  * 发送数据
+  */
+  _sendJson(json) {
+    var that = this;
+    wx.sendSocketMessage({
+      //  对象转换字符串
+      data: JSON.stringify(json),
+    })
+  },
+
+  //  心跳开始
+  _startPing() {
+    var that = this;
+    var heartbeatInterval = that.data._heartbeatInterval * 1000;
+    that.data._heartbeatTimerId = setInterval(() => {
+      var options = {
+        cmd: "ping"
+      };
+      that._sendJson(options);
+    }, heartbeatInterval);
+  },
 
 })

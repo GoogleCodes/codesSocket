@@ -38,7 +38,7 @@ Page({
 
   onReady() {
     //  调用连接socket
-    this.goConnSocket();
+    // this.goConnSocket();
   },
 
   _getBindingList(limit, skip) {
@@ -162,52 +162,64 @@ Page({
     let that = this, json = {};
     wx.showLoading({ title: '' })
     wx.setStorageSync('did', did);
-    let arr = [0x00, 0x02, 0xA0, 0xFF];
+    let arr = [];
     json = {
-      'data': main.getArrays(arr),
+      did: did,
+    }
+    arr.push(json);
+    json = {
+      cmd: "subscribe_req",
+      data: arr
     };
-    tools.sendData('c2s_write', did, json);
+    that._sendJson(json);
+
+    // let arr = [0x00, 0x02, 0x40];
+    // json = {
+    //   'data': main.getArrays(arr),
+    // };
+    // tools.sendData('c2s_write', did, json);
     
-    wx.onSocketMessage((res) => {
-      let noti = JSON.parse(res.data).cmd;
-      wx.hideLoading();
-      switch (noti) {
-        case 'subscribe_res':
-          break;
-        case 'c2s_write':
-          break;
-        case 's2c_noti':
+    // wx.onSocketMessage((res) => {
+    //   let noti = JSON.parse(res.data).cmd;
+    //   wx.hideLoading();
+    //   switch (noti) {
+    //     case 'subscribe_res':
+
+    //       break;
+    //     case 'c2s_write':
+    //       break;
+    //     case 's2c_noti':
           setTimeout(() => {
             wx.switchTab({
               url: '../index/index',
             })
           }, 500);
-          break;
-        case 'c2s_read':
+    //       break;
+    //     case 'c2s_read':
 
-          break;
-        case 'pong':
-          break;
-      }
+    //       break;
+    //     case 'pong':
+    //       break;
+    //   }
 
-      // var data = JSON.parse(res.data);
-      // //  链接socket
-      // json = {
-      //   cmd: "subscribe_req",
-      //   data: arr
-      // };
-      // //  发送数据
-      // that._sendJson(json);
-      //  获取服务器返回的信息
-      // that.getServiceBack();
-      // if (data.data.success == true) {
+    //   // var data = JSON.parse(res.data);
+    //   // //  链接socket
+    //   // json = {
+    //   //   cmd: "subscribe_req",
+    //   //   data: arr
+    //   // };
+    //   // //  发送数据
+    //   // that._sendJson(json);
+    //   //  获取服务器返回的信息
+    //   // that.getServiceBack();
+    //   // if (data.data.success == true) {
         
-      // } else {
-      //   if (data.data.msg == "M2M socket has closed, please login again!") {
-      //     that._login(did);
-      //   }
-      // }
-    });
+    //   // } else {
+    //   //   if (data.data.msg == "M2M socket has closed, please login again!") {
+    //   //     that._login(did);
+    //   //   }
+    //   // }
+    // });
 
   },
 

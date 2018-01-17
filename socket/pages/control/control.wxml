@@ -9,7 +9,7 @@
       <view>
         <text class="fl iconfont icon-weibiaoti- block" style="color: #7cb242;"></text>
         <view class="li-main">
-          <view class="li-main-desc" style="color: #7cb242;">{{ item.did }}</view>
+          <view class="li-main-desc" style="color: #7cb242;">{{ item.dev_alias }}</view>
           <view class="li-main-desc" style='color: #7cb242;'>mac：{{ item.mac }}</view>
         </view>
         <view class="fr" wx:if="{{ item.role == 'guest' }}">访客</view>

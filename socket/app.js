@@ -1,4 +1,11 @@
 //app.js
+
+let $com = require('utils/common/common.js');
+let utils = require('utils/util.js');
+let $ = require('utils/main.js');
+
+console.log($com.j.appID);
+
 App({
   data: {
     deviceInfo: {},
@@ -7,6 +14,8 @@ App({
       'attrs': 'attrs_v4',
       'custom': 'custom'
     },
+    _heartbeatInterval: 60,  //  心跳
+    _heartbeatTimerId: undefined,  //  心跳
     options: wx.getStorageSync('options'),
     wechatOpenId: 'kceshi1',  //  测试:kceshi1
     gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',
@@ -16,8 +25,7 @@ App({
     wss_port: 0, //  端口
   },
 
-
-  onLaunch: function() {
+  onLaunch() {
     this.data.deviceInfo = wx.getSystemInfoSync();
     //  微信小程序appid  微信小程序secret
     var that = this, appID = 'wx427aa2cee61883dd', secret = '945ffa55aed70a50c4db910df20c778e';
@@ -25,42 +33,105 @@ App({
     var user = wx.getStorageSync('user') || {};
     if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {//不要在30天后才更换openid-尽量提前10分钟更新
       wx.login({
-        success: function (res) {
+        success(res) {
           var d = that.globalData.wxData; //  这里存储了appid、secret、token串
-          var url = 'https://api.weixin.qq.com/sns/jscode2session?appid='+ appID +'&secret='+ secret +'&js_code='+ res.code +'&grant_type=authorization_code';
+          var url = $com.loginUri + '?appid=' + $com.j.appID + '&secret=' + $com.j.secret +'&js_code='+ res.code +'&grant_type=authorization_code';
+          
           wx.request({
             url: url,
-            data: {},
-            method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT  
-            // header: {}, // 设置请求的 header  
-            success: function (res) {
+            method: 'GET',
+            success(res) {
               var obj = {};
               obj.openid = res.data.openid;
               obj.expires_in = Date.now() + res.data.expires_in;
               wx.setStorageSync('user', obj);//存储openid  
             }
           });
+
         }
       });
     }
     wx.getUserInfo({
-      success: function (res) {
-        var userInfo = res.userInfo
-        var nickName = userInfo.nickName
-        var avatarUrl = userInfo.avatarUrl
-        var gender = userInfo.gender //性别 0：未知、1：男、2：女 
-        var province = userInfo.province
-        var city = userInfo.city
-        var country = userInfo.country
+      success(res) {
+        let userInfo = res.userInfo,
+            nickName = userInfo.nickName,
+            avatarUrl = userInfo.avatarUrl,
+            gender = userInfo.gender, //性别 0：未知、1：男、2：女,
+            province = userInfo.province,
+            city = userInfo.city,
+            country = userInfo.country;
       }
     });
-
-
-    // this.goConnSocket();
-
+    // this._getBindingList(20, 0);
   },
 
-  getUserInfo: function(cb) {
+  _getBindingList(limit, skip) {
+    var that = this;
+    let options = wx.getStorageSync('options');
+    let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
+    var head = {
+      'content-type': 'application/json',
+      'X-Gizwits-Application-Id': options.gizwitsAppId,
+      'X-Gizwits-User-token': options.token,
+    };
+
+    if (options !== "") {
+      utils.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
+        let json = {}, arr = [], pson = {};
+        wx.setStorageSync('devices', result.data.devices);
+        for (var i in result.data.devices) {
+          var device = result.data.devices[i];
+          json = {
+            did: device.did,
+          };
+          arr.push(json);
+          if (result.data.devices[i].is_online == true) {
+            //  获取数据
+            pson = {
+              'did': device.did,  //  did
+              'host': device.host,  //  websocket 请求地址
+              'ws_port': device.ws_port, //  端口
+              'wss_port': device.wss_port, //  端口
+            };
+            wx.setStorageSync('didJSon', json);
+          }
+        }
+        that._login(pson.host, pson.wss_port);
+      }, (err) => { });
+    }    
+    
+  },
+
+  _login(host, port) {
+    let that = this, json = {};
+    //  获取options缓存数据
+    var options = wx.getStorageSync('options');
+    //  开启提示加载中。。。
+    wx.showLoading({ title: '' })
+    //  创建Socket
+    wx.connectSocket({
+      url: 'wss://' + host + ':' + port + '/ws/app/v1',
+    });
+    //  监听 WebSocket 连接事件
+    wx.onSocketOpen((res) => {
+      json = {
+        cmd: "login_req",
+        data: {
+          appid: options.gizwitsAppId,
+          uid: options.uid,
+          token: options.token,
+          p0_type: that.data.json.attrs,
+          heartbeat_interval: 180,
+          auto_subscribe: true
+        }
+      };
+      that._startPing();
+      that._sendJson(json);
+    });
+    wx.hideLoading();
+  },
+
+  getUserInfo(cb) {
     var that = this
     if (this.globalData.userInfo) {
       typeof cb == "function" && cb(this.globalData.userInfo)
@@ -68,7 +139,7 @@ App({
       //调用登录接口
       wx.getUserInfo({
         withCredentials: false,
-        success: function(res) {
+        success(res) {
           that.globalData.userInfo = res.userInfo
           typeof cb == "function" && cb(that.globalData.userInfo)
         }
@@ -79,64 +150,29 @@ App({
   globalData: {
     userInfo: null
   },
-
-  goConnSocket() {
-    let that = this, json = {};
-    //  创建Socket
-    wx.connectSocket({
-      url: 'wss://sandbox.gizwits.com:8880/ws/app/v1',
-      success(res) {
-        console.log(res);
-      }, fail(err) {
-        console.log(err);
-      }
-    });
-
-    wx.onSocketError((res) => {
-      console.log(res, 'WebSocket连接打开失败，请检查！')
+  
+  /**
+  * 发送数据
+  */
+  _sendJson(json) {
+    var that = this;
+    wx.sendSocketMessage({
+      //  对象转换字符串
+      data: JSON.stringify(json),
     })
-
-    //  监听 WebSocket 连接事件
-    wx.onSocketOpen((res) => {
-      that.setData({ socketOpen: true });
-      json = {
-        cmd: "login_req",
-        data: {
-          appid: that.data.options.gizwitsAppId,
-          uid: that.data.options.uid,
-          token: that.data.options.token,
-          p0_type: that.data.json.attrs,
-          heartbeat_interval: 180,
-          auto_subscribe: true
-        }
-      };
-      that._startPing();
-      that._sendJson(json);
-
-      let option = {}, arr = [];
-      for (let i in that.data.list) {
-        option = {
-          did: that.data.list[i].did,
-        }
-        arr.push(option);
-      }
-      wx.onSocketMessage((res) => {
-        wx.hideLoading();
-        var data = JSON.parse(res.data);
-        //  链接socket
-        json = {
-          cmd: "subscribe_req",
-          data: arr
-        };
-        //  发送数据
-        that._sendJson(json);
-        //  获取服务器返回的信息
-        that.getServiceBack();
-      });
-
-    });
-
   },
 
-  
+  //  心跳开始
+  _startPing() {
+    var that = this;
+    console.log(that.data._heartbeatInterval);
+    var heartbeatInterval = that.data._heartbeatInterval * 1000;
+    that.data._heartbeatTimerId = setInterval(() => {
+      var options = {
+        cmd: "ping"
+      };
+      that._sendJson(options);
+    }, heartbeatInterval);
+  },
+
 })

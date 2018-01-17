@@ -164,7 +164,7 @@ page {
   background: #fff;
   text-align: center;
   position: fixed;
-  bottom: 10px;
+  bottom: 0px;
   right: 0px;
   left: 0px;
 }

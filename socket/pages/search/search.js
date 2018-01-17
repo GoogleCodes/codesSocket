@@ -298,13 +298,30 @@ Page({
       uid: wx.getStorageSync('wxuser').id,
       did: e.currentTarget.dataset.did
     };
-    $.ajax({
-      url: 'dev/adddev',
-      method: "POST",
-      data: json,
-    }).then((ers) => {
-      console.log(res.data);
+    wx.showModal({
+      title: '警告',
+      content: '确定要删除当前选中的设备吗?',
+      success(res) {
+        if (res.cancel == false && res.confirm == true) {
+          $.ajax({
+            url: 'dev/deldev',
+            method: "POST",
+            data: json,
+          }).then((res) => {
+            wx.showToast({
+              title: res.msg,
+              duration: 2000
+            })
+            wx.switchTab({
+              url: '../index/index',
+            })
+          })
+        } else if (res.cancel == true && res.confirm == false) {
+          return false;
+        }
+      }
     })
+    
   },
 
   selectEquipment(e) {
