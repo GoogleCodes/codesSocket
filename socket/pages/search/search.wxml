@@ -38,7 +38,7 @@
 
       <swiper-item>
         <view class="ul-iview">
-          <view class="li-iview fl" wx:for="{{ spliceArray }}" bindtap='deleteDevice' data-did="{{ item.did }}">
+          <view class="li-iview fl" wx:for="{{ spliceArray }}" bindtap='deleteDevice' data-id="{{ item.id }}">
             <view class="li-iview-con">
               <view class="iconfont icon-weibiaoti-3"></view>
             </view>

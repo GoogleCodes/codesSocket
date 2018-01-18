@@ -14,7 +14,8 @@
 
 <view class="table-header">
   <scroll-view scroll-x="true" class="recommend_scroll_x_box">
-    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
+    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" 
+          bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
   </scroll-view>
   <navigator url='/pages/search/search' class="setting">
     <view class="iconfont icon-weibiaoti-9"></view>
@@ -32,7 +33,7 @@
 
           <view class="li-view" wx:for="{{ spliceArray }}">
             <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-leddeng {{deviceID == item.id && areaid == tabArrayID && status ==  true ? 'status' : '' }}"></view>
+              <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}"></view>
             </view>
             <!-- <view class="pic-iview fl pic1" wx:elif="{{ status == true }}">
                 <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
@@ -40,12 +41,14 @@
             <view class="fl status-iview f12">
               <view class="block" style='color: #b3b3b3' bindtap='operating' 
                 data-id='{{ item.id }}' 
-                data-sdid='{{ item.dname }}' 
+                data-sdid='{{ item.did }}' 
                 data-areaid='{{ areaid }}'>
                 <text class="block">{{ item.dname }}</text>
                 <text>当前状态：</text>
-                <text wx:if="{{ deviceID == item.id && status == false }}">关闭</text>
-                <text wx:elif="{{ deviceID == item.id && status == true }}">开启</text>
+                <text wx:if="{{ item.status == 'false' }}">关闭</text>
+                <text wx:if="{{ item.status == 'true' }}">开启</text>
+                <!-- <text wx:if="{{ deviceID == item.id && status == false }}">关闭</text>
+                <text wx:elif="{{ deviceID == item.id && status == true }}">开启</text> -->
                 <!-- <text class="block fr {{ currentItem == item.id && deviceID == item.id ? 'status' : '' }}" 
                       style='color: #6aa84f;'>{{ statusText }}</text> -->
                 <!-- <text class="block fr" style='color: #6aa84f;' 

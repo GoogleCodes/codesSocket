@@ -286,7 +286,7 @@ Page({
   deleteDevice(e) {
     let json = {
       uid: wx.getStorageSync('wxuser').id,
-      did: e.currentTarget.dataset.did
+      id: e.currentTarget.dataset.id
     };
     wx.showModal({
       title: '警告',

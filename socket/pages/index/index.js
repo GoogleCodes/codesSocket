@@ -142,7 +142,6 @@ Page({
       let response = res.data;
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
-          console.log(response[i].pid == wx.getStorageSync('did'));
           that.setData({
             tabArray: res.data,
           });
@@ -155,15 +154,32 @@ Page({
               uid: wx.getStorageSync('wxuser').id,
             },
           }).then((res) => {
+            for (let i in res.data) {
+              if (res.data[i].status == 'false') {
+                that.setData({
+                  status: false,
+                  statusText: '关闭'
+                });
+                console.log(that.data.statusText);
+              } else if (res.data[i].status == 'true') {
+                that.setData({
+                  status: true,
+                  statusText: '开启'
+                });
+                console.log(that.data.statusText);
+              }
+            }
             let resDev = res.data;
             for (let y in resDev) {
+              console.log(resDev[i].pid == wx.getStorageSync('did'));
               if (resDev[i].pid == wx.getStorageSync('did')) {
-                that.setData({
-                  spliceArray: res.data,
-                  areaid: that.data.tabArray[0].id,
-                });
-                wx.setStorageSync('spliceArray', that.data.spliceArray);
+                
               }
+              that.setData({
+                spliceArray: res.data,
+                areaid: that.data.tabArray[0].id,
+              });
+              wx.setStorageSync('spliceArray', that.data.spliceArray);
             }
           });
           that.onLoad();
@@ -183,10 +199,10 @@ Page({
   },
 
   onReady() {
-    // let that = this;
-    // setTimeout(() => {
-    //   that.getIndexGizwits();
-    // }, 500)
+    let that = this;
+    setTimeout(() => {
+      that.getIndexGizwits();
+    }, 500)
   },
 
   operating(e) {
@@ -209,9 +225,6 @@ Page({
       })
     }
 
-    that.setData({
-    });
-
     try {
       for (let i in that.data.tabArray) {
         if (areaid == that.data.tabArray[i].id) {
@@ -219,9 +232,7 @@ Page({
             tabArrayID: that.data.tabArray[i].id
           });
           for (let y in that.data.spliceArray) {
-            console.log(id == that.data.spliceArray[y].id && areaid == that.data.tabArrayID);
             if (id == that.data.spliceArray[y].id) {
-              console.log(that.data.spliceArray[y].id);
               that.setData({
                 deviceID: id,
                 currentItem: id
@@ -229,7 +240,7 @@ Page({
               if (that.data.status == false) {
                 let array1 = [0xA1, 0x01, 0x01];
                 let array2 = [0x00, 0x08, 0xA2];
-                socketGo(array1, array2);
+                // socketGo(array1, array2);
                 that.setData({
                   status: true,
                   statusText: '开启',
@@ -239,25 +250,42 @@ Page({
                   url: 'dev/editdev',
                   method: 'POST',
                   data: {
-                    rid: areaid,
                     uid: wx.getStorageSync('wxuser').id,
-                    did: sdid,
+                    id: id,
                     status: that.data.status
                   }
                 }).then((res) => {
                   console.log(res);
                 });
-                
-                return true;
+
+                that.getIndexGizwits();
+
+                return false;
               } else if (that.data.status == true) {
                 let array1 = [0xA1, 0x01, 0x00];
                 let array2 = [0x00, 0x08, 0xA2];
-                socketGo(array1, array2);
+                // socketGo(array1, array2);
+
                 that.setData({
                   status: false,
                   statusText: '关闭'
                 });
-                return true;
+
+                $.ajax({
+                  url: 'dev/editdev',
+                  method: 'POST',
+                  data: {
+                    uid: wx.getStorageSync('wxuser').id,
+                    id: id,
+                    status: that.data.status
+                  }
+                }).then((res) => {
+                  console.log(res);
+                });
+
+                that.getIndexGizwits();
+
+                return false;
               }
             }
 
