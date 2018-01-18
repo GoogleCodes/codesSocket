@@ -153,12 +153,12 @@
         </view>
       </swiper-item>
 
-
     </swiper>
 
   </view>
 
   <button class="saveData" bindtap='saveIMessage' hidden='{{ pickerShow }}'>保 存</button>
+
 </view>
 
 <!-- <import src="/pages/footer/footer.wxml" />

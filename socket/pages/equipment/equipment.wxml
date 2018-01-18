@@ -11,8 +11,9 @@
     </view>
      <view class="fl device_name" hidden='{{ weibiao }}'>
       <input class="device_name_input" placeholder='请输入设备名称' bindblur='blurInputDate' value='{{ blurInputText }}'></input>
-    </view> 
-    <view class="iconfont icon-weibiaoti-1 fr" bindtap='deleteGizwits' hidden='{{ weibiao }}'></view>
+    </view>
+    <view class="iconfont icon-weibiaoti-1 fr" bindtap='deleteGizwits' hidden='{{ !weibiao }}'></view>
+    <view class="iconfont icon-weibiaoti-1 fr" hidden='{{ weibiao }}' style="color: green;"></view>
   </view>
 
   <view class="eq-iview">

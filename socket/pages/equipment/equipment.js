@@ -169,13 +169,9 @@ Page({
 
     $.getSocketResponse((data) => {
       if (data.splice(9, 1).toString() == 1) {
-        wx.showToast({
-          title: '控制成功!!',
-        })
+        $.alert('控制成功!');
       } else if (data.splice(9, 1).toString() == 1) {
-        wx.showToast({
-          title: '控制失败!!',
-        })
+        $.alert('控制失败!');
       }
     })
 
@@ -242,19 +238,12 @@ Page({
     }
 
     $.getSocketResponse((res) => {
-      console.log(res.splice(3, 1));
       let data = res.splice(3, 1);
       if (data == 1) {
-        wx.showToast({
-          title: '修改成功!',
-          duration: 2000
-        })
+        $.alert('修改成功!');
         return false;
       } else if (data == 0) {
-        wx.showToast({
-          title: '修改失败!',
-          duration: 2000
-        })
+        $.alert('修改失败!');
         return false;
       }
     })

@@ -139,24 +139,37 @@ Page({
         uid: wx.getStorageSync('wxuser').id
       },
     }).then((res) => {
-      that.setData({
-        tabArray: res.data,
-      });
-      wx.setStorageSync('tabArray', that.data.tabArray);
-      $.ajax({
-        url: 'dev/getdev',
-        method: 'POST',
-        data: {
-          rid: res.data[0].id,
-          uid: wx.getStorageSync('wxuser').id,
-        },
-      }).then((res) => {
-        that.setData({
-          spliceArray: res.data,
-          areaid: that.data.tabArray[0].id,
-        });
-        wx.setStorageSync('spliceArray', that.data.spliceArray);
-      });
+      let response = res.data;
+      for (let i in response) {
+        if (response[i].pid == wx.getStorageSync('did')) {
+          console.log(response[i].pid == wx.getStorageSync('did'));
+          that.setData({
+            tabArray: res.data,
+          });
+          wx.setStorageSync('tabArray', that.data.tabArray);
+          $.ajax({
+            url: 'dev/getdev',
+            method: 'POST',
+            data: {
+              rid: res.data[0].id,
+              uid: wx.getStorageSync('wxuser').id,
+            },
+          }).then((res) => {
+            let resDev = res.data;
+            for (let y in resDev) {
+              if (resDev[i].pid == wx.getStorageSync('did')) {
+                that.setData({
+                  spliceArray: res.data,
+                  areaid: that.data.tabArray[0].id,
+                });
+                wx.setStorageSync('spliceArray', that.data.spliceArray);
+              }
+            }
+          });
+          that.onLoad();
+          return false;
+        }
+      }
     });
   },
 

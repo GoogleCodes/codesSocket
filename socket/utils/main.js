@@ -154,34 +154,13 @@ class Main {
   
   /*                      中文转unicode                          */
 
-  _login(host, port) {
-    let that = this, json = {};
-    //  获取options缓存数据
-    var options = wx.getStorageSync('options');
-    //  开启提示加载中。。。
-    wx.showLoading({ title: '' })
-    //  创建Socket
-    wx.connectSocket({
-      url: 'wss://' + host + ':' + port + '/ws/app/v1',
-    });
-    //  监听 WebSocket 连接事件
-    wx.onSocketOpen((res) => {
-      json = {
-        cmd: "login_req",
-        data: {
-          appid: options.gizwitsAppId,
-          uid: options.uid,
-          token: options.token,
-          p0_type: that.data.json.attrs,
-          heartbeat_interval: 180,
-          auto_subscribe: true
-        }
-      };
-      that._startPing();
-      that._sendJson(json);
-    });
-  }
 
+  alert(title) {
+    wx.showToast({
+      title: title,
+      duration: 2000
+    })
+  }
 
 }
 

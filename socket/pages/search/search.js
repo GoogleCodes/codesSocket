@@ -116,9 +116,7 @@ Page({
   addArea(e) {
     const that = this;
     if (e.detail.value == '') {
-      wx.showToast({
-        title: '请输入内容',
-      })
+      $.alert('请输入内容!');
       return;
     }
     that.setData({
@@ -175,9 +173,7 @@ Page({
         that.setData({
           spliceArray: []
         });
-        wx.showToast({
-          title: "暂时没有设备！",
-        })
+        $.alert('暂时没有设备！');
       }
     })
 
@@ -257,10 +253,7 @@ Page({
   deleteGroup() {
     let that = this;
     if (that.data.areaid == -1) {
-      wx.showToast({
-        title: '请选择区域!',
-        duration: 2000,
-      })
+      $.alert('请选择区域!');
       return false;
     }
     wx.showModal({
@@ -276,10 +269,7 @@ Page({
               uid: wx.getStorageSync('wxuser').id,
             },
           }).then((res) => {
-            wx.showToast({
-              title: '已经成功删除',
-              duration: 2500,
-            })
+            $.alert('已经成功删除!');
             setTimeout(() => {
               wx.switchTab({
                 url: '../index/index',
@@ -328,9 +318,7 @@ Page({
     let that = this, arr = {};
     let index = e.currentTarget.dataset.key;
     if (that.data.areaid == -1) {
-      wx.showToast({
-        title: '请选择区域!',
-      })
+      $.alert('请选择区域!');
       return false;
     }
     let json = {
@@ -338,6 +326,7 @@ Page({
       did: JSON.stringify(e.currentTarget.dataset.sdid),
       dname: JSON.stringify(e.currentTarget.dataset.sdid),
       rid: that.data.areaid,
+      pid: wx.getStorageSync('did')
     };
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
@@ -379,18 +368,16 @@ Page({
   saveIMessage() {
     let that = this;
     if (this.data.addAreaText == "") {
-      wx.showToast({
-        title: '请输入内容',
-      })
+      $.alert('请输入内容!');
       return;
     }
-
     $.ajax({
       url: 'dev/addregion',
       method: "POST",
       data: {
         uid: wx.getStorageSync('wxuser').id,
-        name: this.data.addAreaText
+        name: this.data.addAreaText,
+        pid: wx.getStorageSync('did'),
       },
     }).then((res) => {
       that.setData({
@@ -398,10 +385,7 @@ Page({
       })
       $.goPages('../index/index');
     })
-
-    wx.showToast({
-      title: '请求成功',
-    })
+    $.alert('请求成功!');
     this.setData({
       pickerShow: true
     });
