@@ -39,7 +39,7 @@
                 <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
               </view> -->
             <view class="fl status-iview f12">
-              <view class="block" style='color: #b3b3b3' bindtap='operating' 
+              <view class="block" style='color: #b3b3b3' bindtap='operating'
                 data-id='{{ item.id }}' 
                 data-sdid='{{ item.did }}' 
                 data-areaid='{{ areaid }}'>

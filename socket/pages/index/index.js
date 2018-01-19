@@ -11,6 +11,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    buttonClicked: false,
     currentTab: 0,
     winHeight: 0,
     docHeight: 0,
@@ -125,8 +126,8 @@ Page({
       wx.redirectTo({ url: '../login/login', });
     }
 
-    $.unicode("中文");
-    $.unicode1('\u4e2d\u6587');
+    // $.unicode("中文");
+    // $.unicode1('\u4e2d\u6587');
 
   },
 
@@ -142,48 +143,52 @@ Page({
       let response = res.data;
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
+          console.log(response, '1....');
+          wx.setStorageSync('tabArray', response);
           that.setData({
-            tabArray: res.data,
+            tabArray: wx.getStorageSync('tabArray'),
           });
-          wx.setStorageSync('tabArray', that.data.tabArray);
           $.ajax({
             url: 'dev/getdev',
             method: 'POST',
             data: {
-              rid: res.data[0].id,
+              rid: response[0].id,
               uid: wx.getStorageSync('wxuser').id,
             },
           }).then((res) => {
+            let data = res.data;
             for (let i in res.data) {
               if (res.data[i].status == 'false') {
                 that.setData({
                   status: false,
                   statusText: '关闭'
                 });
-                console.log(that.data.statusText);
               } else if (res.data[i].status == 'true') {
                 that.setData({
                   status: true,
                   statusText: '开启'
                 });
-                console.log(that.data.statusText);
               }
             }
             let resDev = res.data;
             for (let y in resDev) {
-              console.log(resDev[i].pid == wx.getStorageSync('did'));
-              if (resDev[i].pid == wx.getStorageSync('did')) {
-                
-              }
               that.setData({
                 spliceArray: res.data,
                 areaid: that.data.tabArray[0].id,
               });
+
               wx.setStorageSync('spliceArray', that.data.spliceArray);
             }
           });
           that.onLoad();
           return false;
+        } else if (response[i].pid !== wx.getStorageSync('did')) {
+          that.setData({
+            tabArray: [],
+            spliceArray: [],
+          });
+          wx.removeStorageSync('tabArray');
+          wx.removeStorageSync('spliceArray');
         }
       }
     });
@@ -194,8 +199,8 @@ Page({
       title: '加载中...',
     })
     let that = this;
-    
     this._getBindingList(20, 0);
+    this.getIndexGizwits();
   },
 
   onReady() {
@@ -206,13 +211,12 @@ Page({
   },
 
   operating(e) {
-    let that = this;
+    let that = this, isLock = false;
     let id = e.currentTarget.dataset.id;
     let sdid = JSON.parse(e.currentTarget.dataset.sdid);
     let arr = [], json = {};
     let brr = [], count = '';
     let areaid = e.currentTarget.dataset.areaid;
-    let areaiding = '';
 
     function socketGo(array1, array2) {
       count = array2.concat(sdid.concat(array1));
@@ -221,8 +225,22 @@ Page({
       };
       tools.sendData('c2s_write', that.data.did, json);
       $.getSocketResponse((data) => {
-        console.log(data);
+
       })
+    }
+
+    function ajax(status) {
+      $.ajax({
+        url: 'dev/editdev',
+        method: 'POST',
+        data: {
+          uid: wx.getStorageSync('wxuser').id,
+          id: id,
+          status: status
+        }
+      }).then((res) => {
+        console.log(res.data);
+      });
     }
 
     try {
@@ -237,65 +255,43 @@ Page({
                 deviceID: id,
                 currentItem: id
               });
-              if (that.data.status == false) {
+              if (that.data.spliceArray[y].status == 'false') {
+                console.log(that.data.status.toString());
                 let array1 = [0xA1, 0x01, 0x01];
                 let array2 = [0x00, 0x08, 0xA2];
-                // socketGo(array1, array2);
+                socketGo(array1, array2);
                 that.setData({
                   status: true,
                   statusText: '开启',
                 });
 
-                $.ajax({
-                  url: 'dev/editdev',
-                  method: 'POST',
-                  data: {
-                    uid: wx.getStorageSync('wxuser').id,
-                    id: id,
-                    status: that.data.status
-                  }
-                }).then((res) => {
-                  console.log(res);
-                });
+                ajax(that.data.status);
 
                 that.getIndexGizwits();
-
-                return false;
-              } else if (that.data.status == true) {
+                return true;
+              } else if (that.data.spliceArray[y].status == 'true') {
                 let array1 = [0xA1, 0x01, 0x00];
                 let array2 = [0x00, 0x08, 0xA2];
-                // socketGo(array1, array2);
+                socketGo(array1, array2);
 
                 that.setData({
                   status: false,
                   statusText: '关闭'
                 });
 
-                $.ajax({
-                  url: 'dev/editdev',
-                  method: 'POST',
-                  data: {
-                    uid: wx.getStorageSync('wxuser').id,
-                    id: id,
-                    status: that.data.status
-                  }
-                }).then((res) => {
-                  console.log(res);
-                });
+                ajax(that.data.status);
 
                 that.getIndexGizwits();
-
-                return false;
+                return true;
               }
             }
 
           }
         }
       }
-
     } catch (e) {
-
     }
+
   },
 
   _login() {

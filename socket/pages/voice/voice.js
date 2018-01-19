@@ -214,7 +214,6 @@ Page({
       that.setData({
         sceneName: str
       });
-      console.log(that.data.sceneName);
     })
 
   },
