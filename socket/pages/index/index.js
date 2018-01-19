@@ -255,7 +255,7 @@ Page({
                 deviceID: id,
                 currentItem: id
               });
-              if (that.data.spliceArray[y].status == 'false') {
+              if (that.data.status == false) {
                 console.log(that.data.status.toString());
                 let array1 = [0xA1, 0x01, 0x01];
                 let array2 = [0x00, 0x08, 0xA2];
@@ -269,7 +269,7 @@ Page({
 
                 that.getIndexGizwits();
                 return true;
-              } else if (that.data.spliceArray[y].status == 'true') {
+              } else if (that.data.status == true) {
                 let array1 = [0xA1, 0x01, 0x00];
                 let array2 = [0x00, 0x08, 0xA2];
                 socketGo(array1, array2);
@@ -282,7 +282,7 @@ Page({
                 ajax(that.data.status);
 
                 that.getIndexGizwits();
-                return true;
+                return false;
               }
             }
 
