@@ -57,7 +57,7 @@
                 wx:elif='{{ deviceID == item.id && areaid == tabArrayID && item.status ==  1 }}'>打开</text>  -->
               </view>
             </view>
-            <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}&id={{ item.id }}">
+            <navigator url="/pages/equipment/equipment?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
               <view class="arrow-iview fr iconfont icon-fruits-lemon">
                 <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image>  -->
               </view>

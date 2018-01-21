@@ -3,7 +3,6 @@
 var tools = require('../../utils/util.js');
 import { Main } from '../../utils/main.js'
 let main = new Main();
-
 Page({
 
   /**

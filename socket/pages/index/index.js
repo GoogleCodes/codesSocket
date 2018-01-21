@@ -211,6 +211,9 @@ Page({
   },
 
   operating(e) {
+    wx.showLoading({
+      title: '加载中。。。',
+    })
     let that = this, isLock = false;
     let id = e.currentTarget.dataset.id;
     let sdid = JSON.parse(e.currentTarget.dataset.sdid);
@@ -255,35 +258,72 @@ Page({
                 deviceID: id,
                 currentItem: id
               });
-              if (that.data.status == false) {
-                console.log(that.data.status.toString());
-                let array1 = [0xA1, 0x01, 0x01];
-                let array2 = [0x00, 0x08, 0xA2];
-                socketGo(array1, array2);
-                that.setData({
-                  status: true,
-                  statusText: '开启',
-                });
 
-                ajax(that.data.status);
+              let array1 = [0xA1, 0x01, 0x01];
+              let array2 = [0x00, 0x08, 0xA2];
 
-                that.getIndexGizwits();
-                return true;
-              } else if (that.data.status == true) {
-                let array1 = [0xA1, 0x01, 0x00];
-                let array2 = [0x00, 0x08, 0xA2];
-                socketGo(array1, array2);
+              switch (true) {
+                case that.data.spliceArray[y].status == "false":
+                  array1 = [0xA1, 0x01, 0x01];
+                  array2 = [0x00, 0x08, 0xA2];
+                  socketGo(array1, array2);
+                  that.setData({
+                    status: true,
+                    statusText: '开启',
+                  });
 
-                that.setData({
-                  status: false,
-                  statusText: '关闭'
-                });
+                  ajax("true");
+                  wx.hideLoading();
 
-                ajax(that.data.status);
+                  that.getIndexGizwits();
+                  return;
+                case that.data.spliceArray[y].status == "true":
+                  array1 = [0xA1, 0x01, 0x00];
+                  array2 = [0x00, 0x08, 0xA2];
+                  socketGo(array1, array2);
 
-                that.getIndexGizwits();
-                return false;
+                  that.setData({
+                    status: false,
+                    statusText: '关闭'
+                  });
+
+                  ajax("false");
+                  wx.hideLoading();
+
+                  that.getIndexGizwits();
+                  return;
               }
+
+              // if (that.data.spliceArray[y].status == "false") {
+              //   console.log(1, "..............................");
+              //   let array1 = [0xA1, 0x01, 0x01];
+              //   let array2 = [0x00, 0x08, 0xA2];
+              //   socketGo(array1, array2);
+              //   that.setData({
+              //     status: true,
+              //     statusText: '开启',
+              //   });
+
+              //   // ajax("true");
+
+              //   that.getIndexGizwits();
+              //   return;
+              // } else if (that.data.status == true) {
+              //   console.log(2, "..............................");
+              //   let array1 = [0xA1, 0x01, 0x00];
+              //   let array2 = [0x00, 0x08, 0xA2];
+              //   socketGo(array1, array2);
+
+              //   that.setData({
+              //     status: false,
+              //     statusText: '关闭'
+              //   });
+
+              //   // ajax("false");
+
+              //   that.getIndexGizwits();
+              //   // return false;
+              // }
             }
 
           }

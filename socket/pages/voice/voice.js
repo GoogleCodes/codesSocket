@@ -127,38 +127,72 @@ Page({
               });
 
               let tabArray = wx.getStorageSync('tabArray');
-              if (IndexDemo('打开全部灯', sqlStr) || IndexDemo('打', sqlStr) || IndexDemo('打开', sqlStr)) {
-                s.setData({
-                  voiceOpen: false,
-                  voiceDone: true,
-                })
-                //  发送数据
-                tools.sendData('c2s_write', that.data.id, {
-                  "onoffAll": true,
-                });
-                main.getSocketResponse((res) => {
-                  console.log(res, 'data...');
-                })
-                wx.showToast({
-                  title: '打开成功',
-                  duration: 1500,
-                })
-                return false;
-              } else if (IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr)) {
-                s.setData({
-                  voiceOpen: true,
-                  voiceDone: false,
-                })
-                //  发送数据
-                tools.sendData('c2s_write', that.data.did, {
-                  "onoffAll": false,
-                });
-                wx.showToast({
-                  title: '关闭成功',
-                  duration: 1500,
-                })
-                return false;
+
+              switch (true) {
+                case IndexDemo('打开全部灯', sqlStr) || IndexDemo('打', sqlStr) || IndexDemo('打开', sqlStr):
+                  s.setData({
+                    voiceOpen: false,
+                    voiceDone: true,
+                  })
+                  //  发送数据
+                  tools.sendData('c2s_write', that.data.id, {
+                    "onoffAll": true,
+                  });
+                  main.getSocketResponse((res) => {
+                    console.log(res, 'data...');
+                  })
+                  wx.showToast({
+                    title: '打开成功',
+                    duration: 1500,
+                  })
+                  return;
+                case IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr):
+                  s.setData({
+                    voiceOpen: true,
+                    voiceDone: false,
+                  })
+                  //  发送数据
+                  tools.sendData('c2s_write', that.data.did, {
+                    "onoffAll": false,
+                  });
+                  wx.showToast({
+                    title: '关闭成功',
+                    duration: 1500,
+                  })
+                  return;
               }
+              // if (IndexDemo('打开全部灯', sqlStr) || IndexDemo('打', sqlStr) || IndexDemo('打开', sqlStr)) {
+              //   s.setData({
+              //     voiceOpen: false,
+              //     voiceDone: true,
+              //   })
+              //   //  发送数据
+              //   tools.sendData('c2s_write', that.data.id, {
+              //     "onoffAll": true,
+              //   });
+              //   main.getSocketResponse((res) => {
+              //     console.log(res, 'data...');
+              //   })
+              //   wx.showToast({
+              //     title: '打开成功',
+              //     duration: 1500,
+              //   })
+              //   return false;
+              // } else if (IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr)) {
+              //   s.setData({
+              //     voiceOpen: true,
+              //     voiceDone: false,
+              //   })
+              //   //  发送数据
+              //   tools.sendData('c2s_write', that.data.did, {
+              //     "onoffAll": false,
+              //   });
+              //   wx.showToast({
+              //     title: '关闭成功',
+              //     duration: 1500,
+              //   })
+              //   return false;
+              // }
 
               // if (typeof (sqlStr) == "string") {
               //   var myString = sqlStr.substring(0, 1);

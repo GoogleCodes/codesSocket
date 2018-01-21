@@ -21,6 +21,9 @@ Page({
     id: 0,
     blurInputText: '',
     did: '',
+    rid: '',
+    list: {},
+    popers: true,
   },
 
   /**
@@ -31,7 +34,8 @@ Page({
     this.setData({
       sdid: options.sdid,
       id: options.id,
-      did: wx.getStorageSync('did')
+      did: wx.getStorageSync('did'),
+      rid: options.rid
     });
     wx.getSystemInfo({
       success(res) {
@@ -39,6 +43,31 @@ Page({
           winTop: (res.windowHeight - 225) / 2,
         });
       },
+    });
+
+    this.getDev(that.data.rid, wx.getStorageSync('wxuser').id);
+  },
+
+  getDev(rid, uid) {
+    let that = this;
+    $.ajax({
+      url: 'dev/getdev',
+      method: 'POST',
+      data: {
+        rid: rid,
+        uid: uid,
+      },
+    }).then((res) => {
+      for (let i in res.data) {
+        if (res.data[i].id == that.data.id) {
+          that.setData({
+            list: res.data[i]
+          });
+          console.log(that.data.list);
+          return true;
+        }
+      }
+      console.log(res);
     });
   },
 
@@ -49,59 +78,99 @@ Page({
       content: '您确定要删除这个设备吗?',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
-          wx.request({
-            url: 'http://yuyin.ittun.com/public/index/dev/getregion',
+
+          $.ajax({
+            url: 'dev/getregion',
             method: 'POST',
-            header: {
-              'content-type': 'application/json',
-              'content-type': 'application/x-www-form-urlencoded'
-            },
             data: {
               uid: wx.getStorageSync('wxuser').id,
             },
-            success(res) {
-              wx.request({
-                url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-                method: 'POST',
-                header: {
-                  'content-type': 'application/json',
-                  'content-type': 'application/x-www-form-urlencoded'
-                },
-                data: {
-                  rid: res.data.data[0].id,
-                  uid: wx.getStorageSync('wxuser').id,
-                },
-                success(res) {
-                  let data = res.data.data;
-                  for (let i in data) {
-                    if (that.data.id == data[i].id) {
-                      wx.request({
-                        url: 'http://yuyin.ittun.com/public/index/dev/deldev',
-                        header: {
-                          'content-type': 'application/json',
-                          'content-type': 'application/x-www-form-urlencoded'
-                        },
-                        method: 'POST',
-                        data: {
-                          uid: wx.getStorageSync('wxuser').id,
-                          rid: data[i].rid
-                        },
-                        success(res) {
-                          console.log(res.data);
-                          setTimeout(() => {
-                            wx.switchTab({
-                              url: '../index/index',
-                            })
-                          }, 500)
-                        }
-                      })
-                    }
-                  }
-
+          }).then((res) => {
+            $.ajax({
+              url: 'dev/getdev',
+              method: 'POST',
+              data: {
+                rid: res.data[0].id,
+                uid: wx.getStorageSync('wxuser').id,
+              },
+            }).then((res) => {
+              let data = res.data;
+              for (let i in data) {
+                if (that.data.id == data[i].id) {
+                  $.ajax({
+                    url: 'dev/deldev',
+                    method: 'POST',
+                    data: {
+                      uid: wx.getStorageSync('wxuser').id,
+                      rid: data[i].rid
+                    },
+                  }).then((res) => {
+                    console.log(res);
+                    // $.alert(res.msg);
+                    // setTimeout(() => {
+                    //   wx.switchTab({
+                    //     url: '../index/index',
+                    //   })
+                    // }, 500)
+                  });
                 }
-              });
-            }
-          })
+              }
+            });
+          });
+
+          // wx.request({
+          //   url: 'http://yuyin.ittun.com/public/index/dev/getregion',
+          //   method: 'POST',
+          //   header: {
+          //     'content-type': 'application/json',
+          //     'content-type': 'application/x-www-form-urlencoded'
+          //   },
+          //   data: {
+          //     uid: wx.getStorageSync('wxuser').id,
+          //   },
+          //   success(res) {
+          //     wx.request({
+          //       url: 'http://yuyin.ittun.com/public/index/dev/getdev',
+          //       method: 'POST',
+          //       header: {
+          //         'content-type': 'application/json',
+          //         'content-type': 'application/x-www-form-urlencoded'
+          //       },
+          //       data: {
+          //         rid: res.data.data[0].id,
+          //         uid: wx.getStorageSync('wxuser').id,
+          //       },
+          //       success(res) {
+          //         let data = res.data.data;
+          //         for (let i in data) {
+          //           if (that.data.id == data[i].id) {
+          //             wx.request({
+          //               url: 'http://yuyin.ittun.com/public/index/dev/deldev',
+          //               header: {
+          //                 'content-type': 'application/json',
+          //                 'content-type': 'application/x-www-form-urlencoded'
+          //               },
+          //               method: 'POST',
+          //               data: {
+          //                 uid: wx.getStorageSync('wxuser').id,
+          //                 rid: data[i].rid
+          //               },
+          //               success(res) {
+          //                 console.log(res.data);
+          //                 setTimeout(() => {
+          //                   wx.switchTab({
+          //                     url: '../index/index',
+          //                   })
+          //                 }, 500)
+          //               }
+          //             })
+          //           }
+          //         }
+
+          //       }
+          //     });
+          //   }
+          // })
         } else if (res.cancel == true && res.confirm == false) {
           return false;
         }
@@ -198,18 +267,53 @@ Page({
     if (that.data.weibiao == true) {
       that.setData({
         weibiao: false,
+        popers: false,
       });
     } else if (that.data.weibiao == false) {
       that.setData({
         weibiao: true,
+        popers: true,
       });
     }
   },
 
+  goSaveImessage() {
+    let that = this;
+    $.ajax({
+      url: 'dev/editdev',
+      method: 'POST',
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+        id: that.data.id,
+        dname: that.data.blurInputText
+      }
+    }).then((res) => {
+      $.alert(res.msg);
+      that.setData({
+        popers: true,
+      });
+      setTimeout(() => {
+        wx.switchTab({
+          url: '../index/index',
+        })
+      }, 1000)
+    });
+  },
+
+  clearPopers() {
+    this.setData({
+      popers: true,
+    });
+  },
+
   blurInputDate(e) {
     let that = this;
+    that.setData({
+      blurInputText: e.detail.value
+    });
+    console.log(that.data.blurInputText);
+    return;
     let arr = [], json = {};
-
     let nameLength = [1];
     let nameContent = [60];
     let did = JSON.parse(that.data.sdid);
