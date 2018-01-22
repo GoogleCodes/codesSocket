@@ -19,7 +19,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '全部',
+    voiceIMessage: '打开全部设备',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -127,38 +127,46 @@ Page({
               });
 
               let tabArray = wx.getStorageSync('tabArray');
+              for (let i in tabArray) {
+                console.log(tabArray[i].name);
+                switch (true) {
+                  case IndexDemo('打开全部灯', sqlStr) || IndexDemo('打', sqlStr) || IndexDemo('打开', sqlStr):
+                    s.setData({
+                      voiceOpen: false,
+                      voiceDone: true,
+                    })
+                    //  发送数据
+                    tools.sendData('c2s_write', that.data.id, {
+                      "onoffAll": true,
+                    });
+                    $.getSocketResponse((res) => {
+                      console.log(res, 'data...');
+                    })
+                    $.alert('打开成功!');
+                    return true;
+                  case IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr):
+                    s.setData({
+                      voiceOpen: true,
+                      voiceDone: false,
+                    })
+                    //  发送数据
+                    tools.sendData('c2s_write', that.data.did, {
+                      "onoffAll": false,
+                    });
+                    $.alert('关闭成功!');
+                    return true;
+                  case IndexDemo("打开", sqlStr):
 
-              switch (true) {
-                case IndexDemo('打开全部灯', sqlStr) || IndexDemo('打', sqlStr) || IndexDemo('打开', sqlStr):
-                  s.setData({
-                    voiceOpen: false,
-                    voiceDone: true,
-                  })
-                  //  发送数据
-                  tools.sendData('c2s_write', that.data.id, {
-                    "onoffAll": true,
-                  });
-                  $.getSocketResponse((res) => {
-                    console.log(res, 'data...');
-                  })
-                  $.alert('打开成功!');
-                  return;
-                case IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr):
-                  s.setData({
-                    voiceOpen: true,
-                    voiceDone: false,
-                  })
-                  //  发送数据
-                  tools.sendData('c2s_write', that.data.did, {
-                    "onoffAll": false,
-                  });
-                  $.alert('关闭成功!');
-                  return;
+                    return false;
+                  case IndexDemo(tabArray[i].name, sqlStr):
+
+                    return false;
+                }
               }
 
-              // if (typeof (sqlStr) == "string") {
-              //   var myString = sqlStr.substring(0, 1);
-              // }
+              if (typeof (sqlStr) == "string") {
+                var myString = sqlStr.substring(0, 1);
+              }
 
             }
             if (data.states == 1) {
@@ -252,11 +260,15 @@ Page({
       arr.push(0, 18, 0x50);
       that.webScene(arr, that.data.arrays);
 
+      $.alert("123");
+
     } else if (that.data.voiceIMessage == "关闭" + that.data.sceneName) {
 
       that.data.arrays[14] = 0;
       arr.push(0, 18, 0x50);
       that.webScene(arr, that.data.arrays);
+
+      $.alert("123");
 
     }
 
@@ -288,35 +300,37 @@ Page({
                 for (let b in spliceArray) {
                   if (list[a].id == spliceArray[b].id) {
                     switch (true) {
-                      case IndexDemo('打开', that.data.voiceIMessage) == 0:
-                        sdid = list[i].did;
-                        if (typeof sdid == 'string') {
-                          sdid = JSON.parse(sdid)
-                        }
-                        brr = [0xA2, 0x01, 0x01];
-                        arr.push(0x00, 0x08, 0xA2);
-                        let count = arr.concat(sdid.concat(brr));
-                        json = {
-                          'data': $.getArrays(count),
-                        };
-                        count = "";
-                        tools.sendData('c2s_write', that.data.did, json);
-                        break;
-                      case IndexDemo('全部打开', that.data.voiceIMessage) == 0:
+                      // case IndexDemo('打开全部', that.data.voiceIMessage) == 0:
+                      //   sdid = list[i].did;
+                      //   if (typeof sdid == 'string') {
+                      //     sdid = JSON.parse(sdid)
+                      //   }
+                      //   brr = [0xA2, 0x01, 0x01];
+                      //   arr.push(0x00, 0x08, 0xA2);
+                      //   let count = arr.concat(sdid.concat(brr));
+                      //   json = {
+                      //     'data': $.getArrays(count),
+                      //   };
+                      //   count = "";
+                      //   tools.sendData('c2s_write', that.data.did, json);
+                      //   $.alert('打开成功!');
+                      //   break;
+                      case IndexDemo('打开全部', that.data.voiceIMessage) == 0:
                         //  发送数据
                         tools.sendData('c2s_write', that.data.did, {
                           "onoffAll": true,
                         });
-                        $._Toast('打开成功!', 'success');
-                        break;
+                        $.alert('打开成功!');
+                        return true;
                       case IndexDemo('关闭全部', that.data.voiceIMessage) == 0:
                         //  发送数据
                         tools.sendData('c2s_write', that.data.did, {
                           "onoffAll": false,
                         });
-                        $._Toast('关闭成功!', 'success');
-                        break;
+                        $.alert('关闭成功!');
+                        return true;
                       default:
+                        $.alert('文字识别错误!');
                         return false;
                     }
                   }

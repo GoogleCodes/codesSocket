@@ -98,7 +98,7 @@
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
               <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' data-key='{{ i }}' data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
             </view>
-            <view>{{ item.deviceName }}</view>
+            <view>{{ item.sdid }}</view>
           </view>
           <!--
         

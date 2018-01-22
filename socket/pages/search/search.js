@@ -33,13 +33,13 @@ Page({
       'content-type': 'application/x-www-form-urlencoded'
     },
     did: '',
+    deviceType: 0,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
     this.setData({
       did: wx.getStorageSync('did')
     });
@@ -67,6 +67,11 @@ Page({
       for (let i in k) {
         last = k.splice(4, 21);
         if (last.indexOf(1) == 0) {
+          console.log(last.indexOf(1));
+          // if (last.indexOf(3) == 1) {
+          //   //  that.data.deviceType
+          //   console.log(123);
+          
           json = {
             sdid: last.splice(0, 4),
             active: 0,
@@ -77,6 +82,8 @@ Page({
             array: brr
           });
           wx.setStorageSync('gizwits', that.data.array);
+        } else if (last.indexOf(1) == 0) {
+          console.log(456);
         }
       }
     })
