@@ -326,7 +326,8 @@ Page({
       did: JSON.stringify(e.currentTarget.dataset.sdid),
       dname: JSON.stringify(e.currentTarget.dataset.sdid),
       rid: that.data.areaid,
-      pid: wx.getStorageSync('did')
+      pid: wx.getStorageSync('did'),
+      status: 'false'
     };
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;

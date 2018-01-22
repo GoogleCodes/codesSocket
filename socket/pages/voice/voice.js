@@ -3,7 +3,7 @@
 var tools = require('../../utils/util.js');
 
 import { Main } from '../../utils/main.js'
-let main = new Main();
+let $ = new Main();
 
 // const did = wx.getStorageSync('didJSon').did;
 
@@ -28,7 +28,8 @@ Page({
       'content-type': 'application/json',
       'content-type': 'application/x-www-form-urlencoded'
     },
-    did: ''
+    did: '',
+    uploadFileUrl: 'http://yuyin.ittun.com/public/index/dev/zhen'
 
   },
 
@@ -48,7 +49,7 @@ Page({
       success(res) {
         var tempFilePath = res.tempFilePath;
         that.setData({ recodePath: tempFilePath, isSpeaking: true });
-        main._Toast('录音成功', 'success');
+        $._Toast('录音成功', 'success');
         wx.getSavedFileList({
           success(res) {
             var voices = [];
@@ -81,9 +82,8 @@ Page({
     wx.showToast();
     try {
       setTimeout(() => {
-        console.log(s.data.recodePath, "s.data.recodePath");
         wx.uploadFile({
-          url: 'http://www.getcodeing.com/public/index/dev/zhen',
+          url: s.data.uploadFileUrl,
           filePath: s.data.recodePath,
           method: "POST",
           name: 'silk',
@@ -96,19 +96,19 @@ Page({
             'lan': 'zh' //s.data.arrayCharset, // 'zh',
           },
           success(res) {
+            console.log(res.data);
             s.setData({ voiceNow: true });
             var error_text = '语音识别失败';
             console.log("返回的东西是：", JSON.parse(res.data), "options...");
             switch (true) {
               case res.data.toString() == error_text:
-                main._Toast('语音识别失败!请重试!', 'success');
-                break;
+                $.alert('语音识别失败!请重试!');
+                return false;
               case res.statusCode == 404:
-                main._Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
-                return;
+                $.alert('服务器搞飞机去了!呜呜呜~~~~');
+                return false;
             }
             var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
-            console.log(options, "options...");
             s.setData({
               ins_y: options.time1,
               ins_l: options.time2,
@@ -138,13 +138,10 @@ Page({
                   tools.sendData('c2s_write', that.data.id, {
                     "onoffAll": true,
                   });
-                  main.getSocketResponse((res) => {
+                  $.getSocketResponse((res) => {
                     console.log(res, 'data...');
                   })
-                  wx.showToast({
-                    title: '打开成功',
-                    duration: 1500,
-                  })
+                  $.alert('打开成功!');
                   return;
                 case IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr):
                   s.setData({
@@ -155,62 +152,28 @@ Page({
                   tools.sendData('c2s_write', that.data.did, {
                     "onoffAll": false,
                   });
-                  wx.showToast({
-                    title: '关闭成功',
-                    duration: 1500,
-                  })
+                  $.alert('关闭成功!');
                   return;
               }
-              // if (IndexDemo('打开全部灯', sqlStr) || IndexDemo('打', sqlStr) || IndexDemo('打开', sqlStr)) {
-              //   s.setData({
-              //     voiceOpen: false,
-              //     voiceDone: true,
-              //   })
-              //   //  发送数据
-              //   tools.sendData('c2s_write', that.data.id, {
-              //     "onoffAll": true,
-              //   });
-              //   main.getSocketResponse((res) => {
-              //     console.log(res, 'data...');
-              //   })
-              //   wx.showToast({
-              //     title: '打开成功',
-              //     duration: 1500,
-              //   })
-              //   return false;
-              // } else if (IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr)) {
-              //   s.setData({
-              //     voiceOpen: true,
-              //     voiceDone: false,
-              //   })
-              //   //  发送数据
-              //   tools.sendData('c2s_write', that.data.did, {
-              //     "onoffAll": false,
-              //   });
-              //   wx.showToast({
-              //     title: '关闭成功',
-              //     duration: 1500,
-              //   })
-              //   return false;
-              // }
 
               // if (typeof (sqlStr) == "string") {
               //   var myString = sqlStr.substring(0, 1);
               // }
+
             }
             if (data.states == 1) {
               var cEditData = s.data.editData;
               cEditData.recodeIdentity = data.identitys;
               s.setData({ editData: cEditData });
             } else {
-              main._goShowModel('提示', data.message, () => { });
+              $._goShowModel('提示', data.message, () => { });
             }
             wx.hideToast();
           },
           fail(res) {
             s.setData({ voiceNow: true });
             //  错误提示
-            main._goShowModel('提示', '录音的姿势不对!', () => { });
+            $._goShowModel('提示', '录音的姿势不对!', () => { });
             wx.hideToast();
           }
         });
@@ -229,10 +192,10 @@ Page({
     let arr = [], json = {}, that = this;
     arr.push(0x00, 0x01, 0x40);
     json = {
-      'data': main.getArrays(arr),
+      'data': $.getArrays(arr),
     };
     tools.sendData('c2s_write', that.data.did, json);
-    main.getSocketResponse((data) => {
+    $.getSocketResponse((data) => {
       that.data.arrays = data.splice(4, 18);
       let arraysName = that.data.arrays;
       that.setData({
@@ -256,11 +219,10 @@ Page({
     let count = null, json = {};
     count = arrays1.concat(arrays2);
     json = {
-      'data': main.getArrays(count),
+      'data': $.getArrays(count),
     };
     tools.sendData('c2s_write', that.data.did, json);
-
-    main.getSocketResponse((data) => {
+    $.getSocketResponse((data) => {
       let arr = data.splice(3, 1);
       if (arr == 1) {
         wx.showToast({
@@ -301,7 +263,7 @@ Page({
     let tabArray = wx.getStorageSync('tabArray');
     let spliceArray = wx.getStorageSync('spliceArray');
 
-    main.ajax({
+    $.ajax({
       url: 'dev/getregion',
       method: 'POST',
       data: {
@@ -313,7 +275,7 @@ Page({
         for (let y in tabArray) {
           if (region[i].id == tabArray[y].id) {
             rid = region[i].id;
-            main.ajax({
+            $.ajax({
               url: 'dev/getdev',
               method: 'POST',
               data: {
@@ -325,42 +287,43 @@ Page({
               for (let a in list) {
                 for (let b in spliceArray) {
                   if (list[a].id == spliceArray[b].id) {
-                    if (IndexDemo('打开', that.data.voiceIMessage) == 0) {
-                      sdid = list[i].did;
-                      if (typeof sdid == 'string') {
-                        sdid = JSON.parse(sdid)
-                      }
-                      brr = [0xA2, 0x01, 0x01];
-                      arr.push(0x00, 0x08, 0xA2);
-                      let count = arr.concat(sdid.concat(brr));
-                      json = {
-                        'data': main.getArrays(count),
-                      };
-                      count = "";
-                      tools.sendData('c2s_write', that.data.did, json);
-                    } else if (IndexDemo('全部打开', that.data.voiceIMessage) == 0) {
-                      //  发送数据
-                      tools.sendData('c2s_write', that.data.did, {
-                        "onoffAll": true,
-                      });
-                      main._Toast('打开成功!', 'success');
-                    } else if (IndexDemo('关闭全部', that.data.voiceIMessage) == 0) {
-                      //  发送数据
-                      tools.sendData('c2s_write',that.data.did, {
-                        "onoffAll": false,
-                      });
-                      main._Toast('关闭成功!', 'success');
-                    } else if (IndexDemo('关闭', that.data.voiceIMessage) == 0) {
-                      console.log(2);
-                    } else {
-                      console.log(3);
-                      return false;
+                    switch (true) {
+                      case IndexDemo('打开', that.data.voiceIMessage) == 0:
+                        sdid = list[i].did;
+                        if (typeof sdid == 'string') {
+                          sdid = JSON.parse(sdid)
+                        }
+                        brr = [0xA2, 0x01, 0x01];
+                        arr.push(0x00, 0x08, 0xA2);
+                        let count = arr.concat(sdid.concat(brr));
+                        json = {
+                          'data': $.getArrays(count),
+                        };
+                        count = "";
+                        tools.sendData('c2s_write', that.data.did, json);
+                        break;
+                      case IndexDemo('全部打开', that.data.voiceIMessage) == 0:
+                        //  发送数据
+                        tools.sendData('c2s_write', that.data.did, {
+                          "onoffAll": true,
+                        });
+                        $._Toast('打开成功!', 'success');
+                        break;
+                      case IndexDemo('关闭全部', that.data.voiceIMessage) == 0:
+                        //  发送数据
+                        tools.sendData('c2s_write', that.data.did, {
+                          "onoffAll": false,
+                        });
+                        $._Toast('关闭成功!', 'success');
+                        break;
+                      default:
+                        return false;
                     }
                   }
                 }
               }
 
-              main.getSocketResponse((data) => {
+              $.getSocketResponse((data) => {
                 conosole.log(data);
               });
 
@@ -371,28 +334,6 @@ Page({
         }
       }
     })
-
-    // main.ajax({
-    //   data: {
-    //     url: 'dev/getdev',
-    //     method: 'POST',
-    //     header: {
-    //       'content-type': 'application/json',
-    //       'content-type': 'application/x-www-form-urlencoded'
-    //     },
-    //     data: {
-    //       rid: rid,
-    //       uid: wx.getStorageSync('wxuser').id,
-    //     },
-    //   }
-    // }).then((res) => {
-    //   list = res.data.data;
-    //   for (let i in list) {
-    //     if (rid == list[i].rid) {
-          
-    //     }
-    //   }
-    // }) 
 
   }
 

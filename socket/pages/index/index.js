@@ -58,6 +58,8 @@ Page({
     this.setData({
       currentTab: e.detail.current
     });
+    wx.setStorageSync('currentTab', that.data.currentTab);
+    console.log(that.data.currentTab, 'that.data.currentTab...');
     for (let i in that.data.tabArray) {
       if (i == that.data.currentTab) {
         $.ajax({
@@ -88,6 +90,7 @@ Page({
         currentTab: e.target.dataset.current
       })
     }
+    wx.setStorageSync('currentTab', that.data.currentTab);
     $.ajax({
       url: 'dev/getdev',
       method: 'POST',
@@ -143,7 +146,6 @@ Page({
       let response = res.data;
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
-          console.log(response, '1....');
           wx.setStorageSync('tabArray', response);
           that.setData({
             tabArray: wx.getStorageSync('tabArray'),
@@ -190,6 +192,49 @@ Page({
           wx.removeStorageSync('tabArray');
           wx.removeStorageSync('spliceArray');
         }
+        that.setData({
+          currentTab: wx.getStorageSync('currentTab')
+        });
+      }
+    });
+  },
+
+  elePosition(rid) {
+    let that = this;
+    $.ajax({
+      url: 'dev/getdev',
+      method: 'POST',
+      data: {
+        rid: rid,
+        uid: wx.getStorageSync('wxuser').id,
+      },
+    }).then((res) => {
+      let data = res.data;
+      
+      for (let i in res.data) {
+        if (res.data[i].status == 'false') {
+          that.setData({
+            status: false,
+            statusText: '关闭'
+          });
+        } else if (res.data[i].status == 'true') {
+          that.setData({
+            status: true,
+            statusText: '开启'
+          });
+        }
+      }
+      let resDev = res.data;
+      console.log(resDev);
+      // for (let y in resDev) {
+        
+      // }
+      if (rid == that.data.areaid) {
+        that.setData({
+          spliceArray: res.data,
+          areaid: that.data.areaid,
+        });
+        wx.setStorageSync('spliceArray', that.data.spliceArray);
       }
     });
   },
@@ -228,11 +273,12 @@ Page({
       };
       tools.sendData('c2s_write', that.data.did, json);
       $.getSocketResponse((data) => {
-
+        console.log(data);
       })
     }
 
     function ajax(status) {
+      let that = this;
       $.ajax({
         url: 'dev/editdev',
         method: 'POST',
@@ -275,7 +321,8 @@ Page({
                   ajax("true");
                   wx.hideLoading();
 
-                  that.getIndexGizwits();
+                  // that.getIndexGizwits();
+                  that.elePosition(that.data.areaid);
                   return;
                 case that.data.spliceArray[y].status == "true":
                   array1 = [0xA1, 0x01, 0x00];
@@ -290,40 +337,12 @@ Page({
                   ajax("false");
                   wx.hideLoading();
 
-                  that.getIndexGizwits();
-                  return;
+                  that.elePosition(that.data.areaid);
+                  return false;
+                default:
+                  wx.hideLoading();
+                  return false;
               }
-
-              // if (that.data.spliceArray[y].status == "false") {
-              //   console.log(1, "..............................");
-              //   let array1 = [0xA1, 0x01, 0x01];
-              //   let array2 = [0x00, 0x08, 0xA2];
-              //   socketGo(array1, array2);
-              //   that.setData({
-              //     status: true,
-              //     statusText: '开启',
-              //   });
-
-              //   // ajax("true");
-
-              //   that.getIndexGizwits();
-              //   return;
-              // } else if (that.data.status == true) {
-              //   console.log(2, "..............................");
-              //   let array1 = [0xA1, 0x01, 0x00];
-              //   let array2 = [0x00, 0x08, 0xA2];
-              //   socketGo(array1, array2);
-
-              //   that.setData({
-              //     status: false,
-              //     statusText: '关闭'
-              //   });
-
-              //   // ajax("false");
-
-              //   that.getIndexGizwits();
-              //   // return false;
-              // }
             }
 
           }
