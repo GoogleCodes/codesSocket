@@ -96,18 +96,9 @@ Page({
             'lan': 'zh' //s.data.arrayCharset, // 'zh',
           },
           success(res) {
-            console.log(res.data);
             s.setData({ voiceNow: true });
             var error_text = '语音识别失败';
             console.log("返回的东西是：", JSON.parse(res.data), "options...");
-            switch (true) {
-              case res.data.toString() == error_text:
-                $.alert('语音识别失败!请重试!');
-                return false;
-              case res.statusCode == 404:
-                $.alert('服务器搞飞机去了!呜呜呜~~~~');
-                return false;
-            }
             var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
             s.setData({
               ins_y: options.time1,
@@ -119,18 +110,34 @@ Page({
               return s;
             }
 
+            switch (true) {
+              case res.data.toString() == error_text:
+                $.alert('语音识别失败!请重试!');
+                return false;
+              case res.statusCode == 404:
+                $.alert('服务器搞飞机去了!呜呜呜~~~~');
+                return false;
+            }
+            
             for (var i in options.yuyin) {
               var sqlStr = options.yuyin[i];
-
-              s.setData({
-                openMessage: sqlStr,
-              });
-
               let tabArray = wx.getStorageSync('tabArray');
               for (let i in tabArray) {
-                console.log(tabArray[i].name);
                 switch (true) {
-                  case IndexDemo('打开全部灯', sqlStr) || IndexDemo('打', sqlStr) || IndexDemo('打开', sqlStr):
+                  case IndexDemo('打开全部', sqlStr) == 0:
+                    console.log(11111);
+                    $.ajax({
+                      url: 'dev/alleditdev',
+                      method: 'POST',
+                      data: {
+                        status: 'true'
+                      },
+                    }).then((res) => {
+                      $.alert('打开成功!');
+                    });
+                    s.setData({
+                      openMessage: sqlStr,
+                    });
                     s.setData({
                       voiceOpen: false,
                       voiceDone: true,
@@ -139,12 +146,29 @@ Page({
                     tools.sendData('c2s_write', that.data.id, {
                       "onoffAll": true,
                     });
-                    $.getSocketResponse((res) => {
-                      console.log(res, 'data...');
-                    })
-                    $.alert('打开成功!');
-                    return true;
-                  case IndexDemo('关闭全部灯', sqlStr) || IndexDemo('关', sqlStr) || IndexDemo('关闭', sqlStr):
+                    $.ajax({
+                      url: 'dev/alleditdev',
+                      method: 'POST',
+                      data: {
+                        status: 'true'
+                      },
+                    }).then((res) => {
+                      $.alert('打开成功!');
+                    });
+                    // $.getSocketResponse((res) => {
+                    //   console.log(res, 'data...');
+                    // })
+                    return false;
+                  case IndexDemo('关闭全部', sqlStr) == 0:
+                    $.ajax({
+                      url: 'dev/alleditdev',
+                      method: 'POST',
+                      data: {
+                        status: 'false'
+                      },
+                    }).then((res) => {
+                      $.alert('关闭成功!');
+                    });
                     s.setData({
                       voiceOpen: true,
                       voiceDone: false,
@@ -153,13 +177,13 @@ Page({
                     tools.sendData('c2s_write', that.data.did, {
                       "onoffAll": false,
                     });
-                    $.alert('关闭成功!');
-                    return true;
-                  case IndexDemo("打开", sqlStr):
-
+                    
                     return false;
                   case IndexDemo(tabArray[i].name, sqlStr):
-
+                    console.log(123333333333333333333333333333333333333333333);
+                    return false;
+                  default:
+                    $.alert("请重试！");
                     return false;
                 }
               }
@@ -255,21 +279,14 @@ Page({
     }
 
     if (that.data.voiceIMessage == "打开" + that.data.sceneName) {
-
       that.data.arrays[14] = 2;
       arr.push(0, 18, 0x50);
       that.webScene(arr, that.data.arrays);
-
-      $.alert("123");
-
     } else if (that.data.voiceIMessage == "关闭" + that.data.sceneName) {
 
       that.data.arrays[14] = 0;
       arr.push(0, 18, 0x50);
       that.webScene(arr, that.data.arrays);
-
-      $.alert("123");
-
     }
 
     let tabArray = wx.getStorageSync('tabArray');
@@ -320,14 +337,38 @@ Page({
                         tools.sendData('c2s_write', that.data.did, {
                           "onoffAll": true,
                         });
-                        $.alert('打开成功!');
+                        that.setData({
+                          voiceOpen: false,
+                          voiceDone: true,
+                        });
+                        $.ajax({
+                          url: 'dev/alleditdev',
+                          method: 'POST',
+                          data: {
+                            status: 'true'
+                          },
+                        }).then((res) => {
+                          $.alert('打开成功!');
+                        });
                         return true;
                       case IndexDemo('关闭全部', that.data.voiceIMessage) == 0:
                         //  发送数据
                         tools.sendData('c2s_write', that.data.did, {
                           "onoffAll": false,
                         });
-                        $.alert('关闭成功!');
+                        that.setData({
+                          voiceOpen: true,
+                          voiceDone: false,
+                        });
+                        $.ajax({
+                          url: 'dev/alleditdev',
+                          method: 'POST',
+                          data: {
+                            status: 'false'
+                          },
+                        }).then((res) => {
+                          $.alert('关闭成功!');
+                        });
                         return true;
                       default:
                         $.alert('文字识别错误!');
