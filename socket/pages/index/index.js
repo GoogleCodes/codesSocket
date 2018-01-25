@@ -159,26 +159,26 @@ Page({
             },
           }).then((res) => {
             let data = res.data;
-            for (let i in res.data) {
-              if (res.data[i].status == 'false') {
+            let resDev = res.data;
+            for (let i in data) {
+              if (data[i].status == 'false') {
                 that.setData({
                   status: false,
                   statusText: '关闭'
                 });
-              } else if (res.data[i].status == 'true') {
+              } else if (data[i].status == 'true') {
                 that.setData({
                   status: true,
                   statusText: '开启'
                 });
               }
-            }
-            let resDev = res.data;
-            for (let y in resDev) {
               that.setData({
-                spliceArray: res.data,
+                spliceArray: data,
                 areaid: that.data.tabArray[0].id,
               });
+              let json = {
 
+              };
               wx.setStorageSync('spliceArray', that.data.spliceArray);
             }
           });
@@ -210,7 +210,7 @@ Page({
       },
     }).then((res) => {
       let data = res.data;
-      
+
       for (let i in res.data) {
         if (res.data[i].status == 'false') {
           that.setData({
@@ -225,10 +225,6 @@ Page({
         }
       }
       let resDev = res.data;
-      console.log(resDev);
-      // for (let y in resDev) {
-        
-      // }
       if (rid == that.data.areaid) {
         that.setData({
           spliceArray: res.data,
@@ -245,14 +241,14 @@ Page({
     })
     let that = this;
     this._getBindingList(20, 0);
-    this.getIndexGizwits();
+    // this.getIndexGizwits();
   },
 
   onReady() {
     let that = this;
-    setTimeout(() => {
-      that.getIndexGizwits();
-    }, 500)
+    // setTimeout(() => {
+    //   that.getIndexGizwits();
+    // }, 500)
   },
 
   operating(e) {
@@ -293,6 +289,9 @@ Page({
     }
 
     try {
+      let array1 = [0xA1, 0x01, 0x01];
+      let array2 = [0x00, 0x08, 0xA2];
+
       for (let i in that.data.tabArray) {
         if (areaid == that.data.tabArray[i].id) {
           that.setData({
@@ -304,10 +303,6 @@ Page({
                 deviceID: id,
                 currentItem: id
               });
-
-              let array1 = [0xA1, 0x01, 0x01];
-              let array2 = [0x00, 0x08, 0xA2];
-
               switch (true) {
                 case that.data.spliceArray[y].status == "false":
                   array1 = [0xA1, 0x01, 0x01];
@@ -431,7 +426,7 @@ Page({
             that._login();
           }
         }
-      } catch(e) {
+      } catch (e) {
 
       }
     });
@@ -452,53 +447,43 @@ Page({
   _getBindingList(limit, skip) {
     var that = this;
     wx.hideLoading();
-    // let options = wx.getStorageSync('options');
-    // let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
-    // var head = {
-    //   'content-type': 'application/json',
-    //   'X-Gizwits-Application-Id': options.gizwitsAppId,
-    //   'X-Gizwits-User-token': options.token,
-    // };
-    // tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
-      // wx.setStorageSync('devices', result.data.devices);
-      let devices = wx.getStorageSync('devices');
-      let json = {}, arr = [];
-      for (var i in devices) {
-        var device = devices[i];
-        json = {
-          did: device.did,
-        };
-        arr.push(json);
+    let devices = wx.getStorageSync('devices');
+    let json = {}, arr = [];
+    for (var i in devices) {
+      var device = devices[i];
+      json = {
+        did: device.did,
+      };
+      arr.push(json);
+      that.setData({
+        didList: that.data.didList.concat(arr)
+      });
+      if (devices[i].is_online == true) {
         that.setData({
-          didList: that.data.didList.concat(arr)
+          did: device.did,
+          host: device.host,
+          wss_port: device.wss_port,
         });
-        if (devices[i].is_online == true) {
-          that.setData({
-            did: device.did,
-            host: device.host,
-            wss_port: device.wss_port,
-          });
-          //  获取数据
-          let json = {
-            'did': device.did,  //  did
-            'host': device.host,  //  websocket 请求地址
-            'ws_port': device.ws_port, //  端口
-            'wss_port': device.wss_port, //  端口
-          };
-          wx.setStorageSync('didJSon', json);
-        }
+        //  获取数据
+        let json = {
+          'did': device.did,  //  did
+          'host': device.host,  //  websocket 请求地址
+          'ws_port': device.ws_port, //  端口
+          'wss_port': device.wss_port, //  端口
+        };
+        wx.setStorageSync('didJSon', json);
       }
-      that._login();
-      for (let i in that.data.didList) {
-        let did = wx.getStorageSync('did');
-        if (that.data.didList[i].did == did) {
-          setTimeout(() => {
-            that.getIndexGizwits();
-          }, 500)
-          return true;
-        }
+    }
+    that._login();
+    for (let i in that.data.didList) {
+      let did = wx.getStorageSync('did');
+      if (that.data.didList[i].did == did) {
+        setTimeout(() => {
+          that.getIndexGizwits();
+        }, 500)
+        return true;
       }
-    // }, (err) => { });
+    }
   },
 
   /**

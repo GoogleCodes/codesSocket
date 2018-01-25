@@ -41,6 +41,22 @@ Page({
       did: wx.getStorageSync('did')
     });
     this.getScene();
+
+
+    let tabArray = wx.getStorageSync('tabArray');
+    let spliceArray = wx.getStorageSync('spliceArray');
+
+    let sqlStr = '打开led灯, ';
+
+    function IndexDemo(str1, str2) {
+      var s = str2.indexOf(str1);
+      return s;
+    }
+    
+    // console.log(typeof sqlStr);
+    // let a = sqlStr.replace(/,/g, '');
+    // console.log(a.trim(),'-------------');
+    
   },
 
   startRecode(e) {
@@ -80,6 +96,31 @@ Page({
     wx.stopRecord();
     s.setData({ isSpeaking: false });
     wx.showToast();
+
+    function socketGo(array1, array2) {
+      count = array2.concat(sdid.concat(array1));
+      json = {
+        'data': $.getArrays(count),
+      };
+      tools.sendData('c2s_write', that.data.did, json);
+      $.getSocketResponse((data) => {
+        console.log(data);
+      })
+    }
+
+    function ajax(dname, status) {
+      $.ajax({
+        url: 'dev/editvideo',
+        method: 'POST',
+        data: {
+          dname: dname,
+          status: status
+        },
+      }).then((res) => {
+        console.log(res)
+      })
+    }
+
     try {
       setTimeout(() => {
         wx.uploadFile({
@@ -96,10 +137,15 @@ Page({
             'lan': 'zh' //s.data.arrayCharset, // 'zh',
           },
           success(res) {
+
+            let array1 = [0xA1, 0x01, 0x01];
+            let array2 = [0x00, 0x08, 0xA2];
+
             s.setData({ voiceNow: true });
             var error_text = '语音识别失败';
             console.log("返回的东西是：", JSON.parse(res.data), "options...");
             var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
+
             s.setData({
               ins_y: options.time1,
               ins_l: options.time2,
@@ -109,6 +155,9 @@ Page({
               var s = str2.indexOf(str1);
               return s;
             }
+
+            let tabArray = wx.getStorageSync('tabArray');
+            let spliceArray = wx.getStorageSync('spliceArray');
 
             switch (true) {
               case res.data.toString() == error_text:
@@ -121,11 +170,28 @@ Page({
             
             for (var i in options.yuyin) {
               var sqlStr = options.yuyin[i];
-              let tabArray = wx.getStorageSync('tabArray');
-              for (let i in tabArray) {
+              for (let i in spliceArray) {
+
+                let close = '关闭' + spliceArray[i].dname;
+                let open = '打开' + spliceArray[i].dname;
+
+                console.log(open, IndexDemo(open, sqlStr));
                 switch (true) {
+                  case IndexDemo(open, sqlStr) == 0 || IndexDemo(open, sqlStr) > 0:
+                    array1 = [0xA1, 0x01, 0x01];
+                    array2 = [0x00, 0x08, 0xA2];
+                    $.alert('打开成功!');
+                    alert(spliceArray[i].dname, "true");
+                    socketGo(array1, array2);
+                    break;
+                  case IndexDemo(close, sqlStr) == 0 || IndexDemo(close, sqlStr) > 0:
+                    array1 = [0xA1, 0x01, 0x00];
+                    array2 = [0x00, 0x08, 0xA2];
+                    $.alert('关闭成功!');
+                    alert(spliceArray[i].dname, "false");
+                    socketGo(array1, array2);
+                    break;
                   case IndexDemo('打开全部', sqlStr) == 0:
-                    console.log(11111);
                     $.ajax({
                       url: 'dev/alleditdev',
                       method: 'POST',
@@ -179,8 +245,7 @@ Page({
                     });
                     
                     return false;
-                  case IndexDemo(tabArray[i].name, sqlStr):
-                    console.log(123333333333333333333333333333333333333333333);
+                  case IndexDemo(spliceArray[i].name, sqlStr):
                     return false;
                   default:
                     $.alert("请重试！");
