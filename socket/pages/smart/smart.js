@@ -683,12 +683,12 @@ Page({
         name: 'silk',
         header: {
           'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods':'GET, POST, PUT',
           'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
         },
         formData: {
           'lan': 'zh', // 'zh',
         },
-        header: ('Access-Control-Allow-Methods: GET, POST, PUT'),
         success(res) {
           console.log(res);
           var error_text = '语音识别失败';
