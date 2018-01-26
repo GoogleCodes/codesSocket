@@ -19,7 +19,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '打开房间智能灯',
+    voiceIMessage: '打开厨房智能灯',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -168,7 +168,7 @@ Page({
 
             for (var i in options.yuyin) {
               var sqlStr = options.yuyin[i];
-              
+
               function getRegion(content, callback) {
                 $.ajax({
                   url: 'dev/getregion',
@@ -178,8 +178,7 @@ Page({
                   },
                 }).then((res) => {
                   for (let i in res.data) {
-                    console.log(res.data[i], "-+-+-+-");
-                    if (IndexDemo(res.data[i].name, content) > 0) {
+                    if (IndexDemo(res.data[i].name, content) > 0 || IndexDemo(res.data[i].name, content) == 0) {
                       let rid = res.data[i].id
                       callback(rid, res.data[i].name)
                     }
@@ -188,126 +187,243 @@ Page({
               }
 
               getRegion(sqlStr, (id, name) => {
-                console.log(id, name);
+                $.ajax({
+                  url: 'dev/getdev',
+                  method: 'POST',
+                  data: {
+                    rid: id,
+                    uid: wx.getStorageSync('wxuser').id,
+                  },
+                }).then((res) => {
+                  let getdev = res.data;
+                  for (let i in getdev) {
+                    if (getdev[i].rid == id) {
+                      let close = '关闭' + name + getdev[i].dname;
+                      let open = '打开' + name + getdev[i].dname;
+                      switch (true) {
+                        case IndexDemo(open, sqlStr) == 0 || IndexDemo(open, sqlStr) > 0:
+                          array1 = [0xA1, 0x01, 0x01];
+                          array2 = [0x00, 0x08, 0xA2];
+                          $.ajax({
+                            url: 'dev/updatevideo',
+                            method: 'POST',
+                            data: {
+                              dname: getdev[i].dname,
+                              id: getdev[i].id,
+                              rid: getdev[i].rid,
+                              status: "true"
+                            },
+                          }).then((res) => {
+                            $.alert('打开成功!');
+                          })
 
-                
+                          s.setData({
+                            openMessage: sqlStr,
+                          });
+                          s.setData({
+                            voiceOpen: false,
+                            voiceDone: true,
+                          })
+                          socketGo(array1, array2);
+                          break;
+                        case IndexDemo(close, sqlStr) == 0 || IndexDemo(close, sqlStr) > 0:
+                          console.log(close, IndexDemo(close, sqlStr));
+                          array1 = [0xA1, 0x01, 0x00];
+                          array2 = [0x00, 0x08, 0xA2];
+                          $.ajax({
+                            url: 'dev/updatevideo',
+                            method: 'POST',
+                            data: {
+                              dname: spliceArray[i].dname,
+                              id: getdev[i].id,
+                              rid: getdev[i].rid,
+                              status: "false"
+                            },
+                          }).then((res) => {
+                            $.alert('关闭成功!');
+                          })
+
+                          s.setData({
+                            voiceOpen: true,
+                            voiceDone: false,
+                          })
+                          socketGo(array1, array2);
+                          break;
+                        case IndexDemo('打开全部', sqlStr) == 0:
+                          $.ajax({
+                            url: 'dev/alleditdev',
+                            method: 'POST',
+                            data: {
+                              status: 'true',
+                            },
+                          }).then((res) => {
+                            $.alert('打开成功!');
+                          });
+                          s.setData({
+                            openMessage: sqlStr,
+                          });
+                          s.setData({
+                            voiceOpen: false,
+                            voiceDone: true,
+                          })
+                          //  发送数据
+                          tools.sendData('c2s_write', that.data.id, {
+                            "onoffAll": true,
+                          });
+                          $.ajax({
+                            url: 'dev/alleditdev',
+                            method: 'POST',
+                            data: {
+                              status: 'true'
+                            },
+                          }).then((res) => {
+                            $.alert('打开成功!');
+                          });
+                          // $.getSocketResponse((res) => {
+                          //   console.log(res, 'data...');
+                          // })
+                          return false;
+                        case IndexDemo('关闭全部', sqlStr) == 0:
+                          $.ajax({
+                            url: 'dev/alleditdev',
+                            method: 'POST',
+                            data: {
+                              status: 'false'
+                            },
+                          }).then((res) => {
+                            $.alert('关闭成功!');
+                          });
+                          s.setData({
+                            voiceOpen: true,
+                            voiceDone: false,
+                          })
+                          //  发送数据
+                          tools.sendData('c2s_write', that.data.did, {
+                            "onoffAll": false,
+                          });
+
+                          return false;
+                      }
+                    }
+
+                  }
+                });
 
 
               })
 
-              for (let i in spliceArray) {
-                let close = '关闭' + spliceArray[i].dname;
-                let open = '打开' + spliceArray[i].dname;
+              // for (let i in spliceArray) {
+              //   let close = '关闭' + spliceArray[i].dname;
+              //   let open = '打开' + spliceArray[i].dname;
 
-                switch (true) {
-                  case IndexDemo(open, sqlStr) == 0 || IndexDemo(open, sqlStr) > 0:
-                    console.log(open, IndexDemo(open, sqlStr));
-                    array1 = [0xA1, 0x01, 0x01];
-                    array2 = [0x00, 0x08, 0xA2];
+              //   switch (true) {
+              //     case IndexDemo(open, sqlStr) == 0 || IndexDemo(open, sqlStr) > 0:
+              //       console.log(open, IndexDemo(open, sqlStr));
+              //       array1 = [0xA1, 0x01, 0x01];
+              //       array2 = [0x00, 0x08, 0xA2];
+              //       $.ajax({
+              //         url: 'dev/editvideo',
+              //         method: 'POST',
+              //         data: {
+              //           dname: spliceArray[i].dname,
+              //           status: "true"
+              //         },
+              //       }).then((res) => {
+              //         $.alert('打开成功!');
+              //       })
 
-                    $.ajax({
-                      url: 'dev/editvideo',
-                      method: 'POST',
-                      data: {
-                        dname: spliceArray[i].dname,
-                        status: "true"
-                      },
-                    }).then((res) => {
-                      $.alert('打开成功!');
-                    })
+              //       s.setData({
+              //         openMessage: sqlStr,
+              //       });
+              //       s.setData({
+              //         voiceOpen: false,
+              //         voiceDone: true,
+              //       })
+              //       socketGo(array1, array2);
+              //       break;
+              //     case IndexDemo(close, sqlStr) == 0 || IndexDemo(close, sqlStr) > 0:
+              //       console.log(close, IndexDemo(close, sqlStr));
+              //       array1 = [0xA1, 0x01, 0x00];
+              //       array2 = [0x00, 0x08, 0xA2];
 
-                    s.setData({
-                      openMessage: sqlStr,
-                    });
-                    s.setData({
-                      voiceOpen: false,
-                      voiceDone: true,
-                    })
-                    socketGo(array1, array2);
-                    break;
-                  case IndexDemo(close, sqlStr) == 0 || IndexDemo(close, sqlStr) > 0:
-                    console.log(close, IndexDemo(close, sqlStr));
-                    array1 = [0xA1, 0x01, 0x00];
-                    array2 = [0x00, 0x08, 0xA2];
+              //       $.ajax({
+              //         url: 'dev/editvideo',
+              //         method: 'POST',
+              //         data: {
+              //           dname: spliceArray[i].dname,
+              //           status: "false"
+              //         },
+              //       }).then((res) => {
+              //         $.alert('关闭成功!');
+              //       })
 
-                    $.ajax({
-                      url: 'dev/editvideo',
-                      method: 'POST',
-                      data: {
-                        dname: spliceArray[i].dname,
-                        status: "false"
-                      },
-                    }).then((res) => {
-                      $.alert('关闭成功!');
-                    })
+              //       s.setData({
+              //         voiceOpen: true,
+              //         voiceDone: false,
+              //       })
+              //       socketGo(array1, array2);
+              //       break;
+              //     case IndexDemo('打开全部', sqlStr) == 0:
+              //       $.ajax({
+              //         url: 'dev/alleditdev',
+              //         method: 'POST',
+              //         data: {
+              //           status: 'true'
+              //         },
+              //       }).then((res) => {
+              //         $.alert('打开成功!');
+              //       });
+              //       s.setData({
+              //         openMessage: sqlStr,
+              //       });
+              //       s.setData({
+              //         voiceOpen: false,
+              //         voiceDone: true,
+              //       })
+              //       //  发送数据
+              //       tools.sendData('c2s_write', that.data.id, {
+              //         "onoffAll": true,
+              //       });
+              //       $.ajax({
+              //         url: 'dev/alleditdev',
+              //         method: 'POST',
+              //         data: {
+              //           status: 'true'
+              //         },
+              //       }).then((res) => {
+              //         $.alert('打开成功!');
+              //       });
+              //       // $.getSocketResponse((res) => {
+              //       //   console.log(res, 'data...');
+              //       // })
+              //       return false;
+              //     case IndexDemo('关闭全部', sqlStr) == 0:
+              //       $.ajax({
+              //         url: 'dev/alleditdev',
+              //         method: 'POST',
+              //         data: {
+              //           status: 'false'
+              //         },
+              //       }).then((res) => {
+              //         $.alert('关闭成功!');
+              //       });
+              //       s.setData({
+              //         voiceOpen: true,
+              //         voiceDone: false,
+              //       })
+              //       //  发送数据
+              //       tools.sendData('c2s_write', that.data.did, {
+              //         "onoffAll": false,
+              //       });
 
-                    s.setData({
-                      voiceOpen: true,
-                      voiceDone: false,
-                    })
-                    socketGo(array1, array2);
-                    break;
-                  case IndexDemo('打开全部', sqlStr) == 0:
-                    $.ajax({
-                      url: 'dev/alleditdev',
-                      method: 'POST',
-                      data: {
-                        status: 'true'
-                      },
-                    }).then((res) => {
-                      $.alert('打开成功!');
-                    });
-                    s.setData({
-                      openMessage: sqlStr,
-                    });
-                    s.setData({
-                      voiceOpen: false,
-                      voiceDone: true,
-                    })
-                    //  发送数据
-                    tools.sendData('c2s_write', that.data.id, {
-                      "onoffAll": true,
-                    });
-                    $.ajax({
-                      url: 'dev/alleditdev',
-                      method: 'POST',
-                      data: {
-                        status: 'true'
-                      },
-                    }).then((res) => {
-                      $.alert('打开成功!');
-                    });
-                    // $.getSocketResponse((res) => {
-                    //   console.log(res, 'data...');
-                    // })
-                    return false;
-                  case IndexDemo('关闭全部', sqlStr) == 0:
-                    $.ajax({
-                      url: 'dev/alleditdev',
-                      method: 'POST',
-                      data: {
-                        status: 'false'
-                      },
-                    }).then((res) => {
-                      $.alert('关闭成功!');
-                    });
-                    s.setData({
-                      voiceOpen: true,
-                      voiceDone: false,
-                    })
-                    //  发送数据
-                    tools.sendData('c2s_write', that.data.did, {
-                      "onoffAll": false,
-                    });
-
-                    return false;
-                  case IndexDemo(spliceArray[i].name, sqlStr):
-                    return false;
-                  default:
-                    $.alert("请重试！");
-                    return false;
-                }
-              }
+              //       return false;
+              //     case IndexDemo(spliceArray[i].name, sqlStr):
+              //       return false;
+              //     default:
+              //       $.alert("请重试！");
+              //       return false;
+              //   }
+              // }
 
               if (typeof (sqlStr) == "string") {
                 var myString = sqlStr.substring(0, 1);
@@ -452,11 +568,13 @@ Page({
           let allOpen = '打开' + name;
           let allClose = '关闭' + name;
           sdid = JSON.parse(region[i].did);
+
+
           for (let y in device) {
-            console.log(device[y].id == region[i].id);
             if (device[y].id == region[i].id) {
               switch (true) {
                 case IndexDemo(open, con) == 0 || IndexDemo(open, con) > 0:
+                  console.log(IndexDemo(open, con));
                   array1 = [0xA1, 0x01, 0x01];
                   array2 = [0x00, 0x08, 0xA2];
                   $.ajax({
@@ -465,6 +583,7 @@ Page({
                     data: {
                       dname: device[y].dname,
                       rid: device[y].rid,
+                      id: device[y].id,
                       status: "true"
                     },
                   }).then((res) => {
@@ -479,68 +598,69 @@ Page({
                   })
                   socketGo(array1, array2);
                   break;
-                case IndexDemo(con, close) == 0 || IndexDemo(con, close) > 0:
-                  array1 = [0xA1, 0x01, 0x00];
-                  array2 = [0x00, 0x08, 0xA2];
-                  $.ajax({
-                    url: 'dev/editvideo',
-                    method: 'POST',
-                    data: {
-                      dname: device[y].dname,
-                      rid: device[y].rid,
-                      status: "false"
-                    },
-                  }).then((res) => {
-                    $.alert('关闭成功!');
-                  })
+                // case IndexDemo(con, close) == 0 || IndexDemo(con, close) > 0:
+                //   array1 = [0xA1, 0x01, 0x00];
+                //   array2 = [0x00, 0x08, 0xA2];
+                //   $.ajax({
+                //     url: 'dev/updatevideo',
+                //     method: 'POST',
+                //     data: {
+                //       dname: device[y].dname,
+                //       rid: device[y].rid,
+                //       id: device[y].id,
+                //       status: "false"
+                //     },
+                //   }).then((res) => {
+                //     $.alert('关闭成功!');
+                //   })
 
-                  that.setData({
-                    openMessage: that.data.voiceIMessage,
-                  });
-                  that.setData({
-                    voiceOpen: false,
-                    voiceDone: true,
-                  })
-                  socketGo(array1, array2);
-                  break;
-                case IndexDemo(allOpen, con) == 0:
-                  //  发送数据
-                  tools.sendData('c2s_write', that.data.did, {
-                    "onoffAll": true,
-                  });
-                  that.setData({
-                    voiceOpen: false,
-                    voiceDone: true,
-                  });
-                  $.ajax({
-                    url: 'dev/alleditdev',
-                    method: 'POST',
-                    data: {
-                      status: 'true'
-                    },
-                  }).then((res) => {
-                    $.alert('打开成功!');
-                  });
-                  return true;
-                case IndexDemo(allClose, con) == 0:
-                  //  发送数据
-                  tools.sendData('c2s_write', that.data.did, {
-                    "onoffAll": false,
-                  });
-                  that.setData({
-                    voiceOpen: true,
-                    voiceDone: false,
-                  });
-                  $.ajax({
-                    url: 'dev/alleditdev',
-                    method: 'POST',
-                    data: {
-                      status: 'false'
-                    },
-                  }).then((res) => {
-                    $.alert('关闭成功!');
-                  });
-                  return true;
+                //   that.setData({
+                //     openMessage: that.data.voiceIMessage,
+                //   });
+                //   that.setData({
+                //     voiceOpen: false,
+                //     voiceDone: true,
+                //   })
+                //   socketGo(array1, array2);
+                //   break;
+                // case IndexDemo(allOpen, con) == 0:
+                //   //  发送数据
+                //   tools.sendData('c2s_write', that.data.did, {
+                //     "onoffAll": true,
+                //   });
+                //   that.setData({
+                //     voiceOpen: false,
+                //     voiceDone: true,
+                //   });
+                //   $.ajax({
+                //     url: 'dev/alleditdev',
+                //     method: 'POST',
+                //     data: {
+                //       status: 'true'
+                //     },
+                //   }).then((res) => {
+                //     $.alert('打开成功!');
+                //   });
+                //   return true;
+                // case IndexDemo(allClose, con) == 0:
+                //   //  发送数据
+                //   tools.sendData('c2s_write', that.data.did, {
+                //     "onoffAll": false,
+                //   });
+                //   that.setData({
+                //     voiceOpen: true,
+                //     voiceDone: false,
+                //   });
+                //   $.ajax({
+                //     url: 'dev/alleditdev',
+                //     method: 'POST',
+                //     data: {
+                //       status: 'false'
+                //     },
+                //   }).then((res) => {
+                //     $.alert('关闭成功!');
+                //   });
+                //   return true;
                 default:
                   $.alert('文字识别错误!');
                   return false;
@@ -549,7 +669,7 @@ Page({
           }
         }
       });
-  });
+    });
 
     // $.ajax({
     //   url: 'dev/getregion',
