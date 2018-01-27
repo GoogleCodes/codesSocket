@@ -19,7 +19,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '打开厨房led灯',
+    voiceIMessage: '关闭厨房led灯',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -181,48 +181,49 @@ Page({
                     if (IndexDemo(res.data[i].name, content) > 0 || IndexDemo(res.data[i].name, content) == 0) {
                       let rid = res.data[i].id
                       callback(rid, res.data[i].name)
-                    } else if (IndexDemo('打开全部设备', sqlStr) == 0) {
-                      $.ajax({
-                        url: 'dev/alleditdev',
-                        method: 'POST',
-                        data: {
-                          status: 'true',
-                        },
-                      }).then((res) => {
-                        $.alert('打开成功!');
-                      });
-                      s.setData({
-                        openMessage: sqlStr,
-                      });
-                      s.setData({
-                        voiceOpen: false,
-                        voiceDone: true,
-                      })
-                      //  发送数据
-                      tools.sendData('c2s_write', that.data.id, {
-                        "onoffAll": true,
-                      });
-                      return false;
-                    } else if (IndexDemo('关闭全部设备', sqlStr) == 0) {
-                      $.ajax({
-                        url: 'dev/alleditdev',
-                        method: 'POST',
-                        data: {
-                          status: 'false'
-                        },
-                      }).then((res) => {
-                        $.alert('关闭成功!');
-                      });
-                      s.setData({
-                        voiceOpen: true,
-                        voiceDone: false,
-                      })
-                      //  发送数据
-                      tools.sendData('c2s_write', that.data.did, {
-                        "onoffAll": false,
-                      });
-                      return false;
                     }
+                    // else if (IndexDemo('打开全部设备', sqlStr) == 0) {
+                    //   $.ajax({
+                    //     url: 'dev/alleditdev',
+                    //     method: 'POST',
+                    //     data: {
+                    //       status: 'true',
+                    //     },
+                    //   }).then((res) => {
+                    //     $.alert('打开成功!');
+                    //   });
+                    //   s.setData({
+                    //     openMessage: sqlStr,
+                    //   });
+                    //   s.setData({
+                    //     voiceOpen: false,
+                    //     voiceDone: true,
+                    //   })
+                    //   //  发送数据
+                    //   tools.sendData('c2s_write', that.data.id, {
+                    //     "onoffAll": true,
+                    //   });
+                    //   return false;
+                    // } else if (IndexDemo('关闭全部设备', sqlStr) == 0) {
+                    //   $.ajax({
+                    //     url: 'dev/alleditdev',
+                    //     method: 'POST',
+                    //     data: {
+                    //       status: 'false'
+                    //     },
+                    //   }).then((res) => {
+                    //     $.alert('关闭成功!');
+                    //   });
+                    //   s.setData({
+                    //     voiceOpen: true,
+                    //     voiceDone: false,
+                    //   })
+                    //   //  发送数据
+                    //   tools.sendData('c2s_write', that.data.did, {
+                    //     "onoffAll": false,
+                    //   });
+                    //   return false;
+                    // }
                   }
                 });
               }
@@ -239,9 +240,8 @@ Page({
                   let getdev = res.data;
                   for (let i in getdev) {
                     if (getdev[i].rid == id) {
-                      let close = '关闭' + name + getdev[i].dname;
                       let open = '打开' + name + getdev[i].dname;
-
+                      let close = '关闭' + name + getdev[i].dname;
                       if (IndexDemo(open, sqlStr) == 0 || IndexDemo(open, sqlStr) > 0) {
                         array1 = [0xA1, 0x01, 0x01];
                         array2 = [0x00, 0x08, 0xA2];
@@ -274,7 +274,7 @@ Page({
                           url: 'dev/updatevideo',
                           method: 'POST',
                           data: {
-                            dname: spliceArray[i].dname,
+                            dname: getdev[i].dname,
                             id: getdev[i].id,
                             rid: getdev[i].rid,
                             status: "false"
@@ -628,50 +628,10 @@ Page({
         },
       }).then((res) => {
         for (let i in res.data) {
-          if (IndexDemo(res.data[i].name, content) > 0) {
+          console.log(IndexDemo(res.data[i].name, content));
+          if (IndexDemo(res.data[i].name, content) == 0 || IndexDemo(res.data[i].name, content) > 0) {
             let rid = res.data[i].id
             callback(rid, res.data[i].name)
-          } else if (IndexDemo("打开全部设备", con) == 0) {
-            //  发送数据
-            tools.sendData('c2s_write', that.data.did, {
-              "onoffAll": true,
-            });
-            that.setData({
-              voiceOpen: false,
-              voiceDone: true,
-            });
-            $.ajax({
-              url: 'dev/alleditdev',
-              method: 'POST',
-              data: {
-                status: 'true'
-              },
-            }).then((res) => {
-              $.alert('打开成功!');
-            });
-            return false;
-          } else if (IndexDemo("关闭全部设备", con) == 0) {
-            //  发送数据
-            tools.sendData('c2s_write', that.data.did, {
-              "onoffAll": false,
-            });
-            that.setData({
-              voiceOpen: true,
-              voiceDone: false,
-            });
-            $.ajax({
-              url: 'dev/alleditdev',
-              method: 'POST',
-              data: {
-                status: 'false'
-              },
-            }).then((res) => {
-              $.alert('关闭成功!');
-            });
-            return false;
-          } else {
-            $.alert('文字识别错误!');
-            return true;
           }
         }
       });
@@ -725,7 +685,7 @@ Page({
                 })
                 socketGo(array1, array2);
                 return false;
-              } else if (IndexDemo(con, close) == 0 || IndexDemo(con, close) > 0) {
+              } else if (IndexDemo(close, con) == 0 || IndexDemo(close, con) > 0) {
                 array1 = [0xA1, 0x01, 0x00];
                 array2 = [0x00, 0x08, 0xA2];
                 $.ajax({
