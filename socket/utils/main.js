@@ -1,10 +1,6 @@
 let urls = require('common/common.js');
 
-class Main {
-  
-  constructor() {
-  }
-
+var $ = {
   formatTime(number) {  //  时间格式化
     var n = number * 1000;
     let date = new Date(n),
@@ -21,7 +17,7 @@ class Main {
       //秒钟
       second = date.getSeconds()
     return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':');
-  }
+  },
 
   getArrays(reqArr) {
     let arrays = new Array(768), i = 0;
@@ -31,7 +27,7 @@ class Main {
     let arrtoo = arrays.slice(0);
     let t = reqArr;
     return t.concat(arrtoo).splice(0, 768)
-  }
+  },
 
   _Toast(message, types) {
     wx.showToast({
@@ -39,7 +35,7 @@ class Main {
       icon: types,
       duration: 2000
     });
-  }
+  },
 
   _goShowModel(title, desc, success) {
     wx.showModal({
@@ -50,7 +46,7 @@ class Main {
         success(res)
       }
     });
-  }
+  },
 
   goPages(url) {
     setTimeout(() => {
@@ -58,10 +54,10 @@ class Main {
         url: url,
       })
     }, 500)
-  }
+  },
 
   ajax(data) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function(resolve, reject) {
       wx.request({
         url: urls.serviceUri + data.url,
         data: data.data,
@@ -86,7 +82,7 @@ class Main {
         }
       })
     })
-  }
+  },
 
   sendRrquest(url, method, data, header) {
     return new Promise(function (resolve, reject) {
@@ -99,7 +95,7 @@ class Main {
         fail: reject
       })
     });
-  }
+  },
 
   getSocketResponse(callback) {
     wx.onSocketMessage((res) => {
@@ -108,21 +104,21 @@ class Main {
         return callback(data);
       } catch (e) { }
     })
-  }
+  },
 
 
   getSaveMessage(callback) {
     wx.onSocketMessage((res) => {
       try {
         callback()
-      } catch(e) {}
+      } catch (e) { }
     })
-  }
+  },
 
   IndexDemo(str) {
     var s = sqlStr.indexOf(str);
     return s;
-  }
+  },
 
   /*                      中文转unicode                          */
 
@@ -133,7 +129,7 @@ class Main {
     }
     console.log(value);
     return value;
-  }
+  },
 
   left_zero_4(str) {
     if (str != null && str != '' && str != 'undefined') {
@@ -142,7 +138,7 @@ class Main {
       }
     }
     return str;
-  }
+  },
 
   unicode1(str) {
     var value = '';
@@ -150,8 +146,8 @@ class Main {
       value += '&#' + str.charCodeAt(i) + ';';
     console.log(value);
     return value;
-  }
-  
+  },
+
   /*                      中文转unicode                          */
 
 
@@ -160,8 +156,17 @@ class Main {
       title: title,
       duration: 2000
     })
-  }
+  },
 
-}
+  model(title, desc, flag) {
+    wx.showModal({
+      title: title,
+      content: desc,
+      showCancel: flag,
+    })
+  },
+  
 
-export { Main }
+};
+
+export { $ }

@@ -36,7 +36,6 @@ App({
         success(res) {
           var d = that.globalData.wxData; //  这里存储了appid、secret、token串
           var url = $com.loginUri + '?appid=' + $com.j.appID + '&secret=' + $com.j.secret +'&js_code='+ res.code +'&grant_type=authorization_code';
-          
           wx.request({
             url: url,
             method: 'GET',
@@ -63,6 +62,19 @@ App({
       }
     });
     // this._getBindingList(20, 0);
+
+    wx.getSystemInfo({
+      success: function (res) {
+        console.log(res.model)
+        console.log(res.pixelRatio)
+        console.log(res.windowWidth)
+        console.log(res.windowHeight)
+        console.log(res.language)
+        console.log(res.version)
+        console.log(res.platform)
+      }
+    })
+
   },
 
   _getBindingList(limit, skip) {

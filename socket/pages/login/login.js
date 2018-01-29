@@ -2,8 +2,9 @@
 
 var tools = require('../../utils/util.js');
 
-import { Main } from '../../utils/main.js'
-let $ = new Main();
+import { $ } from '../../utils/main.js'
+// let $ = new Main();
+
 
 Page({
   /**
@@ -174,7 +175,7 @@ Page({
         tel: tel
       },
     }).then((res) => {
-      wx.setStorageSync('wxuser', res.data)
+      wx.setStorageSync('wxuser', res.data);
     });
     
   },

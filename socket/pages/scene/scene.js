@@ -1,8 +1,8 @@
 // pages/scene/scene.js
 
 var tools = require('../../utils/util.js');
-import { Main } from '../../utils/main.js'
-let main = new Main();
+import { $ } from '../../utils/main.js'
+// let $ = new Main();
 // const did = wx.getStorageSync('didJSon').did;
 // const did = wx.getStorageSync('did');
 
@@ -39,7 +39,7 @@ Page({
     let arr = [], json = {}, that = this;
     arr.push(0x00, 0x01, 0x40);
     json = {
-      'data': main.getArrays(arr),
+      'data': $.getArrays(arr),
     };
     tools.sendData('c2s_write', that.data.did, json);
     setTimeout(() => {
@@ -80,15 +80,16 @@ Page({
   },
 
   switchScene(e) {
+    let flag = e.detail.value;
     let arr = [], that = this, json = {};
     console.log(that.data.did);
     // arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 10, 1, 1);
     arr.push(0, 18, 0x50);
     let count = null;
-    if (e.detail.value == true) {
+    if (flag == true) {
       count = arr.concat(that.data.sceneArray);
       json = {
-        'data': main.getArrays(count),
+        'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
       wx.onSocketMessage((res) => {
@@ -112,13 +113,13 @@ Page({
         } catch (e) {
         }
       })
-    } else if (e.detail.value == false)  {
+    } else if (flag == false)  {
       count = arr.concat(that.data.sceneArray);
       json = {
-        'data': main.getArrays(count),
+        'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      return;
+      return false;
     }
   },
 
@@ -130,7 +131,7 @@ Page({
       success(res) {
         arr.push(0, 18, 0x60);
         json = {
-          'data': main.getArrays(arr.concat(that.data.sceneid)),
+          'data': $.getArrays(arr.concat(that.data.sceneid)),
         };
         tools.sendData('c2s_write', that.data.did, json);
         wx.onSocketMessage((res) => {

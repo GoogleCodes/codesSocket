@@ -3,14 +3,14 @@
 <view class="control-body">
   <view class="control-title">网关：</view>
 
-  <view>全部：</view>
-  <view class="control-ul">
-    <view class="control-li">
+  <!-- <view>全部：</view>
+  <view class="control-ul" style="margin-bottom:18px;">
+    <view class="control-li" bindtap='selectingAll'>
       <view>
-        
+        <text class="fl iconfont icon-weibiaoti- block"></text>
       </view>
     </view>
-  </view>
+  </view> -->
 
   <view>在线的设备：</view>
   <view class="control-ul">

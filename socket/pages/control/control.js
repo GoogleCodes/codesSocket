@@ -1,8 +1,8 @@
 // pages/control/control.js
 
 var tools = require('../../utils/util.js');
-import { Main } from '../../utils/main.js'
-let main = new Main();
+import { $ } from '../../utils/main.js'
+// let main = new Main();
 Page({
 
   /**
@@ -26,6 +26,18 @@ Page({
     wss_port: 0, //  端口
     isOnList: [],
     isOffList: [],
+  },
+
+  selectingAll() {
+    console.log(123123);
+    let arr = [0x00, 0x02, 0xA0, 0xFF];
+    var json = {
+      'data': main.getArrays(arr),
+    };
+    tools.sendData('c2s_write', wx.getStorageSync('did'), json);
+    wx.switchTab({
+      url: '../index/index',
+    })
   },
 
   /**

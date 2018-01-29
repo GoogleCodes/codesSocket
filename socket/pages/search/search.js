@@ -1,8 +1,8 @@
 // pages/search/search.js
 
 var tools = require('../../utils/util.js');
-import { Main } from '../../utils/main.js'
-let $ = new Main();
+import { $ } from '../../utils/main.js'
+// let $ = new Main();
 
 const did = wx.getStorageSync('didJSon').did;
 

@@ -4,8 +4,8 @@ var app = new getApp();
 var times = null, ins = 0;
 
 var tools = require('../../utils/util.js');
-import { Main } from '../../utils/main.js'
-let main = new Main();
+import { $ } from '../../utils/main.js'
+// let $ = new Main();
 
 Page({
   /**
@@ -369,14 +369,14 @@ Page({
         //  0xA0  获取子设备请求
         arr.push(0x00, 0x02, 0xA0, 0x01);
         var json = {
-          'data': main.getArrays(arr),
+          'data': $.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 33:
         arr.push(0x00, 0x01, 0x40);
         let json = {
-          'data': main.getArrays(arr),
+          'data': $.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
@@ -384,14 +384,14 @@ Page({
         arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 1, 1, 1);
         // arr.push(0, 18, 0x44, 2);
         var json = {
-          'data': main.getArrays(arr),
+          'data': $.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
       case e.detail.value == 100:
         arr.push(0x00, 0x03, 0x12, 0x01, 0x01, 0x00, 0x01);
         var json = {
-          'data': main.getArrays(arr),
+          'data': $.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
         break;
@@ -412,10 +412,10 @@ Page({
         //  发送数据
         arr.push(0x00, 0x01, 0x14, 0x01, 0x01, 0x00, 0x01, 0x0F, 0x0B);
         json = {
-          'data': main.getArrays(arr),
+          'data': $.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
-        main._Toast('打开成功', 'success');
+        $._Toast('打开成功', 'success');
         that.getDev(that.data.switchButton);
         break;
       case false:
@@ -427,10 +427,10 @@ Page({
         // };
         arr.push(0x00, 0x01, 0x01);
         json = {
-          'data': main.getArrays(arr),
+          'data': $.getArrays(arr),
         };
         tools.sendData('c2s_write', that.data.did, json);
-        main._Toast('关闭成功', 'success');
+        $._Toast('关闭成功', 'success');
         break;
       default:
         break;
@@ -473,24 +473,24 @@ Page({
       //  arr.push(0x00, 0x08, 0xA2, 0x01, 0x01, 0x00, 0x01, 0xA2, 0x01, 0x01)
       //  0xA2 百分比操作（窗帘有效）
       arr.push(0x00, 0x08, 0xA2, 0x01, 0x00, 0x00, 0x02, 0xA1, 0x01, 0x1)
-      main.getArrays(arr);
+      $.getArrays(arr);
       that.setData({ switchSpec: true });
       //  发送数据
       json = {
-        "data": main.getArrays(arr),
+        "data": $.getArrays(arr),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      main._Toast('打开成功', 'success');
+      $._Toast('打开成功', 'success');
     } else {
       that.setData({ switchSpec: false });
       arr.push(0x00, 0x08, 0x16, 0x02, 0x01, 0x01, 0x00, 0x01)
-      main.getArrays(arr);
+      $.getArrays(arr);
       //  发送数据
       json = {
-        "data": main.getArrays(arr)
+        "data": $.getArrays(arr)
       };
       tools.sendData('c2s_write', that.data.did, json);
-      main._Toast('关闭成功', 'success');
+      $._Toast('关闭成功', 'success');
     }
   },
 
@@ -561,7 +561,7 @@ Page({
         that.setData({ switchButton: true });
         //  发送数据
         tools.sendData('c2s_write', that.data.did, that.data.switchButton);
-        main._Toast('发送成功', 'success');
+        $._Toast('发送成功', 'success');
       }
     });
   },
@@ -647,7 +647,7 @@ Page({
       success(res) {
         var tempFilePath = res.tempFilePath;
         that.setData({ recodePath: tempFilePath, isSpeaking: true });
-        main._Toast('录音成功', 'success');
+        $._Toast('录音成功', 'success');
         wx.getSavedFileList({
           success(res) {
             var voices = [];
@@ -695,10 +695,10 @@ Page({
           console.log("返回的东西是：", res.data.toString() == error_text, res.data);
           switch (true) {
             case res.data.toString() == error_text:
-              main._Toast('语音识别失败!请重试!', 'success');
+              $._Toast('语音识别失败!请重试!', 'success');
               break;
             case res.statusCode == 404:
-              main._Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
+              $._Toast('服务器搞飞机去了!呜呜呜~~~~', 'success');
               break;
           }
           var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
@@ -722,7 +722,7 @@ Page({
                 };
                 //  发送数据
                 tools.sendData('c2s_write', s.data.did, json);
-                main._Toast('打开成功!', 'success');
+                $._Toast('打开成功!', 'success');
                 break;
               case myString == "关" || myString == s.data.language:
                 s.setData({ switchButton: false });
@@ -731,7 +731,7 @@ Page({
                 };
                 //  发送数据
                 tools.sendData('c2s_write', s.data.did, json);
-                main._Toast('关闭成功!', 'success');
+                $._Toast('关闭成功!', 'success');
                 break;
               default:
                 break;
@@ -743,12 +743,12 @@ Page({
             cEditData.recodeIdentity = data.identitys;
             s.setData({ editData: cEditData });
           } else {
-            main._goShowModel('提示', data.message, () => { });
+            $._goShowModel('提示', data.message, () => { });
           }
           wx.hideToast();
         },
         fail(res) {  //  错误提示
-          main._goShowModel('提示', '录音的姿势不对!', () => { });
+          $._goShowModel('提示', '录音的姿势不对!', () => { });
           wx.hideToast();
         }
       });

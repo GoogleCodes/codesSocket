@@ -1,7 +1,7 @@
 // pages/me/me.js
 
-import { Main } from '../../utils/main.js'
-let main = new Main();
+import { $ } from '../../utils/main.js'
+// let main = new Main();
 
 Page({
 
