@@ -2,6 +2,9 @@
 
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
+
+let com = require('../../utils/common/common.js');
+
 // let $ = new Main();
 let did = wx.getStorageSync('didJSon').did;
 
@@ -31,7 +34,7 @@ Page({
     },
     tabId: 0,
     wechatOpenId: 'kceshi1',  //  测试:kceshi1
-    gizwitsAppId: '141b9a9bb1df416cbb18bb85c864633f',
+    gizwitsAppId: '',
     did: '',
     host: '', //  websocket 请求地址 sandbox.gizwits.com
     ws_port: 0, //  端口
@@ -43,6 +46,7 @@ Page({
     didList: [],
     statusText: '关闭',
     currentItem: 0,
+    typeDevice: 0,
   },
 
   refesh(e) {
@@ -59,7 +63,7 @@ Page({
       currentTab: e.detail.current
     });
     wx.setStorageSync('currentTab', that.data.currentTab);
-    console.log(that.data.currentTab, 'that.data.currentTab...');
+    console.log();
     for (let i in that.data.tabArray) {
       if (i == that.data.currentTab) {
         $.ajax({
@@ -69,14 +73,27 @@ Page({
             rid: that.data.tabArray[i].id,
             uid: wx.getStorageSync('wxuser').id,
           },
-        }).then((res) => {
+        }).then(function(res) {
           that.setData({
             spliceArray: res.data,
             areaid: that.data.tabArray[i].id,
           });
         });
-
       }
+    }
+    for (let y in that.data.spliceArray) {
+      let did = JSON.parse(that.data.spliceArray[y].did);
+      if (did[1] == 1) {
+        that.setData({
+          typeDevice: 1,
+        });
+      } else if (did[1] == 0) {
+        that.setData({
+          typeDevice: 0,
+        });
+      }
+      $.log(did);
+      console.log(that.data.typeDevice);
     }
 
   },
@@ -98,7 +115,7 @@ Page({
         rid: e.target.dataset.id,
         uid: wx.getStorageSync('wxuser').id,
       }
-    }).then((res) => {
+    }).then(function(res) {
       that.setData({
         spliceArray: res.data,
         tabId: e.target.dataset.id,
@@ -111,7 +128,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    const that = this;
+    let that = this;
     this.setData({
       did: wx.getStorageSync('did')
     });
@@ -142,10 +159,13 @@ Page({
       data: {
         uid: wx.getStorageSync('wxuser').id
       },
-    }).then((res) => {
+    }).then(function(res) {
       let response = res.data;
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
+          let arr = [];
+          arr.push(response[i]);
+          console.log(arr);
           wx.setStorageSync('tabArray', response);
           that.setData({
             tabArray: wx.getStorageSync('tabArray'),
@@ -154,19 +174,19 @@ Page({
             url: 'dev/getdev',
             method: 'POST',
             data: {
-              rid: response[0].id,
+              rid: arr[0].id,
               uid: wx.getStorageSync('wxuser').id,
             },
-          }).then((res) => {
+          }).then(function(res) {
             let data = res.data;
             let resDev = res.data;
-            for (let i in data) {
-              if (data[i].status == 'false') {
+            for (let j in data) {
+              if (data[j].status == 'false') {
                 that.setData({
                   status: false,
                   statusText: '关闭'
                 });
-              } else if (data[i].status == 'true') {
+              } else if (data[j].status == 'true') {
                 that.setData({
                   status: true,
                   statusText: '开启'
@@ -176,21 +196,30 @@ Page({
                 spliceArray: data,
                 areaid: that.data.tabArray[0].id,
               });
-              let json = {
+              // console.log(that.data.spliceArray);
 
-              };
+              // for (let y in that.data.spliceArray) {
+              //   let did = JSON.parse(that.data.spliceArray[y].did);
+              //   $.log(did);
+              //   // $.log(did[1] == 0);
+
+              //   if (did[1] == 1) {
+              //     that.setData({
+              //       typeDevice: 1,
+              //     });
+              //   }
+              //   if (did[1] == 0) {
+              //     that.setData({
+              //       typeDevice: 0,
+              //     });
+              //   }
+              // }
+
               wx.setStorageSync('spliceArray', that.data.spliceArray);
             }
           });
           that.onLoad();
-          return false;
-        } else if (response[i].pid !== wx.getStorageSync('did')) {
-          that.setData({
-            tabArray: [],
-            spliceArray: [],
-          });
-          wx.removeStorageSync('tabArray');
-          wx.removeStorageSync('spliceArray');
+          // return false;
         }
         that.setData({
           currentTab: wx.getStorageSync('currentTab')
@@ -208,9 +237,8 @@ Page({
         rid: rid,
         uid: wx.getStorageSync('wxuser').id,
       },
-    }).then((res) => {
+    }).then(function(res) {
       let data = res.data;
-
       for (let i in res.data) {
         if (res.data[i].status == 'false') {
           that.setData({
@@ -241,14 +269,15 @@ Page({
     })
     let that = this;
     this._getBindingList(20, 0);
-    // this.getIndexGizwits();
+
+    this.getIndexGizwits();
   },
 
   onReady() {
     let that = this;
-    // setTimeout(() => {
-    //   that.getIndexGizwits();
-    // }, 500)
+    setTimeout(function() {
+      that.getIndexGizwits();
+    }, 500)
   },
 
   operating(e) {
@@ -268,7 +297,7 @@ Page({
         'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      $.getSocketResponse((data) => {
+      $.getSocketResponse(function(data) {
         console.log(data);
       })
     }
@@ -283,7 +312,7 @@ Page({
           id: id,
           status: status
         }
-      }).then((res) => {
+      }).then(function(res) {
         console.log(res.data);
       });
     }
@@ -358,12 +387,12 @@ Page({
     });
 
     //  监听 WebSocket 连接事件
-    wx.onSocketOpen((res) => {
+    wx.onSocketOpen(function(res) {
       that.setData({ socketOpen: true });
       json = {
         cmd: "login_req",
         data: {
-          appid: options.gizwitsAppId,
+          appid: options.gizwitsAppId = com.gizwitsAppId,
           uid: options.uid,
           token: options.token,
           p0_type: that.data.json.attrs,
@@ -377,7 +406,7 @@ Page({
     wx.hideLoading();
 
     //  获取服务器返回的信息
-    wx.onSocketMessage((res) => {
+    wx.onSocketMessage(function(res) {
       wx.hideLoading();
       var data = JSON.parse(res.data);
       try {
@@ -478,7 +507,7 @@ Page({
     for (let i in that.data.didList) {
       let did = wx.getStorageSync('did');
       if (that.data.didList[i].did == did) {
-        setTimeout(() => {
+        setTimeout(function() {
           that.getIndexGizwits();
         }, 500)
         return true;

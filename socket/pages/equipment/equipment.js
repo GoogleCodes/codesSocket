@@ -57,17 +57,15 @@ Page({
         rid: rid,
         uid: uid,
       },
-    }).then((res) => {
+    }).then(function(res) {
       for (let i in res.data) {
         if (res.data[i].id == that.data.id) {
           that.setData({
             list: res.data[i]
           });
-          console.log(that.data.list);
           return true;
         }
       }
-      console.log(res);
     });
   },
 
@@ -78,99 +76,53 @@ Page({
       content: '您确定要删除这个设备吗?',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
-
           $.ajax({
             url: 'dev/getregion',
             method: 'POST',
             data: {
               uid: wx.getStorageSync('wxuser').id,
             },
-          }).then((res) => {
-            $.ajax({
-              url: 'dev/getdev',
-              method: 'POST',
-              data: {
-                rid: res.data[0].id,
-                uid: wx.getStorageSync('wxuser').id,
-              },
-            }).then((res) => {
-              let data = res.data;
-              for (let i in data) {
-                if (that.data.id == data[i].id) {
-                  $.ajax({
-                    url: 'dev/deldev',
-                    method: 'POST',
-                    data: {
-                      uid: wx.getStorageSync('wxuser').id,
-                      rid: data[i].rid
-                    },
-                  }).then((res) => {
-                    console.log(res);
-                    // $.alert(res.msg);
-                    // setTimeout(() => {
-                    //   wx.switchTab({
-                    //     url: '../index/index',
-                    //   })
-                    // }, 500)
-                  });
-                }
+          }).then(function(res) {
+            for (let y in res.data) {
+              if (res.data[y].id == that.data.rid) {
+                console.log(res.data[y].id);
+                
+                $.ajax({
+                  url: 'dev/getdev',
+                  method: 'POST',
+                  data: {
+                    rid: res.data[y].id,
+                    uid: wx.getStorageSync('wxuser').id,
+                  },
+                }).then(function (res) {
+                  let data = res.data;
+                  for (let i in data) {
+                    console.log(that.data.id, data[i].id);
+                    if (that.data.id == data[i].id) {
+                      $.ajax({
+                        url: 'dev/deldev',
+                        method: 'POST',
+                        data: {
+                          uid: wx.getStorageSync('wxuser').id,
+                          id: data[i].id
+                        },
+                      }).then(function(res) {
+                        $.alert(res.msg);
+                        setTimeout(function() {
+                          wx.switchTab({
+                            url: '../index/index',
+                          })
+                        }, 500)
+                      });
+                    }
+                  }
+                });
+
               }
-            });
+            }
+            
           });
 
-          // wx.request({
-          //   url: 'http://yuyin.ittun.com/public/index/dev/getregion',
-          //   method: 'POST',
-          //   header: {
-          //     'content-type': 'application/json',
-          //     'content-type': 'application/x-www-form-urlencoded'
-          //   },
-          //   data: {
-          //     uid: wx.getStorageSync('wxuser').id,
-          //   },
-          //   success(res) {
-          //     wx.request({
-          //       url: 'http://yuyin.ittun.com/public/index/dev/getdev',
-          //       method: 'POST',
-          //       header: {
-          //         'content-type': 'application/json',
-          //         'content-type': 'application/x-www-form-urlencoded'
-          //       },
-          //       data: {
-          //         rid: res.data.data[0].id,
-          //         uid: wx.getStorageSync('wxuser').id,
-          //       },
-          //       success(res) {
-          //         let data = res.data.data;
-          //         for (let i in data) {
-          //           if (that.data.id == data[i].id) {
-          //             wx.request({
-          //               url: 'http://yuyin.ittun.com/public/index/dev/deldev',
-          //               header: {
-          //                 'content-type': 'application/json',
-          //                 'content-type': 'application/x-www-form-urlencoded'
-          //               },
-          //               method: 'POST',
-          //               data: {
-          //                 uid: wx.getStorageSync('wxuser').id,
-          //                 rid: data[i].rid
-          //               },
-          //               success(res) {
-          //                 console.log(res.data);
-          //                 setTimeout(() => {
-          //                   wx.switchTab({
-          //                     url: '../index/index',
-          //                   })
-          //                 }, 500)
-          //               }
-          //             })
-          //           }
-          //         }
-
-          //       }
-          //     });
-          //   }
-          // })
         } else if (res.cancel == true && res.confirm == false) {
           return false;
         }
@@ -236,7 +188,7 @@ Page({
         break;
     }
 
-    $.getSocketResponse((data) => {
+    $.getSocketResponse(function(data) {
       if (data.splice(9, 1).toString() == 1) {
         $.alert('控制成功!');
       } else if (data.splice(9, 1).toString() == 1) {
@@ -287,12 +239,12 @@ Page({
         id: that.data.id,
         dname: that.data.blurInputText
       }
-    }).then((res) => {
+    }).then(function(res) {
       $.alert(res.msg);
       that.setData({
         popers: true,
       });
-      setTimeout(() => {
+      setTimeout(function() {
         wx.switchTab({
           url: '../index/index',
         })
@@ -341,7 +293,7 @@ Page({
       });
     }
 
-    $.getSocketResponse((res) => {
+    $.getSocketResponse(function(res) {
       let data = res.splice(3, 1);
       if (data == 1) {
         $.alert('修改成功!');

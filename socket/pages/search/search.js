@@ -61,18 +61,11 @@ Page({
     };
     tools.sendData('c2s_write', that.data.did, json);
 
-    $.getSocketResponse((data) => {
+    $.getSocketResponse(function(data) {
       let k = data;
       let last = null, brr = [], json = {};
       for (let i in k) {
         last = k.splice(4, 21);
-        // if (last[1] == 0) {
-        //   console.log(1);
-        // }
-        // if (last[1] == 1) {
-        //   console.log(2);
-        // }
-
         if (last.indexOf(1) == 0) {
           if (last[1] == 0) {
             that.setData({
@@ -93,6 +86,9 @@ Page({
           that.setData({
             array: brr
           });
+          // for (let y in that.data.array) {
+          //   console.log(that.data.array[y].sdid);
+          // }
           wx.setStorageSync('gizwits', that.data.array);
         }
       }
@@ -105,27 +101,31 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
       },
     }).then((res) => {
-      that.setData({
-        list: res.data,
-      });
-      that.setData({
-        areaid: that.data.list[0].id
-      });
-      $.ajax({
-        url: 'dev/getdev',
-        method: 'POST',
-        header: that.data.headers,
-        data: {
-          uid: wx.getStorageSync('wxuser').id,
-          rid: that.data.areaid,
-        }
-      }).then((res) => {
-        if (res.code == 1) {
+      for (let i in res) {
+        if (res[i].pid == wx.getStorageSync('did')) {
           that.setData({
-            spliceArray: res.data
+            list: res.data,
           });
+          that.setData({
+            areaid: that.data.list[0].id
+          });
+          $.ajax({
+            url: 'dev/getdev',
+            method: 'POST',
+            header: that.data.headers,
+            data: {
+              uid: wx.getStorageSync('wxuser').id,
+              rid: that.data.areaid,
+            }
+          }).then(function (res) {
+            if (res.code == 1) {
+              that.setData({
+                spliceArray: res.data
+              });
+            }
+          })
         }
-      })
+      }
     })
 
   },
@@ -162,13 +162,12 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
         rid: that.data.areaid,
       }
-    }).then((res) => {
+    }).then(function(res) {
       if (res.code == 1) {
         that.setData({
           spliceArray: res.data
         });
-        console.log(that.data.spliceArray);
-        $.getSocketResponse((k) => {
+        $.getSocketResponse(function(k) {
           let last = null, brr = [], json = {};
           for (let i in k) {
             last = k.splice(4, 21);
@@ -285,7 +284,7 @@ Page({
               id: that.data.areaid,
               uid: wx.getStorageSync('wxuser').id,
             },
-          }).then((res) => {
+          }).then(function(res) {
             $.alert('已经成功删除!');
             setTimeout(() => {
               wx.switchTab({
@@ -314,7 +313,7 @@ Page({
             url: 'dev/deldev',
             method: "POST",
             data: json,
-          }).then((res) => {
+          }).then(function(res) {
             wx.showToast({
               title: res.msg,
               duration: 2000
@@ -358,7 +357,7 @@ Page({
         url: 'dev/adddev',
         method: "POST",
         data: json,
-      }).then((res) => {
+      }).then(function(res) {
         wx.showToast({
           title: res.data.msg,
         })
@@ -394,10 +393,10 @@ Page({
       method: "POST",
       data: {
         uid: wx.getStorageSync('wxuser').id,
-        name: this.data.addAreaText,
+        name: that.data.addAreaText,
         pid: wx.getStorageSync('did'),
       },
-    }).then((res) => {
+    }).then(function(res) {
       that.setData({
         areaid: res.data.data
       })
@@ -412,19 +411,26 @@ Page({
 
   getRegion() {
     let that = this;
-
     $.ajax({
       url: 'dev/getregion',
       method: 'POST',
       data: {
         uid: wx.getStorageSync('wxuser').id,
       },
-    }).then((res) => {
-      that.setData({
-        list: res.data,
-      });
+    }).then(function(res) {
+      for (let i in res.data) {
+        if (res.data[i].pid == wx.getStorageSync('did')) {
+          let arr = [];
+          arr.push(res.data[i]);
+          that.setData({
+            list: arr,
+          });
+        }
+        that.setData({
+          list: res.data,
+        });
+      }
     })
-    
   },
 
   onShow() {

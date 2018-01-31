@@ -19,6 +19,10 @@ var $ = {
     return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':');
   },
 
+  log(message) {
+    console.log(message);
+  },
+
   getArrays(reqArr) {
     let arrays = new Array(768), i = 0;
     for (i; i <= 768; i++) {
@@ -49,7 +53,7 @@ var $ = {
   },
 
   goPages(url) {
-    setTimeout(() => {
+    setTimeout(function() {
       wx.switchTab({
         url: url,
       })
@@ -67,13 +71,28 @@ var $ = {
           'content-type': 'application/x-www-form-urlencoded'
         },
         success(res) {
-          if (res.statusCode == 404) {
+          if (res.statusCode == 500) {
+            // console.log(res, 500);
+            // wx.navigateTo({
+            //   url: '../text/text',
+            //   data: res.data,
+            // })
+            wx.showToast({
+              title: '服务器错误了!',
+              duration: 1500,
+            })
+            return false;
+          } else if (res.statusCode == 404) {
             wx.showToast({
               title: '服务器关闭了!',
               duration: 1500,
             })
             return false;
           } else if (res.statusCode == 200) {
+            // console.log(res, 200);
+            // wx.navigateTo({
+            //   url: '../text/text?data=' + JSON.stringify(res),
+            // })
             resolve(res.data)
           }
         },

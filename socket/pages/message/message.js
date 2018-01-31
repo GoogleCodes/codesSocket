@@ -44,7 +44,7 @@ Page({
       'X-Gizwits-Application-Id': options.gizwitsAppId,
       'X-Gizwits-User-token': options.token,
     };
-    tools.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
+    tools.sendRrquest('bindings' + query, 'GET', '', head).then(function(result) {
       // that.setData({ listDevices: result.data.devices });
       // var pKey = null;
       for (var i in result.data.devices) {
@@ -59,7 +59,7 @@ Page({
       }
       // that._GizwitsDevdata(that.data.options.did);
       // that._getGizwitsDataing(pKey);
-    }, (err) => { });
+    }, function(err) { });
   },
 
   saveData() {

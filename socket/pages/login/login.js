@@ -2,6 +2,8 @@
 
 var tools = require('../../utils/util.js');
 
+let com = require('../../utils/common/common.js');
+
 import { $ } from '../../utils/main.js'
 // let $ = new Main();
 
@@ -14,7 +16,7 @@ Page({
     uname: '13630017088', // 13250672958 || 13630017088 || 13232800159
     pword: '654321', // 123456789 || 654321
     wechatOpenId: 'kceshi1',
-    gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
+    gizwitsAppId: '',
     token: '',
     loadHidden: true,
     uid: '',
@@ -52,14 +54,13 @@ Page({
 
     wx.setStorageSync('userInformation', json);
     that.getUser(that.data.uname);
-
     tools.sendRrquest('login', 'POST', json, {
       'content-type': 'application/json',
-      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
-    }).then((result) => {
+      'X-Gizwits-Application-Id': that.data.gizwitsAppId = com.gizwitsAppId,
+    }).then(function(result) {
        //  如果账号或者密码错误 提示错误
       if (result.data.error_code == 9020) {
-        tools.showModel('提示','账号或者密码错误', (res) => {
+        tools.showModel('提示','账号或者密码错误', function(res) {
           that.setData({ loadHidden: true, });
         });
         return false;
@@ -96,7 +97,7 @@ Page({
         'content-type': 'application/json',
         'X-Gizwits-Application-Id': options.gizwitsAppId,
         'X-Gizwits-User-token': options.token,
-      }).then((result) => {
+      }).then(function(result) {
         wx.setStorageSync('devices', result.data.devices);
         for (var i in result.data.devices) {
           var device = result.data.devices[i];
@@ -115,7 +116,7 @@ Page({
             wx.setStorageSync('didJSon', json);
           }
         }
-      }, (err) => { });
+      }, function(err) { });
     }
 
   },
@@ -150,7 +151,7 @@ Page({
       url: 'wss://' + host + ':' + port + '/ws/app/v1',
     });
     //  监听 WebSocket 连接事件
-    wx.onSocketOpen((res) => {
+    wx.onSocketOpen(function(res) {
       json = {
         cmd: "login_req",
         data: {
@@ -168,15 +169,33 @@ Page({
   },
 
   getUser(tel) {
+    console.log(tel);
+
     $.ajax({
       url: 'member/getUser',
       method: "POST",
       data: {
         tel: tel
       },
-    }).then((res) => {
+    }).then(function(res) {
+      console.log(res, "-----------------------");
       wx.setStorageSync('wxuser', res.data);
     });
+
+    // wx.request({
+    //   url: "http://www.getcodeing.cn/public/index/member/getUser",
+    //   method: "POST",
+    //   header: {
+    //     'content-type': 'application/json',
+    //     'content-type': 'application/x-www-form-urlencoded'
+    //   },
+    //   data: {
+    //     tel: tel
+    //   },
+    //   success(res) {
+    //     console.log(res, "----------------------");
+    //   }
+    // })
     
   },
 
@@ -195,7 +214,7 @@ Page({
   _startPing() {
     var that = this;
     var heartbeatInterval = that.data._heartbeatInterval * 1000;
-    that.data._heartbeatTimerId = setInterval(() => {
+    that.data._heartbeatTimerId = setInterval(function() {
       var options = {
         cmd: "ping"
       };

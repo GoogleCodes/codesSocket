@@ -42,11 +42,11 @@ Page({
       'data': $.getArrays(arr),
     };
     tools.sendData('c2s_write', that.data.did, json);
-    setTimeout(() => {
+    setTimeout(function() {
       wx.hideLoading();
     }, 500)
 
-    wx.onSocketMessage((res) => {
+    wx.onSocketMessage(function(res) {
       try {
         let data = JSON.parse(res.data);
         let arr = data.data.attrs.data;
@@ -82,8 +82,8 @@ Page({
   switchScene(e) {
     let flag = e.detail.value;
     let arr = [], that = this, json = {};
-    console.log(that.data.did);
     // arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 10, 1, 1);
+    console.log(that.data.sceneArray, "that.data.sceneArray...");
     arr.push(0, 18, 0x50);
     let count = null;
     if (flag == true) {
@@ -92,7 +92,7 @@ Page({
         'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      wx.onSocketMessage((res) => {
+      wx.onSocketMessage(function(res) {
         try {
           let data = JSON.parse(res.data);
           if (data.cmd == 's2c_noti') {
@@ -134,7 +134,7 @@ Page({
           'data': $.getArrays(arr.concat(that.data.sceneid)),
         };
         tools.sendData('c2s_write', that.data.did, json);
-        wx.onSocketMessage((res) => {
+        wx.onSocketMessage(function(res) {
           try {
             let data = JSON.parse(res.data);
             let count = data.data.attrs.data

@@ -8,7 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-  
+    list: []
   },
 
   sliderchange(e) {
@@ -19,7 +19,10 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-  
+    this.list = options.data;
+    
+    console.log(typeof options.data, options.data);
+    
   },
 
   /**

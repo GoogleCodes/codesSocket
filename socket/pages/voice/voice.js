@@ -19,7 +19,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '打开房间led灯',
+    voiceIMessage: '关闭演示板led灯',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -29,7 +29,8 @@ Page({
       'content-type': 'application/x-www-form-urlencoded'
     },
     did: '',
-    uploadFileUrl: 'http://yuyin.ittun.com/public/index/dev/zhen'
+    uploadFileUrl: 'http://yuyin.ittun.com/public/index/dev/zhen',
+    saveDisabled: false,
 
   },
 
@@ -102,7 +103,7 @@ Page({
         'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      $.getSocketResponse((data) => {
+      $.getSocketResponse(function (data) {
         console.log(data);
       })
     }
@@ -115,13 +116,13 @@ Page({
           dname: dname,
           status: status
         },
-      }).then((res) => {
+      }).then(function (res) {
         console.log(res)
       })
     }
 
     try {
-      setTimeout(() => {
+      setTimeout(function () {
         wx.uploadFile({
           url: s.data.uploadFileUrl,
           filePath: s.data.recodePath,
@@ -175,59 +176,17 @@ Page({
                   data: {
                     uid: wx.getStorageSync('wxuser').id,
                   },
-                }).then((res) => {
+                }).then(function (res) {
                   for (let i in res.data) {
                     if (IndexDemo(res.data[i].name, content) > 0 || IndexDemo(res.data[i].name, content) == 0) {
                       let rid = res.data[i].id
                       callback(rid, res.data[i].name)
                     }
-                    // else if (IndexDemo('打开全部设备', sqlStr) == 0) {
-                    //   $.ajax({
-                    //     url: 'dev/alleditdev',
-                    //     method: 'POST',
-                    //     data: {
-                    //       status: 'true',
-                    //     },
-                    //   }).then((res) => {
-                    //     $.alert('打开成功!');
-                    //   });
-                    //   s.setData({
-                    //     openMessage: sqlStr,
-                    //   });
-                    //   s.setData({
-                    //     voiceOpen: false,
-                    //     voiceDone: true,
-                    //   })
-                    //   //  发送数据
-                    //   tools.sendData('c2s_write', that.data.id, {
-                    //     "onoffAll": true,
-                    //   });
-                    //   return false;
-                    // } else if (IndexDemo('关闭全部设备', sqlStr) == 0) {
-                    //   $.ajax({
-                    //     url: 'dev/alleditdev',
-                    //     method: 'POST',
-                    //     data: {
-                    //       status: 'false'
-                    //     },
-                    //   }).then((res) => {
-                    //     $.alert('关闭成功!');
-                    //   });
-                    //   s.setData({
-                    //     voiceOpen: true,
-                    //     voiceDone: false,
-                    //   })
-                    //   //  发送数据
-                    //   tools.sendData('c2s_write', that.data.did, {
-                    //     "onoffAll": false,
-                    //   });
-                    //   return false;
-                    // }
                   }
                 });
               }
 
-              getRegion(sqlStr, (id, name) => {
+              getRegion(sqlStr, function (id, name) {
                 $.ajax({
                   url: 'dev/getdev',
                   method: 'POST',
@@ -235,7 +194,7 @@ Page({
                     rid: id,
                     uid: wx.getStorageSync('wxuser').id,
                   },
-                }).then((res) => {
+                }).then(function (res) {
                   let getdev = res.data;
                   for (let i in getdev) {
                     if (getdev[i].rid == id) {
@@ -253,17 +212,16 @@ Page({
                             rid: getdev[i].rid,
                             status: "true"
                           },
-                        }).then((res) => {
+                        }).then(function (res) {
                           $.alert('打开成功!');
                         })
-
                         s.setData({
                           openMessage: sqlStr,
                         });
-                        s.setData({
-                          voiceOpen: false,
-                          voiceDone: true,
-                        })
+                        // s.setData({
+                        //   voiceOpen: false,
+                        //   voiceDone: true,
+                        // })
                         socketGo(array1, array2);
                         return false;
                       } else if (IndexDemo(close, sqlStr) == 0 || IndexDemo(close, sqlStr) > 0) {
@@ -278,56 +236,60 @@ Page({
                             rid: getdev[i].rid,
                             status: "false"
                           },
-                        }).then((res) => {
+                        }).then(function (res) {
                           $.alert('关闭成功!');
                         })
 
-                        s.setData({
-                          voiceOpen: true,
-                          voiceDone: false,
-                        })
+                        // s.setData({
+                        //   voiceOpen: true,
+                        //   voiceDone: false,
+                        // })
                         socketGo(array1, array2);
                         return false;
-                      } else if (IndexDemo("打开全部", con)) {
-                        console.log("关闭全部...");
-                        //  发送数据
-                        tools.sendData('c2s_write', that.data.did, {
-                          "onoffAll": false,
-                        });
-                        that.setData({
-                          voiceOpen: true,
-                          voiceDone: false,
-                        });
-                        $.ajax({
-                          url: 'dev/alleditdev',
-                          method: 'POST',
-                          data: {
-                            status: 'false'
-                          },
-                        }).then((res) => {
-                          $.alert('关闭成功!');
-                        });
-                        return false;
-                      } else if (IndexDemo("关闭全部", con)) {
-                        //  发送数据
-                        tools.sendData('c2s_write', that.data.did, {
-                          "onoffAll": true,
-                        });
-                        that.setData({
-                          voiceOpen: false,
-                          voiceDone: true,
-                        });
-                        $.ajax({
-                          url: 'dev/alleditdev',
-                          method: 'POST',
-                          data: {
-                            status: 'true'
-                          },
-                        }).then(function (res) {
-                          $.alert('打开成功!');
-                        });
-                        return false;
                       }
+                      
+                      // if (IndexDemo("打开全部", con)) {
+                      //   console.log("关闭全部...");
+                      //   //  发送数据
+                      //   tools.sendData('c2s_write', that.data.did, {
+                      //     "onoffAll": false,
+                      //   });
+                      //   that.setData({
+                      //     voiceOpen: true,
+                      //     voiceDone: false,
+                      //   });
+                      //   $.ajax({
+                      //     url: 'dev/alleditdev',
+                      //     method: 'POST',
+                      //     data: {
+                      //       status: 'false'
+                      //     },
+                      //   }).then(function (res) {
+                      //     $.alert('关闭成功!');
+                      //   });
+                      //   return false;
+                      // } else if (IndexDemo("关闭全部", con)) {
+                      //   //  发送数据
+                      //   tools.sendData('c2s_write', that.data.did, {
+                      //     "onoffAll": true,
+                      //   });
+                      //   that.setData({
+                      //     voiceOpen: false,
+                      //     voiceDone: true,
+                      //   });
+                      //   $.ajax({
+                      //     url: 'dev/alleditdev',
+                      //     method: 'POST',
+                      //     data: {
+                      //       status: 'true'
+                      //     },
+                      //   }).then(function (res) {
+                      //     $.alert('打开成功!');
+                      //   });
+                      //   return false;
+                      // }
+
+
                     }
                   }
                 });
@@ -458,14 +420,14 @@ Page({
               cEditData.recodeIdentity = data.identitys;
               s.setData({ editData: cEditData });
             } else {
-              $._goShowModel('提示', data.message, () => { });
+              $._goShowModel('提示', data.message, function() { });
             }
             wx.hideToast();
           },
           fail(res) {
             s.setData({ voiceNow: true });
             //  错误提示
-            $._goShowModel('提示', '录音的姿势不对!', () => { });
+            $._goShowModel('提示', '录音的姿势不对!', function() { });
             wx.hideToast();
           }
         });
@@ -487,7 +449,7 @@ Page({
       'data': $.getArrays(arr),
     };
     tools.sendData('c2s_write', that.data.did, json);
-    $.getSocketResponse((data) => {
+    $.getSocketResponse(function(data) {
       that.data.arrays = data.splice(4, 18);
       let arraysName = that.data.arrays;
       that.setData({
@@ -514,7 +476,7 @@ Page({
       'data': $.getArrays(count),
     };
     tools.sendData('c2s_write', that.data.did, json);
-    $.getSocketResponse((data) => {
+    $.getSocketResponse(function(data) {
       let arr = data.splice(3, 1);
       if (arr == 1) {
         wx.showToast({
@@ -532,6 +494,7 @@ Page({
     let that = this, json = {};
     let arr = [], brr = [], list = [], sdid = null;
     let rid = null;
+    let con = that.data.voiceIMessage;
 
     function IndexDemo(str1, str2) {
       var s = str2.indexOf(str1);
@@ -547,12 +510,39 @@ Page({
         'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      $.getSocketResponse((data) => {
-        console.log(data);
-      })
+      // $.getSocketResponse(function(data) {
+      //   console.log(data);
+      // })
     }
     let tabArray = wx.getStorageSync('tabArray');
     let spliceArray = wx.getStorageSync('spliceArray');
+
+    if (IndexDemo("打开情景", con) == 0 || IndexDemo("打开情景", con) > 0) {
+      let arr = [];
+      arr.push(0x00, 0x01, 0x40);
+      json = {
+        'data': $.getArrays(arr),
+      };
+      tools.sendData('c2s_write', that.data.did, json);
+
+      $.getSocketResponse(function (data) {
+        try {
+          let arrays = [];
+          let list = arrays.concat(data.splice(4, 18));
+          let brr = [0, 18, 0x50];
+          let count = brr.concat(list);
+          json = {
+            'data': $.getArrays(count),
+          };
+          console.log(json);
+          tools.sendData('c2s_write', that.data.did, json);
+          return false;
+        } catch (e) {
+
+        }
+      })
+    }
+
     function getRegion(content, callback) {
       $.ajax({
         url: 'dev/getregion',
@@ -560,19 +550,19 @@ Page({
         data: {
           uid: wx.getStorageSync('wxuser').id,
         },
-      }).then((res) => {
+      }).then(function(res) {
         for (let i in res.data) {
-          console.log(IndexDemo(res.data[i].name, content));
-          if (IndexDemo(res.data[i].name, content) == 0 || IndexDemo(res.data[i].name, content) > 0) {
-            let rid = res.data[i].id
-            callback(rid, res.data[i].name)
+          if (res.data[i].pid == wx.getStorageSync('did')) {
+            if (IndexDemo(res.data[i].name, content) == 0 || IndexDemo(res.data[i].name, content) > 0) {
+              let rid = res.data[i].id
+              callback(rid, res.data[i].name)
+            }
           }
         }
       });
     }
 
-    let con = that.data.voiceIMessage;
-    getRegion(con, (id, name) => {
+    getRegion(con, function(id, name) {
       $.ajax({
         url: 'dev/getdev',
         method: 'POST',
@@ -580,8 +570,7 @@ Page({
           rid: id,
           uid: wx.getStorageSync('wxuser').id,
         },
-      }).then((res) => {
-        // console.log(con);
+      }).then(function(res) {
         let region = res.data;
         wx.setStorageSync('region', region);
         let device = wx.getStorageSync('region');
@@ -591,11 +580,9 @@ Page({
           let allOpen = '打开' + name;
           let allClose = '关闭' + name;
           sdid = JSON.parse(region[i].did);
-
           for (let y in device) {
             if (device[y].id == region[i].id) {
               if (IndexDemo(open, con) == 0 || IndexDemo(open, con) > 0) {
-                console.log(1);
                 array1 = [0xA1, 0x01, 0x01];
                 array2 = [0x00, 0x08, 0xA2];
                 $.ajax({
@@ -607,17 +594,31 @@ Page({
                     id: device[y].id,
                     status: "true"
                   },
-                }).then((res) => {
-                  $.alert('打开成功!');
+                }).then(function(res){
+                  // $.alert('打开成功!');
+                  // wx.showModal({
+                  //   title: '警告',
+                  //   content: '打开成功!',
+                  //   showCancel: false
+                  // })
+                  that.setData({
+                    saveDisabled: true,
+                  });
                 })
                 that.setData({
                   openMessage: that.data.voiceIMessage,
                 });
-                that.setData({
-                  voiceOpen: false,
-                  voiceDone: true,
-                })
+                // that.setData({
+                //   voiceOpen: false,
+                //   voiceDone: true,
+                // })
                 socketGo(array1, array2);
+                // setTimeout(function() {
+                //   that.setData({
+                //     saveDisabled: false,
+                //   });
+                // }, 5000)
+                that.onShow();
                 return false;
               } else if (IndexDemo(close, con) == 0 || IndexDemo(close, con) > 0) {
                 array1 = [0xA1, 0x01, 0x00];
@@ -631,88 +632,79 @@ Page({
                     id: device[y].id,
                     status: "false"
                   },
-                }).then((res) => {
-                  $.alert('关闭成功!');
+                }).then(function(res) {
+                  // $.alert('关闭成功!');
+                  // wx.showModal({
+                  //   title: '警告',
+                  //   content: '关闭成功！!',
+                  //   showCancel: false
+                  // })
+                  that.setData({
+                    saveDisabled: true,
+                  });
                 })
-
                 that.setData({
                   openMessage: that.data.voiceIMessage,
                 });
-                that.setData({
-                  voiceOpen: false,
-                  voiceDone: true,
-                })
+                // that.setData({
+                //   voiceOpen: false,
+                //   voiceDone: true,
+                // })
                 socketGo(array1, array2);
-                return false;
-              } else if (IndexDemo("打开全部", con)) {
-                console.log("关闭全部...");
-                //  发送数据
-                tools.sendData('c2s_write', that.data.did, {
-                  "onoffAll": false,
-                });
-                that.setData({
-                  voiceOpen: true,
-                  voiceDone: false,
-                });
-                $.ajax({
-                  url: 'dev/alleditdev',
-                  method: 'POST',
-                  data: {
-                    status: 'false'
-                  },
-                }).then((res) => {
-                  $.alert('关闭成功!');
-                });
-                return false;
-              } else if (IndexDemo("关闭全部", con)) {
-                console.log("打开全部...");
-                //  发送数据
-                tools.sendData('c2s_write', that.data.did, {
-                  "onoffAll": true,
-                });
-                that.setData({
-                  voiceOpen: false,
-                  voiceDone: true,
-                });
-                $.ajax({
-                  url: 'dev/alleditdev',
-                  method: 'POST',
-                  data: {
-                    status: 'true'
-                  },
-                }).then(function(res) {
-                  $.alert('打开成功!');
-                });
+                // setTimeout(function () {
+                //   that.setData({
+                //     saveDisabled: false,
+                //   });
+                // }, 5000)
                 return false;
               }
+
+              // if (IndexDemo("打开全部", con)) {
+              //   console.log("关闭全部...");
+              //   //  发送数据
+              //   tools.sendData('c2s_write', that.data.did, {
+              //     "onoffAll": false,
+              //   });
+              //   that.setData({
+              //     voiceOpen: true,
+              //     voiceDone: false,
+              //   });
+              //   $.ajax({
+              //     url: 'dev/alleditdev',
+              //     method: 'POST',
+              //     data: {
+              //       status: 'false'
+              //     },
+              //   }).then((res) => {
+              //     $.alert('关闭成功!');
+              //   });
+              //   return false;
+              // } else if (IndexDemo("关闭全部", con)) {
+              //   console.log("打开全部...");
+              //   //  发送数据
+              //   tools.sendData('c2s_write', that.data.did, {
+              //     "onoffAll": true,
+              //   });
+              //   that.setData({
+              //     voiceOpen: false,
+              //     voiceDone: true,
+              //   });
+              //   $.ajax({
+              //     url: 'dev/alleditdev',
+              //     method: 'POST',
+              //     data: {
+              //       status: 'true'
+              //     },
+              //   }).then(function (res) {
+              //     $.alert('打开成功!');
+              //   });
+              //   return false;
+              // }
             }
           }
         }
       });
     });
-  },
-
-  doDevice(data) {
-    return new Promise(function(resolve) {
-      //  发送数据
-      tools.sendData('c2s_write', that.data.did, {
-        "onoffAll": data.flag,
-      });
-      that.setData({
-        voiceOpen: data.open,
-        voiceDone: data.done,
-      });
-      $.ajax({
-        url: 'dev/alleditdev',
-        method: 'POST',
-        data: {
-          status: data.status
-        },
-      }).then((res) => {
-        $.alert(data.message);
-      });
-    })
-    
   }
 
 })

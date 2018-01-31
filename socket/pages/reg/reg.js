@@ -48,7 +48,7 @@ Page({
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
     //  获取token
-    tools.sendRrquest('request_token', 'POST', '', headToken).then((result) => {
+    tools.sendRrquest('request_token', 'POST', '', headToken).then(function(result) {
       that.setData({ token: result.data.token });
       //  获取图片验证码
       let head = {
@@ -58,7 +58,7 @@ Page({
         'X-Gizwits-Application-Id': that.data.gizwitsAppId,
       };
       //  获取图片验证码
-      tools.sendRrquest('verify/codes', 'GET', '', head).then((result) => {
+      tools.sendRrquest('verify/codes', 'GET', '', head).then(function(result) {
         console.log(result.data);
         that.setData({
           codeImages: result.data.captcha_url,
@@ -92,7 +92,7 @@ Page({
       return false;
     }
     var num = 60;
-    var intervalId = setInterval(() => {
+    var intervalId = setInterval(function() {
       num--;
       that.setData({ getCodeNumber: "还有" + num + "秒", });
       if (num > 0) {
@@ -183,7 +183,7 @@ Page({
         url: 'member/add',
         method: "POST",
         data: json,
-      }).then((res) => {
+      }).then(function(res) {
         wx.showToast({
           title: '注册成功！',
           icon: 'success',
