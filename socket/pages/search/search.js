@@ -33,7 +33,9 @@ Page({
       'content-type': 'application/x-www-form-urlencoded'
     },
     did: '',
-    deviceType: 0,
+    deviceTypeA: -1,
+    deviceTypeB: -1,
+    dname: '',
   },
 
   /**
@@ -65,27 +67,43 @@ Page({
       let k = data;
       let last = null, brr = [], json = {};
       for (let i in k) {
-        last = k.splice(4, 21);
+
+        last = k.splice(4, 6 + data[9]);
         if (last.indexOf(1) == 0) {
-          if (last[1] == 0) {
-            that.setData({
-              deviceType: 0,
-            });
-          }
+
+          let name = last;
+          let a = '', b = '';
           if (last[1] == 1) {
+            a = 1;
             that.setData({
-              deviceType: 1,
+              deviceTypeA: 1
             });
           }
+          if (last[1] == 0) {
+            b = 0;
+            that.setData({
+              deviceTypeB: 0
+            });
+          }
+          console.log(that.data.deviceTypeA, that.data.deviceTypeB);
+          let doname = name.splice(6, last[5]);
+          let str = "";
+          for (let y in doname) {
+            str += "%" + doname[y].toString(16);
+          }
+          console.log(str, $.utf8to16(unescape(str)))
           json = {
             sdid: last.splice(0, 4),
             active: 0,
+            sname: $.utf8to16(unescape(str))
           };
+          console.log(json);
           brr.push(json);
           brr.concat(that.data.array);
           that.setData({
             array: brr
           });
+          console.log(that.data.array, "...........");
           // for (let y in that.data.array) {
           //   console.log(that.data.array[y].sdid);
           // }
@@ -332,24 +350,27 @@ Page({
 
   selectEquipment(e) {
     let that = this, arr = {};
-    let index = e.currentTarget.dataset.key;
+    let pub = e.currentTarget.dataset;
+    let index = pub.key;
     if (that.data.areaid == -1) {
       $.alert('请选择区域!');
       return false;
     }
     let json = {
       uid: wx.getStorageSync('wxuser').id,
-      did: JSON.stringify(e.currentTarget.dataset.sdid),
-      dname: JSON.stringify(e.currentTarget.dataset.sdid),
+      did: pub.sdid,
+      dname: pub.sname,
       rid: that.data.areaid,
       pid: wx.getStorageSync('did'),
       status: 'false'
     };
+    console.log(json);
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
       arr = {
-        key: e.currentTarget.dataset.key,
-        sdid: e.currentTarget.dataset.sdid,
+        key: pub.key,
+        sdid: pub.sdid,
+        dname: pub.sname,
       };
       this.data.spliceArray.push(arr);
       
@@ -377,7 +398,7 @@ Page({
     }
     this.setData({
       array: this.data.array,
-      spliceArray: this.data.spliceArray
+      spliceArray: that.data.spliceArray
     });
     wx.setStorageSync('spliceArray', this.data.spliceArray);
   },

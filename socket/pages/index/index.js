@@ -59,11 +59,13 @@ Page({
 
   bindChange(e) {
     let that = this;
+    wx.showLoading({
+      title: '获取中。。。',
+    })
     this.setData({
       currentTab: e.detail.current
     });
     wx.setStorageSync('currentTab', that.data.currentTab);
-    console.log();
     for (let i in that.data.tabArray) {
       if (i == that.data.currentTab) {
         $.ajax({
@@ -73,29 +75,32 @@ Page({
             rid: that.data.tabArray[i].id,
             uid: wx.getStorageSync('wxuser').id,
           },
-        }).then(function(res) {
-          that.setData({
-            spliceArray: res.data,
-            areaid: that.data.tabArray[i].id,
-          });
+        }).then(function (res) {
+          let arr = [];
+          wx.hideLoading();
+          if (wx.getStorageSync('did') == that.data.tabArray[i].pid) {
+            arr.push(res.data[y]);
+            that.setData({
+              spliceArray: arr,
+              areaid: that.data.tabArray[i].id,
+            });
+          } else {
+            return false;
+          }
+          // for (let y in res.data) {
+          //   if (res.data[y].pid == that.data.tabArray[i].pid) {
+          //     arr.push(res.data[y]);
+          //     that.setData({
+          //       spliceArray: arr,
+          //       areaid: that.data.tabArray[i].id,
+          //     });
+          //   } else {
+          //     return false;
+          //   }
+          // }
         });
       }
     }
-    for (let y in that.data.spliceArray) {
-      let did = JSON.parse(that.data.spliceArray[y].did);
-      if (did[1] == 1) {
-        that.setData({
-          typeDevice: 1,
-        });
-      } else if (did[1] == 0) {
-        that.setData({
-          typeDevice: 0,
-        });
-      }
-      $.log(did);
-      console.log(that.data.typeDevice);
-    }
-
   },
 
   selected(e) {
@@ -108,20 +113,26 @@ Page({
       })
     }
     wx.setStorageSync('currentTab', that.data.currentTab);
-    $.ajax({
-      url: 'dev/getdev',
-      method: 'POST',
-      data: {
-        rid: e.target.dataset.id,
-        uid: wx.getStorageSync('wxuser').id,
-      }
-    }).then(function(res) {
-      that.setData({
-        spliceArray: res.data,
-        tabId: e.target.dataset.id,
-        areaid: e.target.dataset.id,
+
+    let tabArray = wx.getStorageSync('tabArray');
+    for (let i in tabArray) {
+      $.ajax({
+        url: 'dev/getdev',
+        method: 'POST',
+        data: {
+          rid: e.target.dataset.id,
+          uid: wx.getStorageSync('wxuser').id,
+        }
+      }).then(function (res) {
+        if (tabArray[i].pid == wx.getStorageSync('did')) {
+          that.setData({
+            spliceArray: res.data,
+            tabId: e.target.dataset.id,
+            areaid: e.target.dataset.id,
+          });
+        }
       });
-    });
+    }
   },
 
   /**
@@ -149,6 +160,8 @@ Page({
     // $.unicode("中文");
     // $.unicode1('\u4e2d\u6587');
 
+    let str = encodeURIComponent("小灯");
+    console.log(str, $.utf8to16(unescape(str)))
   },
 
   getIndexGizwits() {
@@ -159,10 +172,11 @@ Page({
       data: {
         uid: wx.getStorageSync('wxuser').id
       },
-    }).then(function(res) {
-      let response = res.data;
-      for (let i in response) {
-        if (response[i].pid == wx.getStorageSync('did')) {
+    }).then(function (res) {
+      if (response[i].pid == wx.getStorageSync('did')) {
+        let response = res.data;
+        let json = {};
+        for (let i in response) {
           let arr = [];
           arr.push(response[i]);
           console.log(arr);
@@ -177,53 +191,24 @@ Page({
               rid: arr[0].id,
               uid: wx.getStorageSync('wxuser').id,
             },
-          }).then(function(res) {
-            let data = res.data;
-            let resDev = res.data;
-            for (let j in data) {
-              if (data[j].status == 'false') {
-                that.setData({
-                  status: false,
-                  statusText: '关闭'
-                });
-              } else if (data[j].status == 'true') {
-                that.setData({
-                  status: true,
-                  statusText: '开启'
-                });
-              }
+          }).then(function (res) {
+            if (response[i].pid == wx.getStorageSync('did')) {
+              let data = res.data;
+              let resDev = res.data;
+              let arr = [];
+              arr.push(res.data[y]);
               that.setData({
-                spliceArray: data,
+                spliceArray: arr,
                 areaid: that.data.tabArray[0].id,
               });
-              // console.log(that.data.spliceArray);
-
-              // for (let y in that.data.spliceArray) {
-              //   let did = JSON.parse(that.data.spliceArray[y].did);
-              //   $.log(did);
-              //   // $.log(did[1] == 0);
-
-              //   if (did[1] == 1) {
-              //     that.setData({
-              //       typeDevice: 1,
-              //     });
-              //   }
-              //   if (did[1] == 0) {
-              //     that.setData({
-              //       typeDevice: 0,
-              //     });
-              //   }
-              // }
-
-              wx.setStorageSync('spliceArray', that.data.spliceArray);
             }
+            wx.setStorageSync('spliceArray', that.data.spliceArray);
           });
           that.onLoad();
-          // return false;
+          that.setData({
+            currentTab: wx.getStorageSync('currentTab')
+          });
         }
-        that.setData({
-          currentTab: wx.getStorageSync('currentTab')
-        });
       }
     });
   },
@@ -237,7 +222,7 @@ Page({
         rid: rid,
         uid: wx.getStorageSync('wxuser').id,
       },
-    }).then(function(res) {
+    }).then(function (res) {
       let data = res.data;
       for (let i in res.data) {
         if (res.data[i].status == 'false') {
@@ -275,7 +260,7 @@ Page({
 
   onReady() {
     let that = this;
-    setTimeout(function() {
+    setTimeout(function () {
       that.getIndexGizwits();
     }, 500)
   },
@@ -297,7 +282,7 @@ Page({
         'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      $.getSocketResponse(function(data) {
+      $.getSocketResponse(function (data) {
         console.log(data);
       })
     }
@@ -312,7 +297,7 @@ Page({
           id: id,
           status: status
         }
-      }).then(function(res) {
+      }).then(function (res) {
         console.log(res.data);
       });
     }
@@ -387,7 +372,7 @@ Page({
     });
 
     //  监听 WebSocket 连接事件
-    wx.onSocketOpen(function(res) {
+    wx.onSocketOpen(function (res) {
       that.setData({ socketOpen: true });
       json = {
         cmd: "login_req",
@@ -406,7 +391,7 @@ Page({
     wx.hideLoading();
 
     //  获取服务器返回的信息
-    wx.onSocketMessage(function(res) {
+    wx.onSocketMessage(function (res) {
       wx.hideLoading();
       var data = JSON.parse(res.data);
       try {
@@ -482,6 +467,7 @@ Page({
       var device = devices[i];
       json = {
         did: device.did,
+        isonline: devices[i].is_online
       };
       arr.push(json);
       that.setData({
@@ -507,8 +493,16 @@ Page({
     for (let i in that.data.didList) {
       let did = wx.getStorageSync('did');
       if (that.data.didList[i].did == did) {
-        setTimeout(function() {
-          that.getIndexGizwits();
+        if (that.data.didList[i].isonline == false) {
+          wx.showModal({
+            title: '警告',
+            content: '设备已经下线',
+            showCancel: false,
+          })
+          return false;
+        }
+        setTimeout(function () {
+          // that.getIndexGizwits();
         }, 500)
         return true;
       }

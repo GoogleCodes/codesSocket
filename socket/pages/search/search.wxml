@@ -94,19 +94,30 @@
           <view>{{ item }}</view>
         </view>  -->
 
-          <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ deviceType == 0 }}">
+          <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 0 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-              <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' data-key='{{ i }}' data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
+            {{ item.sdid }}
+              <view class="iconfont icon-weibiaoti-3"  wx:if="{{ item.sdid[1] == 0 }}"
+                    bindtap='selectEquipment' 
+                    data-key='{{ i }}' 
+                    data-sname='{{ item.sname }}'
+                    data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
             </view>
-            <view>{{ item.sdid }}</view>
+            <view>{{ item.sname }}</view>
           </view>
 
-          <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ deviceType == 1 }}">
+            <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 1 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-              <view class="iconfont icon-weibiaoti-6" bindtap='selectEquipment' data-key='{{ i }}' data-name='{{ item.sdid }}' data-types='{{ item.types }}'></view>
+            {{ item.sdid }}
+              <view class="iconfont icon-weibiaoti-6" 
+              bindtap='selectEquipment' 
+              data-key='{{ i }}' 
+              data-sdid='{{ item.sdid }}' 
+              data-sname='{{ item.sname }}'
+              data-types='{{ item.types }}'></view>
             </view>
-            <view>{{ item.name }}</view>
-          </view>
+            <view>{{ item.sname }}</view>
+          </view>  
           <!--
         
         <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 1 }}">
