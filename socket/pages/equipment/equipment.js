@@ -229,27 +229,59 @@ Page({
     }
   },
 
+  getAnalysis(name) {
+    let that = this;
+    let str = encodeURIComponent(name);
+    // let str = encodeURIComponent(that.data.blurInputText);
+    let result = str.split("%");
+    let arr = [];
+    for (let i = 0; i < result.length; i++) {
+      let a = "0x" + result[i];
+      arr.push(parseInt(a))
+    }
+    let array = arr.slice(1);
+    let arrLength = [array.length];
+    let sdid = [1, 1, 0, 2];
+    let brr = [0x00, 0x02, 0x14];
+    let arraySdid = sdid.concat(arrLength.concat(array));
+    return brr.concat(arraySdid);
+  },
+
   goSaveImessage() {
     let that = this;
-    $.ajax({
-      url: 'dev/editdev',
-      method: 'POST',
-      data: {
-        uid: wx.getStorageSync('wxuser').id,
-        id: that.data.id,
-        dname: that.data.blurInputText
-      }
-    }).then(function(res) {
-      $.alert(res.msg);
-      that.setData({
-        popers: true,
-      });
-      setTimeout(function() {
-        wx.switchTab({
-          url: '../index/index',
+    let json = {
+      'data': $.getArrays(that.getAnalysis(that.data.blurInputText)),
+    }
+    tools.sendData('c2s_write', "WTMuHQLp5jjpS5r3TKGTno", json);
+
+    $.getSocketResponse(function (data) {
+      if (data[3] == 1) {
+        $.ajax({
+          url: 'dev/editdev',
+          method: 'POST',
+          data: {
+            uid: wx.getStorageSync('wxuser').id,
+            id: that.data.id,
+            dname: that.data.blurInputText
+          }
+        }).then(function (res) {
+          $.alert(res.msg);
+          that.setData({
+            popers: true,
+          });
+          setTimeout(function () {
+            wx.switchTab({
+              url: '../index/index',
+            })
+          }, 1000)
+        });
+      } else {
+        wx.showModal({
+          title: '警告！',
+          content: '修改名称失败!',
         })
-      }, 1000)
-    });
+      }
+    })
   },
 
   clearPopers() {

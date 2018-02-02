@@ -38,9 +38,16 @@
 
       <swiper-item>
         <view class="ul-iview">
-          <view class="li-iview fl" wx:for="{{ spliceArray }}" bindtap='deleteDevice' data-id="{{ item.id }}">
+          <view class="li-iview fl" wx:for="{{ spliceArray }}" bindtap='deleteDevice' data-id="{{ item.id }}" wx:if='{{ item.types == 0 }}'>
             <view class="li-iview-con">
               <view class="iconfont icon-weibiaoti-3"></view>
+            </view>
+            <view>{{ item.dname }}</view>
+          </view>
+
+          <view class="li-iview fl" wx:for="{{ spliceArray }}" bindtap='deleteDevice' data-id="{{ item.id }}" wx:if='{{ item.types == 1 }}'>
+            <view class="li-iview-con">
+              <view class="iconfont icon-chuangliananzhuang"></view>
             </view>
             <view>{{ item.dname }}</view>
           </view>
@@ -96,7 +103,6 @@
 
           <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 0 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            {{ item.sdid }}
               <view class="iconfont icon-weibiaoti-3"  wx:if="{{ item.sdid[1] == 0 }}"
                     bindtap='selectEquipment' 
                     data-key='{{ i }}' 
@@ -108,7 +114,6 @@
 
             <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 1 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            {{ item.sdid }}
               <view class="iconfont icon-weibiaoti-6" 
               bindtap='selectEquipment' 
               data-key='{{ i }}' 

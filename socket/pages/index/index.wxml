@@ -14,47 +14,34 @@
 
 <view class="table-header">
   <scroll-view scroll-x="true" class="recommend_scroll_x_box">
-    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" 
-          bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
+    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
   </scroll-view>
   <navigator url='/pages/search/search' class="setting">
     <view class="iconfont icon-weibiaoti-9"></view>
   </navigator>
 </view>
-
 <view>
 
-  <swiper class="swiper-box" duration="300" bindchange="bindChange" current="{{ currentTab }}" 
-  style="height: {{ winHeight }}px;z-index: 1;margin-bottom: 90px;">
+  <swiper class="swiper-box" duration="300" bindchange="bindChange" current="{{ currentTab }}" style="height: {{ winHeight }}px;z-index: 1;margin-bottom: 90px;">
 
     <swiper-item wx:for="{{ tabArray }}">
       <view class="{{ selected ? 'hidden': 'show' }}">
         <view class="ul-view">
-          <view class="li-view" wx:for="{{ spliceArray }}">
+
+          <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 0 }}'>
             <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}"></view>
+              <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ types == 0 }}'></view>
             </view>
             <!-- <view class="pic-iview fl pic1" wx:elif="{{ status == true }}">
                 <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
               </view> -->
             <view class="fl status-iview f12">
               <!-- {{ typeDevice }} -->
-              <view class="block" style='color: #b3b3b3' bindtap='operating'
-                data-id='{{ item.id }}' 
-                data-sdid='{{ item.did }}' 
-                data-areaid='{{ areaid }}'>
+              <view class="block" style='color: #b3b3b3' bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}'>
                 <text class="block">{{ item.dname }}</text>
                 <text>当前状态：</text>
-                <text wx:if="{{ item.status == 'false' }}">关闭</text>
-                <text wx:if="{{ item.status == 'true' }}">开启</text>
-                <!-- <text wx:if="{{ deviceID == item.id && status == false }}">关闭</text>
-                <text wx:elif="{{ deviceID == item.id && status == true }}">开启</text> -->
-                <!-- <text class="block fr {{ currentItem == item.id && deviceID == item.id ? 'status' : '' }}" 
-                      style='color: #6aa84f;'>{{ statusText }}</text> -->
-                <!-- <text class="block fr" style='color: #6aa84f;' 
-                wx:if='{{ deviceID == item.id && areaid == tabArrayID && item.status ==  0 }}'>关闭</text>
-                <text class="block fr" style='color: #6aa84f;' 
-                wx:elif='{{ deviceID == item.id && areaid == tabArrayID && item.status ==  1 }}'>打开</text>  -->
+                <text wx:if="{{ item.status == 'false' }}" style='color: #6aa84f'>关闭</text>
+                <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
               </view>
             </view>
             <navigator url="/pages/equipment/equipment?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
@@ -64,7 +51,29 @@
             </navigator>
           </view>
 
-        
+          <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 1 }}'>
+            <view class="pic-iview fl pic1">
+              <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ types == 0 }}'></view>
+            </view>
+            <!-- <view class="pic-iview fl pic1" wx:elif="{{ status == true }}">
+                <view class="iconfont  iconfont icon-leddeng" style="color: #6aa84f"></view>
+              </view> -->
+            <view class="fl status-iview f12">
+              <!-- {{ typeDevice }} -->
+              <view class="block" style='color: #b3b3b3' bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}'>
+                <text class="block">{{ item.dname }}</text>
+                <text>当前状态：</text>
+                <text wx:if="{{ item.status == 'false' }}" style='color: #6aa84f'>关闭</text>
+                <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
+              </view>
+            </view>
+            <navigator url="/pages/equipment/equipment?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
+              <view class="arrow-iview fr iconfont icon-fruits-lemon">
+                <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image>  -->
+              </view>
+            </navigator>
+          </view>
+
         </view>
       </view>
     </swiper-item>

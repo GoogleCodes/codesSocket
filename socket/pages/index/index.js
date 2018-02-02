@@ -47,6 +47,8 @@ Page({
     statusText: '关闭',
     currentItem: 0,
     typeDevice: 0,
+    types: '',
+    typea: ''
   },
 
   refesh(e) {
@@ -157,11 +159,10 @@ Page({
       wx.redirectTo({ url: '../login/login', });
     }
 
-    // $.unicode("中文");
-    // $.unicode1('\u4e2d\u6587');
+    String.prototype.replaceAll = function (s1, s2) {
+      return this.replace(new RegExp(s1, "gm"), s2);
+    }
 
-    let str = encodeURIComponent("小灯");
-    console.log(str, $.utf8to16(unescape(str)))
   },
 
   getIndexGizwits() {
@@ -173,43 +174,71 @@ Page({
         uid: wx.getStorageSync('wxuser').id
       },
     }).then(function (res) {
-      if (response[i].pid == wx.getStorageSync('did')) {
-        let response = res.data;
-        let json = {};
-        for (let i in response) {
+      let response = res.data;
+      let json = {};
+      let last = '';
+      for (let i in response) {
+        if (response[i].pid == wx.getStorageSync('did')) {
           let arr = [];
           arr.push(response[i]);
-          console.log(arr);
-          wx.setStorageSync('tabArray', response);
+          wx.setStorageSync('tabArray', arr);
+          last = arr[0].id;
           that.setData({
             tabArray: wx.getStorageSync('tabArray'),
           });
-          $.ajax({
-            url: 'dev/getdev',
-            method: 'POST',
-            data: {
-              rid: arr[0].id,
-              uid: wx.getStorageSync('wxuser').id,
-            },
-          }).then(function (res) {
-            if (response[i].pid == wx.getStorageSync('did')) {
-              let data = res.data;
-              let resDev = res.data;
-              let arr = [];
-              arr.push(res.data[y]);
-              that.setData({
-                spliceArray: arr,
-                areaid: that.data.tabArray[0].id,
-              });
-            }
-            wx.setStorageSync('spliceArray', that.data.spliceArray);
-          });
-          that.onLoad();
+          // that.onLoad();
           that.setData({
             currentTab: wx.getStorageSync('currentTab')
           });
         }
       }
+
+      $.ajax({
+        url: 'dev/getdev',
+        method: 'POST',
+        data: {
+          rid: last,
+          uid: wx.getStorageSync('wxuser').id,
+        },
+      }).then(function (res) {
+        if (res.msg == "请求失败") {
+          return false;
+        }
+        let device = res.data, json = {};
+        let arr = [];
+        for (let i in device) {
+          if (typeof device[i].did) {
+            let sdid = JSON.parse(device[i].did);
+            if (sdid[1] == 0) {
+              that.setData({
+                types: 0,
+              });
+            } else if (sdid[1] == 1) {
+              that.setData({
+                typea: 1,
+              });
+            }
+            console.log(that.data.types, that.data.typea);
+            json = {
+              did: sdid,
+              dname: device[i].dname,
+              id: device[i].id,
+              pid: device[i].pid,
+              rid: device[i].rid,
+              status: device[i].status,
+              uid: device[i].uid,
+              types: device[i].types,
+            };
+            console.log(json);
+            arr.push(json);
+          }
+        }
+        that.setData({
+          spliceArray: arr,
+          areaid: that.data.tabArray[0].id,
+        });
+        wx.setStorageSync('spliceArray', arr);
+      });
     });
   },
 
@@ -255,28 +284,34 @@ Page({
     let that = this;
     this._getBindingList(20, 0);
 
-    this.getIndexGizwits();
+    // this.getIndexGizwits();
   },
 
   onReady() {
     let that = this;
-    setTimeout(function () {
-      that.getIndexGizwits();
-    }, 500)
+    // setTimeout(function () {
+    //   that.getIndexGizwits();
+    // }, 500)
   },
 
   operating(e) {
+    let currents = e.currentTarget.dataset;
     wx.showLoading({
       title: '加载中。。。',
     })
     let that = this, isLock = false;
-    let id = e.currentTarget.dataset.id;
-    let sdid = JSON.parse(e.currentTarget.dataset.sdid);
+    let id = currents.id;
+    let sdid = currents.sdid;
     let arr = [], json = {};
     let brr = [], count = '';
-    let areaid = e.currentTarget.dataset.areaid;
+    let areaid = currents.areaid;
+
 
     function socketGo(array1, array2) {
+      console.log(typeof(sdid) == 'string');
+      if (typeof sdid == 'string') {
+        sdid = JSON.parse(sdid);
+      }
       count = array2.concat(sdid.concat(array1));
       json = {
         'data': $.getArrays(count),
@@ -502,7 +537,7 @@ Page({
           return false;
         }
         setTimeout(function () {
-          // that.getIndexGizwits();
+          that.getIndexGizwits();
         }, 500)
         return true;
       }

@@ -33,8 +33,6 @@ Page({
       'content-type': 'application/x-www-form-urlencoded'
     },
     did: '',
-    deviceTypeA: -1,
-    deviceTypeB: -1,
     dname: '',
   },
 
@@ -67,47 +65,26 @@ Page({
       let k = data;
       let last = null, brr = [], json = {};
       for (let i in k) {
-
         last = k.splice(4, 6 + data[9]);
         if (last.indexOf(1) == 0) {
-
           let name = last;
           let a = '', b = '';
-          if (last[1] == 1) {
-            a = 1;
-            that.setData({
-              deviceTypeA: 1
-            });
-          }
-          if (last[1] == 0) {
-            b = 0;
-            that.setData({
-              deviceTypeB: 0
-            });
-          }
-          console.log(that.data.deviceTypeA, that.data.deviceTypeB);
           let doname = name.splice(6, last[5]);
           let str = "";
           for (let y in doname) {
             str += "%" + doname[y].toString(16);
           }
-          console.log(str, $.utf8to16(unescape(str)))
           json = {
             sdid: last.splice(0, 4),
             active: 0,
             sname: $.utf8to16(unescape(str))
           };
-          console.log(json);
           brr.push(json);
           brr.concat(that.data.array);
+          wx.setStorageSync('gizwits', brr);
           that.setData({
-            array: brr
+            array: wx.getStorageSync('gizwits')
           });
-          console.log(that.data.array, "...........");
-          // for (let y in that.data.array) {
-          //   console.log(that.data.array[y].sdid);
-          // }
-          wx.setStorageSync('gizwits', that.data.array);
         }
       }
     })
@@ -118,9 +95,11 @@ Page({
       data: {
         uid: wx.getStorageSync('wxuser').id,
       },
-    }).then((res) => {
-      for (let i in res) {
-        if (res[i].pid == wx.getStorageSync('did')) {
+    }).then(function(res) {
+      for (let i in res.data) {
+        console.log(res.data[i].pid == wx.getStorageSync('did'));
+        if (res.data[i].pid == wx.getStorageSync('did')) {
+          console.log(res.data[i]);
           that.setData({
             list: res.data,
           });
@@ -142,6 +121,10 @@ Page({
               });
             }
           })
+        } else {
+          that.setData({
+            list: [],
+          });
         }
       }
     })
@@ -358,13 +341,12 @@ Page({
     }
     let json = {
       uid: wx.getStorageSync('wxuser').id,
-      did: pub.sdid,
+      did: JSON.stringify(pub.sdid),
       dname: pub.sname,
       rid: that.data.areaid,
       pid: wx.getStorageSync('did'),
       status: 'false'
     };
-    console.log(json);
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
       arr = {
@@ -447,9 +429,6 @@ Page({
             list: arr,
           });
         }
-        that.setData({
-          list: res.data,
-        });
       }
     })
   },
