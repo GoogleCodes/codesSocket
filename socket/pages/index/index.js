@@ -80,26 +80,17 @@ Page({
         }).then(function (res) {
           let arr = [];
           wx.hideLoading();
-          if (wx.getStorageSync('did') == that.data.tabArray[i].pid) {
-            arr.push(res.data[y]);
-            that.setData({
-              spliceArray: arr,
-              areaid: that.data.tabArray[i].id,
-            });
-          } else {
-            return false;
+          for (let y in res.data) {
+            if (wx.getStorageSync('did') == that.data.tabArray[i].pid) {
+              arr.push(res.data[y]);
+              that.setData({
+                spliceArray: arr,
+                areaid: that.data.tabArray[i].id,
+              });
+            } else {
+              return false;
+            }
           }
-          // for (let y in res.data) {
-          //   if (res.data[y].pid == that.data.tabArray[i].pid) {
-          //     arr.push(res.data[y]);
-          //     that.setData({
-          //       spliceArray: arr,
-          //       areaid: that.data.tabArray[i].id,
-          //     });
-          //   } else {
-          //     return false;
-          //   }
-          // }
         });
       }
     }
@@ -177,14 +168,14 @@ Page({
       let response = res.data;
       let json = {};
       let last = '';
+      let arr = [];
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
-          let arr = [];
           arr.push(response[i]);
           wx.setStorageSync('tabArray', arr);
           last = arr[0].id;
           that.setData({
-            tabArray: wx.getStorageSync('tabArray'),
+            tabArray: arr,
           });
           // that.onLoad();
           that.setData({
@@ -192,7 +183,6 @@ Page({
           });
         }
       }
-
       $.ajax({
         url: 'dev/getdev',
         method: 'POST',
@@ -218,9 +208,8 @@ Page({
                 typea: 1,
               });
             }
-            console.log(that.data.types, that.data.typea);
             json = {
-              did: sdid,
+              did: JSON.stringify(sdid),
               dname: device[i].dname,
               id: device[i].id,
               pid: device[i].pid,
@@ -229,10 +218,10 @@ Page({
               uid: device[i].uid,
               types: device[i].types,
             };
-            console.log(json);
             arr.push(json);
           }
         }
+        console.log(arr, " ------------------------------------------");
         that.setData({
           spliceArray: arr,
           areaid: that.data.tabArray[0].id,
@@ -306,9 +295,7 @@ Page({
     let brr = [], count = '';
     let areaid = currents.areaid;
 
-
     function socketGo(array1, array2) {
-      console.log(typeof(sdid) == 'string');
       if (typeof sdid == 'string') {
         sdid = JSON.parse(sdid);
       }
@@ -316,10 +303,7 @@ Page({
       json = {
         'data': $.getArrays(count),
       };
-      tools.sendData('c2s_write', that.data.did, json);
-      $.getSocketResponse(function (data) {
-        console.log(data);
-      })
+      tools.sendData('c2s_write', wx.getStorageSync('did'), json);
     }
 
     function ajax(status) {
@@ -333,7 +317,7 @@ Page({
           status: status
         }
       }).then(function (res) {
-        console.log(res.data);
+
       });
     }
 
@@ -431,6 +415,29 @@ Page({
       var data = JSON.parse(res.data);
       try {
         if (data.data.success == true) {
+
+          let arr = [];
+          arr.push(0x00, 0x02, 0xA0, 0xFF);
+          var json = {
+            'data': $.getArrays(arr),
+          };
+          tools.sendData('c2s_write', wx.getStorageSync('did'), json);
+
+          // $.getSocketResponse(function (did, data) {
+          //   let last = '', flag = false, sdid = '';
+          //   let spliceArray = wx.getStorageSync('spliceArray');
+          //   for (let k in data) {
+          //     last = data.splice(4, 6 + data[9]);
+          //     if (last.indexOf(1) == 0) {
+          //       sdid = last.splice(0, 4);
+          //       console.log(sdid);
+          //       for (let i in spliceArray) {
+          //         console.log(sdid == spliceArray[i].did, " ---", spliceArray[i].did)
+          //       }
+          //     }
+          //   }
+          // })
+
           //  链接socket
           // json = {
           //   cmd: "subscribe_req",

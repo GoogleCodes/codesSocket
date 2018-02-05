@@ -72,11 +72,6 @@ var $ = {
         },
         success(res) {
           if (res.statusCode == 500) {
-            // console.log(res, 500);
-            // wx.navigateTo({
-            //   url: '../text/text',
-            //   data: res.data,
-            // })
             wx.showToast({
               title: '服务器错误了!',
               duration: 1500,
@@ -89,10 +84,6 @@ var $ = {
             })
             return false;
           } else if (res.statusCode == 200) {
-            // console.log(res, 200);
-            // wx.navigateTo({
-            //   url: '../text/text?data=' + JSON.stringify(res),
-            // })
             resolve(res.data)
           }
         },
@@ -117,19 +108,29 @@ var $ = {
   },
 
   getSocketResponse(callback) {
-    wx.onSocketMessage((res) => {
+    wx.onSocketMessage(function (res) {
       try {
         let data = JSON.parse(res.data).data.attrs.data;
-        return callback(data);
+        let did = JSON.parse(res.data).data.did;
+        if (did != wx.getStorageSync('did')) {
+          return false;
+        }
+        return callback(did, data);
       } catch (e) { }
     })
   },
 
-
-  getSaveMessage(callback) {
-    wx.onSocketMessage((res) => {
+  openScene(brr) {
+    $.getSocketResponse(function (did, data) {
       try {
-        callback()
+        let arrays = [];
+        let list = arrays.concat(data.splice(4, 18));
+        // brr = [0, 18, 0x50];
+        let count = brr.concat(list);
+        tools.sendData('c2s_write', wx.getStorageSync('did'), {
+          'data': $.getArrays(count),
+        });
+        return false;
       } catch (e) { }
     })
   },
@@ -138,37 +139,6 @@ var $ = {
     var s = sqlStr.indexOf(str);
     return s;
   },
-
-  /*                      中文转unicode                          */
-
-  unicode(str) {
-    var value = '';
-    for (var i = 0; i < str.length; i++) {
-      value += '\\u' + this.left_zero_4(parseInt(str.charCodeAt(i)).toString(16));
-    }
-    console.log(value);
-    return value;
-  },
-
-  left_zero_4(str) {
-    if (str != null && str != '' && str != 'undefined') {
-      if (str.length == 2) {
-        return '00' + str;
-      }
-    }
-    return str;
-  },
-
-  unicode1(str) {
-    var value = '';
-    for (var i = 0; i < str.length; i++)
-      value += '&#' + str.charCodeAt(i) + ';';
-    console.log(value);
-    return value;
-  },
-
-  /*                      中文转unicode                          */
-
 
   alert(title) {
     wx.showToast({
@@ -212,7 +182,6 @@ var $ = {
     }
     return out;
   }
-
 
 };
 

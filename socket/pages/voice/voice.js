@@ -19,7 +19,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '关闭演示板led灯',
+    voiceIMessage: '执行打开情景',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -103,7 +103,7 @@ Page({
         'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      $.getSocketResponse(function (data) {
+      $.getSocketResponse(function (did, data) {
         console.log(data);
       })
     }
@@ -378,7 +378,7 @@ Page({
               //       }).then((res) => {
               //         $.alert('打开成功!');
               //       });
-              //       // $.getSocketResponse((res) => {
+              //       // $.getSocketResponse((did, res) => {
               //       //   console.log(res, 'data...');
               //       // })
               //       return false;
@@ -449,7 +449,7 @@ Page({
       'data': $.getArrays(arr),
     };
     tools.sendData('c2s_write', that.data.did, json);
-    $.getSocketResponse(function(data) {
+    $.getSocketResponse(function(did, data) {
       that.data.arrays = data.splice(4, 18);
       let arraysName = that.data.arrays;
       that.setData({
@@ -476,7 +476,7 @@ Page({
       'data': $.getArrays(count),
     };
     tools.sendData('c2s_write', that.data.did, json);
-    $.getSocketResponse(function(data) {
+    $.getSocketResponse(function(did, data) {
       let arr = data.splice(3, 1);
       if (arr == 1) {
         wx.showToast({
@@ -504,42 +504,96 @@ Page({
     let array1 = [0xA1, 0x01, 0x01];
     let array2 = [0x00, 0x08, 0xA2];
     let count = '';
+
     function socketGo(array1, array2) {
       count = array2.concat(sdid.concat(array1));
       json = {
         'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      // $.getSocketResponse(function(data) {
+      // $.getSocketResponse(function(did, data) {
       //   console.log(data);
       // })
     }
+
     let tabArray = wx.getStorageSync('tabArray');
     let spliceArray = wx.getStorageSync('spliceArray');
 
-    if (IndexDemo("打开情景", con) == 0 || IndexDemo("打开情景", con) > 0) {
-      let arr = [];
-      arr.push(0x00, 0x01, 0x40);
-      json = {
+    if (IndexDemo("执行打开情景", con) == 0 || IndexDemo("执行打开情景", con) > 0) {
+      let arr = [0x00, 0x01, 0x40];
+      tools.sendData('c2s_write', wx.getStorageSync('did'), {
         'data': $.getArrays(arr),
-      };
-      tools.sendData('c2s_write', that.data.did, json);
-
-      $.getSocketResponse(function (data) {
+      });
+      $.getSocketResponse(function (did, data) {
         try {
           let arrays = [];
           let list = arrays.concat(data.splice(4, 18));
           let brr = [0, 18, 0x50];
           let count = brr.concat(list);
-          json = {
-            'data': $.getArrays(count),
-          };
-          console.log(json);
-          tools.sendData('c2s_write', that.data.did, json);
+          for (let i in count) {
+            if (i == 20) {
+              count[i] = count[i] + 1
+            }
+          }
+          setTimeout(function(res) {
+            tools.sendData('c2s_write', wx.getStorageSync('did'), {
+              'data': $.getArrays(count),
+            });
+            $.getSocketResponse(function(did, data) {
+              if (data[3] == 0) {
+                return false;
+              } else if (data[3] == 1) {
+                wx.showModal({
+                  title: '恭喜！',
+                  content: '控制成功!',
+                  showCancel: false,
+                })
+                return false;
+              }
+            });
+          }, 1000);
           return false;
-        } catch (e) {
-
-        }
+        } catch (e) {}
+      })
+    } else if (IndexDemo("执行关闭情景", con) == 0 || IndexDemo("执行关闭情景", con) > 0) {
+      let arr = [0x00, 0x01, 0x40];
+      tools.sendData('c2s_write', wx.getStorageSync('did'), {
+        'data': $.getArrays(arr),
+      });
+      $.getSocketResponse(function (did, data) {
+        try {
+          let arrays = [];
+          let list = arrays.concat(data.splice(4, 18));
+          let brr = [0, 18, 0x50];
+          let count = brr.concat(list);
+          for (let i in count) {
+            if (i == 20) {
+              count[i] = count[i] - 1
+              if (count[i] == -1) {
+                count[i] = 0;
+              }
+            }
+          }
+          console.log(count, "---------------");
+          setTimeout(function (res) {
+            tools.sendData('c2s_write', wx.getStorageSync('did'), {
+              'data': $.getArrays(count),
+            });
+            $.getSocketResponse(function (did, data) {
+              if (data[3] == 0) {
+                return false;
+              } else if (data[3] == 1) {
+                wx.showModal({
+                  title: '恭喜！',
+                  content: '控制成功!',
+                  showCancel: false,
+                })
+                return false;
+              }
+            });
+          }, 1000);
+          return false;
+        } catch (e) { }
       })
     }
 
@@ -554,7 +608,7 @@ Page({
         for (let i in res.data) {
           if (res.data[i].pid == wx.getStorageSync('did')) {
             if (IndexDemo(res.data[i].name, content) == 0 || IndexDemo(res.data[i].name, content) > 0) {
-              let rid = res.data[i].id
+              let rid = res.data[i].id;
               callback(rid, res.data[i].name)
             }
           }
@@ -570,7 +624,7 @@ Page({
           rid: id,
           uid: wx.getStorageSync('wxuser').id,
         },
-      }).then(function(res) {
+      }).then(function (res) {
         let region = res.data;
         wx.setStorageSync('region', region);
         let device = wx.getStorageSync('region');
@@ -658,48 +712,6 @@ Page({
                 // }, 5000)
                 return false;
               }
-
-              // if (IndexDemo("打开全部", con)) {
-              //   console.log("关闭全部...");
-              //   //  发送数据
-              //   tools.sendData('c2s_write', that.data.did, {
-              //     "onoffAll": false,
-              //   });
-              //   that.setData({
-              //     voiceOpen: true,
-              //     voiceDone: false,
-              //   });
-              //   $.ajax({
-              //     url: 'dev/alleditdev',
-              //     method: 'POST',
-              //     data: {
-              //       status: 'false'
-              //     },
-              //   }).then((res) => {
-              //     $.alert('关闭成功!');
-              //   });
-              //   return false;
-              // } else if (IndexDemo("关闭全部", con)) {
-              //   console.log("打开全部...");
-              //   //  发送数据
-              //   tools.sendData('c2s_write', that.data.did, {
-              //     "onoffAll": true,
-              //   });
-              //   that.setData({
-              //     voiceOpen: false,
-              //     voiceDone: true,
-              //   });
-              //   $.ajax({
-              //     url: 'dev/alleditdev',
-              //     method: 'POST',
-              //     data: {
-              //       status: 'true'
-              //     },
-              //   }).then(function (res) {
-              //     $.alert('打开成功!');
-              //   });
-              //   return false;
-              // }
             }
           }
         }

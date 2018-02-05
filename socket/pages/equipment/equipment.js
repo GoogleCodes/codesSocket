@@ -4,7 +4,7 @@ var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
 // let $ = new Main();
 
-const did = wx.getStorageSync('didJSon').did;
+// const did = wx.getStorageSync('didJSon').did;
 
 Page({
 
@@ -24,6 +24,7 @@ Page({
     rid: '',
     list: {},
     popers: true,
+    types: 0,
   },
 
   /**
@@ -32,11 +33,20 @@ Page({
   onLoad(options) {
     let that = this;
     this.setData({
-      sdid: options.sdid,
+      sdid: JSON.parse(options.sdid),
       id: options.id,
       did: wx.getStorageSync('did'),
       rid: options.rid
     });
+    if (that.data.sdid[1] == 0) {
+      that.setData({
+        types: 0,
+      });
+    } else if (that.data.sdid[1] == 1) {
+      that.setData({
+        types: 1,
+      });
+    }
     wx.getSystemInfo({
       success(res) {
         that.setData({
@@ -44,7 +54,6 @@ Page({
         });
       },
     });
-
     this.getDev(that.data.rid, wx.getStorageSync('wxuser').id);
   },
 
@@ -138,16 +147,17 @@ Page({
   //  获取子设备
   mySon() {
     let arr = [];
+    let that = this;
     arr.push(0x00, 0x02, 0xA0, 0x01);
     var json = {
       'data': $.getArrays(arr),
     };
-    tools.sendData('c2s_write', did, json);
+    tools.sendData('c2s_write', that.data.did, json);
   },
 
   gizwits(e) {
-    let that = this, json = {}, arr = [], brr = [], count = null;
-    let sdid = JSON.parse(that.data.sdid);
+    let that = this, json = {}, arr = [], brr = [];
+    let sdid = that.data.sdid;
     if (this.data.currentTabs === e.target.dataset.current) {
       return false;
     } else {
@@ -159,43 +169,69 @@ Page({
       case e.target.dataset.current == 0:
         brr = [0xA2, 0x01, 0x01];
         arr.push(0x00, 0x08, 0xA2);
-        count = arr.concat(sdid.concat(brr));
-        json = {
-          'data': $.getArrays(count),
-        };
-        tools.sendData('c2s_write', did, json);
+        that.saveData(arr, brr);
         break;
       case e.target.dataset.current == 1:
         brr = [0xA2, 0x01, 0x01];
         arr.push(0x00, 0x08, 0xA2);
-        count = arr.concat(sdid.concat(brr));
-        json = {
-          'data': $.getArrays(count),
-        };
-        tools.sendData('c2s_write', did, json);
+        that.saveData(arr, brr);
         break;
       case e.target.dataset.current == 2:
         //  LED
         brr = [0xA5, 0x06, 0x01];
         arr.push(0x00, 0x08, 0xA2);
-        count = arr.concat(sdid.concat(brr));
-        json = {
-          'data': $.getArrays(count),
-        };
-        tools.sendData('c2s_write', did, json);
+        that.saveData(arr, brr);
         break;
       default:
         break;
     }
-
-    $.getSocketResponse(function(data) {
+    $.getSocketResponse(function(did, data) {
       if (data.splice(9, 1).toString() == 1) {
         $.alert('控制成功!');
       } else if (data.splice(9, 1).toString() == 1) {
         $.alert('控制失败!');
       }
-    })
+    });
+  },
 
+  saveData(arr, brr) {
+    console.log();
+    let count = arr.concat(this.data.sdid.concat(brr));
+    console.log(count);
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
+      'data': $.getArrays(count),
+    });
+  },
+
+  winGizwits(e) {
+    let that = this, json = {}, arr = [], brr = [];
+    let sdid = that.data.sdid;
+    if (this.data.currentTabs === e.target.dataset.current) {
+      return false;
+    } else {
+      that.setData({
+        currentTabs: e.target.dataset.current
+      })
+    }
+    //  0X01：开始移动（上）；0x11：保存配置(上) 0X02：开始移动（下）；0x12：保存配置(下)
+    switch (true) {
+      case e.target.dataset.current == 0: //  下拉
+        brr = [0xA3, 0x01, 0x02, 0x12];
+        arr.push(0x00, 0x08, 0xA2);
+        let count = arr.concat(this.data.sdid.concat(brr));
+        console.log(count);
+        that.saveData(arr, brr);
+        break;
+      default:
+        break;
+    }
+    $.getSocketResponse(function (did, data) {
+      if (data.splice(9, 1).toString() == 1) {
+        $.alert('控制成功!');
+      } else if (data.splice(9, 1).toString() == 1) {
+        $.alert('控制失败!');
+      }
+    });
   },
 
   sliderchange(e) {
@@ -252,9 +288,9 @@ Page({
     let json = {
       'data': $.getArrays(that.getAnalysis(that.data.blurInputText)),
     }
-    tools.sendData('c2s_write', "WTMuHQLp5jjpS5r3TKGTno", json);
+    tools.sendData('c2s_write', that.data.did, json);
 
-    $.getSocketResponse(function (data) {
+    $.getSocketResponse(function (did, data) {
       if (data[3] == 1) {
         $.ajax({
           url: 'dev/editdev',
@@ -325,7 +361,7 @@ Page({
       });
     }
 
-    $.getSocketResponse(function(res) {
+    $.getSocketResponse(function(did, res) {
       let data = res.splice(3, 1);
       if (data == 1) {
         $.alert('修改成功!');

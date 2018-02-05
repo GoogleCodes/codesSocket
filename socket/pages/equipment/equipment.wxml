@@ -21,7 +21,7 @@
     <view class="eq-iview-left fl">123</view>
   </view>
 
-  <view class="ul-iview">
+  <view class="ul-iview" wx:if='{{ types == 0 }}'>
     <view class="li-iview {{ currentTabs == 0 ? 'active' : '' }} fl iconfont icon-weibiaoti-3" data-current="0" bindtap='gizwits'>
     </view>
 
@@ -31,6 +31,19 @@
     <view class="li-iview {{ currentTabs == 2 ? 'active' : '' }} fl iconfont icon-weibiaoti-5" data-current="2" bindtap='gizwits'>
     </view>
   </view>
+
+  <view class="ul-iview" wx:if='{{ types == 1 }}'>
+    <view class="li-iview {{ currentTabs == 0 ? 'active' : '' }} fl iconfont icon-weibiaoti-6" data-current="0" bindtap='winGizwits'>
+    </view>
+
+    <view class="li-iview {{ currentTabs == 1 ? 'active' : '' }} fl iconfont icon-weibiaoti-7" data-current="1" bindtap='winGizwits'>
+    </view>
+
+    <view class="li-iview {{ currentTabs == 2 ? 'active' : '' }} fl iconfont icon-weibiaoti-8" data-current="2" bindtap='winGizwits'>
+    </view>
+  </view>
+
+  
 
   <view class="section_gap clear">
     <view>光亮度</view>

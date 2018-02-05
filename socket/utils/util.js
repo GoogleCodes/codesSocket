@@ -24,7 +24,7 @@ let options = {
   },
 };
 
-const sendRrquest = (url, method, data, header) => {
+const sendRrquest = function(url, method, data, header) {
   return new Promise(function (resolve, reject) {
     wx.request({
       url: urls.purl + url,
@@ -40,7 +40,7 @@ const sendRrquest = (url, method, data, header) => {
 /**
  * 字符串转byte[]
  */
-const stringToBytes = (str) => {
+const stringToBytes = function(str) {
   var ch, st, re = [];
   for (var i = 0; i < str.length; i++) {
     ch = str.charCodeAt(i);   // get char
@@ -56,7 +56,7 @@ const stringToBytes = (str) => {
 }
 
 //  发送数据
-const sendDataJson = (cmd, dids, form) => {
+const sendDataJson = function(cmd, dids, form) {
   var that = this;
   var json = {
     cmd: cmd,
@@ -69,18 +69,18 @@ const sendDataJson = (cmd, dids, form) => {
 }
 
 //  格式化JSON
-const storageJson = (json) => {
+const storageJson = function(json) {
   wx.sendSocketMessage({
     //  对象转换字符串
     data: JSON.stringify(json),
     success(res) {
-      console.log(res,'+-+-+-');
+
     }
   })
 }
 
 //  提示信息
-const _Toast = (message,types) => {
+const _Toast = function(message,types) {
   wx.showToast({
     title: message,
     icon: types,
@@ -88,7 +88,7 @@ const _Toast = (message,types) => {
   });
 }
 
-const _goShowModel = (title, desc, success) => {
+const _goShowModel = function(title, desc, success) {
   wx.showModal({
     title: title,
     content: desc,

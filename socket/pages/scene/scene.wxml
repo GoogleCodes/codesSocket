@@ -6,7 +6,7 @@
     <view class="scene-delay">
       <view class="scene-li">
         <view class="iconfont icon-slide-button fl"></view>
-        <view class="fl scene-text">开</view>
+        <view class="fl scene-text">{{ sname }}</view>
         <switch bindchange="switchScene" class="fr" />
       </view>
 

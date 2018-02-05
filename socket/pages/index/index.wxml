@@ -14,7 +14,8 @@
 
 <view class="table-header">
   <scroll-view scroll-x="true" class="recommend_scroll_x_box">
-    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
+    <view class="tab {{ currentTab == idx ? 'active': '' }}" wx:for-index="idx" data-current="{{ idx }}" 
+    bindtap="selected" wx:for="{{ tabArray }}" data-id='{{ item.id }}'>{{ item.name }}</view>
   </scroll-view>
   <navigator url='/pages/search/search' class="setting">
     <view class="iconfont icon-weibiaoti-9"></view>

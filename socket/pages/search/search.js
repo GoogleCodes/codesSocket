@@ -61,11 +61,12 @@ Page({
     };
     tools.sendData('c2s_write', that.data.did, json);
 
-    $.getSocketResponse(function(data) {
+    $.getSocketResponse(function(did, data) {
       let k = data;
       let last = null, brr = [], json = {};
       for (let i in k) {
         last = k.splice(4, 6 + data[9]);
+        console.log(last);
         if (last.indexOf(1) == 0) {
           let name = last;
           let a = '', b = '';
@@ -97,9 +98,7 @@ Page({
       },
     }).then(function(res) {
       for (let i in res.data) {
-        console.log(res.data[i].pid == wx.getStorageSync('did'));
         if (res.data[i].pid == wx.getStorageSync('did')) {
-          console.log(res.data[i]);
           that.setData({
             list: res.data,
           });
@@ -168,7 +167,7 @@ Page({
         that.setData({
           spliceArray: res.data
         });
-        $.getSocketResponse(function(k) {
+        $.getSocketResponse(function(did, k) {
           let last = null, brr = [], json = {};
           for (let i in k) {
             last = k.splice(4, 21);

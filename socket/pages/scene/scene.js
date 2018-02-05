@@ -19,6 +19,7 @@ Page({
     isTrueScene: true,
     sceneArray: [],
     did: "",
+    sname: '',
   },
 
   /**
@@ -42,39 +43,40 @@ Page({
       'data': $.getArrays(arr),
     };
     tools.sendData('c2s_write', that.data.did, json);
-    setTimeout(function() {
+    setTimeout(function () {
       wx.hideLoading();
-    }, 500)
-
-    wx.onSocketMessage(function(res) {
+    }, 500);
+    $.getSocketResponse(function (did, res) {
       try {
-        let data = JSON.parse(res.data);
-        let arr = data.data.attrs.data;
-        let arrID = data.data.attrs.data;
-        //  获取情景貌似ID
-        let sceneID = arr.splice(4,1);
-        if (sceneID == 0) {
+        
+        let arr = res, arrID = res;
+        if (did !== wx.getStorageSync('did')) {
+          return false;
+        } else {
+          //  获取情景貌似ID
+          let sceneID = arr.splice(4, 1);
+          if (sceneID == 0) {
+            that.setData({
+              isTrueScene: true,
+            });
+          } else if (sceneID == 1) {
+            that.setData({
+              isTrueScene: false,
+            });
+          }
           that.setData({
-            isTrueScene: true,
+            sceneArray: res.splice(3, 18)
           });
-        } else if (sceneID == 1) {
+          let sceneName = that.data.sceneArray.splice(1, 6);
+          let str = '';
+          for (let i in sceneName) {
+            str += '%' + sceneName[i].toString(16);
+          }
           that.setData({
-            isTrueScene: false,
+            sname: $.utf8to16(unescape(str))
           });
         }
-        this.data.arrays.push(arr.splice(4, 18));
-        this.setData({
-          arrays: this.data.arrays,
-          sceneid: sceneID
-        });
-        let brr = JSON.parse(res.data);
-        let thatArr = brr.data.attrs.data.splice(4, 18);
-        that.setData({
-          sceneArray: thatArr
-        });
-      } catch(e) {
-        
-      }
+      } catch(e){}
     })
 
   },
@@ -83,16 +85,14 @@ Page({
     let flag = e.detail.value;
     let arr = [], that = this, json = {};
     // arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 10, 1, 1);
-    console.log(that.data.sceneArray, "that.data.sceneArray...");
     arr.push(0, 18, 0x50);
     let count = null;
     if (flag == true) {
       count = arr.concat(that.data.sceneArray);
-      json = {
+      tools.sendData('c2s_write', that.data.did, {
         'data': $.getArrays(count),
-      };
-      tools.sendData('c2s_write', that.data.did, json);
-      wx.onSocketMessage(function(res) {
+      });
+      wx.onSocketMessage(function (res) {
         try {
           let data = JSON.parse(res.data);
           if (data.cmd == 's2c_noti') {
@@ -113,7 +113,7 @@ Page({
         } catch (e) {
         }
       })
-    } else if (flag == false)  {
+    } else if (flag == false) {
       count = arr.concat(that.data.sceneArray);
       json = {
         'data': $.getArrays(count),
@@ -134,7 +134,7 @@ Page({
           'data': $.getArrays(arr.concat(that.data.sceneid)),
         };
         tools.sendData('c2s_write', that.data.did, json);
-        wx.onSocketMessage(function(res) {
+        wx.onSocketMessage(function (res) {
           try {
             let data = JSON.parse(res.data);
             let count = data.data.attrs.data
