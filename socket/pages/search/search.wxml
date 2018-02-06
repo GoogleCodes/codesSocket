@@ -111,7 +111,6 @@
             </view>
             <view>{{ item.sname }}</view>
           </view>
-
             <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 1 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
               <view class="iconfont icon-chuangliananzhuang" 

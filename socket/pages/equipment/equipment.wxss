@@ -74,6 +74,7 @@
   border: 1px solid #ccc;
   text-align: center;
   font-size: 59px;
+  color: #808080;
 }
 
 .ul-iview .li-iview image {

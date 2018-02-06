@@ -97,7 +97,7 @@ Page({
   },
 
   selected(e) {
-    var that = this;
+    var that = this, arr = [];
     if (this.data.currentTab === e.target.dataset.current) {
       return false;
     } else {
@@ -108,24 +108,28 @@ Page({
     wx.setStorageSync('currentTab', that.data.currentTab);
 
     let tabArray = wx.getStorageSync('tabArray');
-    for (let i in tabArray) {
-      $.ajax({
-        url: 'dev/getdev',
-        method: 'POST',
-        data: {
-          rid: e.target.dataset.id,
-          uid: wx.getStorageSync('wxuser').id,
-        }
-      }).then(function (res) {
+    $.ajax({
+      url: 'dev/getdev',
+      method: 'POST',
+      data: {
+        rid: e.target.dataset.id,
+        uid: wx.getStorageSync('wxuser').id,
+      }
+    }).then(function (res) {
+      for (let i in tabArray) {
         if (tabArray[i].pid == wx.getStorageSync('did')) {
-          that.setData({
-            spliceArray: res.data,
-            tabId: e.target.dataset.id,
-            areaid: e.target.dataset.id,
-          });
+          for (let y in res.data) {
+            arr.push(res.data[y]);
+            that.setData({
+              spliceArray: res.data,
+              tabId: e.target.dataset.id,
+              areaid: e.target.dataset.id,
+            });
+          }
         }
-      });
-    }
+      }
+      console.log(arr);
+    });
   },
 
   /**
@@ -179,7 +183,7 @@ Page({
           });
           // that.onLoad();
           that.setData({
-            currentTab: wx.getStorageSync('currentTab')
+            currentTab: 0
           });
         }
       }
@@ -221,7 +225,6 @@ Page({
             arr.push(json);
           }
         }
-        console.log(arr, " ------------------------------------------");
         that.setData({
           spliceArray: arr,
           areaid: that.data.tabArray[0].id,

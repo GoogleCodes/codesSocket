@@ -195,7 +195,6 @@ Page({
   },
 
   saveData(arr, brr) {
-    console.log();
     let count = arr.concat(this.data.sdid.concat(brr));
     console.log(count);
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
@@ -204,7 +203,7 @@ Page({
   },
 
   winGizwits(e) {
-    let that = this, json = {}, arr = [], brr = [];
+    let that = this, json = {}, arr = [], brr = [], count = '';
     let sdid = that.data.sdid;
     if (this.data.currentTabs === e.target.dataset.current) {
       return false;
@@ -218,8 +217,13 @@ Page({
       case e.target.dataset.current == 0: //  下拉
         brr = [0xA3, 0x01, 0x02, 0x12];
         arr.push(0x00, 0x08, 0xA2);
-        let count = arr.concat(this.data.sdid.concat(brr));
-        console.log(count);
+        count = arr.concat(this.data.sdid.concat(brr));
+        that.saveData(arr, brr);
+        break;
+      case e.target.dataset.current == 0: //  下拉
+        brr = [0xA3, 0x01, 0x02, 0x12];
+        arr.push(0x00, 0x08, 0xA2);
+        count = arr.concat(this.data.sdid.concat(brr));
         that.saveData(arr, brr);
         break;
       default:

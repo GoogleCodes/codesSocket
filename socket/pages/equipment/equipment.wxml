@@ -40,15 +40,21 @@
     </view>
 
     <view class="li-iview {{ currentTabs == 2 ? 'active' : '' }} fl iconfont icon-weibiaoti-8" data-current="2" bindtap='winGizwits'>
+      <!-- <image src='../../../static/images/img14.png'></image> -->
     </view>
   </view>
 
-  
-
-  <view class="section_gap clear">
+  <view class="section_gap clear" wx:if='{{ types == 0 }}'>
     <view>光亮度</view>
     <view class="body-view">
       <slider style="height: 50px;z-index: -1" min="0" max="100" bindchange="sliderchange" />
+    </view>
+  </view>
+
+  <view class="section_gap clear" wx:if='{{ types == 1 }}'>
+    <view>打开状态：</view>
+    <view class="body-view">
+      <slider style="height: 50px;z-index: -1" min="0" max="100" />
     </view>
   </view>
 

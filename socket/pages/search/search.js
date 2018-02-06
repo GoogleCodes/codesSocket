@@ -66,7 +66,6 @@ Page({
       let last = null, brr = [], json = {};
       for (let i in k) {
         last = k.splice(4, 6 + data[9]);
-        console.log(last);
         if (last.indexOf(1) == 0) {
           let name = last;
           let a = '', b = '';
@@ -97,10 +96,12 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
       },
     }).then(function(res) {
+      let arr = [];
       for (let i in res.data) {
         if (res.data[i].pid == wx.getStorageSync('did')) {
+          arr.push(res.data[i]);
           that.setData({
-            list: res.data,
+            list: arr,
           });
           that.setData({
             areaid: that.data.list[0].id
@@ -119,7 +120,8 @@ Page({
                 spliceArray: res.data
               });
             }
-          })
+            })
+          console.log(that.data.list, that.data.areaid);
         } else {
           that.setData({
             list: [],
@@ -344,6 +346,7 @@ Page({
       dname: pub.sname,
       rid: that.data.areaid,
       pid: wx.getStorageSync('did'),
+      types: pub.sdid[1],
       status: 'false'
     };
     if (this.data.array[index].active == 0) {
@@ -354,15 +357,12 @@ Page({
         dname: pub.sname,
       };
       this.data.spliceArray.push(arr);
-      
       $.ajax({
         url: 'dev/adddev',
         method: "POST",
         data: json,
       }).then(function(res) {
-        wx.showToast({
-          title: res.data.msg,
-        })
+        $.alert(res.data.msg);
         that.setData({
           currentTab: 0
         });
@@ -419,10 +419,10 @@ Page({
       data: {
         uid: wx.getStorageSync('wxuser').id,
       },
-    }).then(function(res) {
+    }).then(function (res) {
+      let arr = [];
       for (let i in res.data) {
         if (res.data[i].pid == wx.getStorageSync('did')) {
-          let arr = [];
           arr.push(res.data[i]);
           that.setData({
             list: arr,
