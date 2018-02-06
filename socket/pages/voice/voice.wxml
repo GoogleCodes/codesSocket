@@ -57,7 +57,6 @@
       bindblur='blurMessage' 
       bindconfirm='saveIMessage' 
       class="save-input fl" 
-      disabled='{{ saveDisabled }}'
       value='{{ voiceIMessage }}'></input>
 
     <button class="save-button fl" bindtap='saveIMessage'>发送</button>

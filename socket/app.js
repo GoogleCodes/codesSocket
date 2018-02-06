@@ -1,10 +1,10 @@
 //app.js
 
-let $com = require('utils/common/common.js');
+let urls = require('utils/common/common.js');
 let utils = require('utils/util.js');
 let $ = require('utils/main.js');
 
-console.log($com.j.appID);
+console.log(urls.j.appID);
 
 App({
   data: {
@@ -28,25 +28,28 @@ App({
   onLaunch() {
     this.data.deviceInfo = wx.getSystemInfoSync();
     //  微信小程序appid  微信小程序secret
-    var that = this, appID = 'wx427aa2cee61883dd', secret = '945ffa55aed70a50c4db910df20c778e';
+    var that = this;
     //获取openid
     var user = wx.getStorageSync('user') || {};
-    if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {//不要在30天后才更换openid-尽量提前10分钟更新
+    //不要在30天后才更换openid-尽量提前10分钟更新
+    if (typeof user == 'object' && !user.openid && (user.expires_in || Date.now()) < (Date.now() + 600)) {
       wx.login({
         success(res) {
           var d = that.globalData.wxData; //  这里存储了appid、secret、token串
-          var url = $com.loginUri + '?appid=' + $com.j.appID + '&secret=' + $com.j.secret +'&js_code='+ res.code +'&grant_type=authorization_code';
-          wx.request({
-            url: url,
-            method: 'GET',
-            success(res) {
+          if (res.errMsg == 'login:ok') {
+            that.ajax({
+              url: 'dev/getWeChatOpenId',
+              method: 'POST',
+              data: {
+                code: res.code
+              },
+            }).then(function (res) {
               var obj = {};
-              obj.openid = res.data.openid;
-              obj.expires_in = Date.now() + res.data.expires_in;
-              wx.setStorageSync('user', obj);//存储openid  
-            }
-          });
-
+              obj.openid = res.openid;
+              obj.expires_in = Date.now() + res.expires_in;
+              wx.setStorageSync('user', obj); //  存储openid
+            });
+          } 
         }
       });
     }
@@ -61,87 +64,9 @@ App({
             country = userInfo.country;
       }
     });
-    // this._getBindingList(20, 0);
-
-    // wx.getSystemInfo({
-    //   success: function (res) {
-    //     console.log(res.model)
-    //     console.log(res.pixelRatio)
-    //     console.log(res.windowWidth)
-    //     console.log(res.windowHeight)
-    //     console.log(res.language)
-    //     console.log(res.version)
-    //     console.log(res.platform)
-    //   }
-    // })
 
   },
 
-  _getBindingList(limit, skip) {
-    var that = this;
-    let options = wx.getStorageSync('options');
-    let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
-    var head = {
-      'content-type': 'application/json',
-      'X-Gizwits-Application-Id': options.gizwitsAppId,
-      'X-Gizwits-User-token': options.token,
-    };
-
-    if (options !== "") {
-      utils.sendRrquest('bindings' + query, 'GET', '', head).then((result) => {
-        let json = {}, arr = [], pson = {};
-        wx.setStorageSync('devices', result.data.devices);
-        for (var i in result.data.devices) {
-          var device = result.data.devices[i];
-          json = {
-            did: device.did,
-          };
-          arr.push(json);
-          if (result.data.devices[i].is_online == true) {
-            //  获取数据
-            pson = {
-              'did': device.did,  //  did
-              'host': device.host,  //  websocket 请求地址
-              'ws_port': device.ws_port, //  端口
-              'wss_port': device.wss_port, //  端口
-            };
-            wx.setStorageSync('didJSon', json);
-          }
-        }
-        that._login(pson.host, pson.wss_port);
-      }, (err) => { });
-    }    
-    
-  },
-
-  _login(host, port) {
-    let that = this, json = {};
-    //  获取options缓存数据
-    var options = wx.getStorageSync('options');
-    //  开启提示加载中。。。
-    wx.showLoading({ title: '' })
-    //  创建Socket
-    wx.connectSocket({
-      url: 'wss://' + host + ':' + port + '/ws/app/v1',
-    });
-    //  监听 WebSocket 连接事件
-    wx.onSocketOpen((res) => {
-      json = {
-        cmd: "login_req",
-        data: {
-          appid: options.gizwitsAppId,
-          uid: options.uid,
-          token: options.token,
-          p0_type: that.data.json.attrs,
-          heartbeat_interval: 180,
-          auto_subscribe: true
-        }
-      };
-      that._startPing();
-      that._sendJson(json);
-    });
-    wx.hideLoading();
-  },
 
   getUserInfo(cb) {
     var that = this
@@ -185,6 +110,40 @@ App({
       };
       that._sendJson(options);
     }, heartbeatInterval);
+  },
+
+  ajax(data) {
+    return new Promise(function (resolve, reject) {
+      wx.request({
+        url: urls.serviceUri + data.url,
+        data: data.data,
+        method: data.method,
+        header: {
+          'content-type': 'application/json',
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        success(res) {
+          if (res.statusCode == 500) {
+            wx.showToast({
+              title: '服务器错误了!',
+              duration: 1500,
+            })
+            return false;
+          } else if (res.statusCode == 404) {
+            wx.showToast({
+              title: '服务器关闭了!',
+              duration: 1500,
+            })
+            return false;
+          } else if (res.statusCode == 200) {
+            resolve(res.data)
+          }
+        },
+        fail(err) {
+          reject(err)
+        }
+      })
+    })
   },
 
 })

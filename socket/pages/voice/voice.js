@@ -3,9 +3,6 @@
 var tools = require('../../utils/util.js');
 
 import { $ } from '../../utils/main.js'
-// let $ = new Main();
-
-// const did = wx.getStorageSync('didJSon').did;
 
 Page({
 
@@ -19,7 +16,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '执行打开情景',
+    voiceIMessage: '打开房间小灯',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -41,22 +38,7 @@ Page({
     this.setData({
       did: wx.getStorageSync('did')
     });
-    this.getScene();
-
-
-    let tabArray = wx.getStorageSync('tabArray');
-    let spliceArray = wx.getStorageSync('spliceArray');
-
-    let sqlStr = '打开全部, ';
-
-    function IndexDemo(str1, str2) {
-      var s = str2.indexOf(str1);
-      return s;
-    }
-
-    let a = sqlStr.replace(/,/g, '');
-    // console.log(IndexDemo("打开全部", sqlStr));
-
+    // this.getScene();
   },
 
   startRecode(e) {
@@ -91,7 +73,7 @@ Page({
   },
 
   endRecode(e) {
-    var s = this;
+    var s = this, sdid = '';
     s.setData({ voiceNow: false });
     wx.stopRecord();
     s.setData({ isSpeaking: false });
@@ -166,8 +148,51 @@ Page({
                 return false;
             }
 
+            for (var y in options.yuyin) {
+              var sqlStr = options.yuyin[y];
+              if (IndexDemo("执行打开情景", sqlStr) == 0 || IndexDemo("执行打开情景", con) > 0) {
+                console.log("情景");
+                let arr = [0x00, 0x01, 0x40];
+                tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                  'data': $.getArrays(arr),
+                });
+                $.getSocketResponse(function (did, data) {
+                  try {
+                    let arrays = [];
+                    let list = arrays.concat(data.splice(4, 18));
+                    let brr = [0, 18, 0x50];
+                    let count = brr.concat(list);
+                    for (let g in count) {
+                      if (g == 20) {
+                        count[g] = count[g] + 1
+                      }
+                    }
+                    setTimeout(function (res) {
+                      tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                        'data': $.getArrays(count),
+                      });
+                      $.getSocketResponse(function (did, data) {
+                        if (data[3] == 0) {
+                          return false;
+                        } else if (data[3] == 1) {
+                          wx.showModal({
+                            title: '恭喜！',
+                            content: '控制成功!',
+                            showCancel: false,
+                          })
+                          return false;
+                        }
+                      });
+                    }, 1000);
+                    return false;
+                  } catch (e) { }
+                })
+              }
+            }
+
             for (var i in options.yuyin) {
               var sqlStr = options.yuyin[i];
+              
 
               function getRegion(content, callback) {
                 $.ajax({
@@ -195,14 +220,17 @@ Page({
                     uid: wx.getStorageSync('wxuser').id,
                   },
                 }).then(function (res) {
-                  let getdev = res.data;
+                  let getdev = res.data, count = '';
                   for (let i in getdev) {
                     if (getdev[i].rid == id) {
+                      sdid = JSON.parse(getdev[i].did);
                       let open = '打开' + name + getdev[i].dname;
                       let close = '关闭' + name + getdev[i].dname;
                       if (IndexDemo(open, sqlStr) == 0 || IndexDemo(open, sqlStr) > 0) {
+                        console.log(1);
                         array1 = [0xA1, 0x01, 0x01];
                         array2 = [0x00, 0x08, 0xA2];
+                        console.log(array2.concat(sdid.concat(array1)));
                         $.ajax({
                           url: 'dev/updatevideo',
                           method: 'POST',
@@ -222,9 +250,17 @@ Page({
                         //   voiceOpen: false,
                         //   voiceDone: true,
                         // })
+                        // count = array2.concat(sdid.concat(array1));
+                        // tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                        //   'data': $.getArrays(array2.concat(sdid.concat(array1))),
+                        // });
+                        // $.getSocketResponse(function (did, data) {
+                        //   console.log(data);
+                        // })
                         socketGo(array1, array2);
                         return false;
                       } else if (IndexDemo(close, sqlStr) == 0 || IndexDemo(close, sqlStr) > 0) {
+                        console.log(2);
                         array1 = [0xA1, 0x01, 0x00];
                         array2 = [0x00, 0x08, 0xA2];
                         $.ajax({
@@ -244,171 +280,14 @@ Page({
                         //   voiceOpen: true,
                         //   voiceDone: false,
                         // })
+                        
                         socketGo(array1, array2);
                         return false;
                       }
-                      
-                      // if (IndexDemo("打开全部", con)) {
-                      //   console.log("关闭全部...");
-                      //   //  发送数据
-                      //   tools.sendData('c2s_write', that.data.did, {
-                      //     "onoffAll": false,
-                      //   });
-                      //   that.setData({
-                      //     voiceOpen: true,
-                      //     voiceDone: false,
-                      //   });
-                      //   $.ajax({
-                      //     url: 'dev/alleditdev',
-                      //     method: 'POST',
-                      //     data: {
-                      //       status: 'false'
-                      //     },
-                      //   }).then(function (res) {
-                      //     $.alert('关闭成功!');
-                      //   });
-                      //   return false;
-                      // } else if (IndexDemo("关闭全部", con)) {
-                      //   //  发送数据
-                      //   tools.sendData('c2s_write', that.data.did, {
-                      //     "onoffAll": true,
-                      //   });
-                      //   that.setData({
-                      //     voiceOpen: false,
-                      //     voiceDone: true,
-                      //   });
-                      //   $.ajax({
-                      //     url: 'dev/alleditdev',
-                      //     method: 'POST',
-                      //     data: {
-                      //       status: 'true'
-                      //     },
-                      //   }).then(function (res) {
-                      //     $.alert('打开成功!');
-                      //   });
-                      //   return false;
-                      // }
-
-
                     }
                   }
                 });
-
-
               })
-
-              // for (let i in spliceArray) {
-              //   let close = '关闭' + spliceArray[i].dname;
-              //   let open = '打开' + spliceArray[i].dname;
-
-              //   switch (true) {
-              //     case IndexDemo(open, sqlStr) == 0 || IndexDemo(open, sqlStr) > 0:
-              //       console.log(open, IndexDemo(open, sqlStr));
-              //       array1 = [0xA1, 0x01, 0x01];
-              //       array2 = [0x00, 0x08, 0xA2];
-              //       $.ajax({
-              //         url: 'dev/editvideo',
-              //         method: 'POST',
-              //         data: {
-              //           dname: spliceArray[i].dname,
-              //           status: "true"
-              //         },
-              //       }).then((res) => {
-              //         $.alert('打开成功!');
-              //       })
-
-              //       s.setData({
-              //         openMessage: sqlStr,
-              //       });
-              //       s.setData({
-              //         voiceOpen: false,
-              //         voiceDone: true,
-              //       })
-              //       socketGo(array1, array2);
-              //       break;
-              //     case IndexDemo(close, sqlStr) == 0 || IndexDemo(close, sqlStr) > 0:
-              //       console.log(close, IndexDemo(close, sqlStr));
-              //       array1 = [0xA1, 0x01, 0x00];
-              //       array2 = [0x00, 0x08, 0xA2];
-
-              //       $.ajax({
-              //         url: 'dev/editvideo',
-              //         method: 'POST',
-              //         data: {
-              //           dname: spliceArray[i].dname,
-              //           status: "false"
-              //         },
-              //       }).then((res) => {
-              //         $.alert('关闭成功!');
-              //       })
-
-              //       s.setData({
-              //         voiceOpen: true,
-              //         voiceDone: false,
-              //       })
-              //       socketGo(array1, array2);
-              //       break;
-              //     case IndexDemo('打开全部', sqlStr) == 0:
-              //       $.ajax({
-              //         url: 'dev/alleditdev',
-              //         method: 'POST',
-              //         data: {
-              //           status: 'true'
-              //         },
-              //       }).then((res) => {
-              //         $.alert('打开成功!');
-              //       });
-              //       s.setData({
-              //         openMessage: sqlStr,
-              //       });
-              //       s.setData({
-              //         voiceOpen: false,
-              //         voiceDone: true,
-              //       })
-              //       //  发送数据
-              //       tools.sendData('c2s_write', that.data.id, {
-              //         "onoffAll": true,
-              //       });
-              //       $.ajax({
-              //         url: 'dev/alleditdev',
-              //         method: 'POST',
-              //         data: {
-              //           status: 'true'
-              //         },
-              //       }).then((res) => {
-              //         $.alert('打开成功!');
-              //       });
-              //       // $.getSocketResponse((did, res) => {
-              //       //   console.log(res, 'data...');
-              //       // })
-              //       return false;
-              //     case IndexDemo('关闭全部', sqlStr) == 0:
-              //       $.ajax({
-              //         url: 'dev/alleditdev',
-              //         method: 'POST',
-              //         data: {
-              //           status: 'false'
-              //         },
-              //       }).then((res) => {
-              //         $.alert('关闭成功!');
-              //       });
-              //       s.setData({
-              //         voiceOpen: true,
-              //         voiceDone: false,
-              //       })
-              //       //  发送数据
-              //       tools.sendData('c2s_write', that.data.did, {
-              //         "onoffAll": false,
-              //       });
-
-              //       return false;
-              //     case IndexDemo(spliceArray[i].name, sqlStr):
-              //       return false;
-              //     default:
-              //       $.alert("请重试！");
-              //       return false;
-              //   }
-              // }
 
               if (typeof (sqlStr) == "string") {
                 var myString = sqlStr.substring(0, 1);
@@ -507,10 +386,9 @@ Page({
 
     function socketGo(array1, array2) {
       count = array2.concat(sdid.concat(array1));
-      json = {
+      tools.sendData('c2s_write', wx.getStorageSync('did'), {
         'data': $.getArrays(count),
-      };
-      tools.sendData('c2s_write', that.data.did, json);
+      });
       // $.getSocketResponse(function(did, data) {
       //   console.log(data);
       // })
@@ -574,7 +452,6 @@ Page({
               }
             }
           }
-          console.log(count, "---------------");
           setTimeout(function (res) {
             tools.sendData('c2s_write', wx.getStorageSync('did'), {
               'data': $.getArrays(count),
@@ -649,12 +526,7 @@ Page({
                     status: "true"
                   },
                 }).then(function(res){
-                  // $.alert('打开成功!');
-                  // wx.showModal({
-                  //   title: '警告',
-                  //   content: '打开成功!',
-                  //   showCancel: false
-                  // })
+                  $.alert('打开成功!');
                   that.setData({
                     saveDisabled: true,
                   });
@@ -687,12 +559,7 @@ Page({
                     status: "false"
                   },
                 }).then(function(res) {
-                  // $.alert('关闭成功!');
-                  // wx.showModal({
-                  //   title: '警告',
-                  //   content: '关闭成功！!',
-                  //   showCancel: false
-                  // })
+                  $.alert('关闭成功!');
                   that.setData({
                     saveDisabled: true,
                   });
