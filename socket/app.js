@@ -38,7 +38,7 @@ App({
           var d = that.globalData.wxData; //  这里存储了appid、secret、token串
           if (res.errMsg == 'login:ok') {
             that.ajax({
-              url: 'dev/getWeChatOpenId',
+              url: 'member/getWeChatOpenId',
               method: 'POST',
               data: {
                 code: res.code

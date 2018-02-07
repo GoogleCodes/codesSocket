@@ -229,3 +229,42 @@
   margin: 10px auto;
 }
 /* poper end */
+
+
+
+.layer-pop {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  margin: 0px auto;
+  width: 95%;
+  height: 225px;
+  background: #fff;
+  z-index: 20;
+}
+
+.layer-utils .prve, .next {
+  width: 115px;
+  height: 40px;
+  color: #808080;
+  background: #fff;
+}
+
+.layer-utils .prve {
+  margin: 50px 0 0 20px;
+}
+
+.layer-utils .next {
+  margin: 50px 20px 0 0;
+}
+
+.layer-utils .saveData {
+  width: 115px;
+  height: 40px;
+  color: #fff;
+  position: relative;
+  top: 50px;
+  line-height: 40px;
+  background: #8cc63f;
+}

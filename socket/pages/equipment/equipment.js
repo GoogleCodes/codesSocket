@@ -25,6 +25,7 @@ Page({
     list: {},
     popers: true,
     types: 0,
+    layerShow: true,
   },
 
   /**

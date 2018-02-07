@@ -21,7 +21,7 @@
     <view class="eq-iview-left fl">123</view>
   </view>
 
-  <view class="ul-iview" wx:if='{{ types == 0 }}'>
+  <view class="ul-iview">
     <view class="li-iview {{ currentTabs == 0 ? 'active' : '' }} fl iconfont icon-weibiaoti-3" data-current="0" bindtap='gizwits'>
     </view>
 
@@ -32,33 +32,16 @@
     </view>
   </view>
 
-  <view class="ul-iview" wx:if='{{ types == 1 }}'>
-    <view class="li-iview {{ currentTabs == 0 ? 'active' : '' }} fl iconfont icon-weibiaoti-6" data-current="0" bindtap='winGizwits'>
-    </view>
 
-    <view class="li-iview {{ currentTabs == 1 ? 'active' : '' }} fl iconfont icon-weibiaoti-7" data-current="1" bindtap='winGizwits'>
-    </view>
-
-    <view class="li-iview {{ currentTabs == 2 ? 'active' : '' }} fl iconfont icon-weibiaoti-8" data-current="2" bindtap='winGizwits'>
-      <!-- <image src='../../../static/images/img14.png'></image> -->
-    </view>
-  </view>
-
-  <view class="section_gap clear" wx:if='{{ types == 0 }}'>
+  <view class="section_gap clear">
     <view>光亮度</view>
     <view class="body-view">
       <slider style="height: 50px;z-index: -1" min="0" max="100" bindchange="sliderchange" />
     </view>
   </view>
 
-  <view class="section_gap clear" wx:if='{{ types == 1 }}'>
-    <view>打开状态：</view>
-    <view class="body-view">
-      <slider style="height: 50px;z-index: -1" min="0" max="100" />
-    </view>
-  </view>
-
   <button class="carryOut" bindtap='carryout'>完成</button>
+
 </view>
 
 <view class="layer" hidden='{{ popers }}' bindtap='clearPopers'></view>

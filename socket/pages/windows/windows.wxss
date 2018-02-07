@@ -21,6 +21,15 @@
   position: relative;
 }
 
+.eq-iview .icon-weibiaoti-1 {
+  color: #ed1c24;
+  font-size: 20px;
+  z-index: 1;
+  position: absolute;
+  top: 3px;
+  right: 7px;
+}
+
 .eq-iview:nth-child(2n) {
   margin: 20px 10% 0;
 }
@@ -50,6 +59,7 @@
   border: 1px solid #ccc;
   text-align: center;
   font-size: 59px;
+  color: #808080;
 }
 
 .ul-iview .active {
@@ -112,7 +122,6 @@
   .ul-iview .li-iview .windows-iview {
     margin: 21px auto 0px;
   }
-  
 }
 
 @media all and (max-width: 320px) {
@@ -190,6 +199,92 @@
 
 .layer-utils .next {
   margin: 50px 20px 0 0;
+}
+
+.layer-utils .saveData {
+  width: 115px;
+  height: 40px;
+  color: #fff;
+  position: relative;
+  top: 50px;
+  line-height: 40px;
+  background: #8cc63f;
+}
+
+/* poper start */
+
+.poper {
+  width: 80%;
+  height: 150px;
+  background: #fff;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  right: 0px;
+  margin: 0px auto;
+  border-radius: 5px;
+}
+
+.poper_title {
+  text-align: center;
+  line-height: 50px;
+  height: 50px;
+  display: block;
+}
+
+.poper_text {
+  height: 40px;
+  width: 85%;
+  border: 1px solid #ccc;
+  margin: 0px auto;
+  padding-left: 10px;
+}
+
+.poper_save {
+  width: 90%;
+  height: 40px;
+  border: 1px solid #8cc63f;
+  background: #8cc63f;
+  color: #fff;
+  line-height: 40px;
+  font-size: 14px;
+  margin: 10px auto;
+}
+
+/* poper end */
+
+.layer-pop {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  margin: 0px auto;
+  width: 95%;
+  height: 225px;
+  background: #fff;
+  z-index: 20;
+}
+
+.layer-utils .prve, .next {
+  width: 115px;
+  height: 40px;
+  color: #808080;
+  background: #fff;
+}
+
+.layer-utils .prve {
+  margin: 50px 0 0 20px;
+}
+
+.layer-utils .next {
+  margin: 50px 20px 0 0;
+}
+
+.layer-utils .active {
+  color: #8cc63f;
+  line-height: 40px;
+  border: 1px solid #8cc63f;
 }
 
 .layer-utils .saveData {

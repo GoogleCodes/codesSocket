@@ -3,14 +3,17 @@
 <!--pages/equipment/equipment.wxml-->
 <view class="marBtm60">
 
-  <view class="setFunction">
+  <view class="setFunction" bindtap='setting'>
     <image src="../../../static/images/img10.png" style="width: 100%;height: 100%;"></image>
   </view>
 
   <view class="eq-iview">
-    <view class="eq-iview-left fl">设备名称：</view>
-    <view class="eq-iview-left fl">卧室灯</view>
-    <image src="../../../static/images/img11.png" style="width: 20px;height: 20px;"></image>
+    <view class="fl" bindtap='updateDeviceName'>
+      <view class="eq-iview-left fl">设备名称：</view>
+      <view class="eq-iview-left fl">{{ list.dname }}</view>
+    </view>
+    <view class="iconfont icon-weibiaoti-1 fr" bindtap='deleteGizwits'></view>
+    <!-- <image src="../../../static/images/img11.png" style="width: 20px;height: 20px;" bindtap='deleteGizwits'></image> -->
   </view>
 
   <view class="eq-iview">
@@ -19,15 +22,24 @@
   </view>
 
   <view class="ul-iview">
-    <view class="li-iview active">
+    <view class="li-iview {{ currentTabs == 0 ? 'active' : '' }} fl iconfont icon-weibiaoti-6" data-current="0" bindtap='gizwits'>
+    </view>
+    <view class="li-iview {{ currentTabs == 1 ? 'active' : '' }} fl iconfont icon-weibiaoti-7" data-current="1" bindtap='gizwits'>
+    </view>
+    <view class="li-iview {{ currentTabs == 2 ? 'active' : '' }} fl iconfont icon-weibiaoti-8" data-current="2" bindtap='gizwits'>
+    </view>
+  </view>
+
+  <view class="ul-iview" hidden='true'>
+    <view class="li-iview {{ currentTabs == 0 ? 'active' : '' }}" data-current="0" bindtap='gizwits'>
       <image class="windows-iview" src="../../../static/images/img12.png" style="width: 40px;height: 50px;"></image>
     </view>
 
-    <view class="li-iview">
+    <view class="li-iview {{ currentTabs == 1 ? 'active' : '' }}" data-current="1" bindtap='gizwits'>
       <image class="windows-iview" src="../../../static/images/img13.png" style="width: 40px;height: 50px;"></image>
     </view>
 
-    <view class="li-iview">
+    <view class="li-iview {{ currentTabs == 2 ? 'active' : '' }}" data-current="2" bindtap='gizwits'>
       <image class="windows-iview" src="../../../static/images/img14.png" style="width: 40px;height: 50px;"></image>
     </view>
   </view>
@@ -35,18 +47,18 @@
   <view class="section_gap clear">
     <view>打开状态：</view>
     <view class="body-view">
-      <slider style="height: 50px;z-index: -1" min="0" max="100" />
+      <slider style="height: 50px;z-index: -1" min="0" max="100" bindchange="sliderchange" />
     </view>
   </view>
 
-  <button class="carryOut" bindtap='carryout'>完成</button>
+  <button class="carryOut">完成</button>
 
   <view class="layer" hidden='{{ layerShow }}'></view>
   <view class="layer-pop" style="top: {{ winTop }}px" hidden='{{ layerShow }}'>
     <view class="layer-utils">
-      <button class="fl prve">正方向</button>
-      <button class="fr next">反方向</button>
-      <button class="saveData" bindtap='saveData'>保 存</button>
+      <button class="fl prve {{ currentTirection == 0 ? 'active' : '' }}" data-current="0" bindtap='Triection'>正方向</button>
+      <button class="fr next {{ currentTirection == 1 ? 'active' : '' }}" data-current="1" bindtap='Triection'>反方向</button>
+      <button class="saveData" bindtap='saveToolsData'>保 存</button>
     </view>
   </view>
 
@@ -54,3 +66,10 @@
 
 <!-- <import src="/pages/footer/footer.wxml" />
 <template is="footer" /> -->
+
+<view class="layer" hidden='{{ popers }}' bindtap='clearPopers'></view>
+<view class="poper" style='top: {{ windowTop }}px' hidden='{{ popers }}'>
+  <text class='poper_title'>修改设备名称</text>
+  <input type='text' placeholder='请输入文字' bindblur='blurInputDate' value='{{ blurInputText }}' class="poper_text"></input>
+  <button class="poper_save" bindtap='goSaveImessage'>马上提交</button>
+</view>

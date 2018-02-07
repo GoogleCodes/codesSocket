@@ -38,6 +38,7 @@ Page({
   longChose(e) {
     let that = this;
     for (let i in that.data.devices) {
+      // console.log(that.data.devices[i].did == e.currentTarget.dataset.did, that.data.devices[i].did, e.currentTarget.dataset.did);
       if (that.data.devices[i].did == e.currentTarget.dataset.did) {
         switch (true) {
           case that.data.cancel == false:
@@ -57,6 +58,7 @@ Page({
           default:
             break;
         }
+        console.log(that.data.did);
       }
     }
   },
