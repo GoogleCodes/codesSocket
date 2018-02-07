@@ -12,9 +12,9 @@ page {
 }
 
 .share-main .share-title {
-  margin: 0 20px;
+  margin: 0 20px 10px 10px;
   line-height: 50px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .share-main .ul-share {
@@ -29,9 +29,9 @@ page {
   clear: both;
 }
 
- .share-main .ul-share .li-share .p-share:first-child {
+.share-main .ul-share .li-share .p-share:first-child {
   width: 40%;
-} 
+}
 
 .share-main .ul-share .li-share .p-share {
   margin: 0 0 0 12px;

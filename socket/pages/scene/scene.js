@@ -2,9 +2,6 @@
 
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
-// let $ = new Main();
-// const did = wx.getStorageSync('didJSon').did;
-// const did = wx.getStorageSync('did');
 
 Page({
 
@@ -20,6 +17,7 @@ Page({
     sceneArray: [],
     did: "",
     sname: '',
+    list: [],
   },
 
   /**
@@ -39,46 +37,73 @@ Page({
     })
     let arr = [], json = {}, that = this;
     arr.push(0x00, 0x01, 0x40);
-    json = {
+    tools.sendData('c2s_write', that.data.did, {
       'data': $.getArrays(arr),
-    };
-    tools.sendData('c2s_write', that.data.did, json);
-    setTimeout(function () {
+    });
+    setTimeout(function() {
       wx.hideLoading();
     }, 500);
     $.getSocketResponse(function (did, res) {
+      let last = '', json = {};
       try {
-        
         let arr = res, arrID = res;
         if (did !== wx.getStorageSync('did')) {
           return false;
         } else {
+          let arrays = [];
           //  获取情景貌似ID
-          let sceneID = arr.splice(4, 1);
+          let sceneID = arr[4];
           if (sceneID == 0) {
             that.setData({
               isTrueScene: true,
             });
-          } else if (sceneID == 1) {
+          } else if (sceneID !== 0) {
             that.setData({
               isTrueScene: false,
             });
           }
-          that.setData({
-            sceneArray: res.splice(3, 18)
-          });
-          let sceneName = that.data.sceneArray.splice(1, 6);
+          for (let i in res) {
+            last = res.splice(4, 26);
+            if (last[0] !== 0) {
+              json = {
+                a: last
+              };
+              arrays.push(json);
+            }
+          }
+          let byte = [], option = {};
           let str = '';
-          for (let i in sceneName) {
-            str += '%' + sceneName[i].toString(16);
+          for (let y in arrays) {
+            let by = arrays[y].a.splice(1, 6);
+            for (let j in by) {
+              str += '%' + by[j].toString(16);
+            }
+          }
+          console.log(str);
+          // that.setData({
+          //   sceneArray: res.splice(3, 18)
+          // });
+          let pson = '';
+          for (let i in byte) {
+            let b = byte[i];
+            for (let f in b) {
+              console.log(b[f]);
+              str += '%' + b[f].toString(16);
+              pson = {
+                id: sceneID,
+                name: $.utf8to16(unescape(str)),
+              };
+            }
+            that.data.list.push(pson);
           }
           that.setData({
+            list: that.data.list,
             sname: $.utf8to16(unescape(str))
           });
+          console.log(that.data.list);
         }
-      } catch(e){}
+      } catch(e) {}
     })
-
   },
 
   switchScene(e) {

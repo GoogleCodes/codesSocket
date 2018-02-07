@@ -241,18 +241,55 @@ Page({
 
   sliderchange(e) {
     let did = wx.getStorageSync('did');
-    let num = e.detail.value, arr = [], json = {};
-    let sdid = JSON.parse(this.data.sdid);
-    let brr = [0xA5, 0x06, num];
+    //  获取数值
+    let num = e.detail.value, arr = [], brr = [], json = {}, that = this;
+    //  获取sdid
+    let sdid = that.data.sdid;
     //  控制码
+    brr = [0xA5, 0x06, num];
     arr.push(0x00, 0x08, 0xA2)
+    //  数组拷贝
     let count = arr.concat(sdid.concat(brr));
-    json = {
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(count),
-    };
-    //  获取did
-    const storage = wx.getStorageSync("didJSon");
-    tools.sendData('c2s_write', did, json);
+    });
+    $.getSocketResponse(function (did, data) {
+      if (data[8] == 1) {
+        wx.showToast({
+          title: '控制成功!',
+        })
+      } else if (data[8] == 0) {
+        wx.showToast({
+          title: '控制失败!',
+        })
+      }
+    });
+  },
+
+  ledchange(e) {
+    let that = this, arr = [], brr = [];
+    //  获取数值
+    let num = e.detail.value;
+    //  获取sdid
+    let sdid = that.data.sdid;
+    brr = [0xA5, 0x06, num];
+    arr.push(0x00, 0x08, 0xA2)
+    //  数组拷贝
+    let count = arr.concat(sdid.concat(brr));
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
+      'data': $.getArrays(count),
+    });
+    $.getSocketResponse(function (did, data) {
+      if (data[8] == 1) {
+        wx.showToast({
+          title: '控制成功!',
+        })
+      } else if (data[8] == 0) {
+        wx.showToast({
+          title: '控制失败!',
+        })
+      }
+    });
   },
 
   updateDeviceName() {

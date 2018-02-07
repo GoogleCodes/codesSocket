@@ -18,7 +18,7 @@ Page({
       'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
       'X-Gizwits-User-token': wx.getStorageSync('options').token,
     },
-    devices: wx.getStorageSync('devices'),
+    devices: [],
   },
 
   /**
@@ -30,6 +30,7 @@ Page({
       success(res) {
         that.setData({
           winTop: (res.windowHeight - 330) / 2,
+          devices: wx.getStorageSync('devices'),
         });
       },
     });
@@ -38,7 +39,6 @@ Page({
   longChose(e) {
     let that = this;
     for (let i in that.data.devices) {
-      // console.log(that.data.devices[i].did == e.currentTarget.dataset.did, that.data.devices[i].did, e.currentTarget.dataset.did);
       if (that.data.devices[i].did == e.currentTarget.dataset.did) {
         switch (true) {
           case that.data.cancel == false:

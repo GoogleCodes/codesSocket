@@ -38,7 +38,15 @@
     <view class="body-view">
       <slider style="height: 50px;z-index: -1" min="0" max="100" bindchange="sliderchange" />
     </view>
+
+    <view class="f12">色 温：</view>
+    <view class="body-view">
+      <slider style="height: 50px;z-index: -1" min="0" max="100" bindchange='ledchange' />
+    </view>
+
   </view>
+
+
 
   <button class="carryOut" bindtap='carryout'>完成</button>
 

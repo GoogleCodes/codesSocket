@@ -1,10 +1,6 @@
 //app.js
 
 let urls = require('utils/common/common.js');
-let utils = require('utils/util.js');
-let $ = require('utils/main.js');
-
-console.log(urls.j.appID);
 
 App({
   data: {
@@ -37,6 +33,27 @@ App({
         success(res) {
           var d = that.globalData.wxData; //  这里存储了appid、secret、token串
           if (res.errMsg == 'login:ok') {
+
+            // wx.request({
+            //   url: 'http://www.getcodeing.cn/public/index/member/getWeChatOpenId',
+            //   method: 'POST',
+            //   header: {
+            //     'content-type': 'application/json',
+            //     'content-type': 'application/x-www-form-urlencoded'
+            //   },
+            //   data: {
+            //     code: res.code
+            //   },
+            //   success(res) {
+            //     if (res.data.statusCode == 200) {
+            //       var obj = {};
+            //       obj.openid = res.data.openid;
+            //       obj.expires_in = Date.now() + res.data.expires_in;
+            //       wx.setStorageSync('user', obj); //  存储openid
+            //     }
+            //   },
+            // })
+
             that.ajax({
               url: 'member/getWeChatOpenId',
               method: 'POST',
@@ -53,20 +70,19 @@ App({
         }
       });
     }
-    wx.getUserInfo({
-      success(res) {
-        let userInfo = res.userInfo,
-            nickName = userInfo.nickName,
-            avatarUrl = userInfo.avatarUrl,
-            gender = userInfo.gender, //性别 0：未知、1：男、2：女,
-            province = userInfo.province,
-            city = userInfo.city,
-            country = userInfo.country;
-      }
-    });
+    // wx.getUserInfo({
+    //   success(res) {
+    //     let userInfo = res.userInfo,
+    //         nickName = userInfo.nickName,
+    //         avatarUrl = userInfo.avatarUrl,
+    //         gender = userInfo.gender, //性别 0：未知、1：男、2：女,
+    //         province = userInfo.province,
+    //         city = userInfo.city,
+    //         country = userInfo.country;
+    //   }
+    // });
 
   },
-
 
   getUserInfo(cb) {
     var that = this
@@ -104,7 +120,7 @@ App({
     var that = this;
     console.log(that.data._heartbeatInterval);
     var heartbeatInterval = that.data._heartbeatInterval * 1000;
-    that.data._heartbeatTimerId = setInterval(() => {
+    that.data._heartbeatTimerId = setInterval(function() {
       var options = {
         cmd: "ping"
       };

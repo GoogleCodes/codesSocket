@@ -1,11 +1,8 @@
 // pages/login/login.js
 
 var tools = require('../../utils/util.js');
-
 let com = require('../../utils/common/common.js');
-
 import { $ } from '../../utils/main.js'
-// let $ = new Main();
 
 
 Page({
@@ -129,6 +126,9 @@ Page({
     var that = this;
     //  获取用户信息
     var userInfom = wx.getStorageSync('userInformation');
+    if (userInfom.username == undefined) {
+      return false;
+    }
     that.setData({
       uname: userInfom.username,
       pword: userInfom.password,
@@ -169,34 +169,17 @@ Page({
   },
 
   getUser(tel) {
-    console.log(tel);
-
-    $.ajax({
-      url: 'member/getUser',
-      method: "POST",
-      data: {
-        tel: tel
-      },
-    }).then(function(res) {
-      console.log(res, "-----------------------");
-      wx.setStorageSync('wxuser', res.data);
-    });
-
-    // wx.request({
-    //   url: "http://www.getcodeing.cn/public/index/member/getUser",
-    //   method: "POST",
-    //   header: {
-    //     'content-type': 'application/json',
-    //     'content-type': 'application/x-www-form-urlencoded'
-    //   },
-    //   data: {
-    //     tel: tel
-    //   },
-    //   success(res) {
-    //     console.log(res, "----------------------");
-    //   }
-    // })
-    
+    try {
+      $.ajax({
+        url: 'member/getUser',
+        method: "POST",
+        data: {
+          tel: tel
+        },
+      }).then(function (res) {
+        wx.setStorageSync('wxuser', res.data);
+      });
+    } catch(e) {}
   },
 
   /**

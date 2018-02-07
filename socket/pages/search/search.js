@@ -2,9 +2,6 @@
 
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
-// let $ = new Main();
-
-const did = wx.getStorageSync('didJSon').did;
 
 Page({
 
@@ -53,7 +50,6 @@ Page({
       },
     });
 
-
     let arr = [];
     arr.push(0x00, 0x02, 0xA0, 0xFF);
     var json = {
@@ -68,6 +64,7 @@ Page({
         last = k.splice(4, 6 + data[9]);
         if (last.indexOf(1) == 0) {
           let name = last;
+          console.log(name);
           let a = '', b = '';
           let doname = name.splice(6, last[5]);
           let str = "";
