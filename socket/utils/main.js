@@ -23,6 +23,14 @@ var $ = {
     console.log(message);
   },
 
+  parse(obj) {
+    return JSON.parse(obj);
+  },
+
+  stringify(obj) {
+    return JSON.stringify(obj);
+  },
+
   getArrays(reqArr) {
     let arrays = new Array(768), i = 0;
     for (i; i <= 768; i++) {

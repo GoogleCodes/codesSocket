@@ -1,15 +1,14 @@
 <!--pages/scene/scene.wxml-->
 
 <view class="scene-body">
-  <view class="scene-body-title">情景模式开关</view>
+  <view class="scene-body-title">延迟情景</view>
   <view hidden='{{ isTrueScene }}'>
-    <view class="scene-delay">
+    <view class="scene-delay" wx:for='{{ scenelist }}' wx:if='{{ item.sceneTypes == 2 }}'>
       <view class="scene-li">
         <view class="iconfont icon-slide-button fl"></view>
-        <view class="fl scene-text">{{ sname }}</view>
-        <switch bindchange="switchScene" class="fr" />
+        <view class="fl scene-text">{{ item.sname }}</view>
+        <switch bindchange="switchScene" class="fr" data-id='{{ item.sid }}' data-last='{{ item.last }}' data-byteName='{{ item.byteName }}' />
       </view>
-
     </view>
 
     <view class="scene-realTime" hidden='{{ true }}'>
@@ -20,6 +19,19 @@
       </view>
     </view>
   </view>
+
+  <view class="scene-body-title">定时情景</view>
+  <view hidden='{{ isTrueScene }}'>
+    <view class="scene-delay" wx:for='{{ scenelist }}' wx:if='{{ item.sceneTypes == 0 }}'>
+      <view class="scene-li">
+        <view class="iconfont icon-slide-button fl"></view>
+        <view class="fl scene-text">{{ item.sname }}</view>
+        <switch bindchange="switchScene" class="fr" data-id='{{ item.sid }}' data-last='{{ item.last }}' data-bytename='{{ item.byteName }}' />
+      </view>
+    </view>
+
+  </view>
+
 </view>
 
 

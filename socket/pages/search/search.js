@@ -63,8 +63,8 @@ Page({
       for (let i in k) {
         last = k.splice(4, 6 + data[9]);
         if (last.indexOf(1) == 0) {
+          console.log(last);
           let name = last;
-          console.log(name);
           let a = '', b = '';
           let doname = name.splice(6, last[5]);
           let str = "";

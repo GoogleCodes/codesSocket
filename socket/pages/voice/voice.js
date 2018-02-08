@@ -80,14 +80,14 @@ Page({
     wx.showToast();
 
     function socketGo(array1, array2) {
-      count = array2.concat(sdid.concat(array1));
+      let count = array2.concat(sdid.concat(array1));
       json = {
         'data': $.getArrays(count),
       };
       tools.sendData('c2s_write', that.data.did, json);
-      // $.getSocketResponse(function (did, data) {
-      //   console.log(data);
-      // })
+      $.getSocketResponse(function (did, data) {
+        console.log(data);
+      })
     }
 
     function ajax(dname, status) {
@@ -148,15 +148,52 @@ Page({
                 return false;
             }
 
+            function senceGo(arr) {
+              tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                'data': $.getArrays(arr),
+              });
+            }
+
             for (var i in options.yuyin) {
               var sqlStr = options.yuyin[i];
 
-              if (IndexDemo("情景", sqlStr) == 0 || IndexDemo("情景", sqlStr) > 0) {
-                console.log(IndexDemo("情景", sqlStr));
+              if (IndexDemo("打开情景", sqlStr) == 0 || IndexDemo("打开情景", sqlStr) > 0) {
+                console.log(IndexDemo("打开情景", sqlStr));
                 let arr = [0x00, 0x01, 0x40];
-                tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                  'data': $.getArrays(arr),
-                });
+                senceGo(arr);
+                $.getSocketResponse(function (did, data) {
+                  try {
+                    let arrays = [];
+                    let list = arrays.concat(data.splice(4, 18));
+                    let brr = [0, 18, 0x50];
+                    let count = brr.concat(list);
+                    for (let g in count) {
+                      if (g == 20) {
+                        count[g] = count[g] + 1
+                      }
+                    }
+                    setTimeout(function (res) {
+                      tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                        'data': $.getArrays(count),
+                      });
+                      $.getSocketResponse(function (did, data) {
+                        if (data[3] == 0) {
+                          return false;
+                        } else if (data[3] == 1) {
+                          wx.showModal({
+                            title: '恭喜！',
+                            content: '控制成功!',
+                            showCancel: false,
+                          })
+                        }
+                      });
+                    }, 1000);
+                  } catch (e) { }
+                })
+              } else if (IndexDemo("关闭情景", sqlStr) == 0 || IndexDemo("关闭情景", sqlStr) > 0) {
+                console.log(IndexDemo("关闭情景", sqlStr), "关闭！");
+                let arr = [0x00, 0x01, 0x40];
+                senceGo(arr);
                 $.getSocketResponse(function (did, data) {
                   try {
                     let arrays = [];
@@ -221,10 +258,8 @@ Page({
                       let open = '打开' + name + getdev[i].dname;
                       let close = '关闭' + name + getdev[i].dname;
                       if (IndexDemo(open, sqlStr) == 0 || IndexDemo(open, sqlStr) > 0) {
-                        console.log(1);
                         array1 = [0xA1, 0x01, 0x01];
                         array2 = [0x00, 0x08, 0xA2];
-                        console.log(array2.concat(sdid.concat(array1)));
                         $.ajax({
                           url: 'dev/updatevideo',
                           method: 'POST',
@@ -244,14 +279,14 @@ Page({
                         //   voiceOpen: false,
                         //   voiceDone: true,
                         // })
-                        // count = array2.concat(sdid.concat(array1));
-                        // tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                        //   'data': $.getArrays(array2.concat(sdid.concat(array1))),
-                        // });
-                        // $.getSocketResponse(function (did, data) {
-                        //   console.log(data);
-                        // })
-                        socketGo(array1, array2);
+                        count = array2.concat(sdid.concat(array1));
+                        tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                          'data': $.getArrays(array2.concat(sdid.concat(array1))),
+                        });
+                        $.getSocketResponse(function (did, data) {
+                          console.log(data);
+                        })
+                        // socketGo(array1, array2);
                         return false;
                       } else if (IndexDemo(close, sqlStr) == 0 || IndexDemo(close, sqlStr) > 0) {
                         console.log(2);
@@ -269,16 +304,21 @@ Page({
                         }).then(function (res) {
                           $.alert('关闭成功!');
                         })
-
                         // s.setData({
                         //   voiceOpen: true,
                         //   voiceDone: false,
                         // })
-
-                        socketGo(array1, array2);
-                        return false;
-                      } else if (IndexDemo("情景", sqlStr) == 0 || IndexDemo(close, sqlStr) > 0) {
-                        console.log('情景');
+                        count = array2.concat(sdid.concat(array1));
+                        tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                          'data': $.getArrays(array2.concat(sdid.concat(array1))),
+                        });
+                        $.getSocketResponse(function (did, data) {
+                          console.log(data);
+                        })
+                        // socketGo(array1, array2);
+                        $.getSocketResponse(function (did, data) {
+                          console.log(data);
+                        })
                         return false;
                       }
                     }

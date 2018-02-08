@@ -95,8 +95,6 @@ Page({
           }).then(function(res) {
             for (let y in res.data) {
               if (res.data[y].id == that.data.rid) {
-                console.log(res.data[y].id);
-                
                 $.ajax({
                   url: 'dev/getdev',
                   method: 'POST',
@@ -327,11 +325,9 @@ Page({
 
   goSaveImessage() {
     let that = this;
-    let json = {
+    tools.sendData('c2s_write', that.data.did, {
       'data': $.getArrays(that.getAnalysis(that.data.blurInputText)),
-    }
-    tools.sendData('c2s_write', that.data.did, json);
-
+    });
     $.getSocketResponse(function (did, data) {
       if (data[3] == 1) {
         $.ajax({
@@ -373,8 +369,6 @@ Page({
     that.setData({
       blurInputText: e.detail.value
     });
-    console.log(that.data.blurInputText);
-    return;
     let arr = [], json = {};
     let nameLength = [1];
     let nameContent = [60];

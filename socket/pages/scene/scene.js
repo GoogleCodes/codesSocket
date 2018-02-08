@@ -17,7 +17,9 @@ Page({
     sceneArray: [],
     did: "",
     sname: '',
-    list: [],
+    sceneTypes: -1,
+    timingList: [], //  定時
+    delayList: [],  //  延迟
   },
 
   /**
@@ -37,83 +39,95 @@ Page({
     })
     let arr = [], json = {}, that = this;
     arr.push(0x00, 0x01, 0x40);
-    tools.sendData('c2s_write', that.data.did, {
+    json = {
       'data': $.getArrays(arr),
-    });
-    setTimeout(function() {
+    };
+    tools.sendData('c2s_write', that.data.did, json);
+    setTimeout(function () {
       wx.hideLoading();
     }, 500);
     $.getSocketResponse(function (did, res) {
-      let last = '', json = {};
       try {
         let arr = res, arrID = res;
         if (did !== wx.getStorageSync('did')) {
+          wx.hideToast();
           return false;
-        } else {
-          let arrays = [];
-          //  获取情景貌似ID
-          let sceneID = arr[4];
-          if (sceneID == 0) {
-            that.setData({
-              isTrueScene: true,
-            });
-          } else if (sceneID !== 0) {
-            that.setData({
-              isTrueScene: false,
-            });
-          }
-          for (let i in res) {
-            last = res.splice(4, 26);
-            if (last[0] !== 0) {
-              json = {
-                a: last
-              };
-              arrays.push(json);
-            }
-          }
-          let byte = [], option = {};
-          let str = '';
-          for (let y in arrays) {
-            let by = arrays[y].a.splice(1, 6);
-            for (let j in by) {
-              str += '%' + by[j].toString(16);
-            }
-          }
-          console.log(str);
-          // that.setData({
-          //   sceneArray: res.splice(3, 18)
-          // });
-          let pson = '';
-          for (let i in byte) {
-            let b = byte[i];
-            for (let f in b) {
-              console.log(b[f]);
-              str += '%' + b[f].toString(16);
-              pson = {
-                id: sceneID,
-                name: $.utf8to16(unescape(str)),
-              };
-            }
-            that.data.list.push(pson);
-          }
-          that.setData({
-            list: that.data.list,
-            sname: $.utf8to16(unescape(str))
-          });
-          console.log(that.data.list);
         }
-      } catch(e) {}
+        //  获取情景貌似ID
+        let sceneID = arr[4];
+        if (sceneID == 0) {
+          that.setData({
+            isTrueScene: true,
+          });
+        } else if (sceneID !== 0) {
+          that.setData({
+            isTrueScene: false,
+          });
+        }
+        let last = '', arrays = [], options = {};
+        for (let i in res) {
+          last = res.splice(4, 26);
+          if (last.indexOf(0) > 0) {
+            let name = last;
+            let doname = name.splice(1, 6);
+            let str = "";
+            for (let y in doname) {
+              str += "%" + doname[y].toString(16);
+            }
+            if (last[8] == 0) {
+              that.setData({
+                sceneTypes: 0
+              });
+            } else if (last[8] == 2) {
+              that.setData({
+                sceneTypes: 2
+              });
+            }
+            options = {
+              byteName: $.stringify(doname),
+              sceneTypes: that.data.sceneTypes,
+              sid: last[0],
+              sname: $.utf8to16(unescape(str)),
+              last: $.stringify(last.splice(1, 11)),
+            };
+            that.data.scenelist.push(options);
+            wx.setStorageSync('scene', that.data.scenelist);
+          }
+        }
+        console.log(that.data.scenelist);
+        that.setData({
+          scenelist: wx.getStorageSync('scene')
+        });
+        that.setData({
+          sceneArray: last
+        });
+      } catch (e) { }
     })
+
   },
 
   switchScene(e) {
     let flag = e.detail.value;
+    let arrayID = [];
+    console.log(e);
+    let current = e.target.dataset;
+    arrayID.push(current.id);
+    let last = $.parse(current.last);
+    let name = $.parse(current.bytename);
+    let toolsArrays = arrayID.concat(name.concat(last));
+    let map = [], index = '';
+    console.log(toolsArrays);
+    for (let i in toolsArrays) {
+      if (i == 14) {
+        index = toolsArrays[i] + 1;
+      }
+    }
+    return;
     let arr = [], that = this, json = {};
-    // arr.push(0, 18, 0x50, 1, 229, 188, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0 + 10, 1, 1);
     arr.push(0, 18, 0x50);
     let count = null;
     if (flag == true) {
-      count = arr.concat(that.data.sceneArray);
+      count = arr.concat(toolsArrays);
       tools.sendData('c2s_write', that.data.did, {
         'data': $.getArrays(count),
       });
@@ -139,11 +153,10 @@ Page({
         }
       })
     } else if (flag == false) {
-      count = arr.concat(that.data.sceneArray);
-      json = {
-        'data': $.getArrays(count),
-      };
-      tools.sendData('c2s_write', that.data.did, json);
+      count = arr.concat(toolsArrays);
+      // tools.sendData('c2s_write', that.data.did, {
+      //   'data': $.getArrays(count),
+      // });
       return false;
     }
   },
