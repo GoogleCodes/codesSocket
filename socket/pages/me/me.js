@@ -16,6 +16,11 @@ Page({
       'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
       'X-Gizwits-User-token': wx.getStorageSync('options').token,
     },
+
+    lastX: 0,     //滑动开始x轴位置
+    lastY: 0,     //滑动开始y轴位置
+    currentGesture: 0, //标识手势
+    status: false,
   },
 
   /**

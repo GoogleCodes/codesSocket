@@ -116,19 +116,12 @@ Page({
     let name = $.parse(current.bytename);
     let toolsArrays = arrayID.concat(name.concat(last));
     let map = [], index = '';
-    console.log(toolsArrays);
-    for (let i in toolsArrays) {
-      if (i == 14) {
-        index = toolsArrays[i] + 1;
-      }
-    }
-    return;
     let arr = [], that = this, json = {};
     arr.push(0, 18, 0x50);
     let count = null;
     if (flag == true) {
       count = arr.concat(toolsArrays);
-      tools.sendData('c2s_write', that.data.did, {
+      tools.sendData('c2s_write', wx.getStorageSync('did'), {
         'data': $.getArrays(count),
       });
       wx.onSocketMessage(function (res) {
@@ -152,11 +145,33 @@ Page({
         } catch (e) {
         }
       })
+      return false;
     } else if (flag == false) {
       count = arr.concat(toolsArrays);
-      // tools.sendData('c2s_write', that.data.did, {
-      //   'data': $.getArrays(count),
-      // });
+      tools.sendData('c2s_write', wx.getStorageSync('did'), {
+        'data': $.getArrays(count),
+      });
+      wx.onSocketMessage(function (res) {
+        try {
+          let data = JSON.parse(res.data);
+          if (data.cmd == 's2c_noti') {
+            let count = data.data.attrs.data
+            let arr = count.splice(3, 1);
+            for (let i = 0; i < arr.length; i++) {
+              if (arr[i] == 1) {
+                wx.showToast({
+                  title: '控制成功',
+                })
+              } else {
+                wx.showToast({
+                  title: '控制失败',
+                })
+              }
+            }
+          }
+        } catch (e) {
+        }
+      })
       return false;
     }
   },
