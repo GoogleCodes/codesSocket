@@ -45,7 +45,7 @@ Page({
     wx.getSystemInfo({
       success(res) {
         that.setData({
-          winHeight: res.windowHeight / 2
+          winHeight: res.windowHeight
         });
       },
     });

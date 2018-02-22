@@ -34,7 +34,6 @@ Page({
     this.setData({
       mobile: e.detail.value
     })
-    console.log(e);
   },
 
   //  获取Token
