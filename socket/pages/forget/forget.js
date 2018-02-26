@@ -19,6 +19,8 @@ Page({
     codeImages: '',     //  图片验证码,
     token: '',
     captcha_id: '',
+    layer_top: 0,
+    layer_success: false,
   },
 
   /**
@@ -26,6 +28,13 @@ Page({
    */
   onLoad(options) {
     let that = this;
+    wx.getSystemInfo({
+      success(res) {
+        that.setData({
+          layer_top: res.windowHeight / 3,
+        });
+      },
+    });
     that.getToken();
   },
 
@@ -175,6 +184,12 @@ Page({
       wx.removeStorageSync("userInformation");
       wx.removeStorageSync("options");
       wx.redirectTo({ url: '../login/login', });
+    });
+  },
+
+  layerClose() {
+    this.setData({
+      layer_success: true,
     });
   },
 

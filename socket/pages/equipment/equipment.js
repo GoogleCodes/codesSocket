@@ -39,6 +39,7 @@ Page({
       did: wx.getStorageSync('did'),
       rid: options.rid
     });
+    console.log(that.data.sdid);
     if (that.data.sdid[1] == 0) {
       that.setData({
         types: 0,
@@ -308,7 +309,6 @@ Page({
   getAnalysis(name) {
     let that = this;
     let str = encodeURIComponent(name);
-    // let str = encodeURIComponent(that.data.blurInputText);
     let result = str.split("%");
     let arr = [];
     for (let i = 0; i < result.length; i++) {
@@ -319,8 +319,7 @@ Page({
     let arrLength = [array.length];
     let sdid = [1, 1, 0, 2];
     let brr = [0x00, 0x02, 0x14];
-    let arraySdid = sdid.concat(arrLength.concat(array));
-    return brr.concat(arraySdid);
+    return brr.concat(sdid.concat(arrLength.concat(array)));
   },
 
   goSaveImessage() {
@@ -330,6 +329,7 @@ Page({
     });
     $.getSocketResponse(function (did, data) {
       if (data[3] == 1) {
+        console.log(data);
         $.ajax({
           url: 'dev/editdev',
           method: 'POST',
@@ -349,6 +349,7 @@ Page({
             })
           }, 1000)
         });
+        return true;
       } else {
         wx.showModal({
           title: '警告！',
@@ -369,21 +370,19 @@ Page({
     that.setData({
       blurInputText: e.detail.value
     });
-    let arr = [], json = {};
+    let arr = [0x00, 0x02, 0x14], json = {};
+    //  名称长度
     let nameLength = [1];
     let nameContent = [60];
-    let did = JSON.parse(that.data.sdid);
+    let did = that.data.sdid;
     let count = nameLength.concat(nameContent);
-
-    arr.push(0x00, 0x02, 0x14);
 
     let a = did.concat(count);
     let b = arr.concat(a);
 
-    json = {
+    tools.sendData('c2s_write', that.data.did, {
       'data': $.getArrays(b),
-    };
-    tools.sendData('c2s_write', that.data.did, json);
+    });
 
     let deviceName = e.detail.value;
 
@@ -411,3 +410,30 @@ Page({
   }
 
 })
+
+
+
+
+/**
+*　　　　　　　　┏┓　　　┏┓+ +
+*　　　　　　　┏┛┻━━━┛┻┓ + +
+*　　　　　　　┃　　　　　　　┃ 　
+*　　　　　　　┃　　　━　　　┃ ++ + + +
+*　　　　　　 ████━████ ┃+
+*　　　　　　　┃　　　　　　　┃ +
+*　　　　　　　┃　　　┻　　　┃
+*　　　　　　　┃　　　　　　　┃ + +
+*　　　　　　　┗━┓　　　┏━┛
+*　　　　　　　　　┃　　　┃　　　　　　　　　　　
+*　　　　　　　　　┃　　　┃ + + + +
+*　　　　　　　　　┃　　　┃　　　　　　　　
+*　　　　　　　　　┃　　　┃ + 　　　　神兽保佑,代码无bug　　
+*　　　　　　　　　┃　　　┃
+*　　　　　　　　　┃　　　┃　　+　　　　　　　　　
+*　　　　　　　　　┃　 　　┗━━━┓ + +
+*　　　　　　　　　┃ 　　　　　　　┣┓
+*　　　　　　　　　┃ 　　　　　　　┏┛
+*　　　　　　　　　┗┓┓┏━┳┓┏┛ + + + +
+*　　　　　　　　　　┃┫┫　┃┫┫
+*　　　　　　　　　　┗┻┛　┗┻┛+ + + +
+*/

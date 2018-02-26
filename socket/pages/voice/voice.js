@@ -44,10 +44,17 @@ Page({
       url: 'dev/semlist',
       method: "POST",
     }).then((res) => {
+      console.log(that.data.semlist);
+      let arr = [];
+      for (let i in res.data) {
+        for (let y in res.data[i]) {
+          arr.push(res.data[i][y]);
+        }
+      }
       that.setData({
-        semlist: res.data,
+        semlist: arr
       });
-
+      console.log(that.data.semlist);
     });
     // this.getScene();
   },
@@ -341,6 +348,17 @@ Page({
                 }
               }
 
+              for (let i in semlist) {
+                if (semlist[i].word !== con) {
+                  wx.showModal({
+                    title: '警告!',
+                    content: '暂时没有这条语义!',
+                    showCancel: false,
+                  })
+                  return false;
+                }
+              }
+
               if (typeof (sqlStr) == "string") {
                 var myString = sqlStr.substring(0, 1);
               }
@@ -447,7 +465,6 @@ Page({
     let spliceArray = wx.getStorageSync('spliceArray');
 
     let semlist = that.data.semlist;
-    console.log(semlist);
 
     if (IndexDemo("执行打开情景", con) == 0 || IndexDemo("执行打开情景", con) > 0) {
       let arr = [0x00, 0x01, 0x40];
@@ -572,30 +589,42 @@ Page({
                   if (IndexDemo(open, con) == 0 || IndexDemo(open, con) > 0) {
                     array1 = [0xA1, 0x01, 0x01];
                     array2 = [0x00, 0x08, 0xA2];
-
-                    $.ajax({
-                      url: 'dev/updatevideo',
-                      method: 'POST',
-                      data: {
-                        dname: device[y].dname,
-                        rid: device[y].rid,
-                        id: device[y].id,
-                        status: "true"
-                      },
-                    }).then(function (res) {
-                      // $.alert('打开成功!');
-                      that.setData({
-                        saveDisabled: true,
-                      });
-                    })
+                    socketGo(array1, array2);
                     that.setData({
-                      openMessage: that.data.voiceIMessage,
+                      voiceNow: false,
+                    })
+                    $.getSocketResponse((did, data) => {
+                      that.setData({
+                        voiceNow: true,
+                      })
+                      console.log(data);
+
+                      $.ajax({
+                        url: 'dev/updatevideo',
+                        method: 'POST',
+                        data: {
+                          dname: device[y].dname,
+                          rid: device[y].rid,
+                          id: device[y].id,
+                          status: "true"
+                        },
+                      }).then(function (res) {
+                        // $.alert('打开成功!');
+                        that.setData({
+                          saveDisabled: true,
+                        });
+                      })
+                      that.setData({
+                        openMessage: that.data.voiceIMessage,
+                        voiceOpen: false,
+                      });
+
                     });
+                    
                     // that.setData({
                     //   voiceOpen: false,
                     //   voiceDone: true,
                     // })
-                    socketGo(array1, array2);
                     // setTimeout(function() {
                     //   that.setData({
                     //     saveDisabled: false,
@@ -641,15 +670,18 @@ Page({
             }
           });
         });
-
-        // if (con == '打开房间智能灯') {
-        //   console.log(1);
-        // } else if (con == '关闭房间智能灯') {
-        //   console.log(2);
-        // }
+        return false;
       }
     }
-    
+    for (let i in semlist) {
+      if (semlist[i].word !== con) {
+        wx.showModal({
+          title: '警告!',
+          content: '暂时没有这条语义!',
+          showCancel: false,
+        })
+        return false;
+      }
+    }
   }
-
 })

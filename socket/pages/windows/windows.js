@@ -17,6 +17,7 @@ Page({
     popers: true,
     weibiao: true,
     winTop: 0,
+    blurInputText: '',
     rid: 0,
     did: 0,
     sdid: 0,
@@ -197,8 +198,25 @@ Page({
     tools.sendData('c2s_write', DID.did, json);
   },
 
+  getAnalysis(name) {
+    let that = this;
+    let str = encodeURIComponent(name);
+    let result = str.split("%");
+    let arr = [];
+    for (let i = 0; i < result.length; i++) {
+      let a = "0x" + result[i];
+      arr.push(parseInt(a))
+    }
+    let array = arr.slice(1);
+    let arrLength = [array.length];
+    let sdid = [1, 1, 0, 2];
+    let brr = [0x00, 0x02, 0x14];
+    return brr.concat(sdid.concat(arrLength.concat(array)));
+  },
+
   goSaveImessage() {
     let that = this;
+    console.log(that.data.blurInputText);
     let json = {
       'data': $.getArrays(that.getAnalysis(that.data.blurInputText)),
     }
@@ -232,6 +250,50 @@ Page({
         })
       }
     })
+  },
+
+  blurInputDate(e) {
+    let that = this;
+    that.setData({
+      blurInputText: e.detail.value
+    });
+    // let arr = [0x00, 0x02, 0x14], json = {};
+    // //  名称长度
+    // let nameLength = [1];
+    // let nameContent = [60];
+    // let did = that.data.sdid;
+    // let count = nameLength.concat(nameContent);
+
+    // let a = did.concat(count);
+    // let b = arr.concat(a);
+
+    // tools.sendData('c2s_write', that.data.did, {
+    //   'data': $.getArrays(b),
+    // });
+
+    // let deviceName = e.detail.value;
+
+    // if (that.data.weibiao == true) {
+    //   that.setData({
+    //     weibiao: false,
+    //   });
+    // } else if (that.data.weibiao == false) {
+    //   that.setData({
+    //     weibiao: true,
+    //   });
+    // }
+
+    // $.getSocketResponse(function (did, res) {
+    //   let data = res.splice(3, 1);
+    //   if (data == 1) {
+    //     $.alert('修改成功!');
+    //     return false;
+    //   } else if (data == 0) {
+    //     $.alert('修改失败!');
+    //     return false;
+    //   }
+    // })
+
   },
 
   carryout() {

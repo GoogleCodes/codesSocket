@@ -53,13 +53,13 @@ Page({
   },
 
   _getBindingList(limit, skip) {
+    wx.showLoading({
+      title: '获取中...',
+    })
     var that = this;
     that.setData({
       list: wx.getStorageSync('devices')
     });
-    wx.showLoading({
-      title: '获取中...',
-    })
     for (let i in that.data.list) {
       var device = that.data.list[i];
       if (that.data.list[i].is_online == true) {
@@ -100,8 +100,8 @@ Page({
         // console.log(that.data.isOffList);
         wx.setStorageSync('didJSon', json);
       }
-      wx.hideLoading();
     }
+    wx.hideLoading();
   },
 
   goConnSocket() {

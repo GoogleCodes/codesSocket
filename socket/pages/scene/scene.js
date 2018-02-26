@@ -39,10 +39,9 @@ Page({
     })
     let arr = [], json = {}, that = this;
     arr.push(0x00, 0x01, 0x40);
-    json = {
+    tools.sendData('c2s_write', that.data.did, {
       'data': $.getArrays(arr),
-    };
-    tools.sendData('c2s_write', that.data.did, json);
+    });
     setTimeout(function () {
       wx.hideLoading();
     }, 500);
@@ -96,9 +95,7 @@ Page({
         }
         console.log(that.data.scenelist);
         that.setData({
-          scenelist: wx.getStorageSync('scene')
-        });
-        that.setData({
+          scenelist: wx.getStorageSync('scene'),
           sceneArray: last
         });
       } catch (e) { }
@@ -109,7 +106,6 @@ Page({
   switchScene(e) {
     let flag = e.detail.value;
     let arrayID = [];
-    console.log(e);
     let current = e.target.dataset;
     arrayID.push(current.id);
     let last = $.parse(current.last);

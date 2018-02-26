@@ -22,3 +22,9 @@
     <button type="primary" class="confirm" form-type="submit" loading='{{ !loadHidden }}'>立即注册</button>
   </form>
 </view>
+
+<view class="layer_iview" hidden="{{ layer_success }}" bindtap='layerClose'></view>
+<view class="tab_iview" style="top: {{ layer_top }}px" hidden="{{ layer_success }}">
+  <text class="iconfont icon-weibiaoti-13 block"></text>
+  <text class="tab_text">修改密码成功，请用新的密码登录!</text>
+</view>

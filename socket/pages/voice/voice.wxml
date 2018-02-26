@@ -19,10 +19,9 @@
       </view>
     </view>
 
-    <view class="voice-li" > <!-- hidden='{{ voiceOpen }}' -->
+    <view class="voice-li" hidden='{{ voiceOpen }}'>
       <view class="voice-li-icon fl">
         <text class="iconfont icon-icon-test"></text>
-        <!-- <image src="../../../static/images/img17.png" class="block" style="width: 14px;height: 25px;"></image> -->
       </view>
       <view class="fl f12 tab" style="margin-left: 10px;">
         <view>识别指令成功</view>
@@ -30,7 +29,7 @@
       </view>
     </view>
 
-    <view class="voice-li" hidden='{{ voiceDone }}'> <!--  -->
+    <view class="voice-li" hidden='{{ voiceDone }}'>
       <view class="voice-li-icon fl">
         <text class="iconfont icon-icon-test"></text>
       </view>

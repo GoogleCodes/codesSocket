@@ -18,16 +18,14 @@
 
   <view class="eq-iview">
     <view class="eq-iview-left fl">设备编码：</view>
-    <view class="eq-iview-left fl">123</view>
+    <view class="eq-iview-left fl"></view>
   </view>
 
   <view class="ul-iview">
     <view class="li-iview {{ currentTabs == 0 ? 'active' : '' }} fl iconfont icon-weibiaoti-3" data-current="0" bindtap='gizwits'>
     </view>
-
     <view class="li-iview {{ currentTabs == 1 ? 'active' : '' }} fl iconfont icon-weibiaoti-4" data-current="1" bindtap='gizwits'>
     </view>
-
     <view class="li-iview {{ currentTabs == 2 ? 'active' : '' }} fl iconfont icon-weibiaoti-5" data-current="2" bindtap='gizwits'>
     </view>
   </view>

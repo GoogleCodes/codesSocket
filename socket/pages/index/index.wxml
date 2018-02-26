@@ -4,7 +4,7 @@
     <text style="font-size: 36rpx;padding-left: 10px;">刷新中...</text>
   </view> -->
 
-<swiper indicator-dots="true" interval="2000" style="height: 150px" circular="true" autoplay="true" indicator-color="rgba(101,101,101,1)" indicator-active-color="rgb(255,255,255)">
+<swiper indicator-dots="true" interval="2000" style="height: 170px" circular="true" autoplay="true" indicator-color="rgba(101,101,101,1)" indicator-active-color="rgb(255,255,255)">
   <block wx:for="{{ imgUrls }}">
     <swiper-item>
       <image src="{{ item }}" class="slide-image" style='width: 100%;height: 100%;' />

@@ -68,6 +68,7 @@ Page({
       currentTab: e.detail.current
     });
     wx.setStorageSync('currentTab', that.data.currentTab);
+    let arr = [];
     for (let i in that.data.tabArray) {
       if (i == that.data.currentTab) {
         $.ajax({
@@ -78,7 +79,6 @@ Page({
             uid: wx.getStorageSync('wxuser').id,
           },
         }).then(function (res) {
-          let arr = [];
           wx.hideLoading();
           for (let y in res.data) {
             if (wx.getStorageSync('did') == that.data.tabArray[i].pid) {
@@ -93,6 +93,11 @@ Page({
           }
         });
       }
+    }
+    if (arr.length == 0) {
+      that.setData({
+        spliceArray: [],
+      });
     }
   },
 
@@ -128,7 +133,12 @@ Page({
           }
         }
       }
-      console.log(arr);
+      if (arr.length == 0) {
+        console.log(arr);
+        that.setData({
+          spliceArray: [],
+        });
+      }
     });
   },
 
@@ -153,7 +163,6 @@ Page({
       wx.removeStorageSync('wxuser');
       wx.redirectTo({ url: '../login/login', });
     }
-
   },
 
   getIndexGizwits() {
@@ -266,13 +275,11 @@ Page({
   },
 
   onShow() {
+    let that = this;
     wx.showLoading({
       title: '加载中...',
     })
-    let that = this;
     this._getBindingList(20, 0);
-
-    // this.getIndexGizwits();
   },
 
   onReady() {

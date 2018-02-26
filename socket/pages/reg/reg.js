@@ -21,6 +21,8 @@ Page({
     webcharImg: '',     //  微信头像
     token: '',
     captcha_id: '',
+    layer_top: 0,
+    layer_success: true,
   },
 
   /**
@@ -28,6 +30,15 @@ Page({
    */
   onLoad(options) {
     this.getToken();
+    let that = this;
+    wx.getSystemInfo({
+      success(res) {
+        console.log(res);
+        that.setData({
+          layer_top: res.windowHeight / 3,
+        });
+      },
+    });
   },
 
   mobileInputEvent(e) {
@@ -118,11 +129,11 @@ Page({
     tools.sendRrquest('sms_code', 'POST', json, head).then(function (result) {
       try {
         if (result.data.error_code == 9008) {
+          
           wx.showModal({
             title: '提示',
             content: "请输入手机号码!",
             showCancel: false,
-            success: function (res) { }
           });
         }
       }catch(e){
@@ -148,16 +159,16 @@ Page({
     //  验证
     switch (true) {
       case e.detail.value.name == '':
-        tools.showModel('提示', '请输入名称');
+        tools.showModel('提示', '请输入名称',() => {});
         return false;
       case e.detail.value.mobile == '':
-        tools.showModel('提示', '请输入手机号码');
+        tools.showModel('提示', '请输入手机号码', () => { });
         return false;
       case e.detail.value.code == '':
-        tools.showModel('提示', '验证码为空');
+        tools.showModel('提示', '验证码为空', () => { });
         return false;
       case e.detail.value.pword == '':
-        tools.showModel('提示', '密码为空');
+        tools.showModel('提示', '密码为空', () => { });
         return false;
     }
     var head = {
@@ -183,6 +194,9 @@ Page({
         method: "POST",
         data: json,
       }).then(function(res) {
+        that.setData({
+          layer_success: false,
+        });
         wx.showToast({
           title: '注册成功！',
           icon: 'success',
@@ -195,6 +209,12 @@ Page({
       wx.redirectTo({ url: '../login/login', });
     });
 
+  },
+
+  layerClose() {
+    this.setData({
+      layer_success: true,
+    });
   },
 
 })
