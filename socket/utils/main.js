@@ -1,6 +1,11 @@
 let urls = require('common/common.js');
 
+let tools = require('util.js');
+
 var $ = {
+
+  regex: /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/,
+
   formatTime(number) {  //  时间格式化
     var n = number * 1000;
     let date = new Date(n),
@@ -102,6 +107,34 @@ var $ = {
     })
   },
 
+  upload(data) {
+    return new Promise(function (resolve, reject) {
+      wx.uploadFile({
+        url: urls.uploadFileUrl,
+        filePath: data.data,
+        method: 'POST',
+        name: data.name,
+        header: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT',
+          'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
+        },
+        formData: {
+          'lan': 'zh' //s.data.arrayCharset, // 'zh',
+        },
+        success(res) {
+          resolve(res);
+        },
+        fail(err) {
+          s.setData({ voiceNow: true });
+          //  错误提示
+          $._goShowModel('提示', '录音的姿势不对!', function () { });
+          wx.hideToast();
+        }
+      })
+    });
+  },
+
   sendRrquest(url, method, data, header) {
     return new Promise(function (resolve, reject) {
       wx.request({
@@ -189,7 +222,98 @@ var $ = {
       }
     }
     return out;
-  }
+  },
+
+  colorHEX(str) {
+    var that = str;
+    let regex = this.regex;
+    if (/^(rgb|RGB)/.test(that)) {
+      let str = that.replace("(", "");
+      let laststr = str.replace(")", "");
+      var aColor = laststr.replace(/(?:|||rgb|RGB)*/g, "").split(",");
+      var strHex = "#";
+      for (var i = 0; i < aColor.length; i++) {
+        var hex = Number(aColor[i]).toString(16);
+        if (hex === "0") {
+          hex += hex;
+        }
+        strHex += hex;
+      }
+      if (strHex.length !== 7) {
+        strHex = that;
+      }
+      return strHex;
+    } else if (regex.test(that)) {
+      var aNum = that.replace(/#/, "").split("");
+      if (aNum.length === 6) {
+        return that;
+      } else if (aNum.length === 3) {
+        var numHex = "#";
+        for (var i = 0; i < aNum.length; i += 1) {
+          numHex += (aNum[i] + aNum[i]);
+        }
+        return numHex;
+      }
+    } else {
+      return that;
+    }
+  },
+
+  colorRGB(str) {
+    var sColor = str.toLowerCase();
+    if (sColor && this.regex.test(sColor)) {
+      if (sColor.length === 4) {
+        var sColorNew = "#";
+        for (var i = 1; i < 4; i += 1) {
+          sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
+        }
+        sColor = sColorNew;
+      }
+      //处理六位的颜色值
+      var sColorChange = [];
+      for (var i = 1; i < 7; i += 2) {
+        sColorChange.push(parseInt("0x" + sColor.slice(i, i + 2)));
+      }
+      return "RGB(" + sColorChange.join(",") + ")";
+    } else {
+      return sColor;
+    }
+  },
+
+  IndexDemo(str1, str2) {
+    var s = str2.indexOf(str1);
+    return s;
+  },
+
+  getRegion(content, callback) {
+    let that = this;
+    this.ajax({
+      url: 'dev/getregion',
+      method: 'POST',
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+      },
+    }).then((res) => {
+      for (let i in res.data) {
+        if (res.data[i].pid == wx.getStorageSync('did')) {
+          if (that.IndexDemo(res.data[i].name, content) == 0 || that.IndexDemo(res.data[i].name, content) > 0) {
+            let rid = res.data[i].id;
+            callback(rid, res.data[i].name)
+          }
+        }
+      }
+    })
+  },
+
+  /**
+   * 发送数据
+   */
+  sendData(count) {
+    let that = this;
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
+      'data': that.getArrays(count),
+    });
+  },
 
 };
 

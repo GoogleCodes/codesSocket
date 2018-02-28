@@ -14,4 +14,10 @@ module.exports = {
   wxopen: 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token',
   access_token: '2BVg5XaXPn8MD6UgPp-bbMQ03VjKFxmn03ZBqpMp23ZN7V4uIhPNDZC2sIP6ArX2fjvUaUUKCrx-xLkLyRDGU2T8zqB3Q9ck9G-kczwwwIsgCIMLi1di2pdaXzNFTOIHJNWiAJAWAJ',
   template_id: 'ho9RAP7GBHDJYg3EVHqiBgxSQmt1apwOpGAhLBCfgkI', //  模版ID
+  uploadFileUrl: 'http://yuyin.ittun.com/public/index/dev/zhen',
+  header: {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested - With, Content-Type, Accept'
+  },
 }

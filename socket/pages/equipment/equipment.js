@@ -169,6 +169,7 @@ Page({
       case e.target.dataset.current == 0:
         brr = [0xA2, 0x01, 0x01];
         arr.push(0x00, 0x08, 0xA2);
+        
         that.saveData(arr, brr);
         break;
       case e.target.dataset.current == 1:
@@ -196,7 +197,8 @@ Page({
 
   saveData(arr, brr) {
     let count = arr.concat(this.data.sdid.concat(brr));
-    console.log(count);
+    console.log($.getArrays(count));
+    return false;
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(count),
     });

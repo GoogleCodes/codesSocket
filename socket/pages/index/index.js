@@ -163,6 +163,16 @@ Page({
       wx.removeStorageSync('wxuser');
       wx.redirectTo({ url: '../login/login', });
     }
+
+    
+    let sHEX = "#fff";
+    let sRGB = $.colorRGB(sHEX);
+    console.log($.colorRGB(sHEX));
+    console.log($.colorHEX(sRGB));
+
+    let a = 1;
+    console.log(a << 2);
+
   },
 
   getIndexGizwits() {

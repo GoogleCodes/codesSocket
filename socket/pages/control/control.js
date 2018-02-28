@@ -57,6 +57,20 @@ Page({
       title: '获取中...',
     })
     var that = this;
+    // if (wx.getStorageSync('devices') == '') {
+    //   wx.showModal({
+    //     title: '警告!',
+    //     content: '请重新登录一下!',
+    //     showCancel: false,
+    //     success(res) {
+    //       console.log(res);
+    //     }
+    //   })
+    //   wx.navigateTo({
+    //     url: '../login/login',
+    //   })
+    //   return false;
+    // }
     that.setData({
       list: wx.getStorageSync('devices')
     });
@@ -219,7 +233,8 @@ Page({
     //   //   cmd: "subscribe_req",
     //   //   data: arr
     //   // };
-    //   // //  发送数据
+    //   // //  发送endRecode
+    
     //   // that._sendJson(json);
     //   //  获取服务器返回的信息
     //   // that.getServiceBack();
