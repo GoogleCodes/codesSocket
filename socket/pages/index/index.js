@@ -161,9 +161,13 @@ Page({
     if (wx.getStorageSync('options') == '') {
       wx.removeStorageSync('userInformation');
       wx.removeStorageSync('wxuser');
-      wx.redirectTo({ url: '../login/login', });
+      wx.redirectTo({ url: '../login/login' });
     }
-
+    //  else if (wx.getStorageSync('devices') == '') {
+    //   wx.removeStorageSync('userInformation');
+    //   wx.removeStorageSync('wxuser');
+    //   wx.redirectTo({ url: '../login/login', });
+    // }
     
     let sHEX = "#fff";
     let sRGB = $.colorRGB(sHEX);

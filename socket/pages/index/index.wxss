@@ -95,6 +95,11 @@ page {
   left: 11px;
 }
 
+.ul-view .li-view .pic-iview .icon-chuangliananzhuang {
+  position: relative;
+  top: 5px;
+}
+
 .icon-fruits-lemon {
   position: absolute;
   right: 0px;

@@ -24,7 +24,9 @@ Page({
     recodePath: '',
     did: '',
     semlist: [],
-
+    array: ['国语', '粤语'],
+    index: 0,
+    arrayCharset: 'zh'
   },
 
   /**
@@ -120,7 +122,7 @@ Page({
           name: 'silk',
           header: c.header,
           formData: {
-            'lan': 'zh' //s.data.arrayCharset, // 'zh',
+            'lan': s.data.arrayCharset //s.data.arrayCharset, // 'zh',
           },
           success(res) {
             let array1 = [0xA1, 0x01, 0x01];
@@ -582,5 +584,23 @@ Page({
         return false;
       }
     }
-  }
+  },
+
+  bindPickerChange(e) {
+    var that = this;
+    that.setData({
+      index: e.detail.value
+    });
+    if (that.data.index == 0) {
+      that.setData({
+        arrayCharset: 'zh', //  国语
+      });
+    } else if (that.data.index == 1) {
+      that.setData({
+        arrayCharset: 'ct',// 粤语
+      });
+    }
+    console.log(that.data.arrayCharset);
+  },
+
 })

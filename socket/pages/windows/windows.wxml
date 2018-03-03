@@ -4,7 +4,8 @@
 <view class="marBtm60">
 
   <view class="setFunction" bindtap='setting'>
-    <image src="../../../static/images/img10.png" style="width: 100%;height: 100%;"></image>
+    <text class="iconfont icon-weibiaoti-9"></text>
+    <!-- <image src="../../../static/images/img10.png" style="width: 100%;height: 100%;"></image> -->
   </view>
 
   <view class="eq-iview">
@@ -53,7 +54,7 @@
 
   <button class="carryOut">完成</button>
 
-  <view class="layer" hidden='{{ layerShow }}'></view>
+  <view class="layer" hidden='{{ layerShow }}' bindtap='clearPopers'></view>
   <view class="layer-pop" style="top: {{ winTop }}px" hidden='{{ layerShow }}'>
     <view class="layer-utils">
       <button class="fl prve {{ currentTirection == 0 ? 'active' : '' }}" data-current="0" bindtap='Triection'>正方向</button>

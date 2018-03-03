@@ -182,6 +182,7 @@ Page({
   clearPopers() {
     this.setData({
       popers: true,
+      layerShow: true,
     });
   },
 
@@ -190,7 +191,6 @@ Page({
     that.setData({ switchButton: true });
     //  获取did
     const DID = wx.getStorageSync("didJSon");
-    console.log(DID.did);
     var json = {
       'onoffAll': that.data.switchButton,
     };
