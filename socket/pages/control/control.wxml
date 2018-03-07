@@ -1,18 +1,8 @@
 <!--pages/control/control.wxml-->
 
 <view class="control-body">
-  <view class="control-title">网关：</view>
-
-  <!-- <view>全部：</view>
-  <view class="control-ul" style="margin-bottom:18px;">
-    <view class="control-li" bindtap='selectingAll'>
-      <view>
-        <text class="fl iconfont icon-weibiaoti- block"></text>
-      </view>
-    </view>
-  </view> -->
-
-  <view>在线的设备：</view>
+  <view class="control-title">设备列表：</view>
+  
   <view class="control-ul">
     <view class="control-li" wx:for="{{ isOnList }}" data-did="{{item.did }}" data-host="{{ item.host }}" data-wssport="{{ item.wss_port }}" bindtap='goSelectDevice'>
       <view>
@@ -29,7 +19,6 @@
     </view>
   </view>
 
-  <view style="margin-top: 30px;">不在线的设备：</view>
   <view class="control-ul">
     <view class="control-li" wx:for="{{ isOffList }}" data-did="{{item.did }}" data-host="{{ item.host }}" data-wssport="{{ item.wss_port }}" bindtap='goSelectDevice'>
       <view wx:if="{{ item.is_online == false }}">

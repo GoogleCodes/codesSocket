@@ -1,0 +1,13 @@
+<!--pages/upatearea.wxml-->
+
+<view class="area_view">
+  <view class="fl">请先选择区域：</view>
+  <picker class="fl picker" range='{{ list }}' value='{{ index }}' data-id='{{ list[index] }}' range-key='id' range-key='name' bindchange="bindMultiPickerChange">
+    <view>{{ list[index].name }}</view>
+  </picker>
+</view>
+
+<view class="a_form">
+  <input class="" placeholder='请输入要修改的区域！' class="text" value='{{ areaText }}' bindblur='blurText' confirm-type='done'></input>
+  <button class="save fl" bindtap='editdev'>确认修改</button>
+</view>

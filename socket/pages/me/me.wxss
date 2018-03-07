@@ -31,7 +31,14 @@ page {
 .me-iview .me-li-iview .small-icon {
   color: #8cc63f;
   font-size: 20px;
+  width: 1.3rem;
+  display: block;
+  float: left;
   margin-right: 10px;
+}
+
+.me-iview .me-li-iview .icon-weibiaoti-12 {
+  font-size: 1.4rem;
 }
 
 .me-iview .me-li-iview .icon-youbian {

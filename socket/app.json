@@ -1,10 +1,12 @@
 {
   "pages": [
+    "pages/me/me",
     "pages/login/login",
     "pages/index/index",
+    "pages/upatearea/upatearea",
+    "pages/search/search",
     "pages/smart/smart",
     "pages/control/control",
-    "pages/search/search",
     "pages/scene/scene",
     "pages/message/message",
     "pages/equipment/equipment",
@@ -16,7 +18,6 @@
     "pages/windows/windows",
     "pages/aboutme/aboutme",
     "pages/text/text",
-    "pages/me/me",
     "pages/reg/reg",
     "pages/more/more",
     "template/util/util",

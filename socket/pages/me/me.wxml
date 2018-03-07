@@ -17,10 +17,26 @@
       <text class="iconfont icon-youbian fr"></text>
     </view>
 
+    <view class="me-li-iview" hidden='true'>
+      <navigator url='/pages/forget/forget' hover-class="nav-hover">
+        <text class="iconfont icon-weibiaoti-12 small-icon"></text>
+        <text class="">修改语音</text>
+        <text class="iconfont icon-youbian fr"></text>
+      </navigator>
+    </view>
+
     <view class="me-li-iview">
       <navigator url='/pages/forget/forget' hover-class="nav-hover">
         <text class="iconfont icon-mima1 small-icon"></text>
         <text class="">修改密码</text>
+        <text class="iconfont icon-youbian fr"></text>
+      </navigator>
+    </view>
+
+    <view class="me-li-iview">
+      <navigator url='/pages/upatearea/upatearea' hover-class="nav-hover">
+        <text class="iconfont icon-weibiaoti2zhuanhuan small-icon"></text>
+        <text class="">修改区域名称</text>
         <text class="iconfont icon-youbian fr"></text>
       </navigator>
     </view>

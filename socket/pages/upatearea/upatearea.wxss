@@ -1,0 +1,36 @@
+/* pages/upatearea.wxss */
+
+.area_view {
+  padding: 0px 15px;
+  margin-bottom: 20px;
+  background: #eee;
+  height: 45px;
+  line-height: 45px;
+  font-size: .8rem;
+}
+
+.area_view .picker {
+  width: 69%;
+}
+
+.a_form {
+  margin: 0px 15px;
+  overflow: hidden;
+}
+
+.a_form .text {
+  height: 40px;
+  font-size: .8rem;
+  padding-left: 10px;
+  border-bottom: 1px solid #20C885;
+}
+
+.a_form .save {
+  width: 100%;
+  color: #fff;
+  height: 45px;
+  margin-top: 10px;
+  font-size: .8rem;
+  line-height: 45px;
+  background: #8cc63f;
+}

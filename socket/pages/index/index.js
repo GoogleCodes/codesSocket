@@ -163,20 +163,18 @@ Page({
       wx.removeStorageSync('wxuser');
       wx.redirectTo({ url: '../login/login' });
     }
+
+
     //  else if (wx.getStorageSync('devices') == '') {
     //   wx.removeStorageSync('userInformation');
     //   wx.removeStorageSync('wxuser');
     //   wx.redirectTo({ url: '../login/login', });
     // }
     
-    let sHEX = "#fff";
-    let sRGB = $.colorRGB(sHEX);
-    console.log($.colorRGB(sHEX));
-    console.log($.colorHEX(sRGB));
-
-    let a = 1;
-    console.log(a << 2);
-
+    // let sHEX = "#fff";
+    // let sRGB = $.colorRGB(sHEX);
+    // console.log($.colorRGB(sHEX));
+    // console.log($.colorHEX(sRGB));
   },
 
   getIndexGizwits() {
@@ -194,16 +192,18 @@ Page({
       let arr = [];
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
+          console.log(123);
           arr.push(response[i]);
           wx.setStorageSync('tabArray', arr);
           last = arr[0].id;
           that.setData({
             tabArray: arr,
           });
-          // that.onLoad();
           that.setData({
             currentTab: 0
           });
+        } else if (response[i].pid !== wx.getStorageSync('did')) {
+          console.log(456);
         }
       }
       $.ajax({
@@ -214,9 +214,20 @@ Page({
           uid: wx.getStorageSync('wxuser').id,
         },
       }).then(function (res) {
+        wx.showLoading({
+          title: '加载中...',
+        })
         if (res.msg == "请求失败") {
+          wx.hideLoading();
+          wx.removeStorageSync('tabArray');
+          wx.removeStorageSync('spliceArray');
+          that.setData({
+            spliceArray: [],
+            tabArray: [],
+          });
           return false;
         }
+        wx.hideLoading();
         let device = res.data, json = {};
         let arr = [];
         for (let i in device) {
@@ -294,6 +305,7 @@ Page({
       title: '加载中...',
     })
     this._getBindingList(20, 0);
+    // this.getIndexGizwits();
   },
 
   onReady() {

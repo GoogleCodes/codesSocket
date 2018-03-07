@@ -24,6 +24,20 @@ var $ = {
     return [year, month, day].map(this.formatNumber).join('-') + ' ' + [hour, minute, second].map(this.formatNumber).join(':');
   },
 
+  /**
+   * 数组去重方法
+   */
+  unique(arr) {
+    var result = [], hash = {};
+    for (var i = 0, elem; (elem = arr[i]) != null; i++) {
+      if (!hash[elem]) {
+        result.push(elem);
+        hash[elem] = true;
+      }
+    }
+    return result;
+  },
+
   log(message) {
     console.log(message);
   },

@@ -6,7 +6,7 @@
     <view class="scene-delay" wx:for='{{ scenelist }}' wx:if='{{ item.sceneTypes == 2 }}'>
       <view class="scene-li">
         <view class="iconfont icon-slide-button fl"></view>
-        <view class="fl scene-text">{{ item.sname }}</view>
+        <view class="fl scene-text">{{ item.scene_name }}</view>
         <switch bindchange="switchScene" class="fr" data-id='{{ item.sid }}' data-last='{{ item.last }}' data-byteName='{{ item.byteName }}' />
       </view>
     </view>
@@ -25,7 +25,7 @@
     <view class="scene-delay" wx:for='{{ scenelist }}' wx:if='{{ item.sceneTypes == 0 }}'>
       <view class="scene-li">
         <view class="iconfont icon-slide-button fl"></view>
-        <view class="fl scene-text">{{ item.sname }}</view>
+        <view class="fl scene-text">{{ item.scene_name }}</view>
         <switch bindchange="switchScene" class="fr" data-id='{{ item.sid }}' data-last='{{ item.last }}' data-bytename='{{ item.byteName }}' />
       </view>
     </view>

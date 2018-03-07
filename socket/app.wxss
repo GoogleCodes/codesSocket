@@ -368,6 +368,7 @@ page, .page {
 
 /* layer_iview start */
 .layer_iview {
+  display: none;
   width: 100%;
   height: 100%;
   position: fixed;
@@ -380,6 +381,7 @@ page, .page {
 
 /* .tab_iview start */
 .tab_iview {
+  display: none;
   z-index: 100;
   width: 90%;
   margin: 0px auto;

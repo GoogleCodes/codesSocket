@@ -179,8 +179,10 @@ Page({
   goSelectDevice(e) {
     let did = e.currentTarget.dataset.did;
     wx.setStorageSync('did', did);
-    console.log(did, 'did...');
     this._login(did);
+    wx.setNavigationBarTitle({
+      title: '标题1',
+    })
   },
 
   _login(did) {
