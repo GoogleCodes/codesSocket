@@ -1,0 +1,15 @@
+<!--pages/addarea/addarea.wxml-->
+
+<view class="area-view">
+  <view class="section__title">在此增加区域：</view>
+  <input placeholder='请输入要增加的区域' focus='true' class="search-input fl" 
+  value='{{ addAreaText }}' bindblur='addArea' confirm-type='done'></input>
+  <view class="fr">
+    <navigator url='../search/search'>
+      <view class='iconfont icon-weibiaoti-1 fr'></view>
+    </navigator>
+    <!-- <view class='iconfont icon-weibiaoti-2 fr' bindtap='inputSet'></view> -->
+  </view>
+
+  <button class="saveData" bindtap='saveIMessage' hidden='{{ pickerShow }}'>保 存</button>
+</view>

@@ -19,7 +19,10 @@
     <view class="fr" style="width: 20%" hidden='{{ !pickerShow }}' >
       <!-- <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ pickerShow }}' bindtap='outputSet'></view> -->
       <view class='iconfont icon-weibiaoti-1 fr' bindtap='deleteGroup'></view>
-      <view class='iconfont icon-weibiaoti-2 fr' bindtap='inputSet'></view>
+      <navigator url='../addarea/addarea'>
+        <view class='iconfont icon-weibiaoti-2 fr'></view>
+        <!--  bindtap='inputSet' -->
+      </navigator>
     </view>
 
     <view class="fr" style="width: 10%" hidden='{{ pickerShow }}'>

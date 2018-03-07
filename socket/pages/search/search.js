@@ -136,7 +136,6 @@ Page({
     that.setData({
       addAreaText: e.detail.value
     });
-
   },
 
   bindMultiPickerChange(e) {

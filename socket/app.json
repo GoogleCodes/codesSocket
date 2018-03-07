@@ -1,8 +1,9 @@
 {
   "pages": [
-    "pages/me/me",
+    "pages/addarea/addarea",
     "pages/login/login",
     "pages/index/index",
+    "pages/me/me",
     "pages/upatearea/upatearea",
     "pages/search/search",
     "pages/smart/smart",
