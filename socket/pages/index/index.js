@@ -147,6 +147,9 @@ Page({
    */
   onLoad(options) {
     let that = this;
+    wx.setNavigationBarTitle({
+      title: wx.getStorageSync('title'),
+    })
     this.setData({
       did: wx.getStorageSync('did')
     });
@@ -163,7 +166,6 @@ Page({
       wx.removeStorageSync('wxuser');
       wx.redirectTo({ url: '../login/login' });
     }
-
 
     //  else if (wx.getStorageSync('devices') == '') {
     //   wx.removeStorageSync('userInformation');
@@ -192,7 +194,6 @@ Page({
       let arr = [];
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
-          console.log(123);
           arr.push(response[i]);
           wx.setStorageSync('tabArray', arr);
           last = arr[0].id;
@@ -203,7 +204,6 @@ Page({
             currentTab: 0
           });
         } else if (response[i].pid !== wx.getStorageSync('did')) {
-          console.log(456);
         }
       }
       $.ajax({
@@ -568,6 +568,9 @@ Page({
       let did = wx.getStorageSync('did');
       if (that.data.didList[i].did == did) {
         if (that.data.didList[i].isonline == false) {
+          setTimeout(function () {
+            that.getIndexGizwits();
+          }, 500)
           wx.showModal({
             title: '警告',
             content: '设备已经下线',

@@ -7,8 +7,8 @@ page {
 /* share-main start */
 
 .share-main {
-  margin: 0 0 50px;
-  padding: 0 0 50px;
+   /* margin: 0 0 50px; */
+  padding: 0 0 50px; 
 }
 
 .share-main .share-title {
@@ -27,6 +27,7 @@ page {
   background: #fff;
   position: relative;
   clear: both;
+  padding: 0px 10px;
 }
 
 .share-main .ul-share .li-share .p-share:first-child {
@@ -34,7 +35,7 @@ page {
 }
 
 .share-main .ul-share .li-share .p-share {
-  margin: 0 0 0 12px;
+  /* margin: 0 0 0 12px; */
   /* width: 46%; */
 }
 
@@ -48,6 +49,7 @@ page {
 .share-main .ul-share .li-share .icon-weibiaoti-1 {
   width: 30px;
   height: 30px;
+  display: none;
 }
 
 .share-main .ul-share .li-share .active {
@@ -58,7 +60,7 @@ page {
   width: 206px;
   height: 35px;
   color: #fff;
-  margin: 50px auto 0;
+  margin: 25px auto 0;
   background: #8cc63f;
   border: 1px solid #8cc63f;
   line-height: 35px;
@@ -108,3 +110,44 @@ page {
 }
 
 /* layer end */
+
+
+/* layer-input start */
+.layer-input {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background: #fff;
+  margin: 20px 15px;
+  width: 88%;
+  z-index: 100;
+  border-radius: 5px;
+}
+
+.layer-input .icon-return {
+  font-size: 32px;
+  height: 30px;
+  color: #ccc;
+  display: block;
+  margin: 10px;
+}
+
+.layer-input .text {
+  height: 45px;
+  width: 95%;
+  margin: 0px 10px;
+  line-height: 45px;
+  border-bottom: 1px solid #6aa84f;
+}
+
+.layer-input .save {
+  height: 40px;
+  line-height: 40px;
+  color: #fff;
+  margin: 10px;
+  padding-bottom: 10px;
+  background: #6aa84f;
+  display: block;
+}
+
+/* layer-input end */

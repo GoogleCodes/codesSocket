@@ -5,6 +5,7 @@
   <picker class="fl picker" range='{{ list }}' value='{{ index }}' data-id='{{ list[index] }}' range-key='id' range-key='name' bindchange="bindMultiPickerChange">
     <view>{{ list[index].name }}</view>
   </picker>
+  <view class="iconfont icon-sanjiaoxing-down fl"></view>
 </view>
 
 <view class="a_form">

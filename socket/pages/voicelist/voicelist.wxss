@@ -1,0 +1,35 @@
+/* pages/voicelist/voicelist.wxss */
+
+page {
+  background: #eee;
+}
+
+/* list start */
+
+.list {
+  margin: 10px 0;
+}
+
+.list .li {
+  height: 40px;
+  line-height: 40px;
+  text-indent: 1em;
+  background: #fff;
+  padding: 0px 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.list .li:last-child {
+  border: none;
+}
+
+.list .li .icon-weibiaoti-13 {
+  margin-right: 10px;
+  color: #fff;
+}
+
+.list .li .active {
+  color: #8cc63f;
+}
+
+/* list end */

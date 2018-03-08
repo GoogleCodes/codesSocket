@@ -21,6 +21,7 @@ Page({
     captcha_id: '',
     layer_top: 0,
     layer_success: false,
+    disabled: true,
   },
 
   /**
@@ -98,23 +99,23 @@ Page({
    * 获取手机验证码
    */
   getCodeNumber (e) {
-    let that = this;
-    let mobile = this.data.phone;
+    let that = this, mobile = that.data.phone, num = 60;
     let regMobile = /^1[3|4|5|8][0-9]\d{4,8}$/;
     if(mobile == '') {
       wx.showModal({
         title: '提示!',
         content: '请输入手机号码！',
+        showCancel: false
       })
       return false;
     } else if (!regMobile.test(mobile)) {
       wx.showModal({
         title: '提示!',
         content: '手机号有误！',
+        showCancel: false
       })
       return false;
     }
-    var num = 60;
     var intervalId = setInterval(() => {
       num--;
       that.setData({ getCodeNumber: "还有" + num + "秒", });
@@ -136,10 +137,10 @@ Page({
       'X-Gizwits-Application-Token': that.data.token,
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
-    let json = {
+    tools.sendRrquest('sms_code', 'POST', {
       "phone": that.data.phone
-    };
-    tools.sendRrquest('sms_code', 'POST', json, head).then(function (result) {});
+    }, head).then((result) => {
+    });
   },
 
   bindChange(e) {
@@ -183,7 +184,9 @@ Page({
       tools.Toast('密码修改成功！');
       wx.removeStorageSync("userInformation");
       wx.removeStorageSync("options");
-      wx.redirectTo({ url: '../login/login', });
+      setTimeout(() => {
+        wx.redirectTo({ url: '../login/login', });
+      }, 500);
     });
   },
 

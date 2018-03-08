@@ -29,12 +29,10 @@ Page({
   },
 
   selectingAll() {
-    console.log(123123);
     let arr = [0x00, 0x02, 0xA0, 0xFF];
-    var json = {
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': main.getArrays(arr),
-    };
-    tools.sendData('c2s_write', wx.getStorageSync('did'), json);
+    });
     wx.switchTab({
       url: '../index/index',
     })
@@ -57,20 +55,6 @@ Page({
       title: '获取中...',
     })
     var that = this;
-    // if (wx.getStorageSync('devices') == '') {
-    //   wx.showModal({
-    //     title: '警告!',
-    //     content: '请重新登录一下!',
-    //     showCancel: false,
-    //     success(res) {
-    //       console.log(res);
-    //     }
-    //   })
-    //   wx.navigateTo({
-    //     url: '../login/login',
-    //   })
-    //   return false;
-    // }
     that.setData({
       list: wx.getStorageSync('devices')
     });
@@ -92,7 +76,6 @@ Page({
           'ws_port': device.ws_port, //  端口
           'wss_port': device.wss_port, //  端口
         };
-        // console.log(that.data.isOnList[i]);
         wx.setStorageSync('didJSon', json);
       }
       if (that.data.list[i].is_online == false) {
@@ -111,7 +94,6 @@ Page({
           'ws_port': device.ws_port, //  端口
           'wss_port': device.wss_port, //  端口
         };
-        // console.log(that.data.isOffList);
         wx.setStorageSync('didJSon', json);
       }
     }
@@ -180,9 +162,7 @@ Page({
     let did = e.currentTarget.dataset.did;
     wx.setStorageSync('did', did);
     this._login(did);
-    wx.setNavigationBarTitle({
-      title: '标题1',
-    })
+    wx.setStorageSync('title', e.currentTarget.dataset.name);
   },
 
   _login(did) {

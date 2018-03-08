@@ -3,7 +3,6 @@
 <view class="message-iview f12">
   <view class="ul-iview">
     <view class="li-iview" bindlongtap='chonseNetword'>
-      <text class="">网关：</text>
       <text class="">mac：{{ deviceMac }}</text>
       <image src='../../../static/images/img11.png' hidden="{{ newWordShow }}" class="fr" style="width: 19px;height: 19px;"></image>
     </view>

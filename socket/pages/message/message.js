@@ -32,34 +32,25 @@ Page({
         });
       },
     });
-    that._getBindingList(20, 0);
+    that._getBindingList();
+    wx.setNavigationBarTitle({
+      title: wx.getStorageSync('title'),
+    })
   },
 
-  _getBindingList(limit, skip) {
+  _getBindingList() {
     var that = this;
-    let options = wx.getStorageSync('options');
-    let query = "?show_disabled=0&limit=" + limit + "&skip=" + skip;
-    var head = {
-      'content-type': 'application/json',
-      'X-Gizwits-Application-Id': options.gizwitsAppId,
-      'X-Gizwits-User-token': options.token,
-    };
-    tools.sendRrquest('bindings' + query, 'GET', '', head).then(function(result) {
-      // that.setData({ listDevices: result.data.devices });
-      // var pKey = null;
-      for (var i in result.data.devices) {
-        var device = result.data.devices[i];
-        if (result.data.devices[i].is_online == true) {
-          that.setData({
-            deviceMac: device.mac,
-            wifiVersion: device.wifi_soft_version
-          });
-          console.log(that.data.deviceMac);
-        }
+    let devices = wx.getStorageSync('devices');
+    for (let i in devices) {
+      if (devices[i].did == wx.getStorageSync('did')) {
+        console.log(devices[i].mac);
+        that.setData({
+          deviceMac: devices[i].mac,
+          wifiVersion: devices[i].wifi_soft_version
+        });
       }
-      // that._GizwitsDevdata(that.data.options.did);
-      // that._getGizwitsDataing(pKey);
-    }, function(err) { });
+    }
+    
   },
 
   saveData() {

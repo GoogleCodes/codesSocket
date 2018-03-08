@@ -10,6 +10,5 @@
     </navigator>
     <!-- <view class='iconfont icon-weibiaoti-2 fr' bindtap='inputSet'></view> -->
   </view>
-
   <button class="saveData" bindtap='saveIMessage' hidden='{{ pickerShow }}'>保 存</button>
 </view>

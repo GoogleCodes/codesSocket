@@ -4,7 +4,7 @@
   <view class="control-title">设备列表：</view>
   
   <view class="control-ul">
-    <view class="control-li" wx:for="{{ isOnList }}" data-did="{{item.did }}" data-host="{{ item.host }}" data-wssport="{{ item.wss_port }}" bindtap='goSelectDevice'>
+    <view class="control-li" wx:for="{{ isOnList }}" data-did="{{item.did }}" data-host="{{ item.host }}" data-wssport="{{ item.wss_port }}" bindtap='goSelectDevice' data-name='{{ item.dev_alias }}'>
       <view>
         <text class="fl iconfont icon-weibiaoti- block" style="color: #7cb242;"></text>
         <view class="li-main">

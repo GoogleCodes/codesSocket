@@ -94,6 +94,10 @@
   border: 1px solid #6aa84f;
 }
 
+.ul-iview .li-iview .sname {
+  height: 30px;
+}
+
 .ul-iview .li-iview .active {
   border: 1px solid #6aa84f;
 }

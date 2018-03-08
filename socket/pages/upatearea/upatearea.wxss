@@ -10,7 +10,12 @@
 }
 
 .area_view .picker {
-  width: 69%;
+  width: 62%;
+}
+
+.area_view .icon-sanjiaoxing-down {
+  color: #ccc;
+  font-size: 1.2rem;
 }
 
 .a_form {

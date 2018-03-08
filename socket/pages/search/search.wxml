@@ -112,7 +112,7 @@
                     data-sname='{{ item.sname }}'
                     data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
             </view>
-            <view>{{ item.sname }}</view>
+            <view class="sname">{{ item.sname }}</view>
           </view>
             <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 1 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
@@ -123,58 +123,8 @@
               data-sname='{{ item.sname }}'
               data-types='{{ item.types }}'></view>
             </view>
-            <view>{{ item.sname }}</view>
-          </view>  
-          <!--
-        
-        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 1 }}">
-          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' 
-            data-key='{{ i }}' data-name='{{ item.name }}' data-types='{{ item.types }}'></view>
+            <view class="sname">{{ item.sname }}</view>
           </view>
-          <view>{{ item.name }}</view>
-        </view> 
-
-        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 2 }}">
-          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            <view class="iconfont icon-weibiaoti-4" bindtap='selectEquipment' 
-            data-key='{{ i }}' data-name='{{ item.name }}' data-types='{{ item.types }}'></view>
-          </view>
-          <view>{{ item.name }}</view>
-        </view>
-
-        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 3 }}">
-          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            <view class="iconfont icon-weibiaoti-5" bindtap='selectEquipment' 
-            data-key='{{ i }}' data-name='{{ item.name }}' data-types='{{ item.types }}'></view>
-          </view>
-          <view>{{ item.name }}</view>
-        </view>
-
-        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 4 }}">
-          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            <view class="iconfont icon-weibiaoti-6" bindtap='selectEquipment' 
-            data-key='{{ i }}' data-name='{{ item.name }}' data-types='{{ item.types }}'></view>
-          </view>
-          <view>{{ item.name }}</view>
-        </view>
-
-        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 5 }}">
-          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            <view class="iconfont icon-weibiaoti-7" bindtap='selectEquipment' 
-            data-key='{{ i }}' data-name='{{ item.name }}' data-types='{{ item.types }}'></view>
-          </view>
-          <view>{{ item.name }}</view>
-        </view>
-
-        <view class="li-iview fl" wx:for="{{ equipment }}" wx:for-index="i" wx:if="{{ item.types == 6 }}">
-          <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-            <view class="iconfont icon-weibiaoti-8" bindtap='selectEquipment' 
-            data-key='{{ i }}' data-name='{{ item.name }}' data-types='{{ item.types }}'></view>
-          </view>
-          <view>{{ item.name }}</view>
-        </view>
-        -->
         </view>
       </swiper-item>
 

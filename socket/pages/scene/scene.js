@@ -29,6 +29,9 @@ Page({
     this.setData({
       did: wx.getStorageSync('did')
     });
+    wx.setNavigationBarTitle({
+      title: wx.getStorageSync('title'),
+    })
     // this.getSceneTo();
   },
 

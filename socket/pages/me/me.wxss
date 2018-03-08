@@ -17,7 +17,7 @@ page {
 .me-iview .me-li-iview {
   width: 87%;
   height: 40px;
-  line-height: 35px;
+  line-height: 40px;
   background: #fff;
   margin: 10px 0;
   padding: 0 5% 0 8%;

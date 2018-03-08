@@ -3,7 +3,7 @@
 <view class="voice-control">
 
   <view style="margin-right: 10px;">
-    <view class="section fl">
+    <view class="section fl" hidden='true'>
       <picker mode="selector" range="{{ array }}" value="{{ index }}" bindchange="bindPickerChange">
         <view class="picker">当前选择：{{ array[index] }}</view>
       </picker>

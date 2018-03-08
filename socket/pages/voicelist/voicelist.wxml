@@ -1,0 +1,11 @@
+<!--pages/voicelist/voicelist.wxml-->
+
+<view class="list">
+  <!-- <view class="li" style="border: none;text-indent: 0em;">选择语言</view> -->
+  <view class="li" wx:for='{{ list }}'>
+    <view bindtap='selectLanguage' data-id='{{ index }}' style='width: 100%;height: 100%;'>
+      <text class="fl">{{ item.siri }}</text>
+      <text class="iconfont icon-weibiaoti-13 fr {{ activeIndex == index ? 'active' : '' }}"></text>
+    </view>
+  </view>
+</view>

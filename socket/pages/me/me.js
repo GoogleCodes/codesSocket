@@ -27,14 +27,15 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-  
+    wx.setNavigationBarTitle({
+      title: wx.getStorageSync('title'),
+    })
   },
 
   _shareGizwits() {
-    let that = this, code = "adc1b95729864eecb02cd614cd305abc";
+    let that = this;
     wx.scanCode({
       success(res) {
-        console.log(res.result);
         that.setData({
           code: res.result.substring(16, 48)
         });
@@ -48,19 +49,19 @@ Page({
               case result.data.error_code == 9084:
                 wx.showModal({
                   title: '警告!',
-                  content: '共享记录未找到！', // "共享记录未找到！", // result.data.error_message,
+                  content: '共享记录未找到！', // "共享记录未找到！",
                 })
                 return false;
               case result.data.error_code == 9088:
                 wx.showModal({
                   title: '警告!',
-                  content: '共享记录过期!', // "共享记录未找到！", // result.data.error_message,
+                  content: '共享记录过期!', // "共享记录未找到！",
                 })
                 return false;
               case result.data.error_code == 9083:
                 wx.showModal({
                   title: '警告!',
-                  content: '客人已经绑定到设备!', // "共享记录未找到！", // result.data.error_message,
+                  content: '客人已经绑定到设备!', // "共享记录未找到！",
                 })
                 return false;
             }

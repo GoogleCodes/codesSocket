@@ -4,16 +4,17 @@
 <view class="share-main">
   <text class="share-title">分享名单：</text>
   <view class="ul-share f12" wx:for="{{ devices }}">
-    <view class="li-share" bindtap='longChose' data-did="{{ item.did }}">
+    <view class="li-share" data-did="{{ item.did }}" data-id="{{ index }}"> <!--  bindtap='active' -->
       <view class="p-share fl">
-        <text>名称：</text>
-        <text>{{ item.dev_alias }}</text>
+        <text hidden='false'>名称：</text>
+        <text>{{ item.phone }}</text>
       </view>
-      <view class="p-share fl">
-        <text>网关：</text>
-        <text>{{ item.mac }}</text>
+      <view class="p-share fr" style="margin-right: 20px;color: #c40000;" bindtap='shareCancel' data-id='{{ item.id }}'>
+        <text hidden='false'>网关：</text>
+        <text hidden='false'>{{ item.did }}</text>
+        <text>取消分享</text>
       </view>
-      <view class="iconfont icon-weibiaoti-1 fr cancel {{ did == item.did ? 'active' : '' }}"></view>
+      <view class="iconfont icon-weibiaoti-1 fr cancel {{ activeIndex == index ? 'active' : '' }}"></view>
       <!-- <image class="cancel {{ did == item.did ? 'active' : '' }}" src='../../../static/images/img11.png'></image> -->
     </view>
   </view>
@@ -22,6 +23,14 @@
 <!-- share-main end -->
 
 <!-- layer start -->
+
+<view class="layer" bindtap='cancenLayer' hidden="{{ layer_text }}"></view>
+<view class="layer-input" style='top:{{ Htop }}px' hidden="{{ layer_text }}">
+  <view class="iconfont icon-return fr" bindtap='cancelLayer'></view>
+  <input type='text' class="text" placeholder='请输入电话号码' bindblur='blurText' value='{{ phoneText }}' />
+  <button class="save" bindtap='addShare'>增加</button>
+</view>
+
 <view class="layer" bindtap='cancenLayer' hidden="{{ layer }}"></view>
 <view class="layer-code" style="top: {{ winTop }}px" hidden="{{ layer }}">
   <view class="share-code">

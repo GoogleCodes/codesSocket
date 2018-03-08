@@ -51,6 +51,9 @@ Page({
         semlist: arr
       });
     });
+    if (wx.getStorageSync('Language') == '') {
+      wx.setStorageSync(Language, 'zh');
+    }
     // this.getScene();
   },
 
@@ -114,7 +117,6 @@ Page({
 
     try {
       setTimeout(function () {
-
         wx.uploadFile({
           url: c.uploadFileUrl,
           filePath: s.data.recodePath,
@@ -122,7 +124,7 @@ Page({
           name: 'silk',
           header: c.header,
           formData: {
-            'lan': s.data.arrayCharset //s.data.arrayCharset, // 'zh',
+            'lan': wx.getStorageSync('Language'),
           },
           success(res) {
             let array1 = [0xA1, 0x01, 0x01];
@@ -600,7 +602,6 @@ Page({
         arrayCharset: 'ct',// 粤语
       });
     }
-    console.log(that.data.arrayCharset);
   },
 
 })
