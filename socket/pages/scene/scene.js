@@ -29,9 +29,7 @@ Page({
     this.setData({
       did: wx.getStorageSync('did')
     });
-    wx.setNavigationBarTitle({
-      title: wx.getStorageSync('title'),
-    })
+    $.getName('title');
     // this.getSceneTo();
   },
 
@@ -52,7 +50,7 @@ Page({
     setTimeout(function () {
       wx.hideLoading();
     }, 500);
-    $.getSocketResponse(function (did, res) {
+    $.getSocketResponse((did, res) => {
       try {
         let arr = res, arrID = res;
         if (did !== wx.getStorageSync('did')) {
@@ -75,7 +73,9 @@ Page({
           last = res.splice(4, 26);
           if (last.indexOf(0) > 0) {
             let name = last;
-            let doname = name.splice(1, 12);
+            let doname = name.splice(1, 13);
+            let byteName = name.splice(1, 3);
+            let id = [];
             let str = "";
             let tmp = new Array();
             for (let y in doname) {
@@ -86,37 +86,37 @@ Page({
             for (let j in tmp) {
               str += "%" + tmp[j].toString(16);
             }
-            if (last[8] == 0) {
+            if (last[1] == 0) {
               that.setData({
                 sceneTypes: 0
               });
-            } else if (last[8] == 2) {
+            } else if (last[1] == 2) {
               that.setData({
                 sceneTypes: 2
               });
             }
+            let n = id.concat(name.splice(0, 1)).concat(doname.concat(byteName));
+            console.log(n);
             options = {
-              byteName: $.stringify(doname),
+              byteName: $.stringify(n),//  $.stringify(doname),
               sceneTypes: that.data.sceneTypes,
-              sid: last[0],
-              sname: $.utf8to16(unescape(str)),
+              scene_id: last[0],
+              scene_name: $.utf8to16(unescape(str)),
               last: $.stringify(last.splice(1, 6)),
             };
             that.data.scenelist.push(options);
-
             $.ajax({
               url: 'Scene/addScene',
               method: 'POST',
               data: {
-                scene_name: $.utf8to16(unescape(str)),
+                byteName: $.stringify(n),
+                sceneTypes: last[1],
                 scene_id: last[0],
+                scene_name: $.utf8to16(unescape(str)),
                 scene_num: '123',
-                byteName: $.stringify(doname),
-                sceneTypes: that.data.sceneTypes,
                 last: $.stringify(last.splice(1, 6)),
               },
             }).then((res) => {
-              
             });
             wx.setStorageSync('scene', that.data.scenelist);
           }
@@ -128,17 +128,13 @@ Page({
           data: {
           },
         }).then((res) => {
-          for (let i in res.data) {
-            console.log(res.data[i]);
-          }
           that.setData({
             scenelist: res.data,
             sceneArray: last
           });
+          console.log(that.data.scenelist);
         });
-
         
-
       } catch (e) { }
     })
 

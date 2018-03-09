@@ -49,7 +49,7 @@ Page({
   getShareList() {
     let that = this;
     wx.request({
-      url: 'https://api.gizwits.com/app/sharing?sharing_type=0&status=0&did=jfCvTmuiaDtYz8rwAjGnnc&limit=20&skip=0',
+      url: 'https://api.gizwits.com/app/sharing?sharing_type=' + 1 + '&status=' + 1 +'&limit=20&skip=0',
       header: {
         'content-type': 'application/json',
         'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
@@ -158,7 +158,14 @@ Page({
         if (res.data.error_code == 9081) {
           wx.showModal({
             title: '警告!',
-            content: '客人或普通用户不能共享设备',
+            content: '客人或普通用户不能共享设备!',
+            showCancel: false,
+          })
+          return false;
+        } else if (res.data.error_code == 9015) {
+          wx.showModal({
+            title: '警告!',
+            content: '请选择主设备!',
             showCancel: false,
           })
           return false;
@@ -166,25 +173,25 @@ Page({
         let code = res.data.qr_content;
         code = code.substring(16, 48)
         //  创建设备分享
-        wx.request({
-          url: 'https://api.gizwits.com/app/sharing/code/' + code,
-          method: "POST",
-          header: that.data.head,
-          success(result) {
-            if (result.data.error_code == 9080) {
-              wx.showModal({
-                title: '警告!',
-                content: '不能共享设备给自己',
-                showCancel: false,
-              })
-              that.setData({
-                layer_text: true,
-              });
-              that.getShareList();
-              return false;
-            }
-          },
-        })
+        // wx.request({
+        //   url: 'https://api.gizwits.com/app/sharing/code/' + code,
+        //   method: "POST",
+        //   header: that.data.head,
+        //   success(result) {
+        //     if (result.data.error_code == 9080) {
+        //       wx.showModal({
+        //         title: '警告!',
+        //         content: '不能共享设备给自己',
+        //         showCancel: false,
+        //       })
+        //       that.setData({
+        //         layer_text: true,
+        //       });
+        //       that.getShareList();
+        //       return false;
+        //     }
+        //   },
+        // })
         that.setData({
           layer: true,
         });

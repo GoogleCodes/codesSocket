@@ -65,12 +65,10 @@ Page({
     let that = this;
     if (e.detail.value == '') {
       return false;
-    } else {
-      that.setData({
-        areaText: e.detail.value
-      });
     }
-    
+    that.setData({
+      areaText: e.detail.value
+    });
   },
 
   editdev() {
@@ -88,11 +86,11 @@ Page({
         wx.showToast({
           title: res.msg,
         });
-        setTimeout(() => {
-          wx.switchTab({
-            url: '../index/index',
-          })
-        }, 500);
+        // setTimeout(() => {
+        //   wx.switchTab({
+        //     url: '../index/index',
+        //   })
+        // }, 500);
         return false;
       } else if (res.code == 0) {
         wx.showModal({

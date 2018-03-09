@@ -6,6 +6,12 @@ var $ = {
 
   regex: /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/,
 
+  getName(name) {
+    wx.setNavigationBarTitle({
+      title: wx.getStorageSync(name),
+    })
+  },
+
   formatTime(number) {  //  时间格式化
     var n = number * 1000;
     let date = new Date(n),

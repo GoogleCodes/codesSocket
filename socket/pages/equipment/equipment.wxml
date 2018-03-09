@@ -1,8 +1,5 @@
 <!--pages/equipment/equipment.wxml-->
 <view class="marBtm60">
-  <view class="setFunction">
-    <image src="../../../static/images/img10.png" style="width: 100%;height: 100%;"></image>
-  </view>
 
   <view class="eq-iview">
     <view class="fl" bindtap='updateDeviceName'>

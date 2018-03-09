@@ -68,11 +68,12 @@ page {
 }
 
 .layer-poper .layer-desc {
-  padding: 0 20px 20px;
-  line-height: 25px;
-  display: block;
-  text-align: justify;
-  font-size: 14px;
+  padding:0 20px 20px;
+  line-height:25px;
+  display:block;
+  text-align:justify;
+  font-size:.9rem;
+
 }
 
 .layer-poper .line {
@@ -84,8 +85,9 @@ page {
 
 .layer-poper .confirm {
   background: #fff;
-  width: 40%;
+  width: 35%;
   height: 40px;
+  font-size: .9rem;
   line-height: 40px;
   color: #f7931e;
   border: 1px solid #f7931e;

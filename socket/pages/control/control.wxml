@@ -32,7 +32,6 @@
         <view class="fr" wx:elif="{{ item.role == 'special' }}">首绑用户</view>
         <view class="fr" wx:elif="{{ item.role == 'normal' }}">普通用户</view>
       </view>
-
     </view>
   </view>
 

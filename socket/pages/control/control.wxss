@@ -18,6 +18,10 @@
   font-size: 14px;
 }
 
+.control-ul .control-li:last-child {
+  border: none;
+}
+
 .control-ul .control-li .icon-weibiaoti- {
   font-size: 25px;
   margin: 0 10px;

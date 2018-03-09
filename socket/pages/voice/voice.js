@@ -17,7 +17,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '打开房间窗帘',
+    voiceIMessage: '打开测试情景',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -26,7 +26,8 @@ Page({
     semlist: [],
     array: ['国语', '粤语'],
     index: 0,
-    arrayCharset: 'zh'
+    arrayCharset: 'zh',
+    scenelist: [],
   },
 
   /**
@@ -52,7 +53,7 @@ Page({
       });
     });
     if (wx.getStorageSync('Language') == '') {
-      wx.setStorageSync(Language, 'zh');
+      wx.setStorageSync('Language', 'zh');
     }
     // this.getScene();
   },
@@ -160,7 +161,6 @@ Page({
             for (var i in options.yuyin) {
               var sqlStr = null;
               sqlStr = options.yuyin[i].replace("，", "");
-              console.log(sqlStr);
               if ($.IndexDemo("打开情景", sqlStr) == 0 || $.IndexDemo("打开情景", sqlStr) > 0) {
                 console.log($.IndexDemo("打开情景", sqlStr));
                 let arr = [0x00, 0x01, 0x40];
@@ -405,81 +405,95 @@ Page({
 
     let semlist = that.data.semlist;
 
-    if ($.IndexDemo("执行打开情景", con) == 0 || $.IndexDemo("执行打开情景", con) > 0) {
-      let arr = [0x00, 0x01, 0x40];
-      tools.sendData('c2s_write', wx.getStorageSync('did'), {
-        'data': $.getArrays(arr),
+    $.ajax({
+      url: 'Scene/getScene',
+      method: 'POST',
+      data: {
+      },
+    }).then((res) => {
+      that.setData({
+        scenelist: res.data,
       });
-      $.getSocketResponse(function (did, data) {
-        try {
-          let arrays = [];
-          let list = arrays.concat(data.splice(4, 18));
-          let brr = [0, 18, 0x50];
-          let count = brr.concat(list);
-          for (let i in count) {
-            if (i == 20) {
-              count[i] = count[i] + 1
-            }
-          }
-          setTimeout(function (res) {
-            tools.sendData('c2s_write', wx.getStorageSync('did'), {
-              'data': $.getArrays(count),
-            });
-            $.getSocketResponse(function (did, data) {
-              if (data[3] == 0) {
-                return false;
-              } else if (data[3] == 1) {
-                wx.showModal({
-                  title: '恭喜！',
-                  content: '控制成功!',
-                  showCancel: false,
-                })
-                return false;
-              }
-            });
-          }, 1000);
-          return false;
-        } catch (e) { }
-      })
-    } else if ($.IndexDemo("执行关闭情景", con) == 0 || $.IndexDemo("执行关闭情景", con) > 0) {
-      let arr = [0x00, 0x01, 0x40];
-      tools.sendData('c2s_write', wx.getStorageSync('did'), {
-        'data': $.getArrays(arr),
-      });
-      $.getSocketResponse(function (did, data) {
-        try {
-          let arrays = [];
-          let list = arrays.concat(data.splice(4, 18));
-          let brr = [0, 18, 0x50];
-          let count = brr.concat(list);
-          for (let i in count) {
-            if (i == 20) {
-              count[i] = count[i] - 1
-              if (count[i] == -1) {
-                count[i] = 0;
+    });
+    for (let l in that.data.scenelist) {
+      if ($.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) == 0 || $.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) > 0) {
+        let byte = $.parse(that.data.scenelist[l].byteName);
+        console.log(byte.splice(14, 1, 1));
+        let arr = [0x00, 0x01, 0x40];
+        tools.sendData('c2s_write', wx.getStorageSync('did'), {
+          'data': $.getArrays(arr),
+        });
+        $.getSocketResponse(function (did, data) {
+          try {
+            let arrays = [];
+            let list = arrays.concat(data.splice(4, 18));
+            let brr = [0, 18, 0x50];
+            let count = brr.concat(list);
+            for (let i in count) {
+              if (i == 20) {
+                count[i] = count[i] + 1
               }
             }
-          }
-          setTimeout(function (res) {
-            tools.sendData('c2s_write', wx.getStorageSync('did'), {
-              'data': $.getArrays(count),
-            });
-            $.getSocketResponse(function (did, data) {
-              if (data[3] == 0) {
-                return false;
-              } else if (data[3] == 1) {
-                wx.showModal({
-                  title: '恭喜！',
-                  content: '控制成功!',
-                  showCancel: false,
-                })
-                return false;
+            setTimeout(function (res) {
+              tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                'data': $.getArrays(count),
+              });
+              $.getSocketResponse(function (did, data) {
+                if (data[3] == 0) {
+                  return false;
+                } else if (data[3] == 1) {
+                  wx.showModal({
+                    title: '恭喜！',
+                    content: '控制成功!',
+                    showCancel: false,
+                  })
+                  return false;
+                }
+              });
+            }, 1000);
+            return false;
+          } catch (e) { }
+        })
+      } else if ($.IndexDemo("执行关闭情景", con) == 0 || $.IndexDemo("执行关闭情景", con) > 0) {
+        let arr = [0x00, 0x01, 0x40];
+        tools.sendData('c2s_write', wx.getStorageSync('did'), {
+          'data': $.getArrays(arr),
+        });
+        $.getSocketResponse(function (did, data) {
+          try {
+            let arrays = [];
+            let list = arrays.concat(data.splice(4, 18));
+            let brr = [0, 18, 0x50];
+            let count = brr.concat(list);
+            for (let i in count) {
+              if (i == 20) {
+                count[i] = count[i] - 1
+                if (count[i] == -1) {
+                  count[i] = 0;
+                }
               }
-            });
-          }, 1000);
-          return false;
-        } catch (e) { }
-      })
+            }
+            setTimeout(function (res) {
+              tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                'data': $.getArrays(count),
+              });
+              $.getSocketResponse(function (did, data) {
+                if (data[3] == 0) {
+                  return false;
+                } else if (data[3] == 1) {
+                  wx.showModal({
+                    title: '恭喜！',
+                    content: '控制成功!',
+                    showCancel: false,
+                  })
+                  return false;
+                }
+              });
+            }, 1000);
+            return false;
+          } catch (e) { }
+        })
+      }
     }
 
     for (let i in that.data.semlist) {
@@ -576,16 +590,16 @@ Page({
         return false;
       }
     }
-    for (let i in semlist) {
-      if (semlist[i].word !== con) {
-        wx.showModal({
-          title: '警告!',
-          content: '暂时没有这条语义!',
-          showCancel: false,
-        })
-        return false;
-      }
-    }
+    // for (let i in semlist) {
+    //   if (semlist[i].word !== con) {
+    //     wx.showModal({
+    //       title: '警告!',
+    //       content: '暂时没有这条语义!',
+    //       showCancel: false,
+    //     })
+    //     return false;
+    //   }
+    // }
   },
 
   bindPickerChange(e) {

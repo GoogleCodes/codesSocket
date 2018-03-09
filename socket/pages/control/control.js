@@ -162,7 +162,21 @@ Page({
     let did = e.currentTarget.dataset.did;
     wx.setStorageSync('did', did);
     this._login(did);
+    this.addArea(did);
     wx.setStorageSync('title', e.currentTarget.dataset.name);
+  },
+
+  addArea(did) {
+    $.ajax({
+      url: 'dev/addregion',
+      method: "POST",
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+        name: '全部',
+        pid: did,
+      },
+    }).then((res) => {
+    })
   },
 
   _login(did) {

@@ -27,9 +27,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    wx.setNavigationBarTitle({
-      title: wx.getStorageSync('title'),
-    })
+    $.getName('title');
   },
 
   _shareGizwits() {
@@ -43,37 +41,54 @@ Page({
         wx.request({
           url: 'https://api.gizwits.com/app/sharing/code/' + that.data.code,
           method: "POST",
-          header: that.data.head,
+          header: {
+            'Content-Type': 'application/json',
+            'Accept': ' application/json',
+            'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
+            'X-Gizwits-User-token': wx.getStorageSync('options').token,
+          },
           success(result) {
             switch(true) {
               case result.data.error_code == 9084:
                 wx.showModal({
                   title: '警告!',
                   content: '共享记录未找到！', // "共享记录未找到！",
+                  showCancel: false,
                 })
                 return false;
               case result.data.error_code == 9088:
                 wx.showModal({
                   title: '警告!',
                   content: '共享记录过期!', // "共享记录未找到！",
+                  showCancel: false,
                 })
                 return false;
               case result.data.error_code == 9083:
                 wx.showModal({
                   title: '警告!',
                   content: '客人已经绑定到设备!', // "共享记录未找到！",
+                  showCancel: false,
+                })
+                return false;
+              case result.data.error_code == 9089:
+                wx.showModal({
+                  title: '警告!',
+                  content: '共享记录状态不是不接受!', // "共享记录未找到！",
+                  showCancel: false,
                 })
                 return false;
             }
+            console.log(result);
             wx.showModal({
               title: '提示~~~',
               content: "分享成功!",
+              showCancel: false,
             })
             setTimeout(() => {
               wx.switchTab({
                 url: '../index/index',
               })
-            }, 500)
+            }, 1000)
           },
         })
       },

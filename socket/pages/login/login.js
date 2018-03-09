@@ -94,7 +94,7 @@ Page({
         'content-type': 'application/json',
         'X-Gizwits-Application-Id': options.gizwitsAppId,
         'X-Gizwits-User-token': options.token,
-      }).then(function(result) {
+      }).then((result) => {
         wx.setStorageSync('devices', result.data.devices);
         for (var i in result.data.devices) {
           var device = result.data.devices[i];
@@ -144,7 +144,6 @@ Page({
     let that = this, json = {};
     //  获取options缓存数据
     var options = wx.getStorageSync('options');
-    //  开启提示加载中。。。
     wx.showLoading({ title: '' })
     //  创建Socket
     wx.connectSocket({

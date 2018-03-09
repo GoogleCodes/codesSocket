@@ -5,7 +5,6 @@ import { $ } from '../../utils/main.js'
 
 let com = require('../../utils/common/common.js');
 
-// let $ = new Main();
 let did = wx.getStorageSync('didJSon').did;
 
 Page({
@@ -134,7 +133,6 @@ Page({
         }
       }
       if (arr.length == 0) {
-        console.log(arr);
         that.setData({
           spliceArray: [],
         });
@@ -147,9 +145,6 @@ Page({
    */
   onLoad(options) {
     let that = this;
-    wx.setNavigationBarTitle({
-      title: wx.getStorageSync('title'),
-    })
     this.setData({
       did: wx.getStorageSync('did')
     });
@@ -177,10 +172,16 @@ Page({
     // let sRGB = $.colorRGB(sHEX);
     // console.log($.colorRGB(sHEX));
     // console.log($.colorHEX(sRGB));
+
+    var array = [1, 230, 181, 139, 232, 175, 149, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1];
+    array.splice(14, 1, 1);
+    console.log(array);
+
   },
 
   getIndexGizwits() {
     let that = this;
+    $.getName('title');
     $.ajax({
       url: 'dev/getregion',
       method: 'POST',
@@ -203,7 +204,6 @@ Page({
           that.setData({
             currentTab: 0
           });
-        } else if (response[i].pid !== wx.getStorageSync('did')) {
         }
       }
       $.ajax({
@@ -219,12 +219,12 @@ Page({
         })
         if (res.msg == "请求失败") {
           wx.hideLoading();
-          wx.removeStorageSync('tabArray');
-          wx.removeStorageSync('spliceArray');
-          that.setData({
-            spliceArray: [],
-            tabArray: [],
-          });
+          // wx.removeStorageSync('tabArray');
+          // wx.removeStorageSync('spliceArray');
+          // that.setData({
+          //   spliceArray: [],
+          //   tabArray: [],
+          // });
           return false;
         }
         wx.hideLoading();
@@ -305,7 +305,6 @@ Page({
       title: '加载中...',
     })
     this._getBindingList(20, 0);
-    // this.getIndexGizwits();
   },
 
   onReady() {
@@ -356,7 +355,6 @@ Page({
     try {
       let array1 = [0xA1, 0x01, 0x01];
       let array2 = [0x00, 0x08, 0xA2];
-
       for (let i in that.data.tabArray) {
         if (areaid == that.data.tabArray[i].id) {
           that.setData({
@@ -447,68 +445,12 @@ Page({
       var data = JSON.parse(res.data);
       try {
         if (data.data.success == true) {
-
           let arr = [];
           arr.push(0x00, 0x02, 0xA0, 0xFF);
           var json = {
             'data': $.getArrays(arr),
           };
           tools.sendData('c2s_write', wx.getStorageSync('did'), json);
-
-          // $.getSocketResponse(function (did, data) {
-          //   let last = '', flag = false, sdid = '';
-          //   let spliceArray = wx.getStorageSync('spliceArray');
-          //   for (let k in data) {
-          //     last = data.splice(4, 6 + data[9]);
-          //     if (last.indexOf(1) == 0) {
-          //       sdid = last.splice(0, 4);
-          //       console.log(sdid);
-          //       for (let i in spliceArray) {
-          //         console.log(sdid == spliceArray[i].did, " ---", spliceArray[i].did)
-          //       }
-          //     }
-          //   }
-          // })
-
-          //  链接socket
-          // json = {
-          //   cmd: "subscribe_req",
-          //   data: that.data.didList
-          // };
-          // that._sendJson(json);
-          //  读取数据1
-          // that.getJSON('c2s_read', that.data.did);
-
-          //  获取服务器返回的信息
-          // wx.onSocketMessage((res) => {
-          //   var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
-          //   switch (noti.cmd) {
-          //     case 'subscribe_res':
-          //       for (var i in noti.data.success) {
-          //         that.setData({
-          //           did: noti.data.success[i].did
-          //         });
-          //       }
-          //     case 'c2s_write':
-          //       break;
-          //     case 's2c_noti':
-          //       // arr.push(0x00, 0x01, 0x40);
-          //       // let json = {
-          //       //   'data': $.getArrays(arr),
-          //       // };
-          //       // tools.sendData('c2s_write', that.data.did, json); 
-          //       // let a = noti.data.attrs.data.slice(18, 36)
-          //       break;
-          //     case 'pong':
-          //       break;
-          //   }
-          // });
-          // arr.push(0x00, 0x02, 0xA0, 0xFF);
-          // var json = {
-          //   'data': $.getArrays(arr),
-          // };
-          // tools.sendData('c2s_write', wx.getStorageSync('didJSon').did, json);
-
         } else {
           if (data.data.msg == "M2M socket has closed, please login again!") {
             that._login();

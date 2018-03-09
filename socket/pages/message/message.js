@@ -1,6 +1,7 @@
 // pages/message/message.js
 
 var tools = require('../../utils/util.js');
+import { $ } from '../../utils/main.js'
 
 Page({
 
@@ -33,9 +34,7 @@ Page({
       },
     });
     that._getBindingList();
-    wx.setNavigationBarTitle({
-      title: wx.getStorageSync('title'),
-    })
+    $.getName('title');
   },
 
   _getBindingList() {
