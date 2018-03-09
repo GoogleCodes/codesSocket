@@ -17,7 +17,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '打开测试情景',
+    voiceIMessage: '关闭测试情景',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -28,6 +28,7 @@ Page({
     index: 0,
     arrayCharset: 'zh',
     scenelist: [],
+    input: "用户输入指令..."
   },
 
   /**
@@ -55,6 +56,17 @@ Page({
     if (wx.getStorageSync('Language') == '') {
       wx.setStorageSync('Language', 'zh');
     }
+
+    $.ajax({
+      url: 'Scene/getScene',
+      method: 'POST',
+      data: {
+      },
+    }).then((res) => {
+      that.setData({
+        scenelist: res.data,
+      });
+    });
     // this.getScene();
   },
 
@@ -161,57 +173,67 @@ Page({
             for (var i in options.yuyin) {
               var sqlStr = null;
               sqlStr = options.yuyin[i].replace("，", "");
-              if ($.IndexDemo("打开情景", sqlStr) == 0 || $.IndexDemo("打开情景", sqlStr) > 0) {
-                console.log($.IndexDemo("打开情景", sqlStr));
-                let arr = [0x00, 0x01, 0x40];
-                senceGo(arr);
-                $.getSocketResponse(function (did, data) {
+              for (let l in scenelist) {
+                if ($.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) == 0 || $.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) > 0) {
+                  let byte = $.parse(that.data.scenelist[l].byteName);
+                  if (byte[14] == 2) {
+                    byte[14] += 1;
+                  } else if (byte[14] == 0) {
+                    byte[14] += 1;
+                  }
+                  that.setData({
+                    input: that.data.voiceIMessage
+                  });
                   try {
-                    let arrays = [];
-                    let list = arrays.concat(data.splice(4, 18));
                     let brr = [0, 18, 0x50];
-                    let count = brr.concat(list);
-                    for (let g in count) {
-                      if (g == 20) {
-                        count[g] = count[g] + 1
-                      }
-                    }
+                    let count = brr.concat(byte);
                     setTimeout(function (res) {
-                      tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                        'data': $.getArrays(count),
-                      });
+                      senceGo(count);
                       $.getSocketResponse(function (did, data) {
                         if (data[3] == 0) {
+                          that.setData({
+                            voiceOpen: false,
+                            openMessage: '打开失败!'
+                          });
                           return false;
                         } else if (data[3] == 1) {
-                          wx.showModal({
-                            title: '恭喜！',
-                            content: '控制成功!',
-                            showCancel: false,
-                          })
+                          that.setData({
+                            voiceOpen: false,
+                            openMessage: '打开成功!'
+                          });
+                          return false;
                         }
                       });
                     }, 1000);
                   } catch (e) { }
-                })
-              } else if ($.IndexDemo("关闭情景", sqlStr) == 0 || $.IndexDemo("关闭情景", sqlStr) > 0) {
-                let arr = [0x00, 0x01, 0x40];
-                senceGo(arr);
-                $.getSocketResponse(function (did, data) {
+                } else if ($.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情景", sqlStr) == 0 || $.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情景", sqlStr) > 0) {
+                  let byte = $.parse(that.data.scenelist[l].byteName);
+                  if (byte[14] == 2) {
+                    byte[14] += 1;
+                  } else if (byte[14] == 0) {
+                    byte[14] += 1;
+                  }
+                  that.setData({
+                    input: that.data.voiceIMessage
+                  });
                   try {
-                    let arrays = [];
-                    let list = arrays.concat(data.splice(4, 18));
                     let brr = [0, 18, 0x50];
-                    let count = brr.concat(list);
-                    for (let g in count) {
-                      if (g == 20) {
-                        count[g] = count[g] + 1
-                      }
-                    }
+                    let count = brr.concat(byte);
+                    setTimeout(function (res) {
+                      senceGo(count);
+                      $.getSocketResponse(function (did, data) {
+                         if (data[3] == 1) {
+                          that.setData({
+                            voiceOpen: false,
+                            openMessage: '关闭成功!'
+                          });
+                          return false;
+                        }
+                      });
+                    }, 1000);
                   } catch (e) { }
-                });
+                }
               }
-
               let semlist = s.data.semlist;
 
               for (let k in semlist) {
@@ -252,7 +274,7 @@ Page({
                             }).then(function (res) {
                               $.alert('打开成功!');
                             })
-                            
+
                             $.getSocketResponse(function (did, data) {
                               s.setData({
                                 openMessage: sqlStr,
@@ -405,94 +427,73 @@ Page({
 
     let semlist = that.data.semlist;
 
-    $.ajax({
-      url: 'Scene/getScene',
-      method: 'POST',
-      data: {
-      },
-    }).then((res) => {
-      that.setData({
-        scenelist: res.data,
-      });
-    });
+
     for (let l in that.data.scenelist) {
       if ($.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) == 0 || $.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) > 0) {
         let byte = $.parse(that.data.scenelist[l].byteName);
-        console.log(byte.splice(14, 1, 1));
-        let arr = [0x00, 0x01, 0x40];
-        tools.sendData('c2s_write', wx.getStorageSync('did'), {
-          'data': $.getArrays(arr),
-        });
-        $.getSocketResponse(function (did, data) {
-          try {
-            let arrays = [];
-            let list = arrays.concat(data.splice(4, 18));
-            let brr = [0, 18, 0x50];
-            let count = brr.concat(list);
-            for (let i in count) {
-              if (i == 20) {
-                count[i] = count[i] + 1
+        if (byte[14] == 2) {
+          byte[14] += 1;
+        } else if (byte[14] == 0) {
+          byte[14] += 1;
+        }
+        try {
+          let brr = [0, 18, 0x50];
+          let count = brr.concat(byte);
+          that.setData({
+            input: that.data.voiceIMessage
+          });
+          setTimeout(function (res) {
+            tools.sendData('c2s_write', wx.getStorageSync('did'), {
+              'data': $.getArrays(count),
+            });
+            $.getSocketResponse(function (did, data) {
+              if (data[3] == 0) {
+                that.setData({
+                  voiceOpen: false,
+                  openMessage: '打开失败!'
+                });
+                return false;
+              } else if (data[3] == 1) {
+                that.setData({
+                  voiceOpen: false,
+                  openMessage: '打开成功!'
+                });
+                return false;
               }
-            }
-            setTimeout(function (res) {
-              tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                'data': $.getArrays(count),
-              });
-              $.getSocketResponse(function (did, data) {
-                if (data[3] == 0) {
-                  return false;
-                } else if (data[3] == 1) {
-                  wx.showModal({
-                    title: '恭喜！',
-                    content: '控制成功!',
-                    showCancel: false,
-                  })
-                  return false;
-                }
-              });
-            }, 1000);
-            return false;
-          } catch (e) { }
-        })
-      } else if ($.IndexDemo("执行关闭情景", con) == 0 || $.IndexDemo("执行关闭情景", con) > 0) {
-        let arr = [0x00, 0x01, 0x40];
-        tools.sendData('c2s_write', wx.getStorageSync('did'), {
-          'data': $.getArrays(arr),
+            });
+          }, 1000);
+          return false;
+        } catch (e) { }
+      } else if ($.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情景", con) == 0
+        || $.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情景", con) > 0) {
+        let byte = $.parse(that.data.scenelist[l].byteName);
+        if (name[14] == 3) {
+          name[14] -= 1;
+        } else if (name[14] == 1) {
+          name[14] -= 1;
+        }
+        that.setData({
+          input: that.data.voiceIMessage
         });
-        $.getSocketResponse(function (did, data) {
-          try {
-            let arrays = [];
-            let list = arrays.concat(data.splice(4, 18));
-            let brr = [0, 18, 0x50];
-            let count = brr.concat(list);
-            for (let i in count) {
-              if (i == 20) {
-                count[i] = count[i] - 1
-                if (count[i] == -1) {
-                  count[i] = 0;
-                }
+        try {
+          let brr = [0, 18, 0x50];
+          let count = brr.concat(byte);
+          setTimeout(function (res) {
+            tools.sendData('c2s_write', wx.getStorageSync('did'), {
+              'data': $.getArrays(count),
+            });
+            $.getSocketResponse(function (did, data) {
+              if (data[3] == 1) {
+                that.setData({
+                  voiceOpen: false,
+                  openMessage: '关闭成功!'
+                });
+                return false;
               }
-            }
-            setTimeout(function (res) {
-              tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                'data': $.getArrays(count),
-              });
-              $.getSocketResponse(function (did, data) {
-                if (data[3] == 0) {
-                  return false;
-                } else if (data[3] == 1) {
-                  wx.showModal({
-                    title: '恭喜！',
-                    content: '控制成功!',
-                    showCancel: false,
-                  })
-                  return false;
-                }
-              });
-            }, 1000);
-            return false;
-          } catch (e) { }
-        })
+            });
+          }, 1000);
+          return false;
+        } catch (e) { }
       }
     }
 
@@ -520,7 +521,7 @@ Page({
                   if ($.IndexDemo(open, con) == 0 || $.IndexDemo(open, con) > 0) {
                     array1 = [0xA1, 0x01, 0x01];
                     array2 = [0x00, 0x08, 0xA2];
-                    socketGo(array1,array2);
+                    socketGo(array1, array2);
                     that.setData({
                       voiceNow: false,
                     })
@@ -547,7 +548,7 @@ Page({
                       });
 
                     });
-                  
+
                     that.onShow();
                     return false;
                   } else if ($.IndexDemo(close, con) == 0 || $.IndexDemo(close, con) > 0) {

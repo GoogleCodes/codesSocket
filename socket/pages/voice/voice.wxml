@@ -9,7 +9,7 @@
       </picker>
     </view>
     <view class="fr">
-      <view class="voice-userInput fl">用户输入指令...</view>
+      <view class="voice-userInput fl">{{ input }}</view>
       <view class="person iconfont icon-icon-test1 fr">
         <!-- <image src='../../../static/images/img15.png' style="width: 17px;height: 21px;"></image> -->
       </view>
