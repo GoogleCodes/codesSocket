@@ -80,7 +80,7 @@ page {
 }
 
 .layer-code {
-  height: 300px;
+  height: 310px;
   width: 95%;
   background: #fff;
   position: fixed;
@@ -92,8 +92,8 @@ page {
 }
 
 .layer-code .share-code {
-  width: 220px;
-  height: 220px;
+  width: 230px;
+  height: 230px;
   margin: 32px auto 10px;
   border: 1px solid #6aa84f;
 }

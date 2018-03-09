@@ -4,7 +4,8 @@
 <view class="share-main">
   <text class="share-title">分享名单：</text>
   <view class="ul-share f12" wx:for="{{ devices }}">
-    <view class="li-share" data-did="{{ item.did }}" data-id="{{ index }}"> <!--  bindtap='active' -->
+    <view class="li-share" data-did="{{ item.did }}" data-id="{{ index }}">
+      <!--  bindtap='active' -->
       <view class="p-share fl">
         <text hidden='false'>名称：</text>
         <text>{{ item.phone }}</text>
@@ -34,7 +35,8 @@
 <view class="layer" bindtap='cancenLayer' hidden="{{ layer }}"></view>
 <view class="layer-code" style="top: {{ winTop }}px" hidden="{{ layer }}">
   <view class="share-code">
-    <image src="../../../static/images/img19.png" style=''></image>
+    <canvas hidden="{{ canvasHidden }}" style="width: 230px;height: 230px;background:#f1f1f1;" canvas-id="mycanvas" />
+    <!-- <image src="../../../static/images/img19.png" style=''></image> -->
   </view>
   <view class="code-desc">扫二维码分享</view>
 </view>
