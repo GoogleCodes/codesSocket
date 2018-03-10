@@ -48,6 +48,7 @@
 
 .eq-iview .eq-iview-left {
   color: #666;
+  height: 55px;
   font-size: 0.9rem;
 }
 

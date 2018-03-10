@@ -182,7 +182,7 @@ Page({
   clearPopers() {
     this.setData({
       popers: true,
-      layerShow: true,
+      weibiao: true,
     });
   },
 
@@ -257,43 +257,6 @@ Page({
     that.setData({
       blurInputText: e.detail.value
     });
-    // let arr = [0x00, 0x02, 0x14], json = {};
-    // //  名称长度
-    // let nameLength = [1];
-    // let nameContent = [60];
-    // let did = that.data.sdid;
-    // let count = nameLength.concat(nameContent);
-
-    // let a = did.concat(count);
-    // let b = arr.concat(a);
-
-    // tools.sendData('c2s_write', that.data.did, {
-    //   'data': $.getArrays(b),
-    // });
-
-    // let deviceName = e.detail.value;
-
-    // if (that.data.weibiao == true) {
-    //   that.setData({
-    //     weibiao: false,
-    //   });
-    // } else if (that.data.weibiao == false) {
-    //   that.setData({
-    //     weibiao: true,
-    //   });
-    // }
-
-    // $.getSocketResponse(function (did, res) {
-    //   let data = res.splice(3, 1);
-    //   if (data == 1) {
-    //     $.alert('修改成功!');
-    //     return false;
-    //   } else if (data == 0) {
-    //     $.alert('修改失败!');
-    //     return false;
-    //   }
-    // })
-
   },
 
   carryout() {

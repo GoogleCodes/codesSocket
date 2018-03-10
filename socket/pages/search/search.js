@@ -66,6 +66,9 @@ Page({
           let name = last;
           let a = '', b = '';
           let doname = name.splice(6, last[5]);
+          if (doname.length == 0) {
+            console.log(doname);
+          }
           let str = "";
           for (let y in doname) {
             str += "%" + doname[y].toString(16);

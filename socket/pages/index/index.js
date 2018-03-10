@@ -47,7 +47,8 @@ Page({
     currentItem: 0,
     typeDevice: 0,
     types: '',
-    typea: ''
+    typea: '',
+    allDevice: [],
   },
 
   refesh(e) {
@@ -161,22 +162,6 @@ Page({
       wx.removeStorageSync('wxuser');
       wx.redirectTo({ url: '../login/login' });
     }
-
-    //  else if (wx.getStorageSync('devices') == '') {
-    //   wx.removeStorageSync('userInformation');
-    //   wx.removeStorageSync('wxuser');
-    //   wx.redirectTo({ url: '../login/login', });
-    // }
-    
-    // let sHEX = "#fff";
-    // let sRGB = $.colorRGB(sHEX);
-    // console.log($.colorRGB(sHEX));
-    // console.log($.colorHEX(sRGB));
-
-    var array = [1, 230, 181, 139, 232, 175, 149, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1];
-    array.splice(14, 1, 1);
-    console.log(array);
-
   },
 
   getIndexGizwits() {
@@ -445,12 +430,38 @@ Page({
       var data = JSON.parse(res.data);
       try {
         if (data.data.success == true) {
-          let arr = [];
-          arr.push(0x00, 0x02, 0xA0, 0xFF);
-          var json = {
+          let arr = [0x00, 0x02, 0xA0, 0xFF];
+          tools.sendData('c2s_write', wx.getStorageSync('did'), {
             'data': $.getArrays(arr),
-          };
-          tools.sendData('c2s_write', wx.getStorageSync('did'), json);
+          });
+          $.getSocketResponse(function (did, data) {
+            let k = data;
+            let last = null, brr = [], json = {};
+            for (let i in k) {
+              last = k.splice(4, 6 + data[9]);
+              if (last.indexOf(1) == 0) {
+                let name = last;
+                let a = '', b = '';
+                let doname = name.splice(6, last[5]);
+                let str = "";
+                for (let y in doname) {
+                  str += "%" + doname[y].toString(16);
+                }
+                json = {
+                  sdid: last.splice(0, 4),
+                  active: 0,
+                  sname: $.utf8to16(unescape(str))
+                };
+                brr.push(json);
+                console.log(brr);
+                // brr.concat(that.data.array);
+                // wx.setStorageSync('gizwits', brr.concat(that.data.array));
+                that.setData({
+                  allDevice: brr
+                });
+              }
+            }
+          })
         } else {
           if (data.data.msg == "M2M socket has closed, please login again!") {
             that._login();

@@ -167,16 +167,34 @@ Page({
   },
 
   addArea(did) {
+
     $.ajax({
-      url: 'dev/addregion',
-      method: "POST",
+      url: 'dev/getregion',
+      method: 'POST',
       data: {
-        uid: wx.getStorageSync('wxuser').id,
-        name: '全部',
-        pid: did,
+        uid: wx.getStorageSync('wxuser').id
       },
-    }).then((res) => {
-    })
+    }).then(function (res) {
+      for (let i in res.data) {
+        if (res.data[i].pid == wx.getStorageSync('did')) {
+
+          if (res.data[i].name !== '全部') {
+            $.ajax({
+              url: 'dev/addregion',
+              method: "POST",
+              data: {
+                uid: wx.getStorageSync('wxuser').id,
+                name: '全部',
+                pid: did,
+              },
+            }).then((res) => {
+            })
+          }
+
+        }
+      }
+    });
+    
   },
 
   _login(did) {

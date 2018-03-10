@@ -8,7 +8,7 @@
     </view>
 
     <view class="li-iview">
-      <navigator url='/pages/share/share' hover-class='li-iview-hover'>
+      <navigator open-type='redirect' url='/pages/share/share' hover-class='li-iview-hover'>
         <text class="">点击分享</text>
         <text class="iconfont icon-youbian fr"></text>
       </navigator>

@@ -2,7 +2,7 @@
 
 <view class="area-view">
   <view class="section__title">在此增加区域：</view>
-  <input placeholder='请输入要增加的区域' focus='true' class="search-input fl" 
+  <input placeholder='请输入要增加的区域' focus='{{ name_focus }}' class="search-input fl" 
   value='{{ addAreaText }}' bindblur='addArea' confirm-type='done'></input>
   <view class="fr">
     <navigator url='../search/search'>

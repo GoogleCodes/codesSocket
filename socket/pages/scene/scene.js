@@ -13,13 +13,14 @@ Page({
     scenelist: [],
     arrays: [],
     sceneids: [],
-    isTrueScene: true,
     sceneArray: [],
     did: "",
     sname: '',
     sceneTypes: -1,
     timingList: [], //  定時
     delayList: [],  //  延迟
+    checked: false,
+    indexs: 0,
   },
 
   /**
@@ -30,11 +31,62 @@ Page({
       did: wx.getStorageSync('did')
     });
     $.getName('title');
-    // this.getSceneTo();
+    this.getSceneTo();
+    this.getScene();
   },
 
   onShow() {
-    this.getSceneTo();
+    let that = this;
+    this.getScene();
+  },
+
+  getScene() {
+    let that = this;
+    wx.showLoading({
+      title: '获取中...',
+    })
+    // let status = '';
+    // $.getSocketResponse((did, res) => {
+    //   let a = res.splice(4, 765);
+    //   let last = '';
+    //   for (let i in a) {
+    //     if (a[16] !== 0) {
+    //       last = a.splice(0, 17 + (a[16] * 9));
+    //     } else if (a[16] == 0) {
+    //       last = a.splice(0, 17);
+    //     }
+    //     if (last.indexOf(0) > 0) {
+    //       console.log(last[14] == 0 || last[14] == 2)
+    //       if (last[14] == 0 && last[14] == 2) {
+    //         status = "0";
+    //       } else if (last[0] == 2 && last[14] == 3) {
+    //         status = "1";
+    //       }
+    //     }
+    //   }
+    // })
+    $.ajax({
+      url: 'Scene/getScene',
+      method: 'POST',
+    }).then((res) => {
+      let json = {}, arr = [];
+      for (let i in res.data) {
+        if (wx.getStorageSync('did') == res.data[i].did) {
+          json = {
+            scene_id: res.data[i].scene_id,
+            byteName: JSON.parse(res.data[i].byteName),
+            scene_name: res.data[i].scene_name,
+            sceneTypes: res.data[i].sceneTypes,
+            status: res.data[i].status
+          };
+          arr.push(json);
+          that.setData({
+            scenelist: arr,
+          });
+          wx.hideLoading();
+        }
+      }
+    });
   },
 
   //  获取情景
@@ -53,30 +105,25 @@ Page({
     $.getSocketResponse((did, res) => {
       try {
         let arr = res, arrID = res;
-        
         if (did !== wx.getStorageSync('did')) {
           wx.hideToast();
           return false;
         }
         if (arr[2] == 65) {
           //  获取情景貌似ID
-          let sceneID = arr[4];
-          if (sceneID == 0) {
-            that.setData({
-              isTrueScene: true,
-            });
-          } else if (sceneID !== 0) {
-            that.setData({
-              isTrueScene: false,
-            });
-          }
+          let sceneID = arr[3];
           let last = '', arrays = [], options = {};
-          for (let i in res) {
-            last = res.splice(4, 26);
+          let a = res.splice(4, 765);
+          for (let i in a) {
+            if (a[16] !== 0) {
+              last = a.splice(0, 17 + (a[16] * 9));
+            } else if (a[16] == 0) {
+              last = a.splice(0, 17);
+            }
             if (last.indexOf(0) > 0) {
-              let name = last;
+              let name = last.splice(0, 14);
               let doname = name.splice(1, 13);
-              let byteName = name.splice(1, 3);
+              // let byteName = name.splice(1, 3);
               let id = [];
               let str = "";
               let tmp = new Array();
@@ -88,70 +135,54 @@ Page({
               for (let j in tmp) {
                 str += "%" + tmp[j].toString(16);
               }
-              if (last[1] == 0) {
+              let status; // 状态
+              if (last[0] == 0 && last[0] == 2) {
+                status = 0;
+              } else if (last[0] == 1 && last[0] == 3) {
+                status = 1;
+              }
+              let n = name.concat(doname.concat(last));
+              if (n[14] == 0 || n[14] == "0") {
                 that.setData({
                   sceneTypes: 0
                 });
-              } else if (last[1] == 2) {
+              } else if (n[14] == 2 || n[14] == "2") {
                 that.setData({
                   sceneTypes: 2
                 });
               }
-              let n = id.concat(name.splice(0, 1)).concat(doname.concat(byteName));
               options = {
-                byteName: $.stringify(n),//  $.stringify(doname),
+                byteName: $.stringify(n),
                 sceneTypes: that.data.sceneTypes,
-                scene_id: last[0],
+                scene_id: n[0],
                 scene_name: $.utf8to16(unescape(str)),
+                scene_num: '123',
                 last: $.stringify(last.splice(1, 6)),
+                did: wx.getStorageSync('did'),
+                status: status,
               };
               that.data.scenelist.push(options);
-              $.ajax({
-                url: 'Scene/addScene',
-                method: 'POST',
-                data: {
-                  byteName: $.stringify(n),
-                  sceneTypes: last[1],
-                  scene_id: last[0],
-                  scene_name: $.utf8to16(unescape(str)),
-                  scene_num: '123',
-                  last: $.stringify(last.splice(1, 6)),
-                },
-              }).then((res) => {
-              });
-              wx.setStorageSync('scene', that.data.scenelist);
+              console.log($.utf8to16(unescape(str)));
+              // $.ajax({
+              //   url: 'Scene/addScene',
+              //   method: 'POST',
+              //   data: options,
+              // }).then((res) => {
+              // });
             }
           }
+          that.getScene();
         }
-        $.ajax({
-          url: 'Scene/getScene',
-          method: 'POST',
-          data: {
-          },
-        }).then((res) => {
-          let json = {}, arr = [];
-          for (let i in res.data) {
-            json = {
-              byteName: JSON.parse(res.data[i].byteName),
-              scene_name: res.data[i].scene_name,
-              sceneTypes: res.data[i].sceneTypes
-            };
-            arr.push(json);
-          }
-          that.setData({
-            scenelist: arr,
-          });
-        });
-        
       } catch (e) { }
     })
-
   },
 
   switchScene(e) {
     let flag = e.detail.value;
     let current = e.target.dataset;
     let name = current.bytename;
+    let scenename = e.currentTarget.dataset.scenename;
+    let id = e.currentTarget.dataset.id;
     let map = [], index = '';
     let arr = [], that = this, json = {};
     arr.push(0, 18, 0x50);
@@ -166,28 +197,38 @@ Page({
       tools.sendData('c2s_write', wx.getStorageSync('did'), {
         'data': $.getArrays(count),
       });
-      return false;
-      wx.onSocketMessage(function (res) {
+      $.getSocketResponse((did, res) => {
         try {
-          let data = JSON.parse(res.data);
-          if (data.cmd == 's2c_noti') {
-            let count = data.data.attrs.data
-            let arr = count.splice(3, 1);
-            for (let i = 0; i < arr.length; i++) {
-              if (arr[i] == 1) {
-                wx.showToast({
-                  title: '控制成功',
-                })
-              } else {
-                wx.showToast({
-                  title: '控制失败',
-                })
+          if (wx.getStorageSync('did') == did) {
+            if (res[2] == 81) {
+              switch (res[3]) {
+                case 1:
+                  $.ajax({
+                    url: '/Scene/updateScene',
+                    method: 'POST',
+                    data: {
+                      scene_name: scenename,
+                      status: 1
+                    },
+                    success(res) {
+                    }
+                  });
+                  wx.showToast({
+                    title: '控制成功',
+                  })
+                  return false;
+                case 0:
+                  wx.showToast({
+                    title: '控制失败',
+                  })
+                  return false;
+                default:
+                  break;
               }
             }
           }
-        } catch (e) {
-        }
-      })
+        } catch (e) { }
+      });
       return false;
     } else if (flag == false) {
       if (name[14] == 3) {
@@ -199,28 +240,39 @@ Page({
       tools.sendData('c2s_write', wx.getStorageSync('did'), {
         'data': $.getArrays(count),
       });
-      return false;
-      wx.onSocketMessage(function (res) {
+      $.getSocketResponse((did, res) => {
         try {
-          let data = JSON.parse(res.data);
-          if (data.cmd == 's2c_noti') {
-            let count = data.data.attrs.data
-            let arr = count.splice(3, 1);
-            for (let i = 0; i < arr.length; i++) {
-              if (arr[i] == 1) {
-                wx.showToast({
-                  title: '控制成功',
-                })
-              } else {
-                wx.showToast({
-                  title: '控制失败',
-                })
+          if (wx.getStorageSync('did') == did) {
+            if (res[2] == 81) {
+              console.log(res);
+              switch (res[3]) {
+                case 1:
+                  $.ajax({
+                    url: '/Scene/updateScene',
+                    method: 'POST',
+                    data: {
+                      scene_name: scenename,
+                      status: 0
+                    },
+                    success(res) {
+                    }
+                  });
+                  wx.showToast({
+                    title: '控制成功',
+                  })
+                  return false;
+                case 0:
+                  wx.showToast({
+                    title: '控制失败',
+                  })
+                  return false;
+                default:
+                  break;
               }
             }
           }
-        } catch (e) {
-        }
-      })
+        } catch (e) { }
+      });
       return false;
     }
   },

@@ -4,7 +4,7 @@
 
   <view class="me-iview f12">
     <view class="me-li-iview">
-      <navigator url='/pages/control/control' hover-class="nav-hover">
+      <navigator open-type='redirect' url='/pages/control/control' hover-class="nav-hover">
         <text class="iconfont icon-icon-test-copy small-icon"></text>
         <text class="">智控中心</text>
         <text class="iconfont icon-youbian fr go-icon"></text>
@@ -18,7 +18,7 @@
     </view>
 
     <view class="me-li-iview">
-      <navigator url='/pages/voicelist/voicelist' hover-class="nav-hover">
+      <navigator open-type='redirect' url='/pages/voicelist/voicelist' hover-class="nav-hover">
         <text class="iconfont icon-weibiaoti-12 small-icon"></text>
         <text class="">修改语言</text>
         <text class="iconfont icon-youbian fr"></text>
@@ -26,7 +26,7 @@
     </view>
 
     <view class="me-li-iview">
-      <navigator url='/pages/forget/forget' hover-class="nav-hover">
+      <navigator url='../forget/forget' hover-class="nav-hover">
         <text class="iconfont icon-mima1 small-icon"></text>
         <text class="">修改密码</text>
         <text class="iconfont icon-youbian fr"></text>
@@ -34,7 +34,7 @@
     </view>
 
     <view class="me-li-iview">
-      <navigator url='/pages/upatearea/upatearea' hover-class="nav-hover">
+      <navigator url='../upatearea/upatearea' hover-class="nav-hover">
         <text class="iconfont icon-weibiaoti2zhuanhuan small-icon"></text>
         <text class="">修改区域</text>
         <text class="iconfont icon-youbian fr"></text>
@@ -57,7 +57,6 @@
 
   </view>
 </view>
-
 
 <!-- <import src="/pages/footer/footer.wxml" />
 <template is="footer" /> -->

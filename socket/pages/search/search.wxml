@@ -1,6 +1,12 @@
 <!--pages/search/search.wxml-->
 
 <view class="marBtm60">
+  <!-- <navigator open-type='switchTab' url='../index/index'>
+    <view class="section fl" style="margin: 0px 10px; width: 80%;" bindtap='goback'>
+      <view class="iconfont icon-return" style="font-size: 1.3rem;color: #ccc;"></view>
+    </view>
+  </navigator> -->
+
   <view class="section">
     <view class="section__title fl" style="width: 16%;">区域：</view>
     <view hidden='{{ !pickerShow }}' class="fl" style="width: 64%;position: relative;">
@@ -11,15 +17,14 @@
       <!-- <picker mode="multiSelector" bindchange="bindMultiPickerChange" bindcolumnchange="bindMultiPickerColumnChange" value="{{ multiIndex }}" range="{{ multiArray }}" class="picker" >
         <view class="picker">
           {{ multiArray[0][multiIndex[0]] }}
-        </view>
+        </view> redirectTo
       </picker>  -->
     </view>
-    <input placeholder='请输入要增加的区域' class="search-input fl"
-    value='{{ addAreaText }}' bindblur='addArea' hidden='{{ pickerShow }}'></input>
-    <view class="fr" style="width: 20%" hidden='{{ !pickerShow }}' >
+    <input placeholder='请输入要增加的区域' class="search-input fl" value='{{ addAreaText }}' bindblur='addArea' hidden='{{ pickerShow }}'></input>
+    <view class="fr" style="width: 20%" hidden='{{ !pickerShow }}'>
       <!-- <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ pickerShow }}' bindtap='outputSet'></view> -->
       <view class='iconfont icon-weibiaoti-1 fr' bindtap='deleteGroup'></view>
-      <navigator url='../addarea/addarea'>
+      <navigator open-type='redirectTo' url='../addarea/addarea'>
         <view class='iconfont icon-weibiaoti-2 fr'></view>
         <!--  bindtap='inputSet' -->
       </navigator>
@@ -45,7 +50,7 @@
             <view class="li-iview-con">
               <view class="iconfont icon-weibiaoti-3"></view>
             </view>
-            <view>{{ item.dname }}</view>
+            <view class="sname">{{ item.dname }}</view>
           </view>
 
           <view class="li-iview fl" wx:for="{{ spliceArray }}" bindtap='deleteDevice' data-id="{{ item.id }}" wx:if='{{ item.types == 1 }}'>
@@ -54,42 +59,6 @@
             </view>
             <view>{{ item.dname }}</view>
           </view>
-          <!--
-        <view class="li-iview fl" wx:for="{{ spliceArray }}" wx:if="{{ item.did == 1 }}">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-4"></view>
-          </view>
-          <view>{{ item.dname }}</view>
-        </view>
-
-        <view class="li-iview fl" wx:for="{{ spliceArray }}" wx:if="{{ item.did == 2 }}">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-5"></view>
-          </view>
-          <view>{{ item.dname }}</view>
-        </view>
-
-        <view class="li-iview fl" wx:for="{{ spliceArray }}" wx:if="{{ item.did == 3 }}">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-6"></view>
-          </view>
-          <view>{{ item.dname }}</view>
-        </view>
-
-        <view class="li-iview fl" wx:for="{{ spliceArray }}" wx:if="{{ item.did == 4 }}">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-7"></view>
-          </view>
-          <view>{{ item.dname }}</view>
-        </view>
-
-        <view class="li-iview fl" wx:for="{{ spliceArray }}" wx:if="{{ item.did == 5 }}">
-          <view class="li-iview-con">
-            <view class="iconfont icon-weibiaoti-8"></view>
-          </view>
-          <view>{{ item.dname }}</view>
-        </view>
-        -->
         </view>
       </swiper-item>
 
@@ -103,37 +72,23 @@
           </view>
           <view>{{ item }}</view>
         </view>  -->
-
           <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 0 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-              <view class="iconfont icon-weibiaoti-3"  wx:if="{{ item.sdid[1] == 0 }}"
-                    bindtap='selectEquipment' 
-                    data-key='{{ i }}' 
-                    data-sname='{{ item.sname }}'
-                    data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
+              <view class="iconfont icon-weibiaoti-3" wx:if="{{ item.sdid[1] == 0 }}" bindtap='selectEquipment' data-key='{{ i }}' data-sname='{{ item.sname }}' data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
             </view>
             <view class="sname">{{ item.sname }}</view>
           </view>
-            <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 1 }}">
+          <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 1 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
-              <view class="iconfont icon-chuangliananzhuang" 
-              bindtap='selectEquipment' 
-              data-key='{{ i }}' 
-              data-sdid='{{ item.sdid }}' 
-              data-sname='{{ item.sname }}'
-              data-types='{{ item.types }}'></view>
+              <view class="iconfont icon-chuangliananzhuang" bindtap='selectEquipment' data-key='{{ i }}' data-sdid='{{ item.sdid }}' data-sname='{{ item.sname }}' data-types='{{ item.types }}'></view>
             </view>
             <view class="sname">{{ item.sname }}</view>
           </view>
         </view>
       </swiper-item>
-
     </swiper>
-
   </view>
-
   <button class="saveData" bindtap='saveIMessage' hidden='{{ pickerShow }}'>保 存</button>
-
 </view>
 
 <!-- <import src="/pages/footer/footer.wxml" />

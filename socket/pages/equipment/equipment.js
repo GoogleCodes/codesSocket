@@ -17,13 +17,13 @@ Page({
     switchButton: true,
     currentTabs: -1,
     sdid: [],
-    weibiao: true,
     id: 0,
     blurInputText: '',
     did: '',
     rid: '',
     list: {},
     popers: true,
+    weibiao: true,
     types: 0,
     layerShow: true,
   },
@@ -56,6 +56,7 @@ Page({
         });
       },
     });
+    console.log(that.data.winTop);
     this.getDev(that.data.rid, wx.getStorageSync('wxuser').id);
   },
 
@@ -293,19 +294,20 @@ Page({
     });
   },
 
-  updateDeviceName() {
+  update() {
     let that = this;
-    if (that.data.weibiao == true) {
+    if (that.data.popers == true && that.data.weibiao == true) {
       that.setData({
         weibiao: false,
         popers: false,
       });
-    } else if (that.data.weibiao == false) {
+    } else if (that.data.popers == false && that.data.weibiao == false) {
       that.setData({
         weibiao: true,
         popers: true,
       });
     }
+    console.log(that.data.weibiao, that.data.popers);
   },
 
   getAnalysis(name) {
@@ -331,7 +333,6 @@ Page({
     });
     $.getSocketResponse(function (did, data) {
       if (data[3] == 1) {
-        console.log(data);
         $.ajax({
           url: 'dev/editdev',
           method: 'POST',
@@ -341,15 +342,17 @@ Page({
             dname: that.data.blurInputText
           }
         }).then(function (res) {
-          $.alert(res.msg);
-          that.setData({
-            popers: true,
-          });
+          if (res.code == 1) {
+            $.alert(res.msg);
+            that.setData({
+              popers: true,
+            });
+          }
           setTimeout(function () {
             wx.switchTab({
               url: '../index/index',
             })
-          }, 1000)
+          }, 500)
         });
         return true;
       } else {
@@ -364,6 +367,7 @@ Page({
   clearPopers() {
     this.setData({
       popers: true,
+      weibiao: true,
     });
   },
 
@@ -372,49 +376,9 @@ Page({
     that.setData({
       blurInputText: e.detail.value
     });
-    let arr = [0x00, 0x02, 0x14], json = {};
-    //  名称长度
-    let nameLength = [1];
-    let nameContent = [60];
-    let did = that.data.sdid;
-    let count = nameLength.concat(nameContent);
-
-    let a = did.concat(count);
-    let b = arr.concat(a);
-
-    tools.sendData('c2s_write', that.data.did, {
-      'data': $.getArrays(b),
-    });
-
-    let deviceName = e.detail.value;
-
-    if (that.data.weibiao == true) {
-      that.setData({
-        weibiao: false,
-      });
-    } else if (that.data.weibiao == false) {
-      that.setData({
-        weibiao: true,
-      });
-    }
-
-    $.getSocketResponse(function(did, res) {
-      let data = res.splice(3, 1);
-      if (data == 1) {
-        $.alert('修改成功!');
-        return false;
-      } else if (data == 0) {
-        $.alert('修改失败!');
-        return false;
-      }
-    })
-
   }
 
 })
-
-
-
 
 /**
 *　　　　　　　　┏┓　　　┏┓+ +

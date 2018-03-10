@@ -9,14 +9,14 @@ Page({
    * 页面的初始数据
    */
   data: {
-    addAreaText: ''
+    addAreaText: '',
+    name_focus: true
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-  
   },
 
   addArea(e) {
@@ -31,10 +31,6 @@ Page({
 
   saveIMessage() {
     let that = this;
-    if (this.data.addAreaText == "") {
-      $.alert('请输入内容!');
-      return;
-    }
     $.ajax({
       url: 'dev/addregion',
       method: "POST",
@@ -44,12 +40,21 @@ Page({
         pid: wx.getStorageSync('did'),
       },
     }).then((res) => {
+      if (res.msg == '区域已存在') {
+        $.alert('区域已存在!');
+        return false;
+      } else if (res.msg == '请求成功') {
+        $.alert('请求成功!');
+        setTimeout(() => {
+          wx.redirectTo({
+            url: '../search/search',
+          })
+        }, 500);
+      }
       that.setData({
         areaid: res.data.data
       })
-      $.goPages('../index/index');
     })
-    $.alert('请求成功!');
   },
 
   /**

@@ -2,9 +2,11 @@
 <view class="marBtm60">
 
   <view class="eq-iview">
-    <view class="fl" bindtap='updateDeviceName'>
-      <view class="eq-iview-left fl">设备名称：</view>
-      <view class="eq-iview-left fl">{{ list.dname }}</view>
+    <view style="width: 80%;height: 55px;" bindtap='update'>
+      <view class="fl">
+        <view class="eq-iview-left fl">设备名称：</view>
+        <view class="eq-iview-left fl">{{ list.dname }}</view>
+      </view>
     </view>
     <!-- <view class="fl device_name" hidden='{{ weibiao }}'>
       <input class="device_name_input" placeholder='请输入设备名称' value='{{ blurInputText }}'></input>
@@ -43,7 +45,7 @@
 <view class="layer" hidden='{{ popers }}' bindtap='clearPopers'></view>
 <view class="poper" style='top: {{ winTop }}px' hidden='{{ popers }}'>
   <text class='poper_title'>修改设备名称</text>
-  <input type='text' placeholder='请输入文字' bindblur='blurInputDate' value='{{ blurInputText }}' class="poper_text"></input>
+  <input type='text' placeholder='请输入文字' confirm-type='done' bindblur='blurInputDate' value='{{ blurInputText }}' class="poper_text" ></input>
   <button class="poper_save" bindtap='goSaveImessage'>马上提交</button>
 </view>
 

@@ -44,6 +44,7 @@ Page({
           });
         }
       }
+
     });
   },
 
@@ -86,11 +87,11 @@ Page({
         wx.showToast({
           title: res.msg,
         });
-        // setTimeout(() => {
-        //   wx.switchTab({
-        //     url: '../index/index',
-        //   })
-        // }, 500);
+        setTimeout(() => {
+          wx.switchTab({
+            url: '../index/index',
+          })
+        }, 500);
         return false;
       } else if (res.code == 0) {
         wx.showModal({

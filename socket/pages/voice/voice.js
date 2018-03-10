@@ -17,7 +17,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '关闭测试情景',
+    voiceIMessage: '打开测试情景',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -70,6 +70,13 @@ Page({
     // this.getScene();
   },
 
+  //  返回当前页面
+  goback() {
+    wx.switchTab({
+      url: '../index/index',
+    })
+  },
+
   startRecode(e) {
     var that = this;
     wx.startRecord({
@@ -103,6 +110,7 @@ Page({
 
   endRecode(e) {
     var s = this, sdid = '';
+    let that = this;
     s.setData({ voiceNow: false });
     wx.stopRecord();
     wx.showToast();
@@ -146,7 +154,6 @@ Page({
             var error_text = '语音识别失败';
             var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
             console.log("返回的东西是：", options);
-
             s.setData({
               ins_y: options.time1,
               ins_l: options.time2,
@@ -173,31 +180,48 @@ Page({
             for (var i in options.yuyin) {
               var sqlStr = null;
               sqlStr = options.yuyin[i].replace("，", "");
-              for (let l in scenelist) {
-                if ($.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) == 0 || $.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) > 0) {
-                  let byte = $.parse(that.data.scenelist[l].byteName);
+              that.setData({
+                input: sqlStr,
+              });
+              for (let l in s.data.scenelist) {
+                if ($.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情景", sqlStr) == 0 || $.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情景", sqlStr) > 0) {
+                  let byte = $.parse(s.data.scenelist[l].byteName);
                   if (byte[14] == 2) {
                     byte[14] += 1;
                   } else if (byte[14] == 0) {
                     byte[14] += 1;
                   }
                   that.setData({
-                    input: that.data.voiceIMessage
+                    input: s.data.voiceIMessage
                   });
                   try {
                     let brr = [0, 18, 0x50];
                     let count = brr.concat(byte);
                     setTimeout(function (res) {
-                      senceGo(count);
+                      tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                        'data': $.getArrays(count),
+                      });
                       $.getSocketResponse(function (did, data) {
+
+                        $.ajax({
+                          url: '/Scene/updateScene',
+                          method: 'POST',
+                          data: {
+                            scene_name: s.data.scenelist[l].scene_name,
+                            status: 1
+                          },
+                          success(res) {
+                          }
+                        });
+
                         if (data[3] == 0) {
-                          that.setData({
+                          s.setData({
                             voiceOpen: false,
                             openMessage: '打开失败!'
                           });
                           return false;
                         } else if (data[3] == 1) {
-                          that.setData({
+                          s .setData({
                             voiceOpen: false,
                             openMessage: '打开成功!'
                           });
@@ -206,15 +230,15 @@ Page({
                       });
                     }, 1000);
                   } catch (e) { }
-                } else if ($.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情景", sqlStr) == 0 || $.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情景", sqlStr) > 0) {
-                  let byte = $.parse(that.data.scenelist[l].byteName);
+                } else if ($.IndexDemo("关闭" + s.data.scenelist[l].scene_name + "情景", sqlStr) == 0 || $.IndexDemo("关闭" + s.data.scenelist[l].scene_name + "情景", sqlStr) > 0) {
+                  let byte = $.parse(s.data.scenelist[l].byteName);
                   if (byte[14] == 2) {
                     byte[14] += 1;
                   } else if (byte[14] == 0) {
                     byte[14] += 1;
                   }
                   that.setData({
-                    input: that.data.voiceIMessage
+                    input: s.data.voiceIMessage
                   });
                   try {
                     let brr = [0, 18, 0x50];
@@ -222,6 +246,18 @@ Page({
                     setTimeout(function (res) {
                       senceGo(count);
                       $.getSocketResponse(function (did, data) {
+
+                        $.ajax({
+                          url: '/Scene/updateScene',
+                          method: 'POST',
+                          data: {
+                            scene_name: s.data.scenelist[l].scene_name,
+                            status: 0
+                          },
+                          success(res) {
+                          }
+                        });
+
                          if (data[3] == 1) {
                           that.setData({
                             voiceOpen: false,
@@ -323,7 +359,7 @@ Page({
                 if (semlist[i].word !== con) {
                   wx.showModal({
                     title: '警告!',
-                    content: '暂时没有这条语义!',
+                    content: '还没有这条语义,请到后台增加!',
                     showCancel: false,
                   })
                   return false;
@@ -427,7 +463,6 @@ Page({
 
     let semlist = that.data.semlist;
 
-
     for (let l in that.data.scenelist) {
       if ($.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) == 0 || $.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) > 0) {
         let byte = $.parse(that.data.scenelist[l].byteName);
@@ -447,6 +482,16 @@ Page({
               'data': $.getArrays(count),
             });
             $.getSocketResponse(function (did, data) {
+              $.ajax({
+                url: '/Scene/updateScene',
+                method: 'POST',
+                data: {
+                  scene_name: that.data.scenelist[l].scene_name,
+                  status: 1
+                },
+                success(res) {
+                }
+              });
               if (data[3] == 0) {
                 that.setData({
                   voiceOpen: false,
@@ -467,10 +512,10 @@ Page({
       } else if ($.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情景", con) == 0
         || $.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情景", con) > 0) {
         let byte = $.parse(that.data.scenelist[l].byteName);
-        if (name[14] == 3) {
-          name[14] -= 1;
-        } else if (name[14] == 1) {
-          name[14] -= 1;
+        if (byte[14] == 3) {
+          byte[14] -= 1;
+        } else if (byte[14] == 1) {
+          byte[14] -= 1;
         }
         that.setData({
           input: that.data.voiceIMessage
@@ -483,6 +528,16 @@ Page({
               'data': $.getArrays(count),
             });
             $.getSocketResponse(function (did, data) {
+              $.ajax({
+                url: '/Scene/updateScene',
+                method: 'POST',
+                data: {
+                  scene_name: that.data.scenelist[l].scene_name,
+                  status: 0
+                },
+                success(res) {
+                }
+              });
               if (data[3] == 1) {
                 that.setData({
                   voiceOpen: false,
@@ -498,6 +553,7 @@ Page({
     }
 
     for (let i in that.data.semlist) {
+      console.log(that.data.semlist[i].word == con);
       if (that.data.semlist[i].word == con) {
         $.getRegion(con, function (id, name) {
           $.ajax({
@@ -591,16 +647,16 @@ Page({
         return false;
       }
     }
-    // for (let i in semlist) {
-    //   if (semlist[i].word !== con) {
-    //     wx.showModal({
-    //       title: '警告!',
-    //       content: '暂时没有这条语义!',
-    //       showCancel: false,
-    //     })
-    //     return false;
-    //   }
-    // }
+    for (let i in semlist) {
+      if (semlist[i].word !== con) {
+        wx.showModal({
+          title: '警告!',
+          content: '还没有这条语义,请到后台增加!',
+          showCancel: false,
+        })
+        return false;
+      }
+    }
   },
 
   bindPickerChange(e) {
