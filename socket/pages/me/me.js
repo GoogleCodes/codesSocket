@@ -1,6 +1,7 @@
 // pages/me/me.js
 
-import { $ } from '../../utils/main.js'
+import { $ } from '../../utils/main.js';
+var tools = require('../../utils/util.js');
 // let main = new Main();
 
 Page({
@@ -78,17 +79,32 @@ Page({
                 })
                 return false;
             }
-            console.log(result);
+
+
+            let options = wx.getStorageSync('options');
+            let query = "?show_disabled=0&limit=" + 20 + "&skip=" + 0;
+            let json = {}, arr = [], pson = {};
+            tools.sendRrquest('bindings' + query, 'GET', '', {
+              'content-type': 'application/json',
+              'X-Gizwits-Application-Id': options.gizwitsAppId,
+              'X-Gizwits-User-token': options.token,
+            }).then((result) => {
+              wx.setStorageSync('devices', result.data.devices);
+              setTimeout(() => {
+                wx.switchTab({
+                  url: '../index/index',
+                })
+              }, 1000)
+            }, function (err) {
+
+            });
+
             wx.showModal({
               title: '提示~~~',
               content: "分享成功!",
               showCancel: false,
             })
-            setTimeout(() => {
-              wx.switchTab({
-                url: '../index/index',
-              })
-            }, 1000)
+
           },
         })
       },

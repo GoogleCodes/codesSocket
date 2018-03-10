@@ -3,6 +3,7 @@
 const did = wx.getStorageSync('didJSon').did;
 
 var tools = require('../../utils/util.js');
+
 import { $ } from '../../utils/main.js'
 
 var QR = require("../../utils/qrcode.js");
