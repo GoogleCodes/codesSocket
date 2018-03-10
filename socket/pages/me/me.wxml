@@ -4,7 +4,7 @@
 
   <view class="me-iview f12">
     <view class="me-li-iview">
-      <navigator open-type='redirect' url='/pages/control/control' hover-class="nav-hover">
+      <navigator url='/pages/control/control' hover-class="nav-hover">
         <text class="iconfont icon-icon-test-copy small-icon"></text>
         <text class="">智控中心</text>
         <text class="iconfont icon-youbian fr go-icon"></text>

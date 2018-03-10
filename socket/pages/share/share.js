@@ -111,7 +111,14 @@ Page({
             },
             method: 'DELETE',
             success(res) {
-              if (res.statusCode == 200) {
+              if (res.data.error_code == 9093) {
+                wx.showModal({
+                  title: '警告',
+                  content: '许可被拒绝，你不是所有者！',
+                  showCancel: false,
+                })
+                return false;
+              } else if (res.statusCode == 200) {
                 wx.showToast({
                   title: '取消成功!',
                 })
