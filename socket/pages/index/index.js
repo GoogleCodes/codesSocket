@@ -197,7 +197,9 @@ Page({
       }
       console.log(arr.length - 1);
       for (let i in that.data.tabArray) {
-        last = that.data.tabArray[i].id;
+        if (that.data.tabArray.name == '全部') {
+          last = that.data.tabArray[i].id;
+        }
       }
       $.ajax({
         url: 'dev/getdev',
@@ -252,7 +254,7 @@ Page({
           // }
         }
         that.setData({
-          spliceArray: arr.reverse(),
+          spliceArray: arr,
           areaid: 0,
         });
         wx.setStorageSync('spliceArray', arr);
