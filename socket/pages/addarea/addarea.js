@@ -39,6 +39,7 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
         name: that.data.addAreaText,
         pid: wx.getStorageSync('did'),
+        isall: 0
       },
     }).then((res) => {
       if (res.msg == '区域已存在') {

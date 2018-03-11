@@ -4,6 +4,11 @@ page {
   background: #eee;
 }
 
+ ::-webkit-scrollbar {
+  height: 0px;
+  color: transparent;
+} 
+
 /* scrollTop start */
 
 .scrollTop {
@@ -24,19 +29,22 @@ page {
 /* scrollTop end */
 
 .table-header {
+  width: auto;
   height: 40px;
   margin:  10px 0px;
   position: relative;
   background: #fff;
   overflow: hidden;
+  white-space: nowrap;
   border-bottom: 1px solid #eee;
 }
 
 .table-header .tab {
-  font-size: .8rem;
+  font-size: 0.8rem;
   color: #6aa84f;
   line-height: 40px;
   text-align: center;
+  display: inline-block;
   /* margin: 0px 20px; */
 }
 
@@ -56,18 +64,17 @@ page {
 }
 
 .recommend_scroll_x_box {
-  white-space: nowrap;
-  display: flex;
   width: 85%;
-  height:100%;
+  height: 100%;
 }
+
 
 .recommend_scroll_x_box .tab {
   width: 80px;
   text-align: center;
   line-height: 40px;
   color: #595757;
-  font-size: 30rpx;
+  font-size: 12px;
   display: inline-block;
   background: #fff;
 }

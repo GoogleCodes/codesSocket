@@ -49,6 +49,7 @@ Page({
     types: '',
     typea: '',
     allDevice: [],
+    tabArrayAll: [],
   },
 
   refesh(e) {
@@ -177,19 +178,26 @@ Page({
       let response = res.data;
       let json = {};
       let last = '';
-      let arr = [];
+      let arr = [], brr = [];
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
+          // if (response[i].isall == 1) {
+          //   brr.push(response[i]);
+          // } else if (response[i].isall == 0) {
+          //   arr.push(response[i]);
+          //   wx.setStorageSync('tabArray', arr);
+          // }
           arr.push(response[i]);
-          wx.setStorageSync('tabArray', arr);
-          last = arr[0].id;
           that.setData({
-            tabArray: arr,
-          });
-          that.setData({
+            tabArray: arr.reverse(),
+            tabArrayAll: brr,
             currentTab: 0
           });
         }
+      }
+      console.log(arr.length - 1);
+      for (let i in that.data.tabArray) {
+        last = that.data.tabArray[i].id;
       }
       $.ajax({
         url: 'dev/getdev',
@@ -216,33 +224,36 @@ Page({
         let device = res.data, json = {};
         let arr = [];
         for (let i in device) {
-          if (typeof device[i].did) {
-            let sdid = JSON.parse(device[i].did);
-            if (sdid[1] == 0) {
-              that.setData({
-                types: 0,
-              });
-            } else if (sdid[1] == 1) {
-              that.setData({
-                typea: 1,
-              });
-            }
-            json = {
-              did: JSON.stringify(sdid),
-              dname: device[i].dname,
-              id: device[i].id,
-              pid: device[i].pid,
-              rid: device[i].rid,
-              status: device[i].status,
-              uid: device[i].uid,
-              types: device[i].types,
-            };
-            arr.push(json);
-          }
+          // if (typeof device[i].did) {
+            // if (wx.getStorageSync('did') == device[i].did) {
+              let sdid = JSON.parse(device[i].did);
+              if (sdid[1] == 0) {
+                that.setData({
+                  types: 0,
+                });
+              } else if (sdid[1] == 1) {
+                that.setData({
+                  types: 1,
+                });
+              }
+              json = {
+                did: JSON.stringify(sdid),
+                dname: device[i].dname,
+                id: device[i].id,
+                pid: device[i].pid,
+                rid: device[i].rid,
+                status: device[i].status,
+                uid: device[i].uid,
+                types: device[i].types,
+                isall: device[i].isall
+              };
+              arr.push(json);
+            // }
+          // }
         }
         that.setData({
-          spliceArray: arr,
-          areaid: that.data.tabArray[0].id,
+          spliceArray: arr.reverse(),
+          areaid: 0,
         });
         wx.setStorageSync('spliceArray', arr);
       });
@@ -294,9 +305,6 @@ Page({
 
   onReady() {
     let that = this;
-    // setTimeout(function () {
-    //   that.getIndexGizwits();
-    // }, 500)
   },
 
   operating(e) {
@@ -428,6 +436,7 @@ Page({
     wx.onSocketMessage(function (res) {
       wx.hideLoading();
       var data = JSON.parse(res.data);
+      let options = null;
       try {
         if (data.data.success == true) {
           let arr = [0x00, 0x02, 0xA0, 0xFF];
@@ -435,30 +444,44 @@ Page({
             'data': $.getArrays(arr),
           });
           $.getSocketResponse(function (did, data) {
-            let k = data;
-            let last = null, brr = [], json = {};
-            for (let i in k) {
-              last = k.splice(4, 6 + data[9]);
-              if (last.indexOf(1) == 0) {
-                let name = last;
-                let a = '', b = '';
-                let doname = name.splice(6, last[5]);
-                let str = "";
-                for (let y in doname) {
-                  str += "%" + doname[y].toString(16);
+            if (wx.getStorageSync('did') == did) {
+              let k = data, rid = 0;
+              let last = null, brr = [], json = {};
+              let tabArray = wx.getStorageSync('tabArray');
+              for (let i in k) {
+                last = k.splice(4, 6 + data[9]);
+                if (last.indexOf(1) == 0) {
+                  let name = last;
+                  let doname = name.splice(6, last[5]);
+                  let str = "";
+                  for (let y in doname) {
+                    str += "%" + doname[y].toString(16);
+                  }
+                  let deviceDid = last.splice(0, 4);
+                  for (let n in tabArray) {
+                    if (did == tabArray[n].pid) {
+                      if (tabArray[n].name == "全部") {
+                        rid = tabArray[n].id
+                      }
+                    }
+                  }
+                  json = {
+                    uid: wx.getStorageSync('wxuser').id,
+                    did: $.stringify(deviceDid),
+                    dname: $.utf8to16(unescape(str)),
+                    rid: rid,
+                    status: 'false',
+                    pid: wx.getStorageSync('did'),
+                    types: deviceDid[1],
+                    isall: 1
+                  };
+                  $.ajax({
+                    url: 'dev/adddev',
+                    method: "POST",
+                    data: json,
+                  }).then(function (res) {
+                  })
                 }
-                json = {
-                  sdid: last.splice(0, 4),
-                  active: 0,
-                  sname: $.utf8to16(unescape(str))
-                };
-                brr.push(json);
-                console.log(brr);
-                // brr.concat(that.data.array);
-                // wx.setStorageSync('gizwits', brr.concat(that.data.array));
-                that.setData({
-                  allDevice: brr
-                });
               }
             }
           })

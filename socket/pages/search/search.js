@@ -344,7 +344,8 @@ Page({
       rid: that.data.areaid,
       pid: wx.getStorageSync('did'),
       types: pub.sdid[1],
-      status: 'false'
+      status: 'false',
+      isall: 0
     };
     if (this.data.array[index].active == 0) {
       this.data.array[index].active = 1;
