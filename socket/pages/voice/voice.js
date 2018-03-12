@@ -626,7 +626,7 @@ Page({
                     $.getSocketResponse((did, data) => {
                       that.setData({
                         voiceNow: true,
-                        voiceDone: false
+                        voiceDone: true
                       })
 
                       $.ajax({
