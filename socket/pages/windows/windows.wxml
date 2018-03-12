@@ -71,6 +71,6 @@
 <view class="layer" hidden='{{ popers }}' bindtap='clearPopers'></view>
 <view class="poper" style='top: {{ windowTop }}px' hidden='{{ popers }}'>
   <text class='poper_title'>修改设备名称</text>
-  <input type='text' placeholder='请输入文字' bindblur='blurInputDate' value='{{ blurInputText }}' class="poper_text"></input>
+  <input type='text' placeholder='请输入文字' bindinput='blurInputDate' value='{{ blurInputText }}' class="poper_text"></input>
   <button class="poper_save" bindtap='goSaveImessage'>马上提交</button>
 </view>

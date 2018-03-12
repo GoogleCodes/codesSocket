@@ -104,20 +104,21 @@ var $ = {
           'content-type': 'application/x-www-form-urlencoded'
         },
         success(res) {
-          if (res.statusCode == 500) {
-            wx.showToast({
-              title: '服务器错误了!',
-              duration: 1500,
-            })
-            return false;
-          } else if (res.statusCode == 404) {
-            wx.showToast({
-              title: '服务器关闭了!',
-              duration: 1500,
-            })
-            return false;
-          } else if (res.statusCode == 200) {
-            resolve(res.data)
+          switch (true) {
+            case res.statusCode == 500:
+              wx.showToast({
+                title: '服务器错误了!',
+                duration: 1500,
+              })
+              return false;
+            case res.statusCode == 404:
+              wx.showToast({
+                title: '服务器关闭了!',
+                duration: 1500,
+              })
+              return false;
+            case res.statusCode == 200:
+              resolve(res.data);
           }
         },
         fail(err) {

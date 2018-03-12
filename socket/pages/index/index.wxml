@@ -38,10 +38,10 @@
                 <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
               </view>
             </view>
-            <navigator wx:if="{{ item.isall == 1 }}">
+            <!-- <navigator wx:if="{{ item.isall == 1 }}">
               <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
-            </navigator>
-            <navigator wx:else url="/pages/windows/windows?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
+            </navigator> -->
+            <navigator url="/pages/equipment/equipment?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
               <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
             </navigator>
           </view>
@@ -63,10 +63,10 @@
                 <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
               </view>
             </view>
-            <navigator wx:if="{{ item.isall == 1 }}">
+            <!-- <navigator wx:if="{{ item.isall == 1 }}">
               <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
-            </navigator>
-            <navigator wx:else url="/pages/windows/windows?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
+            </navigator> -->
+            <navigator url="/pages/windows/windows?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
               <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
             </navigator>
           </view>
@@ -80,12 +80,10 @@
 
 <!-- 语音按钮 -->
 <view class='music-iview'>
-  <navigator open-type='redirect' url='/pages/voice/voice' class="clea" hover-class='navGoHover'>
+  <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'>
     <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
   </navigator>
 </view>
 
 <!-- <import src="/pages/footer/footer.wxml" />
 <template is="footer" /> -->
-
-<!-- </scroll-view> -->

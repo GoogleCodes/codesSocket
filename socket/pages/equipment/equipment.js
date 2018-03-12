@@ -2,8 +2,6 @@
 
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
-// let $ = new Main();
-
 // const did = wx.getStorageSync('didJSon').did;
 
 Page({
@@ -33,13 +31,12 @@ Page({
    */
   onLoad(options) {
     let that = this;
-    this.setData({
+    that.setData({
       sdid: JSON.parse(options.sdid),
       id: options.id,
       did: wx.getStorageSync('did'),
       rid: options.rid
     });
-    console.log(that.data.sdid);
     if (that.data.sdid[1] == 0) {
       that.setData({
         types: 0,
@@ -56,29 +53,21 @@ Page({
         });
       },
     });
-    console.log(that.data.winTop);
-    this.getDev(that.data.rid, wx.getStorageSync('wxuser').id);
+    this.getDev(that.data.rid);
   },
 
-  getDev(rid, uid) {
+  getDev(rid) {
     let that = this;
-    $.ajax({
-      url: 'dev/getdev',
-      method: 'POST',
-      data: {
-        rid: rid,
-        uid: uid,
-      },
-    }).then(function(res) {
-      for (let i in res.data) {
-        if (res.data[i].id == that.data.id) {
-          that.setData({
-            list: res.data[i]
-          });
-          return true;
-        }
+    $.getName('title');
+    let spliceArray = wx.getStorageSync('spliceArray');
+    for (let i in spliceArray) {
+      if (spliceArray[i].id == that.data.id) {
+        that.setData({
+          list: spliceArray[i]
+        });
+        return true;
       }
-    });
+    }
   },
 
   deleteGizwits() {
@@ -88,13 +77,14 @@ Page({
       content: '您确定要删除这个设备吗?',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
+
           $.ajax({
             url: 'dev/getregion',
             method: 'POST',
             data: {
               uid: wx.getStorageSync('wxuser').id,
             },
-          }).then(function(res) {
+          }).then((res) => {
             for (let y in res.data) {
               if (res.data[y].id == that.data.rid) {
                 $.ajax({
@@ -116,9 +106,9 @@ Page({
                           uid: wx.getStorageSync('wxuser').id,
                           id: data[i].id
                         },
-                      }).then(function(res) {
+                      }).then(function (res) {
                         $.alert(res.msg);
-                        setTimeout(function() {
+                        setTimeout(function () {
                           wx.switchTab({
                             url: '../index/index',
                           })
@@ -130,7 +120,7 @@ Page({
 
               }
             }
-            
+
           });
 
         } else if (res.cancel == true && res.confirm == false) {
@@ -170,7 +160,7 @@ Page({
       case e.target.dataset.current == 0:
         brr = [0xA2, 0x01, 0x01];
         arr.push(0x00, 0x08, 0xA2);
-        
+
         that.saveData(arr, brr);
         break;
       case e.target.dataset.current == 1:
@@ -187,7 +177,7 @@ Page({
       default:
         break;
     }
-    $.getSocketResponse(function(did, data) {
+    $.getSocketResponse(function (did, data) {
       if (data.splice(9, 1).toString() == 1) {
         $.alert('控制成功!');
       } else if (data.splice(9, 1).toString() == 1) {

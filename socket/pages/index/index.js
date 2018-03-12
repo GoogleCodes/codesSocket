@@ -139,9 +139,6 @@ Page({
    */
   onLoad(options) {
     let that = this;
-    this.setData({
-      did: wx.getStorageSync('did')
-    });
     wx.getSystemInfo({
       success(res) {
         that.setData({
@@ -155,6 +152,14 @@ Page({
       wx.removeStorageSync('wxuser');
       wx.redirectTo({ url: '../login/login' });
     }
+  },
+
+  onShow() {
+    let that = this;
+    that.setData({
+      did: wx.getStorageSync('did'),
+    });
+    this._getBindingList(20, 0);
   },
 
   getIndexGizwits() {
@@ -248,7 +253,7 @@ Page({
         }
         that.setData({
           spliceArray: arr,
-          areaid: 0,
+          areaid: arr[arr.length - 1].id,
         });
         wx.setStorageSync('spliceArray', arr);
       });
@@ -288,18 +293,6 @@ Page({
         wx.setStorageSync('spliceArray', that.data.spliceArray);
       }
     });
-  },
-
-  onShow() {
-    let that = this;
-    wx.showLoading({
-      title: '加载中...',
-    })
-    this._getBindingList(20, 0);
-  },
-
-  onReady() {
-    let that = this;
   },
 
   operating(e) {
@@ -388,7 +381,6 @@ Page({
                   return false;
               }
             }
-
           }
         }
       }
@@ -407,7 +399,7 @@ Page({
     });
 
     //  监听 WebSocket 连接事件
-    wx.onSocketOpen(function (res) {
+    wx.onSocketOpen((res) => {
       that.setData({ socketOpen: true });
       json = {
         cmd: "login_req",
@@ -443,7 +435,6 @@ Page({
               let tabArray = wx.getStorageSync('tabArray');
               for (let i in k) {
                 last = k.splice(4, 6 + data[9]);
-
                 if (last.indexOf(1) == 0) {
                   let name = last;
                   let doname = name.splice(6, last[5]);
@@ -451,7 +442,6 @@ Page({
                   for (let y in doname) {
                     str += "%" + doname[y].toString(16);
                   }
-                  console.log($.utf8to16(unescape(str)));
                   let deviceDid = last.splice(0, 4);
                   for (let n in tabArray) {
                     if (did == tabArray[n].pid) {
@@ -460,7 +450,6 @@ Page({
                       }
                     }
                   }
-                  
                   json = {
                     uid: wx.getStorageSync('wxuser').id,
                     did: $.stringify(deviceDid),
@@ -471,12 +460,12 @@ Page({
                     types: deviceDid[1],
                     isall: 1
                   };
-                  // $.ajax({
-                  //   url: 'dev/adddev',
-                  //   method: "POST",
-                  //   data: json,
-                  // }).then(function (res) {
-                  // })
+                  $.ajax({
+                    url: 'dev/adddev',
+                    method: "POST",
+                    data: json,
+                  }).then(function (res) {
+                  })
                 }
               }
             }
@@ -487,7 +476,6 @@ Page({
           }
         }
       } catch (e) {
-
       }
     });
   },
@@ -506,7 +494,6 @@ Page({
 
   _getBindingList(limit, skip) {
     var that = this;
-    wx.hideLoading();
     let devices = wx.getStorageSync('devices');
     let json = {}, arr = [];
     for (var i in devices) {
@@ -537,8 +524,7 @@ Page({
     }
     that._login();
     for (let i in that.data.didList) {
-      let did = wx.getStorageSync('did');
-      if (that.data.didList[i].did == did) {
+      if (that.data.didList[i].did == that.data.did) {
         if (that.data.didList[i].isonline == false) {
           setTimeout(function () {
             that.getIndexGizwits();

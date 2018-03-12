@@ -22,9 +22,9 @@ App({
   },
 
   onLaunch() {
+    let that = this;
     this.data.deviceInfo = wx.getSystemInfoSync();
     //  微信小程序appid  微信小程序secret
-    var that = this;
     //获取openid
     var user = wx.getStorageSync('user') || {};
     //不要在30天后才更换openid-尽量提前10分钟更新
@@ -33,34 +33,13 @@ App({
         success(res) {
           var d = that.globalData.wxData; //  这里存储了appid、secret、token串
           if (res.errMsg == 'login:ok') {
-
-            // wx.request({
-            //   url: 'http://www.getcodeing.cn/public/index/member/getWeChatOpenId',
-            //   method: 'POST',
-            //   header: {
-            //     'content-type': 'application/json',
-            //     'content-type': 'application/x-www-form-urlencoded'
-            //   },
-            //   data: {
-            //     code: res.code
-            //   },
-            //   success(res) {
-            //     if (res.data.statusCode == 200) {
-            //       var obj = {};
-            //       obj.openid = res.data.openid;
-            //       obj.expires_in = Date.now() + res.data.expires_in;
-            //       wx.setStorageSync('user', obj); //  存储openid
-            //     }
-            //   },
-            // })
-
             that.ajax({
               url: 'member/getWeChatOpenId',
               method: 'POST',
               data: {
                 code: res.code
               },
-            }).then(function (res) {
+            }).then((res) => {
               var obj = {};
               obj.openid = res.openid;
               obj.expires_in = Date.now() + res.expires_in;
@@ -70,18 +49,6 @@ App({
         }
       });
     }
-    // wx.getUserInfo({
-    //   success(res) {
-    //     let userInfo = res.userInfo,
-    //         nickName = userInfo.nickName,
-    //         avatarUrl = userInfo.avatarUrl,
-    //         gender = userInfo.gender, //性别 0：未知、1：男、2：女,
-    //         province = userInfo.province,
-    //         city = userInfo.city,
-    //         country = userInfo.country;
-    //   }
-    // });
-
   },
 
   getUserInfo(cb) {
@@ -118,7 +85,6 @@ App({
   //  心跳开始
   _startPing() {
     var that = this;
-    console.log(that.data._heartbeatInterval);
     var heartbeatInterval = that.data._heartbeatInterval * 1000;
     that.data._heartbeatTimerId = setInterval(function() {
       var options = {
@@ -139,20 +105,21 @@ App({
           'content-type': 'application/x-www-form-urlencoded'
         },
         success(res) {
-          if (res.statusCode == 500) {
-            wx.showToast({
-              title: '服务器错误了!',
-              duration: 1500,
-            })
-            return false;
-          } else if (res.statusCode == 404) {
-            wx.showToast({
-              title: '服务器关闭了!',
-              duration: 1500,
-            })
-            return false;
-          } else if (res.statusCode == 200) {
-            resolve(res.data)
+          switch (true) {
+            case res.statusCode == 500:
+              wx.showToast({
+                title: '服务器错误了!',
+                duration: 1500,
+              })
+              return false;
+            case res.statusCode == 404:
+              wx.showToast({
+                title: '服务器关闭了!',
+                duration: 1500,
+              })
+              return false;
+            case res.statusCode == 200:
+              resolve(res.data);
           }
         },
         fail(err) {

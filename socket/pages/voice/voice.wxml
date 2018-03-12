@@ -3,9 +3,9 @@
 <view class="voice-control">
 
   <view style="margin-right: 10px;">
-    <view class="section fl" bindtap='goback'>
+    <!-- <view class="section fl" bindtap='goback'>
       <view class="iconfont icon-return"></view>
-    </view>
+    </view> -->
     <view class="fr">
       <view class="voice-userInput fl">{{ input }}</view>
       <view class="person iconfont icon-icon-test1 fr">
@@ -41,7 +41,7 @@
         <text class="iconfont icon-icon-test"></text>
       </view>
       <view class="fl f12 tab" style="margin-left: 10px;">
-        <view>识别指令成功</view>
+        <view>识别指令失败</view>
         <view>{{ openMessage }}</view>
       </view>
     </view>
@@ -57,7 +57,7 @@
   <!--save-voice start-->
   <view class="save-voice">
 
-    <input type='text' placeholder='输入指令...' bindblur='blurMessage' bindconfirm='saveIMessage' class="save-input fl" value='{{ voiceIMessage }}'></input>
+    <input type='text' placeholder='输入指令...' bindinput='blurMessage' bindconfirm='saveIMessage' class="save-input fl" value='{{ voiceIMessage }}'></input>
 
     <button class="save-button fl" bindtap='saveIMessage'>发送</button>
 

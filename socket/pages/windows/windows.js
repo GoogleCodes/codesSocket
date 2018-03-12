@@ -55,6 +55,7 @@ Page({
         });
       },
     });
+    console.log(that.data.id, wx.getStorageSync('wxuser').id);
     this.getDev(that.data.rid, wx.getStorageSync('wxuser').id);
   },
 
@@ -69,6 +70,7 @@ Page({
       },
     }).then(function (res) {
       for (let i in res.data) {
+        console.log(res.data[i].id == that.data.id);
         if (res.data[i].id == that.data.id) {
           that.setData({
             list: res.data[i]

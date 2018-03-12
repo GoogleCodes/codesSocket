@@ -14,7 +14,6 @@ Page({
     arrays: [],
     sceneids: [],
     sceneArray: [],
-    did: "",
     sname: '',
     sceneTypes: -1,
     timingList: [], //  定時
@@ -27,48 +26,24 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.setData({
-      did: wx.getStorageSync('did')
-    });
-    $.getName('title');
     this.getSceneTo();
-    this.getScene();
   },
 
   onShow() {
-    let that = this;
     this.getScene();
   },
 
   getScene() {
     let that = this;
+    $.getName('title');
     wx.showLoading({
       title: '获取中...',
     })
-    // let status = '';
-    // $.getSocketResponse((did, res) => {
-    //   let a = res.splice(4, 765);
-    //   let last = '';
-    //   for (let i in a) {
-    //     if (a[16] !== 0) {
-    //       last = a.splice(0, 17 + (a[16] * 9));
-    //     } else if (a[16] == 0) {
-    //       last = a.splice(0, 17);
-    //     }
-    //     if (last.indexOf(0) > 0) {
-    //       console.log(last[14] == 0 || last[14] == 2)
-    //       if (last[14] == 0 && last[14] == 2) {
-    //         status = "0";
-    //       } else if (last[0] == 2 && last[14] == 3) {
-    //         status = "1";
-    //       }
-    //     }
-    //   }
-    // })
     $.ajax({
       url: 'Scene/getScene',
       method: 'POST',
     }).then((res) => {
+      wx.hideLoading();
       let json = {}, arr = [];
       for (let i in res.data) {
         if (wx.getStorageSync('did') == res.data[i].did) {
@@ -83,7 +58,6 @@ Page({
           that.setData({
             scenelist: arr,
           });
-          wx.hideLoading();
         }
       }
     });
@@ -99,10 +73,8 @@ Page({
     tools.sendData('c2s_write', that.data.did, {
       'data': $.getArrays(arr),
     });
-    setTimeout(function () {
-      wx.hideLoading();
-    }, 500);
     $.getSocketResponse((did, res) => {
+    wx.hideLoading();
       try {
         let arr = res, arrID = res;
         if (did !== wx.getStorageSync('did')) {
@@ -123,7 +95,6 @@ Page({
             if (last.indexOf(0) > 0) {
               let name = last.splice(0, 14);
               let doname = name.splice(1, 13);
-              // let byteName = name.splice(1, 3);
               let id = [];
               let str = "";
               let tmp = new Array();
@@ -162,13 +133,12 @@ Page({
                 status: status,
               };
               that.data.scenelist.push(options);
-              console.log($.utf8to16(unescape(str)));
-              // $.ajax({
-              //   url: 'Scene/addScene',
-              //   method: 'POST',
-              //   data: options,
-              // }).then((res) => {
-              // });
+              $.ajax({
+                url: 'Scene/addScene',
+                method: 'POST',
+                data: options,
+              }).then((res) => {
+              });
             }
           }
           that.getScene();
@@ -213,14 +183,10 @@ Page({
                     success(res) {
                     }
                   });
-                  wx.showToast({
-                    title: '控制成功',
-                  })
+                  $.alert('控制成功');
                   return false;
                 case 0:
-                  wx.showToast({
-                    title: '控制失败',
-                  })
+                  $.alert('控制失败');
                   return false;
                 default:
                   break;
@@ -257,14 +223,10 @@ Page({
                     success(res) {
                     }
                   });
-                  wx.showToast({
-                    title: '控制成功',
-                  })
+                  $.alert('控制成功')
                   return false;
                 case 0:
-                  wx.showToast({
-                    title: '控制失败',
-                  })
+                  $.alert('控制失败');
                   return false;
                 default:
                   break;
@@ -278,16 +240,15 @@ Page({
   },
 
   switchDeleteScene(e) {
-    let arr = [], json = {}, that = this;
+    let arr = [], that = this;
     wx.showModal({
       title: '删除情景模式',
       content: '确定要删除吗?',
       success(res) {
         arr.push(0, 18, 0x60);
-        json = {
+        tools.sendData('c2s_write', that.data.did, {
           'data': $.getArrays(arr.concat(that.data.sceneid)),
-        };
-        tools.sendData('c2s_write', that.data.did, json);
+        });
         wx.onSocketMessage(function (res) {
           try {
             let data = JSON.parse(res.data);
@@ -295,13 +256,9 @@ Page({
             let arr = count.splice(3, 1);
             for (let i = 0; i < arr.length; i++) {
               if (arr[i] == 1) {
-                wx.showToast({
-                  title: '删除成功',
-                })
+                $.alert('删除成功')
               } else {
-                wx.showToast({
-                  title: '删除失败',
-                })
+                $.alert('删除失败')
               }
             }
           } catch (e) {

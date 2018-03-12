@@ -18,7 +18,7 @@
     </view>
 
     <view class="me-li-iview">
-      <navigator open-type='redirect' url='/pages/voicelist/voicelist' hover-class="nav-hover">
+      <navigator url='/pages/voicelist/voicelist' hover-class="nav-hover">
         <text class="iconfont icon-weibiaoti-12 small-icon"></text>
         <text class="">修改语言</text>
         <text class="iconfont icon-youbian fr"></text>

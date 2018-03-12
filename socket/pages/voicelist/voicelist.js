@@ -20,23 +20,47 @@ Page({
 
   selectLanguage(e) {
     let that = this;
-    console.log(e.currentTarget.dataset.id);
     that.setData({
       activeIndex: e.currentTarget.dataset.id,
     });
     if (that.data.activeIndex == 0) {
       wx.setStorageSync('Language', 'zh');
+      that.goBack('国语');
     } else if (that.data.activeIndex == 1) {
       wx.setStorageSync('Language', 'ct');
+      that.goBack('粤语');
     }
-    console.log(wx.getStorageSync('Language'));
+  },
+
+  goBack(t) {
+    wx.showToast({
+      title: '已选择' + t,
+    })
+    setTimeout(() => {
+      wx.switchTab({
+        url: '../index/index',
+      })
+    }, 500);
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-  
+    let Language = wx.getStorageSync('Language');
+    let that = this;
+    if (Language == '') {
+      return false;
+    }
+    if (Language == 'zh') {
+      that.setData({
+        activeIndex: 0
+      });
+    } else if (Language == 'ct') {
+      that.setData({
+        activeIndex: 1
+      });
+    }
   },
 
   /**

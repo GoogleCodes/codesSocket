@@ -118,10 +118,6 @@ Page({
 
   },
 
-  onLoad() {
-    this._getBindingList(20, 0);
-  },
-
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
@@ -153,7 +149,7 @@ Page({
       url: 'wss://' + host + ':' + port + '/ws/app/v1',
     });
     //  监听 WebSocket 连接事件
-    wx.onSocketOpen(function(res) {
+    wx.onSocketOpen((res) => {
       json = {
         cmd: "login_req",
         data: {
