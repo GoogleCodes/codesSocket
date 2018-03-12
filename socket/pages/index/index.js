@@ -52,14 +52,6 @@ Page({
     tabArrayAll: [],
   },
 
-  refesh(e) {
-    var that = this;
-    that.setData({
-      hasRefesh: true,
-    });
-    this.getIndexGizwits();
-  },
-
   bindChange(e) {
     let that = this;
     wx.showLoading({
@@ -195,10 +187,11 @@ Page({
           });
         }
       }
-      console.log(arr.length - 1);
       for (let i in that.data.tabArray) {
-        if (that.data.tabArray.name == '全部') {
-          last = that.data.tabArray[i].id;
+        if (wx.getStorageSync('did') == that.data.tabArray[i].pid) {
+          if (that.data.tabArray[i].name == '全部') {
+            last = that.data.tabArray[i].id;
+          }
         }
       }
       $.ajax({
@@ -216,10 +209,10 @@ Page({
           wx.hideLoading();
           // wx.removeStorageSync('tabArray');
           // wx.removeStorageSync('spliceArray');
-          // that.setData({
-          //   spliceArray: [],
-          //   tabArray: [],
-          // });
+          that.setData({
+            spliceArray: [],
+            // tabArray: [],
+          });
           return false;
         }
         wx.hideLoading();
@@ -373,8 +366,6 @@ Page({
 
                   ajax("true");
                   wx.hideLoading();
-
-                  // that.getIndexGizwits();
                   that.elePosition(that.data.areaid);
                   return;
                 case that.data.spliceArray[y].status == "true":
@@ -452,6 +443,7 @@ Page({
               let tabArray = wx.getStorageSync('tabArray');
               for (let i in k) {
                 last = k.splice(4, 6 + data[9]);
+
                 if (last.indexOf(1) == 0) {
                   let name = last;
                   let doname = name.splice(6, last[5]);
@@ -459,6 +451,7 @@ Page({
                   for (let y in doname) {
                     str += "%" + doname[y].toString(16);
                   }
+                  console.log($.utf8to16(unescape(str)));
                   let deviceDid = last.splice(0, 4);
                   for (let n in tabArray) {
                     if (did == tabArray[n].pid) {
@@ -467,6 +460,7 @@ Page({
                       }
                     }
                   }
+                  
                   json = {
                     uid: wx.getStorageSync('wxuser').id,
                     did: $.stringify(deviceDid),
@@ -477,12 +471,12 @@ Page({
                     types: deviceDid[1],
                     isall: 1
                   };
-                  $.ajax({
-                    url: 'dev/adddev',
-                    method: "POST",
-                    data: json,
-                  }).then(function (res) {
-                  })
+                  // $.ajax({
+                  //   url: 'dev/adddev',
+                  //   method: "POST",
+                  //   data: json,
+                  // }).then(function (res) {
+                  // })
                 }
               }
             }

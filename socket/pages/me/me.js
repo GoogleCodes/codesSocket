@@ -35,8 +35,9 @@ Page({
     let that = this;
     wx.scanCode({
       success(res) {
+        console.log(res, res.result);
         that.setData({
-          code: res.result.substring(16, 48)
+          code: res.result
         });
         //  创建设备分享
         wx.request({
@@ -49,6 +50,7 @@ Page({
             'X-Gizwits-User-token': wx.getStorageSync('options').token,
           },
           success(result) {
+            console.log(result);
             switch(true) {
               case result.data.error_code == 9084:
                 wx.showModal({
@@ -80,7 +82,6 @@ Page({
                 return false;
             }
 
-
             let options = wx.getStorageSync('options');
             let query = "?show_disabled=0&limit=" + 20 + "&skip=" + 0;
             let json = {}, arr = [], pson = {};
@@ -90,21 +91,20 @@ Page({
               'X-Gizwits-User-token': options.token,
             }).then((result) => {
               wx.setStorageSync('devices', result.data.devices);
-              setTimeout(() => {
-                wx.switchTab({
-                  url: '../index/index',
-                })
-              }, 1000)
+              wx.showModal({
+                title: '提示~~~',
+                content: "分享成功!",
+                showCancel: false,
+                success(res) {
+                  if (res.confirm == true) {
+                    wx.switchTab({
+                      url: '../index/index',
+                    })
+                  }
+                },
+              })
             }, function (err) {
-
             });
-
-            wx.showModal({
-              title: '提示~~~',
-              content: "分享成功!",
-              showCancel: false,
-            })
-
           },
         })
       },

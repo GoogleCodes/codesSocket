@@ -54,7 +54,7 @@ Page({
   getShareList() {
     let that = this;
     wx.request({
-      url: 'https://api.gizwits.com/app/sharing?sharing_type=' + 1 + '&status=' + 1 +'&limit=20&skip=0',
+      url: 'https://api.gizwits.com/app/sharing?sharing_type=0&status=1&limit=20&skip=0',
       header: {
         'content-type': 'application/json',
         'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
@@ -136,19 +136,7 @@ Page({
 
   addShare() {
     let that = this;
-    let regMobile = /^1[3|4|5|8][0-9]\d{4,8}$/;
     var size = that.setCanvasSize();
-    // if (that.data.phoneText == '') {
-    //   wx.showToast({
-    //     title: '请输入手机号码！！',
-    //   });
-    //   return false;
-    // } else if (!regMobile.test(that.data.phoneText)) {
-    //   wx.showToast({
-    //     title: '手机号格式错误！',
-    //   })
-    //   return false;
-    // }
     let options = wx.getStorageSync('options');
     var head = {
       'content-type': 'application/json',
@@ -168,8 +156,7 @@ Page({
       data: {
         "type": 1,
         "did": wx.getStorageSync('did'),
-        "phone": '',
-        "duration": 1
+        "duration": 15
       },
       success(res) {
         wx.hideToast();
@@ -190,27 +177,7 @@ Page({
         }
         let code = res.data.qr_content;
         code = code.substring(16, 48);
-        that.createQrCode(code, "mycanvas", size.w, size.h);
-        //  创建设备分享
-        // wx.request({
-        //   url: 'https://api.gizwits.com/app/sharing/code/' + code,
-        //   method: "POST",
-        //   header: that.data.head,
-        //   success(result) {
-        //     if (result.data.error_code == 9080) {
-        //       wx.showModal({
-        //         title: '警告!',
-        //         content: '不能共享设备给自己',
-        //         showCancel: false,
-        //       })
-        //       that.setData({
-        //         layer_text: true,
-        //       });
-        //       that.getShareList();
-        //       return false;
-        //     }
-        //   },
-        // })
+        that.createQrCode("code", "mycanvas", size.w, size.h);
         that.setData({
           layer: false,
         });
@@ -232,22 +199,21 @@ Page({
   },
 
   //适配不同屏幕大小的canvas
-  setCanvasSize: function () {
+  setCanvasSize() {
     var size = {};
     try {
       var res = wx.getSystemInfoSync();
-      var scale = 930 / 700;//不同屏幕下canvas的适配比例；设计稿是750宽
-      var width = res.windowWidth / scale;
-      var height = width;//canvas画布为正方形
+      var scale = 1100 / 686;//不同屏幕下canvas的适配比例；设计稿是750宽
+      var width = 230; //  res.windowWidth / scale;
+      var height = 230;//canvas画布为正方形
       size.w = width;
       size.h = height;
     } catch (e) {
-      // Do something when catch error
       console.log("获取设备信息失败" + e);
     }
     return size;
   },
-  createQrCode: function (url, canvasId, cavW, cavH) {
+  createQrCode(url, canvasId, cavW, cavH) {
     //调用插件中的draw方法，绘制二维码图片
     QR.api.draw(url, canvasId, cavW, cavH);
     setTimeout(() => { this.canvasToTempImage(); }, 1000);
