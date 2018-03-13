@@ -168,11 +168,6 @@ Page({
       let arr = [], brr = [];
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
-          // if (response[i].isall == 1) {
-          //   brr.push(response[i]);
-          // } else if (response[i].isall == 0) {
-          //   arr.push(response[i]);
-          // }
           arr.push(response[i]);
           that.setData({
             tabArray: arr.reverse(),
@@ -392,11 +387,28 @@ Page({
       };
       that._startPing();
       that._sendJson(json);
+      //  获取服务器返回的信息
+      wx.onSocketMessage((res) => {
+        var data = JSON.parse(res.data);
+        if (data.cmd == 'subscribe_res') {
+          getDevice();
+        }
+        let options = null;
+        try {
+          if (data.data.success == true) {
+
+          } else {
+            if (data.data.msg == "M2M socket has closed, please login again!") {
+              that._login();
+            }
+          }
+        } catch (e) {
+        }
+      });
       if (wx.getStorageSync('did') == '') {
         return false;
-      } else {
-        getDevice();
       }
+      getDevice();
     });
     wx.hideLoading();
     function getDevice() {
@@ -447,22 +459,6 @@ Page({
         }
       })
     }
-
-    //  获取服务器返回的信息
-    wx.onSocketMessage((res) => {
-      wx.hideLoading();
-      var data = JSON.parse(res.data);
-      let options = null;
-      try {
-        if (data.data.success == true) {
-        } else {
-          if (data.data.msg == "M2M socket has closed, please login again!") {
-            that._login();
-          }
-        }
-      } catch (e) {
-      }
-    });
   },
 
   //  心跳开始

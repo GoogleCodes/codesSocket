@@ -110,10 +110,6 @@ Page({
       }
     });
 
-    wx.onSocketError((res) => {
-      console.log('WebSocket连接打开失败，请检查！')
-    })
-
     //  监听 WebSocket 连接事件
     wx.onSocketOpen((res) => {
       that.setData({ socketOpen: true });
