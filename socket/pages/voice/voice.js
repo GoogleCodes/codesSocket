@@ -39,6 +39,10 @@ Page({
     this.setData({
       did: wx.getStorageSync('did')
     });
+
+    if (wx.getStorageSync('Language') == '') {
+      wx.setStorageSync('Language', 'zh');
+    }
     $.ajax({
       url: 'dev/semlist',
       method: "POST",
@@ -52,10 +56,15 @@ Page({
       that.setData({
         semlist: arr
       });
+      // for (let j in that.data.semlist) {
+      //   if ((that.data.semlist[j].word == "测试") == true) {
+      //     console.log(1);
+      //   } else if ((that.data.semlist[j].word !== "测试") == false) {
+      //     console.log(2);
+      //   }
+      // }
+
     });
-    if (wx.getStorageSync('Language') == '') {
-      wx.setStorageSync('Language', 'zh');
-    }
 
     $.ajax({
       url: 'Scene/getScene',
@@ -114,6 +123,7 @@ Page({
 
   endRecode(e) {
     var s = this, sdid = '';
+    let semlist = s.data.semlist;
     let that = this;
     s.setData({ 
       voiceNow: false,
@@ -139,7 +149,7 @@ Page({
     }
 
     try {
-      setTimeout(function () {
+      setTimeout(() => {
         wx.uploadFile({
           url: c.uploadFileUrl,
           filePath: s.data.recodePath,
@@ -185,6 +195,7 @@ Page({
               that.setData({
                 input: sqlStr,
               });
+
               for (let l in s.data.scenelist) {
                 if ($.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情景", sqlStr) == 0 ||
                   $.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情景", sqlStr) > 0 ||
@@ -288,11 +299,10 @@ Page({
                   });
                 }
               }
-              let semlist = s.data.semlist;
 
               for (let k in semlist) {
-                if (semlist[k].word == sqlStr) {
-
+                if ((semlist[k].word == sqlStr) == true) {
+                  console.log(semlist[k].word, sqlStr, semlist[k].word == sqlStr);
                   $.getRegion(sqlStr, (id, name) => {
                     $.ajax({
                       url: 'dev/getdev',
@@ -311,7 +321,6 @@ Page({
                           if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
                             array1 = [0xA1, 0x01, 0x01];
                             array2 = [0x00, 0x08, 0xA2];
-                            // socketGo(array1, array2);
                             count = array2.concat(sdid.concat(array1));
                             tools.sendData('c2s_write', wx.getStorageSync('did'), {
                               'data': $.getArrays(array2.concat(sdid.concat(array1))),
@@ -325,11 +334,11 @@ Page({
                                 rid: getdev[i].rid,
                                 status: "true"
                               },
-                            }).then(function (res) {
+                            }).then((res) => {
                               $.alert('打开成功!');
                             })
 
-                            $.getSocketResponse(function (did, data) {
+                            $.getSocketResponse((did, data) => {
                               s.setData({
                                 openMessage: sqlStr,
                                 voiceOpen: false,
@@ -354,11 +363,10 @@ Page({
                                 rid: getdev[i].rid,
                                 status: "false"
                               },
-                            }).then(function (res) {
+                            }).then((res) => {
                               $.alert('关闭成功!');
                             })
-
-                            $.getSocketResponse(function (did, data) {
+                            $.getSocketResponse((did, data) => {
                               s.setData({
                                 openMessage: sqlStr,
                                 voiceOpen: false,
@@ -373,36 +381,34 @@ Page({
                               input: sqlStr,
                               openMessage: '识别失败!'
                             });
+                            return false;
                           }
                         }
                       }
                     });
                   })
-
-                }
-              }
-
-              for (let i in semlist) {
-                if (semlist[i].word !== sqlStr) {
-                  wx.showModal({
-                    title: '警告!',
-                    content: '还没有这条语义,请到后台增加!',
-                    showCancel: false,
-                  })
                   return false;
                 }
               }
+            }
 
-              if (typeof (sqlStr) == "string") {
-                var myString = sqlStr.substring(0, 1);
+            for (let i in that.data.semlist) {
+              console.log((that.data.semlist[i].word !== sqlStr) == false);
+              if ((that.data.semlist[i].word !== sqlStr)) {
+                wx.showModal({
+                  title: '警告!',
+                  content: '还没有这条语义,请到后台增加!',
+                  showCancel: false,
+                })
+                // return false;
               }
-
             }
           },
           fail(res) {
             s.setData({
               voiceNow: true,
               voiceDone: true,
+              voiceOpen: true
             });
             //  错误提示
             wx.showModal({
@@ -506,11 +512,11 @@ Page({
           that.setData({
             input: that.data.voiceIMessage
           });
-          setTimeout(function (res) {
+          setTimeout((res) => {
             tools.sendData('c2s_write', wx.getStorageSync('did'), {
               'data': $.getArrays(count),
             });
-            $.getSocketResponse(function (did, data) {
+            $.getSocketResponse((did, data) => {
               $.ajax({
                 url: '/Scene/updateScene',
                 method: 'POST',
@@ -702,7 +708,7 @@ Page({
           content: '还没有这条语义,请到后台增加!',
           showCancel: false,
         })
-        return false;
+        // return false;
       }
     }
   },

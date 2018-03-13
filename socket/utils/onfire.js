@@ -117,8 +117,7 @@
       }
       // can not find this event, return false
       return false;
-    }
-    else if (type === function_str) {
+    } else if (type === function_str) {
       _each(__onfireEvents, function (key_1, item_1) {
         _each(item_1, function (key_2, item_2) {
           if (item_2[0] === event) {

@@ -19,15 +19,13 @@
     }
     if (obj.forEach) {
       obj.forEach(iterator, context);
-    }
-    else if (obj.length !== undefined) {
+    } else if (obj.length !== undefined) {
       var i = 0;
       while (i < obj.length) {
         iterator.call(context, obj[i], i, obj);
         i++;
       }
-    }
-    else {
+    } else {
       var i = 0;
       for (i in obj) {
         obj.hasOwnProperty(i) && iterator.call(context, obj[i], i, obj);

@@ -187,7 +187,6 @@ var $ = {
       try {
         let arrays = [];
         let list = arrays.concat(data.splice(4, 18));
-        // brr = [0, 18, 0x50];
         let count = brr.concat(list);
         tools.sendData('c2s_write', wx.getStorageSync('did'), {
           'data': $.getArrays(count),

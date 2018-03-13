@@ -5,8 +5,6 @@ import { $ } from '../../utils/main.js'
 
 let com = require('../../utils/common/common.js');
 
-let did = wx.getStorageSync('didJSon').did;
-
 Page({
 
   /**
@@ -32,13 +30,10 @@ Page({
       'custom': 'custom'
     },
     tabId: 0,
-    wechatOpenId: 'kceshi1',  //  测试:kceshi1
-    gizwitsAppId: '',
     did: '',
     host: '', //  websocket 请求地址 sandbox.gizwits.com
     ws_port: 0, //  端口
     wss_port: 0, //  端口
-    hasRefesh: false,
     areaid: '', //  区域ID
     deviceID: '', //  设备ID,
     tabArrayID: '',
@@ -71,7 +66,7 @@ Page({
             rid: that.data.tabArray[i].id,
             uid: wx.getStorageSync('wxuser').id,
           },
-        }).then(function (res) {
+        }).then((res) => {
           wx.hideLoading();
           for (let y in res.data) {
             if (wx.getStorageSync('did') == that.data.tabArray[i].pid) {
@@ -104,7 +99,6 @@ Page({
       })
     }
     wx.setStorageSync('currentTab', that.data.currentTab);
-
     let tabArray = wx.getStorageSync('tabArray');
     $.ajax({
       url: 'dev/getdev',
@@ -113,7 +107,7 @@ Page({
         rid: e.target.dataset.id,
         uid: wx.getStorageSync('wxuser').id,
       }
-    }).then(function (res) {
+    }).then((res) => {
       for (let i in tabArray) {
         if (tabArray[i].pid == wx.getStorageSync('did')) {
           for (let y in res.data) {
@@ -171,7 +165,7 @@ Page({
       data: {
         uid: wx.getStorageSync('wxuser').id
       },
-    }).then(function (res) {
+    }).then((res) => {
       let response = res.data;
       let json = {};
       let last = '';
@@ -206,14 +200,12 @@ Page({
           rid: last,
           uid: wx.getStorageSync('wxuser').id,
         },
-      }).then(function (res) {
+      }).then((res) => {
         wx.showLoading({
           title: '加载中...',
         })
         if (res.msg == "请求失败") {
           wx.hideLoading();
-          // wx.removeStorageSync('tabArray');
-          // wx.removeStorageSync('spliceArray');
           that.setData({
             spliceArray: [],
             // tabArray: [],
@@ -269,7 +261,7 @@ Page({
         rid: rid,
         uid: wx.getStorageSync('wxuser').id,
       },
-    }).then(function (res) {
+    }).then((res) => {
       let data = res.data;
       for (let i in res.data) {
         if (res.data[i].status == 'false') {
@@ -328,8 +320,7 @@ Page({
           id: id,
           status: status
         }
-      }).then(function (res) {
-
+      }).then((res) => {
       });
     }
 
@@ -418,7 +409,7 @@ Page({
     wx.hideLoading();
 
     //  获取服务器返回的信息
-    wx.onSocketMessage(function (res) {
+    wx.onSocketMessage((res) => {
       wx.hideLoading();
       var data = JSON.parse(res.data);
       let options = null;
@@ -428,7 +419,7 @@ Page({
           tools.sendData('c2s_write', wx.getStorageSync('did'), {
             'data': $.getArrays(arr),
           });
-          $.getSocketResponse(function (did, data) {
+          $.getSocketResponse((did, data) => {
             if (wx.getStorageSync('did') == did) {
               let k = data, rid = 0;
               let last = null, brr = [], json = {};
