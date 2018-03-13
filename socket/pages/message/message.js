@@ -1,6 +1,5 @@
 // pages/message/message.js
 
-var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
 
 Page({
@@ -34,6 +33,9 @@ Page({
       },
     });
     that._getBindingList();
+  },
+
+  onShow() {
     $.getName('title');
   },
 

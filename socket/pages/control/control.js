@@ -2,7 +2,6 @@
 
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
-// let main = new Main();
 Page({
 
   /**
@@ -45,9 +44,8 @@ Page({
     this._getBindingList(20, 0);
   },
 
-  onReady() {
-    //  调用连接socket
-    // this.goConnSocket();
+  onShow() {
+    $.getName('title');
   },
 
   _getBindingList(limit, skip) {

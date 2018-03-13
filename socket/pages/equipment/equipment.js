@@ -37,6 +37,7 @@ Page({
       did: wx.getStorageSync('did'),
       rid: options.rid
     });
+    console.log(that.data.rid);
     if (that.data.sdid[1] == 0) {
       that.setData({
         types: 0,
@@ -53,21 +54,29 @@ Page({
         });
       },
     });
-    this.getDev(that.data.rid);
+    this.getDev();
   },
 
-  getDev(rid) {
+  getDev() {
     let that = this;
     $.getName('title');
-    let spliceArray = wx.getStorageSync('spliceArray');
-    for (let i in spliceArray) {
-      if (spliceArray[i].id == that.data.id) {
-        that.setData({
-          list: spliceArray[i]
-        });
-        return true;
+    $.ajax({
+      url: 'dev/getdev',
+      method: 'POST',
+      data: {
+        rid: that.data.rid,
+        uid: wx.getStorageSync('wxuser').id,
+      },
+    }).then((res) => {
+      for (let i in res.data) {
+        if (res.data[i].id == that.data.id) {
+          that.setData({
+            list: res.data[i]
+          });
+          return true;
+        }
       }
-    }
+    });
   },
 
   deleteGizwits() {
@@ -94,10 +103,9 @@ Page({
                     rid: res.data[y].id,
                     uid: wx.getStorageSync('wxuser').id,
                   },
-                }).then(function (res) {
+                }).then((res) => {
                   let data = res.data;
                   for (let i in data) {
-                    console.log(that.data.id, data[i].id);
                     if (that.data.id == data[i].id) {
                       $.ajax({
                         url: 'dev/deldev',

@@ -23,7 +23,7 @@
         <view class="ul-view">
           <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 0 }}'>
             <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ types == 0 }}'></view>
+              <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ item.types == 0 }}'></view>
             </view>
             <view class="fl status-iview f12">
               <view wx:if="{{ item.isall == 1 }}" class="block" style='color: #b3b3b3'>
@@ -48,7 +48,7 @@
 
           <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 1 }}'>
             <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ types == 0 }}'></view>
+              <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ item.types == 1 }}'></view>
             </view>
             <view class="fl status-iview f12">
               <view wx:if="{{ item.isall == 1 }}" class="block" style='color: #b3b3b3'>

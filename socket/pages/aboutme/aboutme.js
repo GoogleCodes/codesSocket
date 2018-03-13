@@ -1,4 +1,7 @@
 // pages/aboutme/aboutme.js
+
+import { $ } from '../../utils/main.js'
+
 Page({
 
   /**
@@ -19,6 +22,10 @@ Page({
     wx.makePhoneCall({
       phoneNumber: this.data.Cooperation
     })
-  }
+  },
+
+  onShow() {
+    $.getName('title');
+  },
 
 })

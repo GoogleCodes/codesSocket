@@ -137,7 +137,6 @@ Page({
       success(res) {
         that.setData({
           winHeight: res.windowHeight,
-          docHeight: res.windowHeight
         });
       },
     });
@@ -150,9 +149,6 @@ Page({
 
   onShow() {
     let that = this;
-    that.setData({
-      did: wx.getStorageSync('did'),
-    });
     this._getBindingList(20, 0);
   },
 
@@ -176,7 +172,6 @@ Page({
           //   brr.push(response[i]);
           // } else if (response[i].isall == 0) {
           //   arr.push(response[i]);
-          //   wx.setStorageSync('tabArray', arr);
           // }
           arr.push(response[i]);
           that.setData({
@@ -184,6 +179,7 @@ Page({
             tabArrayAll: brr,
             currentTab: 0
           });
+          wx.setStorageSync('tabArray', arr.reverse());
         }
       }
       for (let i in that.data.tabArray) {
@@ -201,47 +197,38 @@ Page({
           uid: wx.getStorageSync('wxuser').id,
         },
       }).then((res) => {
-        wx.showLoading({
-          title: '加载中...',
-        })
         if (res.msg == "请求失败") {
-          wx.hideLoading();
           that.setData({
             spliceArray: [],
             // tabArray: [],
           });
           return false;
         }
-        wx.hideLoading();
         let device = res.data, json = {};
         let arr = [];
         for (let i in device) {
-          // if (typeof device[i].did) {
-            // if (wx.getStorageSync('did') == device[i].did) {
-              let sdid = JSON.parse(device[i].did);
-              if (sdid[1] == 0) {
-                that.setData({
-                  types: 0,
-                });
-              } else if (sdid[1] == 1) {
-                that.setData({
-                  types: 1,
-                });
-              }
-              json = {
-                did: JSON.stringify(sdid),
-                dname: device[i].dname,
-                id: device[i].id,
-                pid: device[i].pid,
-                rid: device[i].rid,
-                status: device[i].status,
-                uid: device[i].uid,
-                types: device[i].types,
-                isall: device[i].isall
-              };
-              arr.push(json);
-            // }
-          // }
+          let sdid = JSON.parse(device[i].did);
+          if (sdid[1] == 0) {
+            that.setData({
+              types: 0,
+            });
+          } else if (sdid[1] == 1) {
+            that.setData({
+              types: 1,
+            });
+          }
+          json = {
+            did: JSON.stringify(sdid),
+            dname: device[i].dname,
+            id: device[i].id,
+            pid: device[i].pid,
+            rid: device[i].rid,
+            status: device[i].status,
+            uid: device[i].uid,
+            types: device[i].types,
+            isall: device[i].isall
+          };
+          arr.push(json);
         }
         that.setData({
           spliceArray: arr,
@@ -405,8 +392,61 @@ Page({
       };
       that._startPing();
       that._sendJson(json);
+      if (wx.getStorageSync('did') == '') {
+        return false;
+      } else {
+        getDevice();
+      }
     });
     wx.hideLoading();
+    function getDevice() {
+      let arr = [0x00, 0x02, 0xA0, 0xFF];
+      tools.sendData('c2s_write', wx.getStorageSync('did'), {
+        'data': $.getArrays(arr),
+      });
+      $.getSocketResponse((did, data) => {
+        if (wx.getStorageSync('did') == did) {
+          let k = data, rid = 0;
+          let last = null, brr = [], json = {};
+          let tabArray = wx.getStorageSync('tabArray');
+          for (let i in k) {
+            last = k.splice(4, 6 + data[9]);
+            if (last.indexOf(1) == 0) {
+              let name = last;
+              let doname = name.splice(6, last[5]);
+              let str = "";
+              for (let y in doname) {
+                str += "%" + doname[y].toString(16);
+              }
+              let deviceDid = last.splice(0, 4);
+              for (let n in tabArray) {
+                if (did == tabArray[n].pid) {
+                  if (tabArray[n].name == "全部") {
+                    rid = tabArray[n].id
+                  }
+                }
+              }
+              json = {
+                uid: wx.getStorageSync('wxuser').id,
+                did: $.stringify(deviceDid),
+                dname: $.utf8to16(unescape(str)),
+                rid: rid,
+                status: 'false',
+                pid: wx.getStorageSync('did'),
+                types: deviceDid[1],
+                isall: 1
+              };
+              $.ajax({
+                url: 'dev/adddev',
+                method: "POST",
+                data: json,
+              }).then(function (res) {
+              })
+            }
+          }
+        }
+      })
+    }
 
     //  获取服务器返回的信息
     wx.onSocketMessage((res) => {
@@ -415,52 +455,6 @@ Page({
       let options = null;
       try {
         if (data.data.success == true) {
-          let arr = [0x00, 0x02, 0xA0, 0xFF];
-          tools.sendData('c2s_write', wx.getStorageSync('did'), {
-            'data': $.getArrays(arr),
-          });
-          $.getSocketResponse((did, data) => {
-            if (wx.getStorageSync('did') == did) {
-              let k = data, rid = 0;
-              let last = null, brr = [], json = {};
-              let tabArray = wx.getStorageSync('tabArray');
-              for (let i in k) {
-                last = k.splice(4, 6 + data[9]);
-                if (last.indexOf(1) == 0) {
-                  let name = last;
-                  let doname = name.splice(6, last[5]);
-                  let str = "";
-                  for (let y in doname) {
-                    str += "%" + doname[y].toString(16);
-                  }
-                  let deviceDid = last.splice(0, 4);
-                  for (let n in tabArray) {
-                    if (did == tabArray[n].pid) {
-                      if (tabArray[n].name == "全部") {
-                        rid = tabArray[n].id
-                      }
-                    }
-                  }
-                  json = {
-                    uid: wx.getStorageSync('wxuser').id,
-                    did: $.stringify(deviceDid),
-                    dname: $.utf8to16(unescape(str)),
-                    rid: rid,
-                    status: 'false',
-                    pid: wx.getStorageSync('did'),
-                    types: deviceDid[1],
-                    isall: 1
-                  };
-                  $.ajax({
-                    url: 'dev/adddev',
-                    method: "POST",
-                    data: json,
-                  }).then(function (res) {
-                  })
-                }
-              }
-            }
-          })
         } else {
           if (data.data.msg == "M2M socket has closed, please login again!") {
             that._login();

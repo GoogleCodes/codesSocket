@@ -359,7 +359,7 @@ Page({
         url: 'dev/adddev',
         method: "POST",
         data: json,
-      }).then(function(res) {
+      }).then((res) => {
         $.alert(res.data.msg);
         that.setData({
           currentTab: 0

@@ -56,14 +56,6 @@ Page({
       that.setData({
         semlist: arr
       });
-      // for (let j in that.data.semlist) {
-      //   if ((that.data.semlist[j].word == "测试") == true) {
-      //     console.log(1);
-      //   } else if ((that.data.semlist[j].word !== "测试") == false) {
-      //     console.log(2);
-      //   }
-      // }
-
     });
 
     $.ajax({
@@ -82,14 +74,7 @@ Page({
   onShow() {
     $.getName('title');
   },
-
-  //  返回当前页面
-  goback() {
-    wx.switchTab({
-      url: '../index/index',
-    })
-  },
-
+  
   startRecode(e) {
     var that = this;
     wx.startRecord({
@@ -529,7 +514,7 @@ Page({
               });
               if (data[3] == 0) {
                 that.setData({
-                  voiceDone: false,
+                  voiceDone: true,
                   voiceOpen: true,
                   input: that.data.voiceIMessage,
                   openMessage: '识别失败!'

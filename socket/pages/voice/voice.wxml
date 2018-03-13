@@ -3,9 +3,6 @@
 <view class="voice-control">
 
   <view style="margin-right: 10px;">
-    <!-- <view class="section fl" bindtap='goback'>
-      <view class="iconfont icon-return"></view>
-    </view> -->
     <view class="fr">
       <view class="voice-userInput fl">{{ input }}</view>
       <view class="person iconfont icon-icon-test1 fr">
