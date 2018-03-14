@@ -6,7 +6,7 @@
 .clear {clear: both}
 .fl {float: left;}
 .fr {float: right;}
-.f12 {font-size: 0.9rem;}
+.f12 {font-size: 0.8rem;}
 .w100 {width: 100%;} 
 .h100 {height: 100%;}
 .marBtm60 {margin-bottom: 60px;}

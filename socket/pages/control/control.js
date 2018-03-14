@@ -25,6 +25,7 @@ Page({
     wss_port: 0, //  端口
     isOnList: [],
     isOffList: [],
+    rid: 0,
   },
 
   selectingAll() {
@@ -168,6 +169,90 @@ Page({
     }).then((res) => {
     })
     wx.setStorageSync('title', e.currentTarget.dataset.name);
+
+    this.getDevice(did);
+
+  },
+
+  getRegion(callback) {
+    $.ajax({
+      url: 'dev/getregion',
+      method: 'POST',
+      data: {
+        uid: wx.getStorageSync('wxuser').id
+      },
+    }).then((res) => {
+      callback(res);
+    });
+  },
+
+  getDevice(did) {
+    let that = this;
+    let arr = [0x00, 0x02, 0xA0, 0xFF];
+    let rid = 0;
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
+      'data': $.getArrays(arr),
+    });
+
+    $.getSocketResponse((did, data) => {
+      if (wx.getStorageSync('did') == did) {
+        if (data[2] == 161) {
+          let k = data, rid = 0;
+          let last = null, brr = [], json = {};
+          that.getRegion((res) => {
+            let list = res.data;
+            for (let i in list) {
+              if (list[i].pid == did) {
+                if (list[i].name == '全部') {
+                  that.setData({
+                    rid: list[i].id
+                  });
+                  rid = that.data.rid;
+                  console.log(rid, that.data.rid, list[i].name);
+
+                  for (let i in k) {
+                    last = k.splice(4, 6 + data[9]);
+                    if (last.indexOf(1) == 0) {
+                      let name = last;
+                      let doname = name.splice(6, last[5]);
+                      let str = "";
+                      for (let y in doname) {
+                        str += "%" + doname[y].toString(16);
+                      }
+                      let deviceDid = last.splice(0, 4);
+
+                      json = {
+                        uid: wx.getStorageSync('wxuser').id,
+                        did: $.stringify(deviceDid),
+                        dname: $.utf8to16(unescape(str)),
+                        rid: that.data.rid,
+                        status: 'false',
+                        pid: wx.getStorageSync('did'),
+                        types: deviceDid[1],
+                        isall: 1
+                      };
+                      console.log(json);
+                      $.ajax({
+                        url: 'dev/adddev',
+                        method: "POST",
+                        data: json,
+                      }).then(function (res) {
+                      })
+
+                    }
+                  }
+
+                }
+              }
+            }
+          });
+
+          
+
+        }
+      }
+    });
+
   },
 
   addArea(did) {
@@ -215,6 +300,11 @@ Page({
       data: arr
     };
     that._sendJson(json);
+    setTimeout(() => {
+      wx.switchTab({
+        url: '../index/index',
+      })
+    }, 500);
 
     // let arr = [0x00, 0x02, 0x40];
     // json = {
@@ -232,11 +322,6 @@ Page({
     //     case 'c2s_write':
     //       break;
     //     case 's2c_noti':
-          setTimeout(() => {
-            wx.switchTab({
-              url: '../index/index',
-            })
-          }, 500);
     //       break;
     //     case 'c2s_read':
 

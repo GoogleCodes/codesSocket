@@ -8,75 +8,60 @@
 
 <view class="table-header">
   <scroll-view scroll-with-animation="true" scroll-x class="recommend_scroll_x_box">
-    <view class="tab {{ currentTab == idx ? 'active': '' }}" data-current="{{ idx }}" bindtap="selected" 
-    wx:for="{{ tabArray }}" wx:for-index="idx" data-id='{{ item.id }}'>{{ item.name }}</view>
+    <view class="tab {{ currentTab == idx ? 'active': '' }}" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" wx:for-index="idx" data-id='{{ item.id }}'>{{ item.name }}</view>
   </scroll-view>
   <navigator url='/pages/search/search' class="setting">
     <view class="iconfont icon-weibiaoti-9"></view>
   </navigator>
 </view>
 
-<view>
-  <swiper class="swiper-box" duration="300" bindchange="bindChange" current="{{ currentTab }}" style="height: {{ winHeight }}px;z-index: 1;margin-bottom: 90px;">
-    <swiper-item wx:for="{{ tabArray }}">
-      <view class="{{ selected ? 'hidden': 'show' }}">
-        <view class="ul-view">
-          <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 0 }}'>
-            <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ item.types == 0 }}'></view>
-            </view>
-            <view class="fl status-iview f12">
-              <view wx:if="{{ item.isall == 1 }}" class="block" style='color: #b3b3b3'>
-                <text class="block">{{ item.dname }}</text>
-                <text>当前状态：</text>
-                <text style='color: #6aa84f'>关闭</text>
-              </view>
-              <view wx:else class="block" style='color: #b3b3b3' bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}'>
-                <text class="block">{{ item.dname }}</text>
-                <text>当前状态：</text>
-                <text wx:if="{{ item.status == 'false' }}" style='color: #6aa84f'>关闭</text>
-                <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
-              </view>
-            </view>
-            <!-- <navigator wx:if="{{ item.isall == 1 }}">
-              <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
-            </navigator> -->
-            <navigator url="/pages/equipment/equipment?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
-              <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
-            </navigator>
+<swiper class="swiper-box" duration="300" bindchange="bindChange" current="{{ currentTab }}" style="height: {{ winHeight }}px;z-index: 1;margin-bottom: 90px;">
+  <swiper-item wx:for="{{ tabArray }}">
+    <view class="{{ selected ? 'hidden': 'show' }}">
+      <view class="ul-view">
+        <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 0 }}'>
+          <view class="pic-iview fl pic1">
+            <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ item.types == 0 }}'></view>
           </view>
-
-          <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 1 }}'>
-            <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ item.types == 1 }}'></view>
+          <view class="fl status-iview f12">
+            <view class="block" style='color: #b3b3b3' 
+            bindtap='operating' 
+            data-id='{{ item.id }}' 
+            data-sdid='{{ item.did }}' 
+            data-areaid='{{ areaid }}'>
+              <text class="block">{{ item.dname }}</text>
+              <text>当前状态：</text>
+              <text wx:if="{{ item.status == 'false' }}" style='color: #6aa84f'>关闭</text>
+              <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
             </view>
-            <view class="fl status-iview f12">
-              <view wx:if="{{ item.isall == 1 }}" class="block" style='color: #b3b3b3'>
-                <text class="block">{{ item.dname }}</text>
-                <text>当前状态：</text>
-                <text style='color: #6aa84f'>关闭</text>
-              </view>
-              <view wx:else class="block" style='color: #b3b3b3' bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}'>
-                <text class="block">{{ item.dname }}</text>
-                <text>当前状态：</text>
-                <text wx:if="{{ item.status == 'false' }}" style='color: #6aa84f'>关闭</text>
-                <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
-              </view>
-            </view>
-            <!-- <navigator wx:if="{{ item.isall == 1 }}">
-              <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
-            </navigator> -->
-            <navigator url="/pages/windows/windows?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
-              <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
-            </navigator>
           </view>
-
+          <navigator url="/pages/equipment/equipment?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
+            <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
+          </navigator>
         </view>
-      </view>
-    </swiper-item>
-  </swiper>
 
-</view>
+        <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 1 }}'>
+          <view class="pic-iview fl pic1">
+            <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" wx:if='{{ item.types == 1 }}'></view>
+          </view>
+          <view class="fl status-iview f12">
+            <view class="block" style='color: #b3b3b3' bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}'>
+              <text class="block">{{ item.dname }}</text>
+              <text>当前状态：</text>
+              <text wx:if="{{ item.status == 'false' }}" style='color: #6aa84f'>关闭</text>
+              <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
+            </view>
+          </view>
+          <navigator url="/pages/windows/windows?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
+            <view class="arrow-iview fr iconfont icon-fruits-lemon"></view>
+          </navigator>
+        </view>
+
+      </view>
+    </view>
+  </swiper-item>
+</swiper>
+
 
 <!-- 语音按钮 -->
 <view class='music-iview'>
@@ -84,6 +69,3 @@
     <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
   </navigator>
 </view>
-
-<!-- <import src="/pages/footer/footer.wxml" />
-<template is="footer" /> -->

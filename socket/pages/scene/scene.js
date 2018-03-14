@@ -70,7 +70,7 @@ Page({
     })
     let arr = [], json = {}, that = this;
     arr.push(0x00, 0x01, 0x40);
-    tools.sendData('c2s_write', that.data.did, {
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
     });
     $.getSocketResponse((did, res) => {

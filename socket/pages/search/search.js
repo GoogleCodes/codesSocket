@@ -146,7 +146,8 @@ Page({
     for (let i in that.data.list) {
       if (e.detail.value == i) {
         that.setData({
-          areaid: that.data.list[i].id
+          areaid: that.data.list[i].id,
+          currentTab: 0
         });
       }
     }
@@ -276,6 +277,7 @@ Page({
       content: '是否要删除当前选择的区域！',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
+          
           $.ajax({
             url: 'dev/delregion',
             method: 'POST',
@@ -283,7 +285,7 @@ Page({
               id: that.data.areaid,
               uid: wx.getStorageSync('wxuser').id,
             },
-          }).then(function(res) {
+          }).then((res) => {
             $.alert('已经成功删除!');
             setTimeout(() => {
               wx.switchTab({

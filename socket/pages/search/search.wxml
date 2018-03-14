@@ -14,16 +14,11 @@
         <view>{{ list[index].name }}</view>
       </picker>
       <text class="iconfont icon-sanjiaoxing-down"></text>
-      <!-- <picker mode="multiSelector" bindchange="bindMultiPickerChange" bindcolumnchange="bindMultiPickerColumnChange" value="{{ multiIndex }}" range="{{ multiArray }}" class="picker" >
-        <view class="picker">
-          {{ multiArray[0][multiIndex[0]] }}
-        </view> redirectTo
-      </picker>  -->
     </view>
     <input placeholder='请输入要增加的区域' class="search-input fl" value='{{ addAreaText }}' bindblur='addArea' hidden='{{ pickerShow }}'></input>
     <view class="fr" style="width: 20%" hidden='{{ !pickerShow }}'>
       <!-- <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ pickerShow }}' bindtap='outputSet'></view> -->
-      <view class='iconfont icon-weibiaoti-1 fr' bindtap='deleteGroup'></view>
+      <view class='iconfont icon-weibiaoti-1 fr' bindtap='deleteGroup'></view><!--   -->
       <navigator open-type='redirectTo' url='../addarea/addarea'>
         <view class='iconfont icon-weibiaoti-2 fr'></view>
         <!--  bindtap='inputSet' -->
@@ -46,14 +41,14 @@
 
       <swiper-item>
         <view class="ul-iview">
-          <view class="li-iview fl" wx:for="{{ spliceArray }}" bindtap='deleteDevice' data-id="{{ item.id }}" wx:if='{{ item.types == 0 }}'>
+          <view class="li-iview fl" wx:for="{{ spliceArray }}" data-id="{{ item.id }}" wx:if='{{ item.types == 0 }}'>
             <view class="li-iview-con">
               <view class="iconfont icon-weibiaoti-3"></view>
             </view>
             <view class="sname">{{ item.dname }}</view>
           </view>
-
-          <view class="li-iview fl" wx:for="{{ spliceArray }}" bindtap='deleteDevice' data-id="{{ item.id }}" wx:if='{{ item.types == 1 }}'>
+          <!--  bindtap='deleteDevice' -->
+          <view class="li-iview fl" wx:for="{{ spliceArray }}" data-id="{{ item.id }}" wx:if='{{ item.types == 1 }}'>
             <view class="li-iview-con">
               <view class="iconfont icon-chuangliananzhuang"></view>
             </view>

@@ -98,6 +98,7 @@ Page({
         currentTab: e.target.dataset.current
       })
     }
+    console.log(e.target.dataset.id);
     wx.setStorageSync('currentTab', that.data.currentTab);
     let tabArray = wx.getStorageSync('tabArray');
     $.ajax({
@@ -110,14 +111,19 @@ Page({
     }).then((res) => {
       for (let i in tabArray) {
         if (tabArray[i].pid == wx.getStorageSync('did')) {
-          for (let y in res.data) {
-            arr.push(res.data[y]);
-            that.setData({
+          // for (let y in res.data) {
+          //   arr.push(res.data[y]);
+          //   that.setData({
+          //     spliceArray: res.data,
+          //     tabId: e.target.dataset.id,
+          //     areaid: e.target.dataset.id,
+          //   });
+          // }
+          that.setData({
               spliceArray: res.data,
               tabId: e.target.dataset.id,
               areaid: e.target.dataset.id,
             });
-          }
         }
       }
       if (arr.length == 0) {
@@ -133,13 +139,6 @@ Page({
    */
   onLoad(options) {
     let that = this;
-    wx.getSystemInfo({
-      success(res) {
-        that.setData({
-          winHeight: res.windowHeight,
-        });
-      },
-    });
     if (wx.getStorageSync('options') == '') {
       wx.removeStorageSync('userInformation');
       wx.removeStorageSync('wxuser');
@@ -225,10 +224,19 @@ Page({
           };
           arr.push(json);
         }
+
+        wx.getSystemInfo({
+          success(res) {
+            that.setData({
+              winHeight: 100 * arr.length,
+            });
+          },
+        });
         that.setData({
           spliceArray: arr,
-          areaid: arr[arr.length - 1].id,
+          areaid: arr[arr.length - 1].rid,
         });
+        console.log(that.data.areaid);
         wx.setStorageSync('spliceArray', arr);
       });
     });
@@ -310,6 +318,7 @@ Page({
       let array1 = [0xA1, 0x01, 0x01];
       let array2 = [0x00, 0x08, 0xA2];
       for (let i in that.data.tabArray) {
+        console.log(areaid, that.data.tabArray[i].id, areaid == that.data.tabArray[i].id);
         if (areaid == that.data.tabArray[i].id) {
           that.setData({
             tabArrayID: that.data.tabArray[i].id
@@ -329,7 +338,6 @@ Page({
                     status: true,
                     statusText: '开启',
                   });
-
                   ajax("true");
                   wx.hideLoading();
                   that.elePosition(that.data.areaid);
@@ -405,10 +413,7 @@ Page({
         } catch (e) {
         }
       });
-      if (wx.getStorageSync('did') == '') {
-        return false;
-      }
-      getDevice();
+      // getDevice();
     });
     wx.hideLoading();
     function getDevice() {
@@ -416,48 +421,6 @@ Page({
       tools.sendData('c2s_write', wx.getStorageSync('did'), {
         'data': $.getArrays(arr),
       });
-      $.getSocketResponse((did, data) => {
-        if (wx.getStorageSync('did') == did) {
-          let k = data, rid = 0;
-          let last = null, brr = [], json = {};
-          let tabArray = wx.getStorageSync('tabArray');
-          for (let i in k) {
-            last = k.splice(4, 6 + data[9]);
-            if (last.indexOf(1) == 0) {
-              let name = last;
-              let doname = name.splice(6, last[5]);
-              let str = "";
-              for (let y in doname) {
-                str += "%" + doname[y].toString(16);
-              }
-              let deviceDid = last.splice(0, 4);
-              for (let n in tabArray) {
-                if (did == tabArray[n].pid) {
-                  if (tabArray[n].name == "全部") {
-                    rid = tabArray[n].id
-                  }
-                }
-              }
-              json = {
-                uid: wx.getStorageSync('wxuser').id,
-                did: $.stringify(deviceDid),
-                dname: $.utf8to16(unescape(str)),
-                rid: rid,
-                status: 'false',
-                pid: wx.getStorageSync('did'),
-                types: deviceDid[1],
-                isall: 1
-              };
-              $.ajax({
-                url: 'dev/adddev',
-                method: "POST",
-                data: json,
-              }).then(function (res) {
-              })
-            }
-          }
-        }
-      })
     }
   },
 
@@ -507,9 +470,7 @@ Page({
     for (let i in that.data.didList) {
       if (that.data.didList[i].did == that.data.did) {
         if (that.data.didList[i].isonline == false) {
-          setTimeout(function () {
-            that.getIndexGizwits();
-          }, 500)
+          that.getIndexGizwits();
           wx.showModal({
             title: '警告',
             content: '设备已经下线',
@@ -517,9 +478,7 @@ Page({
           })
           return false;
         }
-        setTimeout(function () {
-          that.getIndexGizwits();
-        }, 500)
+        that.getIndexGizwits();
         return true;
       }
     }

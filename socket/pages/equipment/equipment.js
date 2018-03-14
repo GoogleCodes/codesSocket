@@ -37,7 +37,6 @@ Page({
       did: wx.getStorageSync('did'),
       rid: options.rid
     });
-    console.log(that.data.rid);
     if (that.data.sdid[1] == 0) {
       that.setData({
         types: 0,
@@ -81,12 +80,25 @@ Page({
 
   deleteGizwits() {
     let that = this;
+    let devices = wx.getStorageSync('devices');
+    let did = wx.getStorageSync('did');
+    // for (let i in devices) {
+    //   if (did == devices[i].did) {
+    //     if (devices[i].role !== 'owner') {
+    //       wx.showModal({
+    //         title: '警告',
+    //         content: '您好，你不是管理者!',
+    //         showCancel: false,
+    //       })
+    //       return false;
+    //     }
+    //   }
+    // }
     wx.showModal({
       title: '警告!',
       content: '您确定要删除这个设备吗?',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
-
           $.ajax({
             url: 'dev/getregion',
             method: 'POST',
@@ -96,6 +108,14 @@ Page({
           }).then((res) => {
             for (let y in res.data) {
               if (res.data[y].id == that.data.rid) {
+                if (res.data[y].name == '全部') {
+                  wx.showModal({
+                    title: '警告',
+                    content: '抱歉,无法删除设备!',
+                    showCancel: false,
+                  })
+                  return false;
+                }
                 $.ajax({
                   url: 'dev/getdev',
                   method: 'POST',
@@ -125,12 +145,9 @@ Page({
                     }
                   }
                 });
-
               }
             }
-
           });
-
         } else if (res.cancel == true && res.confirm == false) {
           return false;
         }
