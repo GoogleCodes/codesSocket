@@ -1,5 +1,5 @@
 <!--pages/equipment/equipment.wxml-->
-<view class="marBtm60">
+<view class="marBtm60" style="padding-bottom: 50px;">
 
   <view class="eq-iview">
     <view style="width: 80%;height: 55px;" bindtap='update'>
@@ -30,7 +30,7 @@
   </view>
 
   <view class="section_gap clear">
-    <view>光亮度</view>
+    <view class="f12">光亮度</view>
     <view class="body-view">
       <slider style="height: 50px;z-index: -1" min="0" max="100" bindchange="sliderchange" />
     </view>

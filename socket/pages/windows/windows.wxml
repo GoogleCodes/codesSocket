@@ -52,7 +52,7 @@
     </view>
   </view>
 
-  <button class="carryOut">完成</button>
+  <button class="carryOut" bindtap='carryout'>完成</button>
 
   <view class="layer" hidden='{{ layerShow }}' bindtap='clearPopers'></view>
   <view class="layer-pop" style="top: {{ winTop }}px" hidden='{{ layerShow }}'>

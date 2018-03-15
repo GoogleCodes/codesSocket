@@ -189,7 +189,6 @@ Page({
   getDevice(did) {
     let that = this;
     let arr = [0x00, 0x02, 0xA0, 0xFF];
-    let rid = 0;
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
     });
@@ -207,8 +206,6 @@ Page({
                   that.setData({
                     rid: list[i].id
                   });
-                  rid = that.data.rid;
-                  console.log(rid, that.data.rid, list[i].name);
 
                   for (let i in k) {
                     last = k.splice(4, 6 + data[9]);
@@ -231,7 +228,6 @@ Page({
                         types: deviceDid[1],
                         isall: 1
                       };
-                      console.log(json);
                       $.ajax({
                         url: 'dev/adddev',
                         method: "POST",

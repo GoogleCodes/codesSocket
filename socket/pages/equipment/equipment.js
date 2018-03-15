@@ -24,6 +24,8 @@ Page({
     weibiao: true,
     types: 0,
     layerShow: true,
+    brightness: 0,
+    colorTemperature: 0
   },
 
   /**
@@ -31,6 +33,7 @@ Page({
    */
   onLoad(options) {
     let that = this;
+    console.log(options);
     that.setData({
       sdid: JSON.parse(options.sdid),
       id: options.id,
@@ -185,7 +188,6 @@ Page({
       case e.target.dataset.current == 0:
         brr = [0xA2, 0x01, 0x01];
         arr.push(0x00, 0x08, 0xA2);
-
         that.saveData(arr, brr);
         break;
       case e.target.dataset.current == 1:
@@ -213,8 +215,6 @@ Page({
 
   saveData(arr, brr) {
     let count = arr.concat(this.data.sdid.concat(brr));
-    console.log($.getArrays(count));
-    return false;
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(count),
     });
@@ -262,8 +262,11 @@ Page({
     let num = e.detail.value, arr = [], brr = [], json = {}, that = this;
     //  获取sdid
     let sdid = that.data.sdid;
+    this.setData({
+      brightness: num
+    });
     //  控制码
-    brr = [0xA5, 0x06, num];
+    brr = [0xA5, 0x06, 0x01, that.data.brightness, that.data.colorTemperature];
     arr.push(0x00, 0x08, 0xA2)
     //  数组拷贝
     let count = arr.concat(sdid.concat(brr));
@@ -287,11 +290,38 @@ Page({
     let that = this, arr = [], brr = [];
     //  获取数值
     let num = e.detail.value;
+    that.setData({
+      colorTemperature: e.detail.value
+    });
     //  获取sdid
     let sdid = that.data.sdid;
-    brr = [0xA5, 0x06, num];
+    brr = [0xA5, 0x06, 0x01, that.data.brightness, that.data.colorTemperature];
     arr.push(0x00, 0x08, 0xA2)
     //  数组拷贝
+    let count = arr.concat(sdid.concat(brr));
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
+      'data': $.getArrays(count),
+    });
+    $.getSocketResponse(function (did, data) {
+      if (data[8] == 1) {
+        wx.showToast({
+          title: '控制成功!',
+        })
+      } else if (data[8] == 0) {
+        wx.showToast({
+          title: '控制失败!',
+        })
+      }
+    });
+  },
+
+  carryout() {
+    let that = this;
+    //  控制码
+    let brr = [0xA5, 0x06, 0x01, that.data.brightness, that.data.colorTemperature];
+    let arr = [0x00, 0x08, 0xA2];
+    //  数组拷贝
+    let sdid = that.data.sdid;
     let count = arr.concat(sdid.concat(brr));
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(count),
@@ -336,14 +366,14 @@ Page({
     }
     let array = arr.slice(1);
     let arrLength = [array.length];
-    let sdid = [1, 1, 0, 2];
+    let sdid = that.data.sdid
     let brr = [0x00, 0x02, 0x14];
     return brr.concat(sdid.concat(arrLength.concat(array)));
   },
 
   goSaveImessage() {
     let that = this;
-    tools.sendData('c2s_write', that.data.did, {
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(that.getAnalysis(that.data.blurInputText)),
     });
     $.getSocketResponse(function (did, data) {

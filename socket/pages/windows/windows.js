@@ -25,6 +25,8 @@ Page({
     list: {},
     currentTirection: -1,
     tirTypes: -1,
+    brightness: 0,
+    deviceIndex: 0  //  选中的设备修改状态
   },
 
   /**
@@ -55,7 +57,6 @@ Page({
         });
       },
     });
-    console.log(that.data.id, wx.getStorageSync('wxuser').id);
     this.getDev(that.data.rid, wx.getStorageSync('wxuser').id);
   },
 
@@ -70,7 +71,6 @@ Page({
       },
     }).then(function (res) {
       for (let i in res.data) {
-        console.log(res.data[i].id == that.data.id);
         if (res.data[i].id == that.data.id) {
           that.setData({
             list: res.data[i]
@@ -95,44 +95,61 @@ Page({
       return false;
     } else {
       that.setData({
-        currentTabs: current
+        currentTabs: current,
+        deviceIndex: e.target.dataset.current
       })
+    }
+  },
+
+  sliderchange(e) {
+
+    let num = e.detail.value, arr = [0x00, 0x08, 0xA2], json = {}, that = this;
+    let sdid = this.data.sdid;
+    this.setData({
+      brightness: e.detail.value
+    });
+    let brr = [];
+
+    function gofunc(brr) {
+      let count = arr.concat(sdid.concat(brr));
+      tools.sendData('c2s_write', wx.getStorageSync('did'), {
+        'data': $.getArrays(count),
+      });
+      let did = wx.getStorageSync('did');
+      $.getSocketResponse((did, data) => {
+        if (data[8] == 1) {
+          wx.showToast({
+            title: '控制成功!',
+          })
+        } else if (data[8] == 0) {
+          wx.showToast({
+            title: '控制失败!',
+          })
+        }
+      });
     }
 
     switch (true) {
-      case e.target.dataset.current == 0:
-        brr = [0xA2, 0x01, 0x01];
-        arr.push(0x00, 0x08, 0xA2);
-        that.saveData(arr, brr);
-        console.log(1);
+      case that.data.currentTabs == 0:
+        brr = [0xA3, 0x01, num];
+        gofunc(brr);
         break;
-      case e.target.dataset.current == 1:
-        brr = [0xA2, 0x01, 0x01];
-        arr.push(0x00, 0x08, 0xA2);
-        // that.saveData(arr, brr);
-        console.log(2);
+      case that.data.currentTabs == 1:
+        brr = [0xA3, 0x01, num];
+        gofunc(brr);
         break;
-      case e.target.dataset.current == 2:
-        brr = [0xA5, 0x06, 0x01];
-        arr.push(0x00, 0x08, 0xA2);
-        that.saveData(arr, brr);
-        console.log(3);
+      case that.data.currentTabs == 2:
+        brr = [0xA5, 0x06, num];
+        gofunc(brr);
         break;
       default:
         break;
     }
-    $.getSocketResponse(function (did, data) {
-      if (data.splice(9, 1).toString() == 1) {
-        $.alert('控制成功!');
-      } else if (data.splice(9, 1).toString() == 1) {
-        $.alert('控制失败!');
-      }
-    });
+    
   },
 
   saveData(arr, brr) {
     let count = arr.concat(this.data.sdid.concat(brr));
-    console.log(count);
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(count),
     });
@@ -191,13 +208,10 @@ Page({
   goGizwits() {
     let that = this;
     that.setData({ switchButton: true });
-    //  获取did
-    const DID = wx.getStorageSync("didJSon");
-    var json = {
-      'onoffAll': that.data.switchButton,
-    };
     //  发送数据
-    tools.sendData('c2s_write', DID.did, json);
+    tools.sendData('c2s_write', wx.getStorageSync("didJSon"), {
+      'onoffAll': that.data.switchButton,
+    });
   },
 
   getAnalysis(name) {
@@ -267,24 +281,23 @@ Page({
     });
   },
 
-  sliderchange(e) {
-    let num = e.detail.value, arr = [], json = {}, that = this;
+  carryout() {
+    let that = this;
     let sdid = this.data.sdid;
-    let brr = [0xA2, 0x01, num];
+    let brr = [0xA2, 0x01, that.data.brightness];
     //  控制码
-    arr.push(0x00, 0x08, 0xA2)
+    let arr = [0x00, 0x08, 0xA2];
     let count = arr.concat(sdid.concat(brr));
-    console.log(count);
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(count),
     });
     let did = wx.getStorageSync('did');
-    $.getSocketResponse(function(did, data) {
+    $.getSocketResponse(function (did, data) {
       if (data[8] == 1) {
         wx.showToast({
           title: '控制成功!',
         })
-      } else if (data[8] == 0)  {
+      } else if (data[8] == 0) {
         wx.showToast({
           title: '控制失败!',
         })
@@ -323,7 +336,6 @@ Page({
           }).then(function (res) {
             for (let y in res.data) {
               if (res.data[y].id == that.data.rid) {
-                console.log(res.data[y].id);
 
                 $.ajax({
                   url: 'dev/getdev',
@@ -335,7 +347,6 @@ Page({
                 }).then(function (res) {
                   let data = res.data;
                   for (let i in data) {
-                    console.log(that.data.id, data[i].id);
                     if (that.data.id == data[i].id) {
                       $.ajax({
                         url: 'dev/deldev',

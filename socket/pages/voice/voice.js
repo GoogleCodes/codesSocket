@@ -1,6 +1,7 @@
 // pages/voice/voice.js
 
 var tools = require('../../utils/util.js');
+
 let c = require('../../utils/common/common.js');
 
 import { $ } from '../../utils/main.js'
@@ -17,7 +18,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '打开测试情景',
+    voiceIMessage: '房间节能灯亮一点',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -74,7 +75,7 @@ Page({
   onShow() {
     $.getName('title');
   },
-  
+
   startRecode(e) {
     var that = this;
     wx.startRecord({
@@ -110,7 +111,7 @@ Page({
     var s = this, sdid = '';
     let semlist = s.data.semlist;
     let that = this;
-    s.setData({ 
+    s.setData({
       voiceNow: false,
       voiceDone: true,
     });
@@ -287,7 +288,6 @@ Page({
 
               for (let k in semlist) {
                 if ((semlist[k].word == sqlStr) == true) {
-                  console.log(semlist[k].word, sqlStr, semlist[k].word == sqlStr);
                   $.getRegion(sqlStr, (id, name) => {
                     $.ajax({
                       url: 'dev/getdev',
@@ -303,7 +303,47 @@ Page({
                           sdid = JSON.parse(getdev[i].did);
                           let open = '打开' + name + getdev[i].dname;
                           let close = '关闭' + name + getdev[i].dname;
-                          if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
+                          if (sqlStr == name + getdev[i].dname + "光一点" || sqlStr == name + getdev[i].dname + "亮一点") {
+                            let array1 = [0xA5, 0x06, 0x64];
+                            let array2 = [0x00, 0x08, 0xA2];
+                            count = array2.concat(sdid.concat(array1));
+                            tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                              'data': $.getArrays(array2.concat(sdid.concat(array1))),
+                            });
+                            that.setData({
+                              voiceNow: false,
+                              voiceDone: true
+                            })
+                            $.getSocketResponse((did, data) => {
+                              that.setData({
+                                voiceNow: true,
+                                voiceDone: true,
+                                openMessage: "已调成亮度为较亮",
+                                voiceOpen: false
+                              })
+                            });
+                            return false;
+                          } else if (sqlStr == name + getdev[i].dname + "暗一点") {
+                            let array1 = [0xA5, 0x06, 0x1E];
+                            let array2 = [0x00, 0x08, 0xA2];
+                            count = array2.concat(sdid.concat(array1));
+                            tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                              'data': $.getArrays(array2.concat(sdid.concat(array1))),
+                            });
+                            that.setData({
+                              voiceNow: false,
+                              voiceDone: true
+                            })
+                            $.getSocketResponse((did, data) => {
+                              that.setData({
+                                voiceNow: true,
+                                voiceDone: true,
+                                openMessage: "已调成亮度为较亮",
+                                voiceOpen: false
+                              })
+                            });
+                            return false;
+                          } else if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
                             array1 = [0xA1, 0x01, 0x01];
                             array2 = [0x00, 0x08, 0xA2];
                             count = array2.concat(sdid.concat(array1));
@@ -322,7 +362,6 @@ Page({
                             }).then((res) => {
                               $.alert('打开成功!');
                             })
-
                             $.getSocketResponse((did, data) => {
                               s.setData({
                                 openMessage: sqlStr,
@@ -334,7 +373,6 @@ Page({
                           } else if ($.IndexDemo(close, sqlStr) == 0 || $.IndexDemo(close, sqlStr) > 0) {
                             array1 = [0xA1, 0x01, 0x00];
                             array2 = [0x00, 0x08, 0xA2];
-                            // socketGo(array1, array2);
                             count = array2.concat(sdid.concat(array1));
                             tools.sendData('c2s_write', wx.getStorageSync('did'), {
                               'data': $.getArrays(array2.concat(sdid.concat(array1))),
@@ -469,6 +507,7 @@ Page({
     let array1 = [0xA1, 0x01, 0x01];
     let array2 = [0x00, 0x08, 0xA2];
     let count = '';
+    let numbers = 1;
 
     function socketGo(array1, array2) {
       count = array2.concat(sdid.concat(array1));
@@ -587,7 +626,7 @@ Page({
 
     for (let i in that.data.semlist) {
       if (that.data.semlist[i].word == con) {
-        $.getRegion(con, function (id, name) {
+        $.getRegion(con, (id, name) => {
           $.ajax({
             url: 'dev/getdev',
             method: 'POST',
@@ -595,8 +634,9 @@ Page({
               rid: id,
               uid: wx.getStorageSync('wxuser').id,
             },
-          }).then(function (res) {
+          }).then((res) => {
             let region = res.data;
+            console.log(region);
             wx.setStorageSync('region', region);
             let device = wx.getStorageSync('region');
             for (let i in region) {
@@ -606,9 +646,12 @@ Page({
               sdid = JSON.parse(region[i].did);
               for (let y in device) {
                 if (device[y].id == region[i].id) {
-                  if ($.IndexDemo(open, con) == 0 || $.IndexDemo(open, con) > 0) {
-                    array1 = [0xA1, 0x01, 0x01];
-                    array2 = [0x00, 0x08, 0xA2];
+                  //  节能灯亮度为百分之80%
+                  $.IndexDemo(name + region[i].dname + "亮度为", con)
+                  if (con == name + region[i].dname + "亮度为" || con == name + region[i].dname +"光一点") {
+                    let c = 0x0A + numbers++;
+                    let array1 = [0xA5, 0x06, c];
+                    let array2 = [0x00, 0x08, 0xA2];
                     socketGo(array1, array2);
                     that.setData({
                       voiceNow: false,
@@ -617,9 +660,38 @@ Page({
                     $.getSocketResponse((did, data) => {
                       that.setData({
                         voiceNow: true,
-                        voiceDone: true
+                        voiceDone: true,
+                        openMessage: "已调成亮度为较亮",
+                        voiceOpen: false
                       })
-
+                    });
+                    return false;
+                  } else if (con == name + region[i].dname + "暗一点") {
+                    let array1 = [0xA5, 0x06, 0x10];
+                    let array2 = [0x00, 0x08, 0xA2];
+                    socketGo(array1, array2);
+                    that.setData({
+                      voiceNow: false,
+                      voiceDone: true
+                    })
+                    $.getSocketResponse((did, data) => {
+                      that.setData({
+                        voiceNow: true,
+                        voiceDone: true,
+                        openMessage: "已调成亮度为较暗",
+                        voiceOpen: false
+                      })
+                    });
+                    return false;
+                  } else if ($.IndexDemo(open, con) == 0 || $.IndexDemo(open, con) > 0) {
+                    array1 = [0xA1, 0x01, 0x01];
+                    array2 = [0x00, 0x08, 0xA2];
+                    socketGo(array1, array2);
+                    that.setData({
+                      voiceNow: false,
+                      voiceDone: true
+                    })
+                    $.getSocketResponse((did, data) => {
                       $.ajax({
                         url: 'dev/updatevideo',
                         method: 'POST',
@@ -633,9 +705,11 @@ Page({
                         // $.alert('打开成功!');
                       })
                       that.setData({
+                        voiceNow: true,
+                        voiceDone: true,
                         openMessage: that.data.voiceIMessage,
                         voiceOpen: false,
-                      });
+                      })
                     });
                     return false;
                   } else if ($.IndexDemo(close, con) == 0 || $.IndexDemo(close, con) > 0) {
@@ -647,10 +721,6 @@ Page({
                       voiceDone: true
                     })
                     $.getSocketResponse((did, data) => {
-                      that.setData({
-                        voiceNow: true,
-                      })
-
                       $.ajax({
                         url: 'dev/updatevideo',
                         method: 'POST',
@@ -665,9 +735,9 @@ Page({
                       })
                       that.setData({
                         openMessage: that.data.voiceIMessage,
+                        voiceNow: true,
                         voiceOpen: false,
-                      });
-
+                      })
                     });
                     return false;
                   } else {
