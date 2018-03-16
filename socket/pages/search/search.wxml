@@ -59,14 +59,6 @@
 
       <swiper-item>
         <view class="ul-iview">
-
-          <!-- <view class="li-iview fl" wx:for="{{ multiArray[1] }}" wx:for-index="i">
-          <view class="li-iview-con {{ isTab ==  i ? 'active': '' }}">
-            <view class="iconfont icon-weibiaoti-3" bindtap='selectEquipment' 
-            data-equipment='{{ i }}' data-item="{{ item }}"></view>
-          </view>
-          <view>{{ item }}</view>
-        </view>  -->
           <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 0 }}">
             <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
               <view class="iconfont icon-weibiaoti-3" wx:if="{{ item.sdid[1] == 0 }}" bindtap='selectEquipment' data-key='{{ i }}' data-sname='{{ item.sname }}' data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>

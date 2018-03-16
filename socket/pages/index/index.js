@@ -413,13 +413,47 @@ Page({
         } catch (e) {
         }
       });
-      // getDevice();
+      getDevice();
     });
     wx.hideLoading();
     function getDevice() {
       let arr = [0x00, 0x02, 0xA0, 0xFF];
       tools.sendData('c2s_write', wx.getStorageSync('did'), {
         'data': $.getArrays(arr),
+      });
+      $.getSocketResponse((did, data) => {
+        if (wx.getStorageSync('did') == did) {
+
+          if (data[2] == 161) {
+            let k = data, rid = 0;
+            let last = null, brr = [], json = {};
+            let map = [];
+            for (let i in data) {
+              last = k.splice(4, 6 + data[9]);
+              if (last[0] > 0) {
+                let name = last;
+                let doname = name.splice(6, last[5]);
+                let str = "";
+                for (let y in doname) {
+                  str += "%" + doname[y].toString(16);
+                }
+                let sdid = last.splice(0, 4);
+                json = {
+                  uid: wx.getStorageSync('wxuser').id,
+                  id: 362,
+                  dname: $.utf8to16(unescape(str))
+                };
+                // $.ajax({
+                //   url: 'dev/editdev',
+                //   method: 'POST',
+                //   data: json
+                // }).then(function (res) {
+                // });
+              }
+            }
+          }
+
+        }
       });
     }
   },

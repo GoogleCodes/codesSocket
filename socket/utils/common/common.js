@@ -8,7 +8,7 @@ let j = {
 module.exports = {
   j: j,
   purl: "https://api.gizwits.com/app/",
-  serviceUri: 'http://www.getcodeing.cn/public/index/',
+  serviceUri: 'https://www.chlorop.com.cn/weixin/public/index/',//  https://www.chlorop.com.cn/weixin/public/index/ http://www.getcodeing.cn/public/index/
   onloadurl: 'https://www.chlorop.com.cn/yuyin/public/index/index/zhen',
   gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
   wxopen: 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token',

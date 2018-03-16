@@ -2,13 +2,13 @@
   <form name='pushMsgFm' report-submit bindsubmit='ForgetForm'>
     <view class='bodyView'>
       <!-- <view class="iconfont icon-user fl"></view> -->
-      <input type='number' bindblur='mobileInputEvent' class='appidText fl' value='{{ phone }}' 
+      <input type='number' bindinput='mobileInputEvent' class='appidText fl' value='{{ phone }}' 
               style="width: 188px" name='phone' placeholder='请输入手机号码' focus='true' />
       <button class="fr codeBtn" bindtap='getCodeNumber' disabled='{{ disaCode }}'>{{ getCodeNumber }}</button>
     </view>
     <view class='bodyView'>
       <!-- <view class="iconfont icon-code fl"></view> -->
-      <input class='appidText fl' value='{{ code }}' name='code' placeholder='请输入验证码' />
+      <input class='appidText fl' value='{{ code }}' data-code='{{ code }}' name='code' placeholder='请输入验证码' />
     </view>
     <view class='bodyView'>
       <!-- <view class="iconfont icon-mima fl"></view> -->

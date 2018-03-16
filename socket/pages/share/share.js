@@ -54,7 +54,7 @@ Page({
   getShareList() {
     let that = this;
     wx.request({
-      url: 'https://api.gizwits.com/app/sharing?sharing_type=1&status=1&limit=20&skip=0',
+      url: 'https://api.gizwits.com/app/sharing?sharing_type=0&status=1&limit=20&skip=0',
       header: {
         'content-type': 'application/json',
         'X-Gizwits-Application-Id': wx.getStorageSync('options').gizwitsAppId,
@@ -122,7 +122,8 @@ Page({
               } else if (res.statusCode == 200) {
                 wx.showToast({
                   title: '取消成功!',
-                })
+                });
+                that.onLoad();
               }
             }
           })
@@ -177,7 +178,7 @@ Page({
         }
         let code = res.data.qr_content;
         code = code.substring(16, 48);
-        that.createQrCode("code", "mycanvas", size.w, size.h);
+        that.createQrCode(code, "mycanvas", size.w, size.h);
         that.setData({
           layer: false,
         });

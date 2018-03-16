@@ -183,10 +183,19 @@ Page({
       "code": e.detail.value.code
     };
     tools.sendRrquest('users', 'POST', options, head).then((result) => {
-      switch(true) {
-        case result.data.error_code == 910:
-          tools.showModel('提示', '验证码错误');
-          break;
+      
+      if (result.data.error_code == 9008) {
+        wx.showToast({
+          title: '服务器错误',
+        })
+        console.log(result);
+        return false;
+      } else if (result.data.error_code == 9010) {
+        wx.showToast({
+          title: '验证码无效',
+        })
+        console.log(result);
+        return false;
       }
 
       $.ajax({

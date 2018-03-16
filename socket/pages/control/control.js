@@ -156,6 +156,7 @@ Page({
   goSelectDevice(e) {
     let did = e.currentTarget.dataset.did;
     wx.setStorageSync('did', did);
+
     this._login(did);
     $.ajax({
       url: 'dev/addregion',
@@ -169,9 +170,7 @@ Page({
     }).then((res) => {
     })
     wx.setStorageSync('title', e.currentTarget.dataset.name);
-
     this.getDevice(did);
-
   },
 
   getRegion(callback) {
@@ -192,7 +191,6 @@ Page({
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
     });
-
     $.getSocketResponse((did, data) => {
       if (wx.getStorageSync('did') == did) {
         if (data[2] == 161) {

@@ -60,7 +60,7 @@ Page({
       };
       //  获取图片验证码
       tools.sendRrquest('verify/codes', 'GET', '', head).then((result) => {
-        that.setData({ 
+        that.setData({
           codeImages: result.data.captcha_url,
           captcha_id: result.data.captcha_id
         });
@@ -98,10 +98,10 @@ Page({
   /**
    * 获取手机验证码
    */
-  getCodeNumber (e) {
+  getCodeNumber(e) {
     let that = this, mobile = that.data.phone, num = 60;
     let regMobile = /^1[3|4|5|8][0-9]\d{4,8}$/;
-    if(mobile == '') {
+    if (mobile == '') {
       wx.showModal({
         title: '提示!',
         content: '请输入手机号码！',
@@ -130,7 +130,7 @@ Page({
           disaCode: false,
         });
       }
-    },1000);
+    }, 1000);
     let head = {
       'content-type': 'application/json',
       'Accept': 'application/json',
@@ -140,6 +140,24 @@ Page({
     tools.sendRrquest('sms_code', 'POST', {
       "phone": that.data.phone
     }, head).then((result) => {
+      console.log(result);
+      if (result.data.error_code == 9037) {
+        wx.showToast({
+          title: '验证码发送失败!',
+        })
+        clearInterval(intervalId);
+        that.setData({
+          getCodeNumber: '重新获取',
+          disaCode: false,
+        });
+        return false;
+      } else if (result.statusCode == 200) {
+        wx.showToast({
+          title: '短信已发送!',
+          duration: 2000,
+        })
+        return false;
+      }
     });
   },
 
@@ -153,19 +171,19 @@ Page({
     //  验证
     switch (true) {
       case e.detail.value.phone == '':
-        tools.showModel('提示','请输入手机号码',() => {});
+        tools.showModel('提示', '请输入手机号码', () => { });
         return false;
       case e.detail.value.code == '':
-        tools.showModel('提示', '验证码为空',() => { });
+        tools.showModel('提示', '验证码为空', () => { });
         return false;
       case e.detail.value.pword == '':
-        tools.showModel('提示', '密码为空',() => { });
+        tools.showModel('提示', '密码为空', () => { });
         return false;
       case e.detail.value.unpword == '':
-        tools.showModel('提示', '密码为空',() => { });
+        tools.showModel('提示', '密码为空', () => { });
         return false;
       case e.detail.value.unpword !== e.detail.value.pword:
-        tools.showModel('提示', '两个密码不相等',() => { });
+        tools.showModel('提示', '两个密码不相等', () => { });
         return false;
       default:
         break;
@@ -175,12 +193,40 @@ Page({
       new_pwd: e.detail.value.pword,
       code: e.detail.value.code
     };
+
     let head = {
-      'content-type' : 'application/json',
-      'Accept' : 'application/json',
+      'content-type': 'application/json',
+      'Accept': 'application/json',
+      'X-Gizwits-Application-Token': that.data.token,
       'X-Gizwits-Application-Id': that.data.gizwitsAppId,
     };
-    tools.sendRrquest('reset_password', 'POST', json, head).then((result) => {
+    tools.sendRrquest('sms_code', 'POST', {
+      "phone": that.data.phone,
+      "code": e.detail.value.code
+    }, head).then((result) => {
+      if (result.data.error_code == 9008) {
+        wx.showToast({
+          title: '服务器错误',
+        })
+        console.log(result);
+        return false;
+      } else if (result.data.error_code == 9010) {
+        wx.showToast({
+          title: '验证码无效',
+        })
+        console.log(result);
+        return false;
+      }
+    });
+    tools.sendRrquest('reset_password', 'POST', {
+      phone: e.detail.value.phone,
+      new_pwd: e.detail.value.pword,
+      code: e.detail.value.code
+    }, {
+      'content-type': 'application/json',
+      'Accept': 'application/json',
+      'X-Gizwits-Application-Id': that.data.gizwitsAppId,
+    }).then((result) => {
       tools.Toast('密码修改成功！');
       wx.removeStorageSync("userInformation");
       wx.removeStorageSync("options");

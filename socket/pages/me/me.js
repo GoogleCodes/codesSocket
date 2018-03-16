@@ -39,11 +39,10 @@ Page({
     let that = this;
     wx.scanCode({
       success(res) {
-        console.log(res, res.result);
+        console.log(res);
         that.setData({
           code: res.result
         });
-        //  创建设备分享
         wx.request({
           url: 'https://api.gizwits.com/app/sharing/code/' + that.data.code,
           method: "POST",
@@ -85,7 +84,6 @@ Page({
                 })
                 return false;
             }
-
             let options = wx.getStorageSync('options');
             let query = "?show_disabled=0&limit=" + 20 + "&skip=" + 0;
             let json = {}, arr = [], pson = {};

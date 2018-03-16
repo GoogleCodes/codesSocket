@@ -304,7 +304,7 @@ Page({
                           let open = '打开' + name + getdev[i].dname;
                           let close = '关闭' + name + getdev[i].dname;
                           if (sqlStr == name + getdev[i].dname + "光一点" || sqlStr == name + getdev[i].dname + "亮一点") {
-                            let array1 = [0xA5, 0x06, 0x64];
+                            let array1 = [0xA6, 0x01, 0x01, 0x64];
                             let array2 = [0x00, 0x08, 0xA2];
                             count = array2.concat(sdid.concat(array1));
                             tools.sendData('c2s_write', wx.getStorageSync('did'), {
@@ -318,13 +318,13 @@ Page({
                               that.setData({
                                 voiceNow: true,
                                 voiceDone: true,
-                                openMessage: "已调成亮度为较亮",
+                                openMessage: "已调成亮度为较光亮度",
                                 voiceOpen: false
                               })
                             });
                             return false;
                           } else if (sqlStr == name + getdev[i].dname + "暗一点") {
-                            let array1 = [0xA5, 0x06, 0x1E];
+                            let array1 = [0xA6, 0x01, 0x00, 0x10];
                             let array2 = [0x00, 0x08, 0xA2];
                             count = array2.concat(sdid.concat(array1));
                             tools.sendData('c2s_write', wx.getStorageSync('did'), {
@@ -338,12 +338,13 @@ Page({
                               that.setData({
                                 voiceNow: true,
                                 voiceDone: true,
-                                openMessage: "已调成亮度为较亮",
+                                openMessage: "已调成亮度为较暗",
                                 voiceOpen: false
                               })
                             });
                             return false;
-                          } else if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
+                          }
+                          if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
                             array1 = [0xA1, 0x01, 0x01];
                             array2 = [0x00, 0x08, 0xA2];
                             count = array2.concat(sdid.concat(array1));
@@ -396,14 +397,6 @@ Page({
                                 voiceDone: true,
                               });
                             })
-                            return false;
-                          } else {
-                            that.setData({
-                              voiceDone: false,
-                              voiceOpen: true,
-                              input: sqlStr,
-                              openMessage: '识别失败!'
-                            });
                             return false;
                           }
                         }
@@ -648,9 +641,8 @@ Page({
                 if (device[y].id == region[i].id) {
                   //  节能灯亮度为百分之80%
                   $.IndexDemo(name + region[i].dname + "亮度为", con)
-                  if (con == name + region[i].dname + "亮度为" || con == name + region[i].dname +"光一点") {
-                    let c = 0x0A + numbers++;
-                    let array1 = [0xA5, 0x06, c];
+                  if (con == name + region[i].dname + "光一点" || con == name + region[i].dname + "亮一点") {
+                    let array1 = [0xA6, 0x01, 0x00, 0x64, 0x00];
                     let array2 = [0x00, 0x08, 0xA2];
                     socketGo(array1, array2);
                     that.setData({
@@ -661,13 +653,13 @@ Page({
                       that.setData({
                         voiceNow: true,
                         voiceDone: true,
-                        openMessage: "已调成亮度为较亮",
+                        openMessage: "已调成亮度为较光亮度",
                         voiceOpen: false
                       })
                     });
                     return false;
                   } else if (con == name + region[i].dname + "暗一点") {
-                    let array1 = [0xA5, 0x06, 0x10];
+                    let array1 = [0xA6, 0x01, 0x00, 0x10, 0x00];
                     let array2 = [0x00, 0x08, 0xA2];
                     socketGo(array1, array2);
                     that.setData({

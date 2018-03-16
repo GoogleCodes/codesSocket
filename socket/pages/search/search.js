@@ -57,7 +57,7 @@ Page({
     };
     tools.sendData('c2s_write', that.data.did, json);
 
-    $.getSocketResponse(function(did, data) {
+    $.getSocketResponse(function (did, data) {
       let k = data;
       let last = null, brr = [], json = {};
       for (let i in k) {
@@ -66,9 +66,6 @@ Page({
           let name = last;
           let a = '', b = '';
           let doname = name.splice(6, last[5]);
-          if (doname.length == 0) {
-            console.log(doname);
-          }
           let str = "";
           for (let y in doname) {
             str += "%" + doname[y].toString(16);
@@ -87,14 +84,18 @@ Page({
         }
       }
     })
+    this.abc();
+  },
 
+  abc() {
+    let that = this;
     $.ajax({
       url: 'dev/getregion',
       method: 'POST',
       data: {
         uid: wx.getStorageSync('wxuser').id,
       },
-    }).then(function(res) {
+    }).then(function (res) {
       let arr = [];
       for (let i in res.data) {
         if (res.data[i].pid == wx.getStorageSync('did')) {
@@ -119,7 +120,7 @@ Page({
                 spliceArray: res.data
               });
             }
-            })
+          })
         } else {
           that.setData({
             list: [],
@@ -127,7 +128,6 @@ Page({
         }
       }
     })
-
   },
 
   addArea(e) {
@@ -162,12 +162,12 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
         rid: that.data.areaid,
       }
-    }).then(function(res) {
+    }).then(function (res) {
       if (res.code == 1) {
         that.setData({
           spliceArray: res.data
         });
-        $.getSocketResponse(function(did, k) {
+        $.getSocketResponse(function (did, k) {
           let last = null, brr = [], json = {};
           for (let i in k) {
             last = k.splice(4, 21);
@@ -277,7 +277,7 @@ Page({
       content: '是否要删除当前选择的区域！',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
-          
+
           $.ajax({
             url: 'dev/delregion',
             method: 'POST',
@@ -296,6 +296,7 @@ Page({
         } else if (res.cancel == true && res.confirm == false) {
           return false;
         }
+
       },
     })
   },
@@ -314,7 +315,7 @@ Page({
             url: 'dev/deldev',
             method: "POST",
             data: json,
-          }).then(function(res) {
+          }).then(function (res) {
             wx.showToast({
               title: res.msg,
               duration: 2000
@@ -328,7 +329,7 @@ Page({
         }
       }
     })
-    
+
   },
 
   selectEquipment(e) {
@@ -362,11 +363,10 @@ Page({
         method: "POST",
         data: json,
       }).then((res) => {
-        $.alert(res.data.msg);
+        that.abc();
         that.setData({
           currentTab: 0
         });
-        $.goPages('../index/index');
       })
 
     } else if (this.data.array[index].active == 1) {
@@ -398,7 +398,7 @@ Page({
         name: that.data.addAreaText,
         pid: wx.getStorageSync('did'),
       },
-    }).then(function(res) {
+    }).then(function (res) {
       that.setData({
         areaid: res.data.data
       })

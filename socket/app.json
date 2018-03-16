@@ -3,6 +3,7 @@
     "pages/login/login",
     "pages/index/index",
     "pages/share/share",
+    "pages/forget/forget",
     "pages/addarea/addarea",
     "pages/equipment/equipment",
     "pages/me/me",
@@ -17,7 +18,6 @@
     "pages/windows/windows",
     "pages/aboutme/aboutme",
     "pages/reg/reg",
-    "pages/forget/forget",
     "pages/voicelist/voicelist",
     "pages/logs/logs"
   ],
