@@ -18,7 +18,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '全部大灯亮一点',
+    voiceIMessage: '打开测试情景',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -40,7 +40,6 @@ Page({
     this.setData({
       did: wx.getStorageSync('did')
     });
-
     if (wx.getStorageSync('Language') == '') {
       wx.setStorageSync('Language', 'zh');
     }
@@ -150,6 +149,7 @@ Page({
             let array2 = [0x00, 0x08, 0xA2];
             s.setData({ voiceNow: true });
             var error_text = '语音识别失败';
+            console.log(res.data);
             var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
             console.log("返回的东西是：", options);
             s.setData({
@@ -159,6 +159,7 @@ Page({
 
             let tabArray = wx.getStorageSync('tabArray');
             let spliceArray = wx.getStorageSync('spliceArray');
+            let sceneArrayMap = wx.getStorageSync('sceneArrayMap');
 
             switch (true) {
               case res.data.toString() == error_text:
@@ -204,6 +205,14 @@ Page({
                         'data': $.getArrays(count),
                       });
                       $.getSocketResponse(function (did, data) {
+
+                        // for (let n in sceneArrayMap) {
+                        //   if (sceneArrayMap[n].scene_name == that.data.scenelist[l].scene_name) {
+                        //     sceneArrayMap[n].status = 1;
+                        //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
+                        //     console.log(wx.getStorageSync('sceneArrayMap'));
+                        //   }
+                        // }
 
                         $.ajax({
                           url: '/Scene/updateScene',
@@ -253,7 +262,14 @@ Page({
                     setTimeout(function (res) {
                       senceGo(count);
                       $.getSocketResponse(function (did, data) {
-
+                        // for (let n in sceneArrayMap) {
+                        //   if (sceneArrayMap[n].scene_name == that.data.scenelist[l].scene_name) {
+                        //     sceneArrayMap[n].status = 0;
+                        //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
+                        //     console.log(wx.getStorageSync('sceneArrayMap'));
+                        //   }
+                        // }
+                        
                         $.ajax({
                           url: '/Scene/updateScene',
                           method: 'POST',
@@ -295,6 +311,7 @@ Page({
                         if (getdev[i].rid == id) {
                           sdid = JSON.parse(getdev[i].did);
                           let open = '打开' + name + getdev[i].dname;
+                          let openA = '开启' + name + getdev[i].dname;
                           let close = '关闭' + name + getdev[i].dname;
                           if (sqlStr == name + getdev[i].dname + "光一点" || sqlStr == name + getdev[i].dname + "亮一点") {
                             let array1 = [0xA6, 0x01, 0x01, 0x64];
@@ -337,7 +354,34 @@ Page({
                             });
                             return false;
                           }
-                          if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
+                          if ($.IndexDemo(openA, sqlStr) == 0 || $.IndexDemo(openA, sqlStr) > 0) {
+                            array1 = [0xA1, 0x01, 0x01];
+                            array2 = [0x00, 0x08, 0xA2];
+                            count = array2.concat(sdid.concat(array1));
+                            tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                              'data': $.getArrays(array2.concat(sdid.concat(array1))),
+                            });
+                            $.ajax({
+                              url: 'dev/updatevideo',
+                              method: 'POST',
+                              data: {
+                                dname: getdev[i].dname,
+                                id: getdev[i].id,
+                                rid: getdev[i].rid,
+                                status: "true"
+                              },
+                            }).then((res) => {
+                              $.alert('打开成功!');
+                            })
+                            $.getSocketResponse((did, data) => {
+                              s.setData({
+                                openMessage: sqlStr,
+                                voiceOpen: false,
+                                voiceDone: true,
+                              });
+                            })
+                            return false;
+                          } else if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
                             array1 = [0xA1, 0x01, 0x01];
                             array2 = [0x00, 0x08, 0xA2];
                             count = array2.concat(sdid.concat(array1));
@@ -367,6 +411,11 @@ Page({
                           } else if ($.IndexDemo(close, sqlStr) == 0 || $.IndexDemo(close, sqlStr) > 0) {
                             array1 = [0xA1, 0x01, 0x00];
                             array2 = [0x00, 0x08, 0xA2];
+                            s.setData({
+                              openMessage: sqlStr,
+                              voiceOpen: false,
+                              voiceDone: true,
+                            });
                             count = array2.concat(sdid.concat(array1));
                             tools.sendData('c2s_write', wx.getStorageSync('did'), {
                               'data': $.getArrays(array2.concat(sdid.concat(array1))),
@@ -401,7 +450,6 @@ Page({
               }
             }
 
-
             // if ($.IndexDemo(close, sqlStr) == -1 || $.IndexDemo(open, sqlStr)) {
             //   that.setData({
             //     voiceDone: false,
@@ -424,7 +472,7 @@ Page({
                   content: '还没有这条语义,请到后台增加!',
                   showCancel: false,
                 })
-                // return false;
+                return false;
               }
             }
           },
@@ -519,6 +567,7 @@ Page({
     let spliceArray = wx.getStorageSync('spliceArray');
 
     let semlist = that.data.semlist;
+    let sceneArrayMap = wx.getStorageSync('sceneArrayMap');
 
     for (let l in that.data.scenelist) {
       if ($.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) == 0 ||
@@ -542,6 +591,13 @@ Page({
               'data': $.getArrays(count),
             });
             $.getSocketResponse((did, data) => {
+              // for (let n in sceneArrayMap) {
+              //   if (sceneArrayMap[n].scene_name == that.data.scenelist[l].scene_name) {
+              //     sceneArrayMap[n].status = 1
+              //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
+              //     console.log(wx.getStorageSync('sceneArrayMap'));
+              //   }
+              // }
               $.ajax({
                 url: '/Scene/updateScene',
                 method: 'POST',
@@ -593,6 +649,13 @@ Page({
               'data': $.getArrays(count),
             });
             $.getSocketResponse(function (did, data) {
+              // for (let n in sceneArrayMap) {
+              //   if (sceneArrayMap[n].scene_name == that.data.scenelist[l].scene_name) {
+              //     sceneArrayMap[n].status = 0
+              //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
+              //     console.log(wx.getStorageSync('sceneArrayMap'));
+              //   }
+              // }
               $.ajax({
                 url: '/Scene/updateScene',
                 method: 'POST',
@@ -615,13 +678,6 @@ Page({
           }, 1000);
           return false;
         } catch (e) { }
-      } else {
-        that.setData({
-          voiceDone: false,
-          voiceOpen: true,
-          input: that.data.voiceIMessage,
-          openMessage: '识别失败!'
-        });
       }
     }
 
@@ -641,6 +697,7 @@ Page({
             let device = wx.getStorageSync('region');
             for (let i in region) {
               let open = "打开" + name + region[i].dname;
+              let openA = "开启" + name + region[i].dname;
               let close = "关闭" + name + region[i].dname;
               let allOpen = '打开' + name, allClose = '关闭' + name;
               sdid = JSON.parse(region[i].did);
@@ -683,6 +740,35 @@ Page({
                     });
                     return false;
                   } else if ($.IndexDemo(open, con) == 0 || $.IndexDemo(open, con) > 0) {
+                    array1 = [0xA1, 0x01, 0x01];
+                    array2 = [0x00, 0x08, 0xA2];
+                    socketGo(array1, array2);
+                    that.setData({
+                      voiceNow: false,
+                      voiceDone: true
+                    })
+                    $.getSocketResponse((did, data) => {
+                      $.ajax({
+                        url: 'dev/updatevideo',
+                        method: 'POST',
+                        data: {
+                          dname: device[y].dname,
+                          rid: device[y].rid,
+                          id: device[y].id,
+                          status: "true"
+                        },
+                      }).then(function (res) {
+                        // $.alert('打开成功!');
+                      })
+                      that.setData({
+                        voiceNow: true,
+                        voiceDone: true,
+                        openMessage: that.data.voiceIMessage,
+                        voiceOpen: false,
+                      })
+                    });
+                    return false;
+                  } else if ($.IndexDemo(openA, con) == 0 || $.IndexDemo(openA, con) > 0) {
                     array1 = [0xA1, 0x01, 0x01];
                     array2 = [0x00, 0x08, 0xA2];
                     socketGo(array1, array2);
@@ -762,7 +848,7 @@ Page({
           content: '还没有这条语义,请到后台增加!',
           showCancel: false,
         })
-        // return false;
+        return false;
       }
     }
   },

@@ -29,7 +29,6 @@
         <switch bindchange="switchScene" class="fr" checked='{{ item.status == 1 ? true : false }}' data-id='{{ item.scene_id }}' data-last='{{ item.last }}' data-bytename='{{ item.byteName }}' data-scenename='{{ item.scene_name }}' />
       </view>
     </view>
-
   </view>
 
 </view>

@@ -61,7 +61,9 @@
 
 <!-- 语音按钮 -->
 <view class='music-iview'>
-  <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'>
-    <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
-  </navigator>
+  <!-- <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'> -->
+    <view class="clea" bindtap='goPages' data-pagename='voice/voice'>
+      <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
+    </view>
+  <!-- </navigator> -->
 </view>

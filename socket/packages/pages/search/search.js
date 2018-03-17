@@ -122,9 +122,7 @@ Page({
             }
           })
         } else {
-          that.setData({
-            list: [],
-          });
+          // that.abc();
         }
       }
     })
@@ -277,7 +275,6 @@ Page({
       content: '是否要删除当前选择的区域！',
       success(res) {
         if (res.cancel == false && res.confirm == true) {
-
           $.ajax({
             url: 'dev/delregion',
             method: 'POST',
@@ -289,14 +286,13 @@ Page({
             $.alert('已经成功删除!');
             setTimeout(() => {
               wx.switchTab({
-                url: '../index/index',
+                url: '../../../pages/index/index',
               })
             }, 500);
           })
         } else if (res.cancel == true && res.confirm == false) {
           return false;
         }
-
       },
     })
   },

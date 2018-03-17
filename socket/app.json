@@ -9,7 +9,6 @@
     "pages/upatearea/upatearea",
     "pages/message/message",
     "pages/scene/scene",
-    "pages/voice/voice",
     "pages/led/led",
     "pages/windows/windows",
     "pages/reg/reg",
@@ -62,7 +61,8 @@
         "pages/aboutme/aboutme",
         "pages/search/search",
         "pages/voicelist/voicelist",
-        "pages/forget/forget"
+        "pages/forget/forget",
+        "pages/voice/voice"
       ]
     }
   ]

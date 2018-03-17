@@ -20,6 +20,7 @@ Page({
     delayList: [],  //  延迟
     checked: false,
     indexs: 0,
+    status: 0,
   },
 
   /**
@@ -30,7 +31,7 @@ Page({
   },
 
   onShow() {
-    this.getScene();
+    // this.getScene();
   },
 
   getScene() {
@@ -39,26 +40,56 @@ Page({
     wx.showLoading({
       title: '获取中...',
     })
+    // that.setData({
+    //   scenelist: wx.getStorageSync('sceneArrayMap'),
+    // });
     $.ajax({
       url: 'Scene/getScene',
       method: 'POST',
     }).then((res) => {
       wx.hideLoading();
       let json = {}, arr = [];
-      for (let i in res.data) {
-        if (wx.getStorageSync('did') == res.data[i].did) {
-          json = {
-            scene_id: res.data[i].scene_id,
-            byteName: JSON.parse(res.data[i].byteName),
-            scene_name: res.data[i].scene_name,
-            sceneTypes: res.data[i].sceneTypes,
-            status: res.data[i].status
-          };
-          arr.push(json);
-          that.setData({
-            scenelist: arr,
-          });
-        }
+      if (res.data == '') {
+        wx.showToast({
+          title: '暫没情景模式!',
+        })
+        return false;
+      } else {
+        wx.removeStorageSync('ls');
+        // if (wx.getStorageSync('did') == res.data[i].did) {
+          if (wx.getStorageSync('scenelist') == '') {
+            for (let i in res.data) {
+              json = {
+                scene_id: res.data[i].scene_id,
+                byteName: JSON.parse(res.data[i].byteName),
+                scene_name: res.data[i].scene_name,
+                sceneTypes: res.data[i].sceneTypes,
+                status: res.data[i].status
+              };
+              arr.push(json);
+              console.log(that.data.scenelist);
+            }
+            wx.setStorageSync('scenelist', arr);
+            that.setData({
+              scenelist: arr,
+            });
+          } else if (wx.getStorageSync('scenelist') !== '') {
+            let list = wx.getStorageSync('scenelist');
+            for (let i in list) {
+              try {
+                wx.setStorageSync('ls', list);
+                if (wx.getStorageSync('ls')[i].scene_id == list[i].id) {
+                  list[i].status = wx.getStorageSync('ls')[i].status;
+                  wx.hideLoading();
+                }
+              } catch (e) {
+              }
+            }
+            that.setData({
+              scenelist: list,
+            });
+          }
+        // }
       }
     });
   },
@@ -69,12 +100,15 @@ Page({
       title: '获取中。。。',
     })
     let arr = [], json = {}, that = this;
+
+    let status; // 状态
+
     arr.push(0x00, 0x01, 0x40);
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
     });
     $.getSocketResponse((did, res) => {
-    wx.hideLoading();
+      wx.hideLoading();
       try {
         let arr = res, arrID = res;
         if (did !== wx.getStorageSync('did')) {
@@ -84,7 +118,7 @@ Page({
         if (arr[2] == 65) {
           //  获取情景貌似ID
           let sceneID = arr[3];
-          let last = '', arrays = [], options = {};
+          let last = '', arrays = [], options = {}, arrayMap = [];
           let a = res.splice(4, 765);
           for (let i in a) {
             if (a[16] !== 0) {
@@ -106,11 +140,14 @@ Page({
               for (let j in tmp) {
                 str += "%" + tmp[j].toString(16);
               }
-              let status; // 状态
               if (last[0] == 0 && last[0] == 2) {
-                status = 0;
+                that.setData({
+                  status: 0
+                });
               } else if (last[0] == 1 && last[0] == 3) {
-                status = 1;
+                that.setData({
+                  status: 1
+                });
               }
               let n = name.concat(doname.concat(last));
               if (n[14] == 0 || n[14] == "0") {
@@ -130,8 +167,11 @@ Page({
                 scene_num: '123',
                 last: $.stringify(last.splice(1, 6)),
                 did: wx.getStorageSync('did'),
-                status: status,
+                status: that.data.status,
               };
+              // arrayMap.push(options);
+              // console.log(arrayMap);
+              // wx.setStorageSync("sceneArrayMap", arrayMap);
               that.data.scenelist.push(options);
               $.ajax({
                 url: 'Scene/addScene',
@@ -154,15 +194,16 @@ Page({
     let scenename = e.currentTarget.dataset.scenename;
     let id = e.currentTarget.dataset.id;
     let map = [], index = '';
-    let arr = [], that = this, json = {};
-    arr.push(0, 18, 0x50);
+    let arr = [0, 18, 0x50], that = this, json = {};
     let count = null;
+    let sceneArrayMap = wx.getStorageSync('sceneArrayMap');
     if (flag == true) {
       if (name[14] == 2) {
         name[14] += 1;
       } else if (name[14] == 0) {
         name[14] += 1;
       }
+      console.log(typeof name);
       count = arr.concat(name);
       tools.sendData('c2s_write', wx.getStorageSync('did'), {
         'data': $.getArrays(count),
@@ -173,6 +214,14 @@ Page({
             if (res[2] == 81) {
               switch (res[3]) {
                 case 1:
+                  // for (let n in sceneArrayMap) {
+                  //   console.log(sceneArrayMap[n].id);
+                  //   if (sceneArrayMap[n].id == id) {
+                  //     sceneArrayMap[n].status = 1;
+                  //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
+                  //     console.log(wx.getStorageSync('sceneArrayMap'));
+                  //   }
+                  // }
                   $.ajax({
                     url: '/Scene/updateScene',
                     method: 'POST',
@@ -183,6 +232,7 @@ Page({
                     success(res) {
                     }
                   });
+
                   $.alert('控制成功');
                   return false;
                 case 0:
@@ -213,6 +263,13 @@ Page({
               console.log(res);
               switch (res[3]) {
                 case 1:
+                  // for (let n in sceneArrayMap) {
+                  //   if (sceneArrayMap[n].id == id) {
+                  //     sceneArrayMap[n].status = 0;
+                  //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
+                  //     console.log(wx.getStorageSync('sceneArrayMap'));
+                  //   }
+                  // }
                   $.ajax({
                     url: '/Scene/updateScene',
                     method: 'POST',

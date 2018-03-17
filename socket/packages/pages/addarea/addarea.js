@@ -31,7 +31,6 @@ Page({
 
   saveIMessage() {
     let that = this;
-    console.log(that.data.addAreaText);
     $.ajax({
       url: 'dev/addregion',
       method: "POST",

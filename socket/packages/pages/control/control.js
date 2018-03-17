@@ -275,7 +275,9 @@ Page({
 
   _login(did) {
     let that = this, json = {};
-    wx.showLoading({ title: '' })
+    wx.showLoading({ 
+      title: '数据获取中' 
+    })
     wx.setStorageSync('did', did);
     let arr = [];
     json = {
@@ -287,56 +289,12 @@ Page({
       data: arr
     };
     that._sendJson(json);
+    wx.hideLoading();
     setTimeout(() => {
       wx.switchTab({
         url: '../../../pages/index/index',
       })
     }, 500);
-
-    // let arr = [0x00, 0x02, 0x40];
-    // json = {
-    //   'data': main.getArrays(arr),
-    // };
-    // tools.sendData('c2s_write', did, json);
-    
-    // wx.onSocketMessage((res) => {
-    //   let noti = JSON.parse(res.data).cmd;
-    //   wx.hideLoading();
-    //   switch (noti) {
-    //     case 'subscribe_res':
-
-    //       break;
-    //     case 'c2s_write':
-    //       break;
-    //     case 's2c_noti':
-    //       break;
-    //     case 'c2s_read':
-
-    //       break;
-    //     case 'pong':
-    //       break;
-    //   }
-
-    //   // var data = JSON.parse(res.data);
-    //   // //  链接socket
-    //   // json = {
-    //   //   cmd: "subscribe_req",
-    //   //   data: arr
-    //   // };
-    //   // //  发送endRecode
-    
-    //   // that._sendJson(json);
-    //   //  获取服务器返回的信息
-    //   // that.getServiceBack();
-    //   // if (data.data.success == true) {
-        
-    //   // } else {
-    //   //   if (data.data.msg == "M2M socket has closed, please login again!") {
-    //   //     that._login(did);
-    //   //   }
-    //   // }
-    // });
-
   },
 
   //  心跳开始
