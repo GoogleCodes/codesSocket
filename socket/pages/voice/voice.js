@@ -18,7 +18,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '房间节能灯亮一点',
+    voiceIMessage: '全部大灯亮一点',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -276,13 +276,6 @@ Page({
                       });
                     }, 1000);
                   } catch (e) { }
-                } else {
-                  that.setData({
-                    voiceDone: false,
-                    voiceOpen: true,
-                    input: sqlStr,
-                    openMessage: '识别失败!'
-                  });
                 }
               }
 
@@ -408,9 +401,24 @@ Page({
               }
             }
 
+
+            // if ($.IndexDemo(close, sqlStr) == -1 || $.IndexDemo(open, sqlStr)) {
+            //   that.setData({
+            //     voiceDone: false,
+            //     voiceOpen: true,
+            //     input: sqlStr,
+            //     openMessage: '识别失败!'
+            //   });
+            // }
+
             for (let i in that.data.semlist) {
-              console.log((that.data.semlist[i].word !== sqlStr) == false);
               if ((that.data.semlist[i].word !== sqlStr)) {
+                that.setData({
+                  voiceDone: false,
+                  voiceOpen: true,
+                  input: sqlStr,
+                  openMessage: '识别失败!'
+                });
                 wx.showModal({
                   title: '警告!',
                   content: '还没有这条语义,请到后台增加!',
@@ -629,7 +637,6 @@ Page({
             },
           }).then((res) => {
             let region = res.data;
-            console.log(region);
             wx.setStorageSync('region', region);
             let device = wx.getStorageSync('region');
             for (let i in region) {

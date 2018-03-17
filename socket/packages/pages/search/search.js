@@ -436,4 +436,11 @@ Page({
     this.getRegion();
   },
 
+  goPages(e) {
+    let pageNames = e.currentTarget.dataset.pagename;
+    wx.navigateTo({
+      url: '../' + pageNames,
+    })
+  },
+
 })

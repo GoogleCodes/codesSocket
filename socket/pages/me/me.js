@@ -132,4 +132,11 @@ Page({
     });
   },
 
+  goPages(e) {
+    let pageNames = e.currentTarget.dataset.pagename;
+    wx.navigateTo({
+      url: '../../packages/pages/' + pageNames,
+    })
+  },
+
 })

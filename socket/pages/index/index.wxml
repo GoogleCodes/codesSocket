@@ -10,9 +10,9 @@
   <scroll-view scroll-with-animation="true" scroll-x class="recommend_scroll_x_box">
     <view class="tab {{ currentTab == idx ? 'active': '' }}" data-current="{{ idx }}" bindtap="selected" wx:for="{{ tabArray }}" wx:for-index="idx" data-id='{{ item.id }}'>{{ item.name }}</view>
   </scroll-view>
-  <navigator url='/pages/search/search' class="setting">
-    <view class="iconfont icon-weibiaoti-9"></view>
-  </navigator>
+  <view class=" setting">
+    <view class="iconfont icon-weibiaoti-9" bindtap='goPages' data-pagename='search/search'></view>
+  </view>
 </view>
 
 <swiper class="swiper-box" duration="300" bindchange="bindChange" current="{{ currentTab }}" style="height: {{ winHeight }}px;z-index: 1;margin-bottom: 90px;">
@@ -21,12 +21,7 @@
       <view class="ul-view">
         <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 0 }}'>
           <view class="pic-iview fl pic1">
-            <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" 
-            bindtap='operating' 
-            data-id='{{ item.id }}' 
-            data-sdid='{{ item.did }}' 
-            data-areaid='{{ areaid }}'
-            wx:if='{{ item.types == 0 }}'></view>
+            <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}' wx:if='{{ item.types == 0 }}'></view>
           </view>
           <view class="fl status-iview f12">
             <view class="block" style='color: #b3b3b3'>
@@ -43,9 +38,7 @@
 
         <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 1 }}'>
           <view class="pic-iview fl pic1">
-            <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" 
-            bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}'
-            wx:if='{{ item.types == 1 }}'></view>
+            <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}' wx:if='{{ item.types == 1 }}'></view>
           </view>
           <view class="fl status-iview f12">
             <view class="block" style='color: #b3b3b3'>

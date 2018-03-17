@@ -38,7 +38,7 @@ Page({
     })
     setTimeout(() => {
       wx.switchTab({
-        url: '../index/index',
+        url: '../../../pages/index/index',
       })
     }, 500);
   },

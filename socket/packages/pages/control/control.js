@@ -2,6 +2,7 @@
 
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
+
 Page({
 
   /**
@@ -156,7 +157,6 @@ Page({
   goSelectDevice(e) {
     let did = e.currentTarget.dataset.did;
     wx.setStorageSync('did', did);
-
     this._login(did);
     $.ajax({
       url: 'dev/addregion',
@@ -232,25 +232,18 @@ Page({
                         data: json,
                       }).then(function (res) {
                       })
-
                     }
                   }
-
                 }
               }
             }
           });
-
-          
-
         }
       }
     });
-
   },
 
   addArea(did) {
-
     $.ajax({
       url: 'dev/getregion',
       method: 'POST',
@@ -296,7 +289,7 @@ Page({
     that._sendJson(json);
     setTimeout(() => {
       wx.switchTab({
-        url: '../index/index',
+        url: '../../../pages/index/index',
       })
     }, 500);
 

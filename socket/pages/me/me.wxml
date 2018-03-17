@@ -3,12 +3,12 @@
 <view class="me_pages">
 
   <view class="me-iview f12">
-    <view class="me-li-iview">
-      <navigator url='/pages/control/control' hover-class="nav-hover">
+    <view class="me-li-iview" bindtap='goPages' data-pagename='control/control'>
+      <!-- <navigator url='/pages/control/control' hover-class="nav-hover"> -->
         <text class="iconfont icon-icon-test-copy small-icon"></text>
         <text class="">智控中心</text>
         <text class="iconfont icon-youbian fr go-icon"></text>
-      </navigator>
+      <!-- </navigator> -->
     </view>
 
     <view class="me-li-iview" bindtap='_shareGizwits'>
@@ -17,20 +17,18 @@
       <text class="iconfont icon-youbian fr"></text>
     </view>
 
-    <view class="me-li-iview">
-      <navigator url='/pages/voicelist/voicelist' hover-class="nav-hover">
+    <view class="me-li-iview" bindtap='goPages' data-pagename='voicelist/voicelist'>
         <text class="iconfont icon-weibiaoti-12 small-icon"></text>
         <text class="">修改语言</text>
         <text class="iconfont icon-youbian fr"></text>
-      </navigator>
     </view>
 
-    <view class="me-li-iview">
-      <navigator url='../forget/forget' hover-class="nav-hover">
+    <view class="me-li-iview" bindtap='goPages' data-pagename='forget/forget'>
+      <!-- <navigator url='../forget/forget' hover-class="nav-hover"> -->
         <text class="iconfont icon-mima1 small-icon"></text>
         <text class="">修改密码</text>
         <text class="iconfont icon-youbian fr"></text>
-      </navigator>
+      <!-- </navigator> -->
     </view>
 
     <view class="me-li-iview">
@@ -41,12 +39,12 @@
       </navigator>
     </view>
 
-    <view class="me-li-iview">
-      <navigator url='/pages/aboutme/aboutme' hover-class="nav-hover">
+    <view class="me-li-iview" bindtap='goPages' data-pagename='aboutme/aboutme'>
+      <!-- <navigator url='packages/pages/aboutme/aboutme' hover-class="nav-hover"> -->
         <text class="iconfont icon-icon-test small-icon"></text>
         <text class="">关于我们</text>
         <text class="iconfont icon-youbian fr"></text>
-      </navigator>
+      <!-- </navigator> -->
     </view>
 
     <view class="me-li-iview" bindtap='backLogin'>

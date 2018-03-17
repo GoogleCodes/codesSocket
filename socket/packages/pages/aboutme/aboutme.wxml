@@ -4,19 +4,16 @@
   <view class="logo">
     <image src='https://www.getcodeing.com/static/images/logo.png' style="width: 100%;height: 100%;"></image>
   </view>
-
   <view class="telphone">
     <view>
       <text class="block" style='color: #7cb242;'>如果您希望和叶绿体进行商业合作？</text>
       <text class="block" bindtap='wxPhoneCall'>请拨打：{{ Cooperation }}</text>
     </view>
-
     <view>
       <text class="block" style='color: #7cb242;'>如果您对产品有任何疑问？</text>
       <text class="block">请拨打：0757-22916661</text>
     </view>
   </view>
-
   <view class="ul-view f12">
     <view class="li-view">
       <text class="fl desc-view">邮箱：</text>
@@ -36,6 +33,3 @@
     </view>
   </view>
 </view>
-
-<!-- <import src="/pages/footer/footer.wxml" />
-<template is="footer" /> -->

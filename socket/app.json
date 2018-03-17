@@ -3,22 +3,16 @@
     "pages/login/login",
     "pages/index/index",
     "pages/share/share",
-    "pages/forget/forget",
-    "pages/addarea/addarea",
     "pages/equipment/equipment",
     "pages/me/me",
-    "pages/search/search",
     "pages/smart/smart",
     "pages/upatearea/upatearea",
     "pages/message/message",
-    "pages/control/control",
     "pages/scene/scene",
     "pages/voice/voice",
     "pages/led/led",
     "pages/windows/windows",
-    "pages/aboutme/aboutme",
     "pages/reg/reg",
-    "pages/voicelist/voicelist",
     "pages/logs/logs"
   ],
   "window": {
@@ -58,5 +52,18 @@
         "selectedIconPath": "static/images/tabBar/img4-4.png"
       }
     ]
-  }
+  },
+  "subPackages": [
+    {
+      "root": "packages/",
+      "pages": [
+        "pages/control/control",
+        "pages/addarea/addarea",
+        "pages/aboutme/aboutme",
+        "pages/search/search",
+        "pages/voicelist/voicelist",
+        "pages/forget/forget"
+      ]
+    }
+  ]
 }
