@@ -156,11 +156,6 @@ Page({
       let json = {};
       let last = '';
       let arr = [], brr = [];
-      if (wx.getStorageSync('tabArray') == '') {
-
-      } else if (wx.getStorageSync('tabArray') !== '') {
-
-      }
       for (let i in response) {
         if (response[i].pid == wx.getStorageSync('did')) {
           arr.push(response[i]);
@@ -190,7 +185,7 @@ Page({
       }).then((res) => {
         if (res.msg == "请求失败") {
           that.setData({
-            spliceArray: [],
+            // spliceArray: [],
             // tabArray: [],
           });
           return false;
@@ -415,6 +410,7 @@ Page({
   },
 
   getDevice() {
+    let that = this;
     let arr = [0x00, 0x02, 0xA0, 0xFF];
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
@@ -423,131 +419,92 @@ Page({
       $.getSocketResponse((did, data) => {
         wx.setStorageSync('backData', JSON.stringify(data));
         if (wx.getStorageSync('did') == did) {
-
+          that.getIndexGizwits();
+        }
+      });
+    } else {
+      $.getSocketResponse((did, data) => {
+        console.log(wx.getStorageSync('backData') !== JSON.stringify(data));
+        if (wx.getStorageSync('backData') !== JSON.stringify(data)) {
           $.ajax({
-            url: 'dev/getregion',
+            url: 'dev/delallregion',
             method: 'POST',
             data: {
               uid: wx.getStorageSync('wxuser').id
             },
           }).then((res) => {
-            if (data[2] == 161) {
-              let k = data, rid = 0;
-              let last = null, brr = [], json = {};
-              let map = [];
-            }
-            for (let i in res.data) {
-              if (res.data[i].name == '全部') {
-                if (data[2] == 161) {
-                  let k = data, rid = 0;
-                  let last = null, brr = [], json = {};
-                  let map = [];
-                }
-                for (let i in data) {
-                  last = k.splice(4, 6 + data[9]);
-                  if (last[0] > 0) {
-                    let name = last;
-                    let doname = name.splice(6, last[5]);
-                    let str = "";
-                    for (let y in doname) {
-                      str += "%" + doname[y].toString(16);
+            console.log(res);
+            if (res.code == 1) {
+              wx.removeStorageSync('spliceArray');
+              $.ajax({
+                url: 'dev/addregion',
+                method: 'POST',
+                data: {
+                  name: '全部',
+                  uid: wx.getStorageSync('wxuser').id,
+                  pid: wx.getStorageSync('did'),
+                },
+              }).then((res) => {
+                console.log(res, "..............addregion");
+                let id = res.data;
+                console.log(id);
+                if (data[2] == 21) {
+                  console.log(21);
+                  let arr = [0x00, 0x02, 0xA0, 0xFF];
+                  tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                    'data': $.getArrays(arr),
+                  });
+
+                  $.getSocketResponse((did, data) => {
+                    if (data[2] == 161) {
+                      let k = data;
+                      console.log(123123123123123123123);
+
+                      let last = null, json = {};
+                      for (let p in k) {
+                        console.log(k);
+                        last = k.splice(4, 6 + data[9]);
+                        if (last.indexOf(1) == 0) {
+                          let name = last;
+                          let doname = name.splice(6, last[5]);
+                          let str = "";
+                          for (let y in doname) {
+                            str += "%" + doname[y].toString(16);
+                          }
+                          let deviceDid = last.splice(0, 4);
+                          json = {
+                            uid: wx.getStorageSync('wxuser').id,
+                            did: $.stringify(deviceDid),
+                            dname: $.utf8to16(unescape(str)),
+                            rid: id,
+                            status: 'false',
+                            pid: wx.getStorageSync('did'),
+                            types: deviceDid[1],
+                            isall: 1
+                          };
+                          $.ajax({
+                            url: 'dev/adddev',
+                            method: "POST",
+                            data: json,
+                          }).then(function (res) {
+                            console.log(res, "---------dev/adddev");
+                          })
+                        }
+                      }
+
+                      that.getIndexGizwits();
                     }
-                    let sdid = last.splice(0, 4);
-                    json = {
-                      uid: wx.getStorageSync('wxuser').id,
-                      did: $.stringify(sdid),
-                      dname: $.utf8to16(unescape(str)),
-                      rid: res.data[i].id,
-                      status: 'false',
-                      pid: wx.getStorageSync('did'),
-                      types: sdid[1],
-                      isall: 1
-                    };
-                    $.ajax({
-                      url: 'dev/adddev',
-                      method: "POST",
-                      data: json,
-                    }).then(function (res) {
-                    })
-                  }
+
+                  });
+
                 }
-              }
+              });
+              // wx.reLaunch({
+              //   url: '../index/index',
+              // });
             }
-            that.getIndexGizwits();
           });
         }
-      });
-    } else {
-      $.getSocketResponse((did, data) => {
-        
-          if (wx.getStorageSync('backData') !== JSON.stringify(data)) {
-            $.ajax({
-              url: 'dev/delallregion',
-              method: 'POST',
-              data: {
-                uid: wx.getStorageSync('wxuser').id
-              },
-              success(res) {
-                wx.removeStorageSync('spliceArray');
-                $.ajax({
-                  url: 'dev/addregion',
-                  method: 'POST',
-                  data: {
-                    uid: wx.getStorageSync('wxuser').id,
-                    name: '全部',
-                    pid: wx.getStorageSync('did'),
-                  },
-                }).then((res) => {
-                  console.log(res, "..............addregion");
-
-                  if (data[2] == 161) {
-                    let k = data, rid = 0;
-                    let last = null, brr = [], json = {};
-                    let map = [];
-                  }
-                  // for (let i in res.data) {
-                  // if (res.data[i].name == '全部') {
-                  if (data[2] == 161) {
-                    let k = data, rid = 0;
-                    let last = null, brr = [], json = {};
-                    let map = [];
-                  }
-                  for (let i in data) {
-                    last = k.splice(4, 6 + data[9]);
-                    if (last[0] > 0) {
-                      let name = last;
-                      let doname = name.splice(6, last[5]);
-                      let str = "";
-                      for (let y in doname) {
-                        str += "%" + doname[y].toString(16);
-                      }
-                      let sdid = last.splice(0, 4);
-                      json = {
-                        uid: wx.getStorageSync('wxuser').id,
-                        did: $.stringify(sdid),
-                        dname: $.utf8to16(unescape(str)),
-                        rid: res.data,
-                        status: 'false',
-                        pid: wx.getStorageSync('did'),
-                        types: sdid[1],
-                        isall: 1
-                      };
-                      $.ajax({
-                        url: 'dev/adddev',
-                        method: "POST",
-                        data: json,
-                      }).then(function (res) {
-                      })
-                    }
-                  }
-                  // }
-                  // }
-                });
-
-                that.getIndexGizwits();
-              }
-            });
-          }
       });
     }
 
