@@ -36,9 +36,7 @@
       <view class="tab {{ currentTab == 0 ? 'active': '' }}" data-current="0" bindtap="selected">已选设备</view>
       <view class="tab {{ currentTab == 1 ? 'active': '' }}" data-current="1" bindtap="selected">未选设备</view>
     </view>
-
     <swiper current="{{ currentTab }}" duration="300" style="height: {{ winHeight }}px" bindchange="bindChange">
-
       <swiper-item>
         <view class="ul-iview">
           <view class="li-iview fl" wx:for="{{ spliceArray }}" data-id="{{ item.id }}" wx:if='{{ item.types == 0 }}'>
@@ -59,14 +57,14 @@
 
       <swiper-item>
         <view class="ul-iview">
-          <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 0 }}">
-            <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+          <view class="li-iview fl {{ item.active  ==  1 ? 'active': '' }}" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 0 }}">
+            <view class="li-iview-con">
               <view class="iconfont icon-weibiaoti-3" wx:if="{{ item.sdid[1] == 0 }}" bindtap='selectEquipment' data-key='{{ i }}' data-sname='{{ item.sname }}' data-sdid='{{ item.sdid }}' data-types='{{ item.types }}'></view>
             </view>
             <view class="sname">{{ item.sname }}</view>
           </view>
-          <view class="li-iview fl" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 1 }}">
-            <view class="li-iview-con {{ item.active  ==  1 ? 'active': '' }}">
+          <view class="li-iview fl {{ item.active  ==  1 ? 'active': '' }}" wx:for="{{ array }}" wx:for-index="i" wx:if="{{ item.sdid[1] == 1 }}">
+            <view class="li-iview-con">
               <view class="iconfont icon-chuangliananzhuang" bindtap='selectEquipment' data-key='{{ i }}' data-sdid='{{ item.sdid }}' data-sname='{{ item.sname }}' data-types='{{ item.types }}'></view>
             </view>
             <view class="sname">{{ item.sname }}</view>
@@ -77,6 +75,3 @@
   </view>
   <button class="saveData" bindtap='saveIMessage' hidden='{{ pickerShow }}'>保 存</button>
 </view>
-
-<!-- <import src="/pages/footer/footer.wxml" />
-<template is="footer" /> -->

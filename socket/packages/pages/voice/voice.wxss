@@ -10,6 +10,7 @@
   position: absolute;
   bottom: 10px;
   width: 95%;
+  background: #fff;
 }
 
 .voice-control .save-voice .save-input {
@@ -41,7 +42,7 @@
   text-align: center;
   line-height: 35px;
   font-size: 23px;
-  color: rgb(0,187,210)
+  color: rgb(0, 187, 210);
 }
 
 .voice-control .person image {
@@ -92,9 +93,8 @@
 
 .voice-control .voice-ul {
   width: 100%;
-  clear:  both;
+  clear: both;
   overflow: hidden;
-  padding: 0 5%;
 }
 
 .voice-control .voice-ul .voice-li .voice-li-icon {
@@ -127,4 +127,10 @@
 
 .voice-control .voice-ul .voice-li .tab {
   line-height: 23px;
+}
+
+.voice-ul .voice-li .now_input {
+  margin-left: 10px;
+  height: 40px;
+  line-height: 40px;
 }

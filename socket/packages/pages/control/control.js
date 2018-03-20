@@ -171,6 +171,7 @@ Page({
     })
     wx.setStorageSync('title', e.currentTarget.dataset.name);
     this.getDevice(did);
+    wx.removeStorageSync('chatList')
   },
 
   getRegion(callback) {

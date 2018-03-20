@@ -3,6 +3,8 @@
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
 
+let that;
+
 Page({
 
   /**
@@ -31,17 +33,14 @@ Page({
     },
     did: '',
     dname: '',
+    flag: 0,
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.setData({
-      did: wx.getStorageSync('did')
-    });
-
-    let that = this;
+    that = this;
     wx.getSystemInfo({
       success(res) {
         that.setData({
@@ -55,9 +54,9 @@ Page({
     var json = {
       'data': $.getArrays(arr),
     };
-    tools.sendData('c2s_write', that.data.did, json);
+    tools.sendData('c2s_write', wx.getStorageSync('did'), json);
 
-    $.getSocketResponse(function (did, data) {
+    $.getSocketResponse((did, data) => {
       let k = data;
       let last = null, brr = [], json = {};
       for (let i in k) {
@@ -84,10 +83,14 @@ Page({
         }
       }
     })
-    this.abc();
   },
 
-  abc() {
+
+  onShow() {
+    this.getRegion();
+  },
+
+  getRegion() {
     let that = this;
     $.ajax({
       url: 'dev/getregion',
@@ -103,27 +106,50 @@ Page({
           that.setData({
             list: arr,
           });
-          that.setData({
-            areaid: that.data.list[0].id
-          });
-          $.ajax({
-            url: 'dev/getdev',
-            method: 'POST',
-            header: that.data.headers,
-            data: {
-              uid: wx.getStorageSync('wxuser').id,
-              rid: that.data.areaid,
-            }
-          }).then(function (res) {
-            if (res.code == 1) {
-              that.setData({
-                spliceArray: res.data
-              });
-            }
-          })
-        } else {
-          // that.abc();
+          that.abc();
         }
+      }
+    })
+  },
+
+  abc() {
+    that.setData({
+      areaid: that.data.list[0].id
+    });
+    $.ajax({
+      url: 'dev/getdev',
+      method: 'POST',
+      header: that.data.headers,
+      data: {
+        uid: wx.getStorageSync('wxuser').id,
+        rid: that.data.areaid,
+      }
+    }).then((res) => {
+      if (res.code == 1) {
+        that.setData({
+          spliceArray: res.data
+        });
+        let arr = [];
+        let gizwits = wx.getStorageSync('gizwits');
+        try{
+          for (let j in gizwits) {
+            console.log(that.data.spliceArray[j].did !== JSON.stringify(gizwits[j].sdid), that.data.spliceArray[j].did, JSON.stringify(gizwits[j].sdid));
+            if (that.data.spliceArray[j].did !== JSON.stringify(gizwits[j].sdid)) {
+
+              arr.push(gizwits[j]);
+              console.log(arr);
+              // that.setData({
+              //   array: [],
+              // });
+            } else {
+            }
+          }
+        } catch(e) {}
+        
+      } else if (res.code == 0) {
+        that.setData({
+          array: wx.getStorageSync('gizwits'),
+        });
       }
     })
   },
@@ -145,14 +171,11 @@ Page({
       if (e.detail.value == i) {
         that.setData({
           areaid: that.data.list[i].id,
-          currentTab: 0
+          currentTab: 0,
+          index: e.detail.value,
         });
       }
     }
-    this.setData({
-      index: e.detail.value,
-    })
-
     $.ajax({
       url: 'dev/getdev',
       method: 'POST',
@@ -160,31 +183,54 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
         rid: that.data.areaid,
       }
-    }).then(function (res) {
+    }).then((res) => {
+      let map = that.data.array;
+      let arrays = [], pson = [], flag = false;
+      for (let y in map) {
+        pson = {
+          active: map[y].active,
+          sdid: map[y].sdid,
+          sname: map[y].sname,
+        };
+        arrays.push(pson);
+      }
       if (res.code == 1) {
         that.setData({
           spliceArray: res.data
         });
-        $.getSocketResponse(function (did, k) {
-          let last = null, brr = [], json = {};
-          for (let i in k) {
-            last = k.splice(4, 21);
-            if (last.indexOf(1) == 0) {
-              json = {
-                sdid: last.splice(0, 4),
-                active: 0,
-              };
-              brr.push(json);
-              brr.concat(that.data.array);
-              that.setData({
-                array: brr,
-              });
-              wx.setStorageSync('gizwits', that.data.array);
-            }
+
+        let gizwits = wx.getStorageSync('gizwits');
+        for (let j in gizwits) {
+          if (that.data.spliceArray[j].did == JSON.stringify(gizwits[j].sdid)) {
+            that.setData({
+              array: [],
+            });
+          }
+        }
+
+        $.getSocketResponse((did, k) => {
+          if (wx.getStorageSync('did') == did) {
+            let last = null, brr = [], json = {};
+            // for (let i in k) {
+            //   last = k.splice(4, 21);
+            //   if (last.indexOf(1) == 0) {
+            //     json = {
+            //       sdid: last.splice(0, 4),
+            //       active: 0,
+            //     };
+            //     brr.push(json);
+            //     brr.concat(that.data.array);
+            //     that.setData({
+            //       array: brr,
+            //     });
+            //     wx.setStorageSync('gizwits', that.data.array);
+            //   }
+            // }
           }
         })
       } else if (res.code == 0) {
         that.setData({
+          array: wx.getStorageSync('gizwits'),
           spliceArray: []
         });
         $.alert('暂时没有设备！');
@@ -194,7 +240,6 @@ Page({
   },
 
   bindMultiPickerColumnChange(e) {
-    console.log('修改的列为', e.detail.column, '，值为', e.detail.value);
     var data = {
       objectArrays: this.data.objectArrays,
       index: this.data.index
@@ -214,7 +259,6 @@ Page({
     this.setData(data);
 
     /*
-    console.log('修改的列为', e.detail.column, '，值为', e.detail.value);
     var data = {
       multiArray: this.data.multiArray,
       multiIndex: this.data.multiIndex
@@ -364,7 +408,6 @@ Page({
           currentTab: 0
         });
       })
-
     } else if (this.data.array[index].active == 1) {
       this.data.array[index].active = 0;
       for (let i in this.data.spliceArray) {
@@ -377,7 +420,7 @@ Page({
       array: this.data.array,
       spliceArray: that.data.spliceArray
     });
-    wx.setStorageSync('spliceArray', this.data.spliceArray);
+    wx.setStorageSync('searchArrays', this.data.spliceArray);
   },
 
   saveIMessage() {
@@ -407,34 +450,9 @@ Page({
     this.onLoad();
   },
 
-  getRegion() {
-    let that = this;
-    $.ajax({
-      url: 'dev/getregion',
-      method: 'POST',
-      data: {
-        uid: wx.getStorageSync('wxuser').id,
-      },
-    }).then(function (res) {
-      let arr = [];
-      for (let i in res.data) {
-        if (res.data[i].pid == wx.getStorageSync('did')) {
-          arr.push(res.data[i]);
-          that.setData({
-            list: arr,
-          });
-        }
-      }
-    })
-  },
-
-  onShow() {
-    this.getRegion();
-  },
-
   goPages(e) {
     let pageNames = e.currentTarget.dataset.pagename;
-    wx.navigateTo({
+    wx.redirectTo({
       url: '../' + pageNames,
     })
   },

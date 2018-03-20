@@ -6,6 +6,10 @@ let c = require('../../utils/common/common.js');
 
 import { $ } from '../../utils/main.js'
 
+var chatListData = [];
+
+let that;
+
 Page({
 
   /**
@@ -29,14 +33,14 @@ Page({
     index: 0,
     arrayCharset: 'zh',
     scenelist: [],
-    input: "用户输入指令..."
+    input: "用户输入指令...",
+    chatList: [],
+    scrolltop: 0,
+    winHeight: 0
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   onLoad(options) {
-    let that = this;
+    that = this;
     this.setData({
       did: wx.getStorageSync('did')
     });
@@ -54,29 +58,91 @@ Page({
         }
       }
       that.setData({
-        semlist: arr
+        semlist: arr,
       });
     });
-
-    $.ajax({
-      url: 'Scene/getScene',
-      method: 'POST',
-      data: {
-      },
-    }).then((res) => {
-      that.setData({
-        scenelist: res.data,
-      });
-    });
-    // this.getScene();
   },
 
   onShow() {
     $.getName('title');
+    that.setData({
+      chatList: wx.getStorageSync('chatList')
+    });
+    wx.getSystemInfo({
+      success(res) {
+        that.setData({
+          winHeight: res.windowHeight - 150,
+        });
+      },
+    });
+    this.getSceneTo();
+  },
+
+  getSceneTo() {
+    let arr = [], json = {}, that = this;
+    let status; // 状态
+    if (wx.getStorageSync('sceneArrayMap') !== '') {
+      that.setData({
+        scenelist: wx.getStorageSync('sceneArrayMap'),
+      });
+      return false;
+    }
+    arr.push(0x00, 0x01, 0x40);
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
+      'data': $.getArrays(arr),
+    });
+    $.getSocketResponse((did, res) => {
+      if (wx.getStorageSync('did') == did) {
+        try {
+          let arr = res, arrID = res;
+          if (arr[2] == 65) {
+            //  获取情景貌似ID
+            let sceneID = arr[3];
+            let last = '', arrays = [], options = {}, arrayMap = [];
+            let a = res.splice(4, 765);
+            for (let i in a) {
+              if (a[16] !== 0) {
+                last = a.splice(0, 17 + (a[16] * 9));
+              } else if (a[16] == 0) {
+                last = a.splice(0, 17);
+              }
+              if (last.indexOf(0) > 0) {
+                let name = last.splice(0, 14);
+                let doname = name.splice(1, 13);
+                let id = [];
+                let str = "";
+                let tmp = new Array();
+                for (let y in doname) {
+                  if (doname[y] !== 0) {
+                    tmp.push(doname[y]);
+                  }
+                }
+                for (let j in tmp) {
+                  str += "%" + tmp[j].toString(16);
+                }
+                let n = name.concat(doname.concat(last));
+                options = {
+                  byteName: $.stringify(n),
+                  sceneTypes: that.data.sceneTypes,
+                  scene_id: n[0],
+                  scene_name: $.utf8to16(unescape(str)),
+                  scene_num: '123',
+                  last: $.stringify(last.splice(1, 6)),
+                  did: wx.getStorageSync('did'),
+                  status: that.data.status,
+                };
+                arrayMap.push(options);
+                wx.setStorageSync("sceneArrayMap", arrayMap);
+              }
+            }
+          }
+        } catch(e) {
+        }
+      }
+    });
   },
 
   startRecode(e) {
-    var that = this;
     wx.startRecord({
       success(res) {
         var tempFilePath = res.tempFilePath;
@@ -108,8 +174,8 @@ Page({
 
   endRecode(e) {
     var s = this, sdid = '';
-    let semlist = s.data.semlist;
     let that = this;
+    let semlist = s.data.semlist;
     s.setData({
       voiceNow: false,
       voiceDone: true,
@@ -149,7 +215,6 @@ Page({
             let array2 = [0x00, 0x08, 0xA2];
             s.setData({ voiceNow: true });
             var error_text = '语音识别失败';
-            console.log(res.data);
             var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
             console.log("返回的东西是：", options);
             s.setData({
@@ -175,20 +240,20 @@ Page({
                 'data': $.getArrays(arr),
               });
             }
-
             var sqlStr = null;
             for (var i in options.yuyin) {
               sqlStr = options.yuyin[i].replace("，", "");
-              that.setData({
-                input: sqlStr,
-              });
-
+              that.addChat(sqlStr, 'r');
               for (let l in s.data.scenelist) {
                 if ($.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情景", sqlStr) == 0 ||
                   $.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情景", sqlStr) > 0 ||
                   $.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情境", sqlStr) == 0 ||
                   $.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情境", sqlStr) > 0) {
                   let byte = $.parse(s.data.scenelist[l].byteName);
+                  console.log(byte);
+                  that.setData({
+                    voiceNow: false,
+                  })
                   if (byte[14] == 2) {
                     byte[14] += 1;
                   } else if (byte[14] == 0) {
@@ -205,39 +270,14 @@ Page({
                         'data': $.getArrays(count),
                       });
                       $.getSocketResponse(function (did, data) {
-
-                        // for (let n in sceneArrayMap) {
-                        //   if (sceneArrayMap[n].scene_name == that.data.scenelist[l].scene_name) {
-                        //     sceneArrayMap[n].status = 1;
-                        //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
-                        //     console.log(wx.getStorageSync('sceneArrayMap'));
-                        //   }
-                        // }
-
-                        $.ajax({
-                          url: '/Scene/updateScene',
-                          method: 'POST',
-                          data: {
-                            scene_name: s.data.scenelist[l].scene_name,
-                            status: 1
-                          },
-                          success(res) {
-                          }
-                        });
-
+                        that.setData({
+                          voiceNow: true,
+                        })
                         if (data[3] == 0) {
-                          s.setData({
-                            voiceOpen: true,
-                            voiceDone: false,
-                            openMessage: '打开失败!'
-                          });
+                          that.addChat("打开失败", 'l');
                           return false;
                         } else if (data[3] == 1) {
-                          s.setData({
-                            voiceOpen: false,
-                            voiceDone: true,
-                            openMessage: '打开成功!'
-                          });
+                          that.addChat("打开成功", 'l');
                           return false;
                         }
                       });
@@ -248,6 +288,9 @@ Page({
                   $.IndexDemo("关闭" + s.data.scenelist[l].scene_name + "情境", sqlStr) == 0 ||
                   $.IndexDemo("关闭" + s.data.scenelist[l].scene_name + "情境", sqlStr) > 0) {
                   let byte = $.parse(s.data.scenelist[l].byteName);
+                  that.setData({
+                    voiceNow: true,
+                  })
                   if (byte[14] == 2) {
                     byte[14] += 1;
                   } else if (byte[14] == 0) {
@@ -259,36 +302,13 @@ Page({
                   try {
                     let brr = [0, 18, 0x50];
                     let count = brr.concat(byte);
-                    setTimeout(function (res) {
+                    setTimeout((res) => {
                       senceGo(count);
-                      $.getSocketResponse(function (did, data) {
-                        // for (let n in sceneArrayMap) {
-                        //   if (sceneArrayMap[n].scene_name == that.data.scenelist[l].scene_name) {
-                        //     sceneArrayMap[n].status = 0;
-                        //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
-                        //     console.log(wx.getStorageSync('sceneArrayMap'));
-                        //   }
-                        // }
-                        
-                        $.ajax({
-                          url: '/Scene/updateScene',
-                          method: 'POST',
-                          data: {
-                            scene_name: s.data.scenelist[l].scene_name,
-                            status: 0
-                          },
-                          success(res) {
-                          }
-                        });
-
+                      $.getSocketResponse((did, data) => {
                         if (data[3] == 1) {
-                          that.setData({
-                            voiceOpen: false,
-                            openMessage: '关闭成功!'
-                          });
+                          that.addChat("关闭成功", 'l');
                           return false;
                         }
-
                       });
                     }, 1000);
                   } catch (e) { }
@@ -327,10 +347,8 @@ Page({
                             $.getSocketResponse((did, data) => {
                               that.setData({
                                 voiceNow: true,
-                                voiceDone: true,
-                                openMessage: "已调成亮度为较光亮度",
-                                voiceOpen: false
                               })
+                              that.addChat("已调成亮度为较光亮度", 'l');
                             });
                             return false;
                           } else if (sqlStr == name + getdev[i].dname + "暗一点") {
@@ -347,10 +365,8 @@ Page({
                             $.getSocketResponse((did, data) => {
                               that.setData({
                                 voiceNow: true,
-                                voiceDone: true,
-                                openMessage: "已调成亮度为较暗",
-                                voiceOpen: false
                               })
+                              that.addChat("已调成亮度为较暗", 'l');
                             });
                             return false;
                           }
@@ -371,14 +387,12 @@ Page({
                                 status: "true"
                               },
                             }).then((res) => {
-                              $.alert('打开成功!');
                             })
                             $.getSocketResponse((did, data) => {
                               s.setData({
-                                openMessage: sqlStr,
-                                voiceOpen: false,
-                                voiceDone: true,
+                                voiceNow: true,
                               });
+                              that.addChat("打开成功", 'l');
                             })
                             return false;
                           } else if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
@@ -402,20 +416,14 @@ Page({
                             })
                             $.getSocketResponse((did, data) => {
                               s.setData({
-                                openMessage: sqlStr,
-                                voiceOpen: false,
-                                voiceDone: true,
+                                voiceNow: true,
                               });
+                              that.addChat("打开成功", 'l');
                             })
                             return false;
                           } else if ($.IndexDemo(close, sqlStr) == 0 || $.IndexDemo(close, sqlStr) > 0) {
                             array1 = [0xA1, 0x01, 0x00];
                             array2 = [0x00, 0x08, 0xA2];
-                            s.setData({
-                              openMessage: sqlStr,
-                              voiceOpen: false,
-                              voiceDone: true,
-                            });
                             count = array2.concat(sdid.concat(array1));
                             tools.sendData('c2s_write', wx.getStorageSync('did'), {
                               'data': $.getArrays(array2.concat(sdid.concat(array1))),
@@ -434,10 +442,9 @@ Page({
                             })
                             $.getSocketResponse((did, data) => {
                               s.setData({
-                                openMessage: sqlStr,
-                                voiceOpen: false,
-                                voiceDone: true,
+                                voiceNow: true,
                               });
+                              that.addChat("打开成功", 'l');
                             })
                             return false;
                           }
@@ -461,17 +468,18 @@ Page({
 
             for (let i in that.data.semlist) {
               if ((that.data.semlist[i].word !== sqlStr)) {
-                that.setData({
-                  voiceDone: false,
-                  voiceOpen: true,
-                  input: sqlStr,
-                  openMessage: '识别失败!'
-                });
+                // that.setData({
+                //   voiceDone: false,
+                //   voiceOpen: true,
+                //   input: sqlStr,
+                //   openMessage: '识别失败!'
+                // });
                 wx.showModal({
                   title: '警告!',
                   content: '还没有这条语义,请到后台增加!',
                   showCancel: false,
                 })
+                that.addChat("识别错误~", 'l');
                 return false;
               }
             }
@@ -547,12 +555,18 @@ Page({
     });
   },
 
+  socketGo(sdid, array1, array2) {
+    let count = '';
+    count = array2.concat(sdid.concat(array1));
+    $.sendData(count);
+  },
+
   saveIMessage(e) {
-    let that = this, json = {};
+    let json = {};
     let arr = [], brr = [], list = [], sdid = null;
     let rid = null;
     let con = that.data.voiceIMessage;
-
+    
     let array1 = [0xA1, 0x01, 0x01];
     let array2 = [0x00, 0x08, 0xA2];
     let count = '';
@@ -568,6 +582,7 @@ Page({
 
     let semlist = that.data.semlist;
     let sceneArrayMap = wx.getStorageSync('sceneArrayMap');
+    that.addChat(con, 'r');
 
     for (let l in that.data.scenelist) {
       if ($.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情景", con) == 0 ||
@@ -575,6 +590,9 @@ Page({
         $.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情境", con) == 0 ||
         $.IndexDemo("打开" + that.data.scenelist[l].scene_name + "情境", con) > 0) {
         let byte = $.parse(that.data.scenelist[l].byteName);
+        that.setData({
+          voiceNow: false,
+        })
         if (byte[14] == 2) {
           byte[14] += 1;
         } else if (byte[14] == 0) {
@@ -591,37 +609,14 @@ Page({
               'data': $.getArrays(count),
             });
             $.getSocketResponse((did, data) => {
-              // for (let n in sceneArrayMap) {
-              //   if (sceneArrayMap[n].scene_name == that.data.scenelist[l].scene_name) {
-              //     sceneArrayMap[n].status = 1
-              //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
-              //     console.log(wx.getStorageSync('sceneArrayMap'));
-              //   }
-              // }
-              $.ajax({
-                url: '/Scene/updateScene',
-                method: 'POST',
-                data: {
-                  scene_name: that.data.scenelist[l].scene_name,
-                  status: 1
-                },
-                success(res) {
-                }
-              });
+              that.setData({
+                voiceNow: true,
+              })
               if (data[3] == 0) {
-                that.setData({
-                  voiceDone: true,
-                  voiceOpen: true,
-                  input: that.data.voiceIMessage,
-                  openMessage: '识别失败!'
-                });
+                that.addChat("识别失败", 'l');
                 return false;
               } else if (data[3] == 1) {
-                that.setData({
-                  voiceOpen: false,
-                  voiceDone: true,
-                  openMessage: '打开成功!'
-                });
+                that.addChat("打开成功", 'l');
                 return false;
               }
             });
@@ -633,6 +628,9 @@ Page({
         $.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情境", con) == 0 ||
         $.IndexDemo("关闭" + that.data.scenelist[l].scene_name + "情境", con) > 0) {
         let byte = $.parse(that.data.scenelist[l].byteName);
+        that.setData({
+          voiceNow: false,
+        })
         if (byte[14] == 3) {
           byte[14] -= 1;
         } else if (byte[14] == 1) {
@@ -644,34 +642,16 @@ Page({
         try {
           let brr = [0, 18, 0x50];
           let count = brr.concat(byte);
-          setTimeout(function (res) {
+          setTimeout((res) => {
             tools.sendData('c2s_write', wx.getStorageSync('did'), {
               'data': $.getArrays(count),
             });
-            $.getSocketResponse(function (did, data) {
-              // for (let n in sceneArrayMap) {
-              //   if (sceneArrayMap[n].scene_name == that.data.scenelist[l].scene_name) {
-              //     sceneArrayMap[n].status = 0
-              //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
-              //     console.log(wx.getStorageSync('sceneArrayMap'));
-              //   }
-              // }
-              $.ajax({
-                url: '/Scene/updateScene',
-                method: 'POST',
-                data: {
-                  scene_name: that.data.scenelist[l].scene_name,
-                  status: 0
-                },
-                success(res) {
-                }
-              });
+            $.getSocketResponse((did, data) => {
+              that.setData({
+                voiceNow: true,
+              })
               if (data[3] == 1) {
-                that.setData({
-                  voiceOpen: false,
-                  voiceDone: true,
-                  openMessage: '关闭成功!'
-                });
+                that.addChat("关闭成功", 'l');
                 return false;
               }
             });
@@ -708,18 +688,19 @@ Page({
                   if (con == name + region[i].dname + "光一点" || con == name + region[i].dname + "亮一点") {
                     let array1 = [0xA6, 0x01, 0x00, 0x64, 0x00];
                     let array2 = [0x00, 0x08, 0xA2];
-                    socketGo(array1, array2);
+                    that.socketGo(sdid, array1, array2);
                     that.setData({
                       voiceNow: false,
-                      voiceDone: true
+                      // voiceDone: true
                     })
                     $.getSocketResponse((did, data) => {
                       that.setData({
                         voiceNow: true,
-                        voiceDone: true,
-                        openMessage: "已调成亮度为较光亮度",
-                        voiceOpen: false
+                        // voiceDone: true,
+                        // openMessage: "已调成亮度为较光亮度",
+                        // voiceOpen: false
                       })
+                      that.addChat("已调成亮度为较光亮度", 'l');
                     });
                     return false;
                   } else if (con == name + region[i].dname + "暗一点") {
@@ -733,16 +714,17 @@ Page({
                     $.getSocketResponse((did, data) => {
                       that.setData({
                         voiceNow: true,
-                        voiceDone: true,
-                        openMessage: "已调成亮度为较暗",
-                        voiceOpen: false
+                        // voiceDone: true,
+                        // openMessage: "已调成亮度为较暗",
+                        // voiceOpen: false
                       })
+                      that.addChat("已调成亮度为较暗", 'l');
                     });
                     return false;
                   } else if ($.IndexDemo(open, con) == 0 || $.IndexDemo(open, con) > 0) {
                     array1 = [0xA1, 0x01, 0x01];
                     array2 = [0x00, 0x08, 0xA2];
-                    socketGo(array1, array2);
+                    that.socketGo(sdid, array1, array2);
                     that.setData({
                       voiceNow: false,
                       voiceDone: true
@@ -758,20 +740,20 @@ Page({
                           status: "true"
                         },
                       }).then(function (res) {
-                        // $.alert('打开成功!');
                       })
                       that.setData({
                         voiceNow: true,
-                        voiceDone: true,
-                        openMessage: that.data.voiceIMessage,
-                        voiceOpen: false,
+                        // voiceDone: true,
+                        // openMessage: that.data.voiceIMessage,
+                        // voiceOpen: false,
                       })
+                      that.addChat("打开成功", 'l');
                     });
                     return false;
                   } else if ($.IndexDemo(openA, con) == 0 || $.IndexDemo(openA, con) > 0) {
                     array1 = [0xA1, 0x01, 0x01];
                     array2 = [0x00, 0x08, 0xA2];
-                    socketGo(array1, array2);
+                    that.socketGo(sdid, array1, array2);
                     that.setData({
                       voiceNow: false,
                       voiceDone: true
@@ -787,20 +769,20 @@ Page({
                           status: "true"
                         },
                       }).then(function (res) {
-                        // $.alert('打开成功!');
                       })
                       that.setData({
                         voiceNow: true,
-                        voiceDone: true,
-                        openMessage: that.data.voiceIMessage,
-                        voiceOpen: false,
+                        // voiceDone: true,
+                        // openMessage: that.data.voiceIMessage,
+                        // voiceOpen: false,
                       })
+                      that.addChat("打开成功", 'l');
                     });
                     return false;
                   } else if ($.IndexDemo(close, con) == 0 || $.IndexDemo(close, con) > 0) {
                     array1 = [0xA1, 0x01, 0x00];
                     array2 = [0x00, 0x08, 0xA2];
-                    socketGo(array1, array2);
+                    that.socketGo(sdid, array1, array2);
                     that.setData({
                       voiceNow: false,
                       voiceDone: true
@@ -816,22 +798,23 @@ Page({
                           status: "false"
                         },
                       }).then(function (res) {
-                        // $.alert('关闭成功!');
                       })
                       that.setData({
-                        openMessage: that.data.voiceIMessage,
                         voiceNow: true,
-                        voiceOpen: false,
+                        // openMessage: that.data.voiceIMessage,
+                        // voiceOpen: false,
                       })
+                      that.addChat("关闭成功", 'l');
                     });
                     return false;
                   } else {
-                    that.setData({
-                      voiceDone: false,
-                      voiceOpen: true,
-                      input: that.data.voiceIMessage,
-                      openMessage: '识别失败!'
-                    });
+                    // that.setData({
+                    //   voiceDone: false,
+                    //   voiceOpen: true,
+                    //   input: that.data.voiceIMessage,
+                    //   openMessage: '识别失败!'
+                    // });
+                    that.addChat("识别失败", 'l');
                   }
                 }
               }
@@ -854,7 +837,6 @@ Page({
   },
 
   bindPickerChange(e) {
-    var that = this;
     that.setData({
       index: e.detail.value
     });
@@ -867,6 +849,21 @@ Page({
         arrayCharset: 'ct',// 粤语
       });
     }
+  },
+
+  addChat(word, orientation) {
+    let ch = {
+      'text': word,
+      'time': new Date().getTime(),
+      'orientation': orientation
+    };
+    chatListData.push(ch);
+    wx.setStorageSync('chatList', chatListData);
+    var charlenght = chatListData.length;
+    that.setData({
+      chatList: chatListData,
+      scrolltop: "roll" + charlenght
+    });
   },
 
 })
