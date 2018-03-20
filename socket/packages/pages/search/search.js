@@ -107,7 +107,7 @@ Page({
               console.log(did, that.data.array[y].sdid);
               console.log(12312312321);
               flag = false;
-        console.log(flag);
+              console.log(flag);
             }
           }
         }
