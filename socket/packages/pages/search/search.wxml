@@ -1,11 +1,6 @@
 <!--pages/search/search.wxml-->
 
 <view class="marBtm60">
-  <!-- <navigator open-type='switchTab' url='../index/index'>
-    <view class="section fl" style="margin: 0px 10px; width: 80%;" bindtap='goback'>
-      <view class="iconfont icon-return" style="font-size: 1.3rem;color: #ccc;"></view>
-    </view>
-  </navigator> -->
 
   <view class="section">
     <view class="section__title fl" style="width: 16%;">区域：</view>
@@ -18,10 +13,11 @@
     <input placeholder='请输入要增加的区域' class="search-input fl" value='{{ addAreaText }}' bindblur='addArea' hidden='{{ pickerShow }}'></input>
     <view class="fr" style="width: 20%" hidden='{{ !pickerShow }}'>
       <!-- <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ pickerShow }}' bindtap='outputSet'></view> -->
-      <view class='iconfont icon-weibiaoti-1 fr' bindtap='deleteGroup'></view><!--   -->
+      <view class='iconfont icon-weibiaoti-1 fr' bindtap='deleteGroup'></view>
+      <!--   -->
       <!-- <navigator open-type='redirectTo' url='../addarea/addarea'> -->
-        <view class='iconfont icon-weibiaoti-2 fr' bindtap='goPages' data-pagename='addarea/addarea'></view>
-        <!--  bindtap='inputSet' -->
+      <view class='iconfont icon-weibiaoti-2 fr' bindtap='goPages' data-pagename='addarea/addarea'></view>
+      <!--  bindtap='inputSet' -->
       <!-- </navigator> -->
     </view>
 

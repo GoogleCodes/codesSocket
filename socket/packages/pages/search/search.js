@@ -33,7 +33,6 @@ Page({
     },
     did: '',
     dname: '',
-    flag: 0,
   },
 
   /**
@@ -49,42 +48,16 @@ Page({
       },
     });
 
-    let arr = [];
-    arr.push(0x00, 0x02, 0xA0, 0xFF);
-    var json = {
+    let arr = [0x00, 0x02, 0xA0, 0xFF];
+    tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
-    };
-    tools.sendData('c2s_write', wx.getStorageSync('did'), json);
+    });
 
-    $.getSocketResponse((did, data) => {
-      let k = data;
-      let last = null, brr = [], json = {};
-      for (let i in k) {
-        last = k.splice(4, 6 + data[9]);
-        if (last.indexOf(1) == 0) {
-          let name = last;
-          let a = '', b = '';
-          let doname = name.splice(6, last[5]);
-          let str = "";
-          for (let y in doname) {
-            str += "%" + doname[y].toString(16);
-          }
-          json = {
-            sdid: last.splice(0, 4),
-            active: 0,
-            sname: $.utf8to16(unescape(str))
-          };
-          brr.push(json);
-          brr.concat(that.data.array);
-          wx.setStorageSync('gizwits', brr);
-          that.setData({
-            array: wx.getStorageSync('gizwits')
-          });
-        }
-      }
-    })
+    $.getBackDevices();
+    that.setData({
+      array: wx.getStorageSync('gizwits')
+    });
   },
-
 
   onShow() {
     this.getRegion();
@@ -98,7 +71,7 @@ Page({
       data: {
         uid: wx.getStorageSync('wxuser').id,
       },
-    }).then(function (res) {
+    }).then((res) => {
       let arr = [];
       for (let i in res.data) {
         if (res.data[i].pid == wx.getStorageSync('did')) {
@@ -126,26 +99,21 @@ Page({
       }
     }).then((res) => {
       if (res.code == 1) {
+        let flag = true, arr = [];
+        for (let i in res.data) {
+          let did = JSON.parse(res.data[i].did);
+          for (let y in that.data.array) {
+            if (did !== that.data.array[y].sdid) {
+              console.log(did, that.data.array[y].sdid);
+              console.log(12312312321);
+              flag = false;
+        console.log(flag);
+            }
+          }
+        }
         that.setData({
           spliceArray: res.data
         });
-        let arr = [];
-        let gizwits = wx.getStorageSync('gizwits');
-        try{
-          for (let j in gizwits) {
-            console.log(that.data.spliceArray[j].did !== JSON.stringify(gizwits[j].sdid), that.data.spliceArray[j].did, JSON.stringify(gizwits[j].sdid));
-            if (that.data.spliceArray[j].did !== JSON.stringify(gizwits[j].sdid)) {
-
-              arr.push(gizwits[j]);
-              console.log(arr);
-              // that.setData({
-              //   array: [],
-              // });
-            } else {
-            }
-          }
-        } catch(e) {}
-        
       } else if (res.code == 0) {
         that.setData({
           array: wx.getStorageSync('gizwits'),
@@ -198,36 +166,8 @@ Page({
         that.setData({
           spliceArray: res.data
         });
-
         let gizwits = wx.getStorageSync('gizwits');
-        for (let j in gizwits) {
-          if (that.data.spliceArray[j].did == JSON.stringify(gizwits[j].sdid)) {
-            that.setData({
-              array: [],
-            });
-          }
-        }
-
-        $.getSocketResponse((did, k) => {
-          if (wx.getStorageSync('did') == did) {
-            let last = null, brr = [], json = {};
-            // for (let i in k) {
-            //   last = k.splice(4, 21);
-            //   if (last.indexOf(1) == 0) {
-            //     json = {
-            //       sdid: last.splice(0, 4),
-            //       active: 0,
-            //     };
-            //     brr.push(json);
-            //     brr.concat(that.data.array);
-            //     that.setData({
-            //       array: brr,
-            //     });
-            //     wx.setStorageSync('gizwits', that.data.array);
-            //   }
-            // }
-          }
-        })
+        let arr = [];
       } else if (res.code == 0) {
         that.setData({
           array: wx.getStorageSync('gizwits'),

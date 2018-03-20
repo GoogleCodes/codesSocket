@@ -336,6 +336,38 @@ var $ = {
     });
   },
 
+  getBackDevices() {
+    let that = this;
+    that.getSocketResponse((did, data) => {
+      let k = data;
+      let last = null, brr = [], json = {};
+      for (let i in k) {
+        last = k.splice(4, 6 + data[9]);
+        if (last.indexOf(1) == 0) {
+          let name = last;
+          let a = '', b = '';
+          let doname = name.splice(6, last[5]);
+          let str = "";
+          for (let y in doname) {
+            str += "%" + doname[y].toString(16);
+          }
+          json = {
+            sdid: last.splice(0, 4),
+            active: 0,
+            sname: that.utf8to16(unescape(str))
+          };
+          console.log(json);
+          brr.push(json);
+          brr.concat(that.data.array);
+          wx.setStorageSync('gizwits', brr);
+          // that.setData({
+          //   array: wx.getStorageSync('gizwits')
+          // });
+        }
+      }
+    })
+  },
+
 };
 
 export { $ }
