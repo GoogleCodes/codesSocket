@@ -10,106 +10,30 @@
 
   ### 目录结构
 <pre>
-├── build                           // 项目的 Webpack 配置文件
-├── config                          // 项目配置目录
-├── server                          // 项目开发的请求数据
-├── pages                           // 生产目录
-│   ├── aboute                      // 我的
-│   ├── equipment：                 // 设备
-│   ├── forget                      // 忘记密码
-│   ├── index                       // 首页
-│   ├── login                       // 登录
-│   ├── logo                        // 日记
-│   ├── reg                         // 注册
-│   ├── smart                       // 测试数据点
-├── static                          // 静态资源，一般把不需要处理的文件可以放这里
+packages
+  ├── pages                          // 生产目录
+  │   ├── aboutme                    // 关于我们
+  │   ├── addarea                    // 增加区域
+  │   ├── control                    // 指控中心
+  │   ├── forget                     // 忘记密码
+  │   ├── search                     // 搜索设备
+  │   ├── voice                      // 语音
+  │   ├── voicelist                  // 修改语言
+  │   ├── updatearea                 // 修改区域名称
+
+pages
+  ├── 
+  │   ├── equipment                  // 设备详情页
+  │   ├── windows                    // 窗帘详情页
+  │   ├── reg                        // 注册
+  │   ├── me                         // 我的
+  │   ├── message                    // 信息
+  │   ├── index                      // 首页
+  │   ├── scene                      // 情景模式
+  │   ├── share                      // 分享
+  │   ├── login                      // 登录
+  │   ├── logo                       // 日记
+  │   ├── reg                        // 注册
+  │   ├── smart                      // 测试数据点
+  ├── static                         // 静态资源，一般把不需要处理的文件可以放这里
 </pre>
-
-
-,
-  "tabBar": {
-    "position": "bottom",
-    "borderStyle": "#eee",
-    "selectedColor": "#6aa84f",
-    "background": "#f8f8f8",
-    "list": [
-      {
-        "pagePath": "pages/index/index",
-        "iconPath": "static/images/tabBar/img1-1.png",
-        "text": "首页",
-        "selectedIconPath": "static/images/tabBar/img1.png"
-      },
-      {
-        "pagePath": "pages/scene/scene",
-        "iconPath": "static/images/tabBar/img2-2.png",
-        "text": "情景",
-        "selectedIconPath": "static/images/tabBar/img2.png"
-      },
-      {
-        "pagePath": "pages/message/message",
-        "iconPath": "static/images/tabBar/img3.png",
-        "text": "信息",
-        "selectedIconPath": "static/images/tabBar/img3-3.png"
-      },
-      {
-        "pagePath": "pages/me/me",
-        "iconPath": "static/images/tabBar/img4.png",
-        "text": "我的",
-        "selectedIconPath": "static/images/tabBar/img4-4.png"
-      }
-    ]
-  }
-
-
-  <view class="li-view" wx:if="{{ item.did == 0 }}">
-          <view class="pic-iview fl pic1">
-              <view class="iconfont  iconfont icon-leddeng"></view>
-          </view>
-          <view class="fl status-iview f12">
-            <text class="block">{{ item.dname }}</text>
-            <view class="block" style="color: #b3b3b3">当前状态：
-              <text class="block fr" style="color: #6aa84f;">关</text>
-            </view>
-          </view>
-          <navigator url="/pages/equipment/equipment?sdid={{ item.dname }}">
-            <view class="arrow-iview fr iconfont icon-fruits-lemon">
-               <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image>  -->
-            </view>
-          </navigator>
-        </view>
-
-        <view class="li-view" wx:elif="{{ item.types == 2 }}">
-          <view class="pic-iview fl pic2">
-              <view class="iconfont icon-chuangliananzhuang"></view>
-            <!-- <image src="../../../static/images/img05.png" class="w100 h100"></image> -->
-          </view>
-          <view class="fl status-iview f12">
-            <text class="block">窗帘</text>
-            <view class="block" style="color: #b3b3b3">当前状态：
-              <text class="block fr" style="color: #6aa84f;">关</text>
-            </view>
-          </view>
-          <navigator url="/pages/led/led">
-            <view class="arrow-iview fr iconfont icon-fruits-lemon">
-               <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image> -->
-            </view>
-          </navigator>
-        </view>
-
-        <view class="li-view" wx:elif="{{ item.types == 3 }}">
-          <view class="pic-iview fl pic3">
-              <view class="iconfont  iconfont icon-hekricon43"></view>
-            <!-- <image src="../../../static/images/img06.png" class="w100 h100"></image> -->
-          </view>
-          <view class="fl status-iview f12">
-            <text class="block">LED</text>
-            <view class="block" style="color: #b3b3b3">当前状态：
-              <text class="block fr" style="color: #6aa84f;">关</text>
-            </view>
-          </view>
-          <navigator url="/pages/windows/windows">
-            <view class="arrow-iview fr iconfont icon-fruits-lemon">
-              <!-- <image src="../../../static/images/img04.png" class="w100 h100"></image> -->
-            </view>
-          </navigator>
-        </view>

@@ -1,11 +1,9 @@
 <!--pages/search/search.wxml-->
-
 <view class="marBtm60">
-
   <view class="section">
     <view class="section__title fl" style="width: 16%;">区域：</view>
     <view hidden='{{ !pickerShow }}' class="fl" style="width: 64%;position: relative;">
-      <picker range='{{ list }}' value='{{ index }}' data-id='{{ list[index].id }}' range-key='id' range-key='name' class="picker" bindchange="bindMultiPickerChange">
+      <picker range='{{ list }}' value='{{ index }}' data-id='{{ list[index].id }}' range-key='id' range-key='name' class="picker" bindchange="bindMultiPickerChange" data-name='{{ list[index].name }}'>
         <view>{{ list[index].name }}</view>
       </picker>
       <text class="iconfont icon-sanjiaoxing-down"></text>
@@ -14,7 +12,6 @@
     <view class="fr" style="width: 20%" hidden='{{ !pickerShow }}'>
       <!-- <view class='iconfont icon-weibiaoti-1 fr' hidden='{{ pickerShow }}' bindtap='outputSet'></view> -->
       <view class='iconfont icon-weibiaoti-1 fr' bindtap='deleteGroup'></view>
-      <!--   -->
       <!-- <navigator open-type='redirectTo' url='../addarea/addarea'> -->
       <view class='iconfont icon-weibiaoti-2 fr' bindtap='goPages' data-pagename='addarea/addarea'></view>
       <!--  bindtap='inputSet' -->
@@ -27,7 +24,6 @@
   </view>
 
   <view hidden='{{ !pickerShow }}'>
-
     <view class="table-header">
       <view class="tab {{ currentTab == 0 ? 'active': '' }}" data-current="0" bindtap="selected">已选设备</view>
       <view class="tab {{ currentTab == 1 ? 'active': '' }}" data-current="1" bindtap="selected">未选设备</view>

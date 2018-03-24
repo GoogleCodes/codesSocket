@@ -3,6 +3,8 @@
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
 
+let arrays = [];
+
 Page({
 
   /**
@@ -29,8 +31,29 @@ Page({
     });
   },
 
+  storageMsg(text) {
+    let json = {
+      name: text,
+      devices: [],
+    };
+    arrays.push(json);
+    wx.setStorageSync('regionList', arrays);
+  },
+
   saveIMessage() {
     let that = this;
+    // let regionList = wx.getStorageSync('regionList');
+    // for (let i in regionList) {
+    //   if (regionList[i].name == that.data.addAreaText) {
+    //     wx.showToast({
+    //       title: '区域已经重覆!',
+    //       duration: 2000
+    //     })
+    //     return false;
+    //   }
+    // }
+    // that.storageMsg(that.data.addAreaText);
+
     $.ajax({
       url: 'dev/addregion',
       method: "POST",

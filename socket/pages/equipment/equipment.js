@@ -33,7 +33,6 @@ Page({
    */
   onLoad(options) {
     let that = this;
-    console.log(options);
     that.setData({
       sdid: JSON.parse(options.sdid),
       id: options.id,
@@ -206,9 +205,9 @@ Page({
     }
     $.getSocketResponse(function (did, data) {
       if (data.splice(9, 1).toString() == 1) {
-        $.alert('控制成功!');
+        // $.alert('控制成功!');
       } else if (data.splice(9, 1).toString() == 1) {
-        $.alert('控制失败!');
+        // $.alert('控制失败!');
       }
     });
   },
@@ -251,7 +250,7 @@ Page({
       if (data.splice(9, 1).toString() == 1) {
         $.alert('控制成功!');
       } else if (data.splice(9, 1).toString() == 1) {
-        $.alert('控制失败!');
+        // $.alert('控制失败!');
       }
     });
   },
@@ -280,7 +279,7 @@ Page({
         })
       } else if (data[8] == 0) {
         wx.showToast({
-          title: '控制失败!',
+          // title: '控制失败!',
         })
       }
     });
@@ -309,7 +308,7 @@ Page({
         })
       } else if (data[8] == 0) {
         wx.showToast({
-          title: '控制失败!',
+          // title: '控制失败!',
         })
       }
     });
@@ -330,10 +329,16 @@ Page({
       if (data[8] == 1) {
         wx.showToast({
           title: '控制成功!',
-        })
+          duration: 2000
+        }) 
+        setTimeout(() => {
+          wx.switchTab({
+            url: '../index/index',
+          })
+        }, 800);
       } else if (data[8] == 0) {
         wx.showToast({
-          title: '控制失败!',
+          // title: '控制失败!',
         })
       }
     });
@@ -354,6 +359,14 @@ Page({
     }
     console.log(that.data.weibiao, that.data.popers);
   },
+
+  clearPopers() {
+    this.setData({
+      popers: true,
+      weibiao: true,
+    });
+  },
+
 
   getAnalysis(name) {
     let that = this;
@@ -391,29 +404,14 @@ Page({
             $.alert(res.msg);
             that.setData({
               popers: true,
+              weibiao: true,
             });
+            that.getDev();
           }
-          setTimeout(function () {
-            wx.switchTab({
-              url: '../index/index',
-            })
-          }, 500)
         });
         return true;
-      } else {
-        wx.showModal({
-          title: '警告！',
-          content: '修改名称失败!',
-        })
       }
     })
-  },
-
-  clearPopers() {
-    this.setData({
-      popers: true,
-      weibiao: true,
-    });
   },
 
   blurInputDate(e) {

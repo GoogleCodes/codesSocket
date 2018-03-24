@@ -125,7 +125,10 @@ Page({
           //  清除缓存
           wx.removeStorageSync('options');
           wx.removeStorageSync('wxuser');
+          wx.removeStorageSync('devices');
+          wx.removeStorageSync('indexDevice');
           wx.removeStorageSync('userInformation');
+          wx.clearStorageSync();
           wx.redirectTo({ url: '../login/login', })
         }
       }

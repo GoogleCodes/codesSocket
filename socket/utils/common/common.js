@@ -1,4 +1,5 @@
 
+//  微信后台的appid
 let j = {
   appID: 'wx427aa2cee61883dd',
   secret: '945ffa55aed70a50c4db910df20c778e'
@@ -8,8 +9,10 @@ let j = {
 module.exports = {
   j: j,
   purl: "https://api.gizwits.com/app/",
+  //  后台获取数据
   serviceUri: 'https://yelvti.qupinmall.com/public/index/',
   //  https://www.chlorop.com.cn/weixin/public/index/
+  //  语音上传连接
   onloadurl: 'https://yelvti.qupinmall.com/public/index/dev/zhen',
   gizwitsAppId: 'd8b4d2f0bce943ee9ecb4abfa01a2e55',
   wxopen: 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token',

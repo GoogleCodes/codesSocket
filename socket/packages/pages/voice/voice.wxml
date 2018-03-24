@@ -1,14 +1,14 @@
 <!--pages/voice/voice.wxml-->
 
 <view class="voice-control">
-  <view style="margin: 0px 10px;">
-    <scroll-view class="scrool-view" scroll-y="true" style="height: {{ winHeight }}px" scroll-with-animation="true">
-      <view wx:for="{{ chatList }}" style="margin: 10px 0;">
-        <view class="fl" style="width: 100%;" wx:if="{{ item.orientation == 'l' }}">
+  <view style="width:100%;">
+    <scroll-view class="scrool-view" style="height: {{ winHeight }}px" scroll-y="true" scroll-with-animation="true" scroll-into-view="{{ scrolltop }}" enable-back-to-top="true">
+      <view wx:for="{{ chatList }}" style="margin: 10px 0;" wx:key="time">
+        <view id="roll{{ index + 1 }}" class="fl" style="width: 100%;" wx:if="{{ item.orientation == 'l' }}">
           <view class="person iconfont icon-icon-test1 fl"></view>
           <view class="voice-userInput fl" style="margin: 0 0 0 20px;">{{ item.text }}</view>
         </view>
-        <view class="fr" style="width: 100%;" wx:if="{{ item.orientation == 'r' }}">
+        <view id="roll{{ index + 1 }}" class="fr" style="width: 100%;" wx:if="{{ item.orientation == 'r' }}">
           <view class="person iconfont icon-icon-test1 fr"></view>
           <view class="voice-userInput fr">{{ item.text }}</view>
         </view>
@@ -17,50 +17,28 @@
         <view class="voice-li" hidden='{{ voiceNow }}'>
           <view class="iconfont voice-li-icon fl">
             <text class="iconfont icon-icon-test"></text>
-            <!-- <image src="../../../static/images/img17.png" class="block" style="width: 14px;height: 25px;"></image> -->
           </view>
           <view class="fl f12 now_input" style="">
             <text>正在识别输入的指令。。。</text>
           </view>
         </view>
-
-        <!-- <view class="voice-li" hidden='{{ voiceOpen }}'>
-          <view class="voice-li-icon fl">
-            <text class="iconfont icon-icon-test"></text>
-          </view>
-          <view class="fl f12 tab" style="margin-left: 10px;">
-            <view>识别指令成功</view>
-            <view>{{ openMessage }}</view>
-          </view>
-        </view>
-
-        <view class="voice-li" hidden='{{ voiceDone }}'>
-          <view class="voice-li-icon fl">
-            <text class="iconfont icon-icon-test"></text>
-          </view>
-          <view class="fl f12 tab" style="margin-left: 10px;">
-            <view>识别指令失败</view>
-            <view>{{ openMessage }}</view>
-          </view>
-        </view> -->
       </view>
-
     </scroll-view>
   </view>
-
-
-
-  <!-- voice-microphone start -->
-  <view class="voice-microphone" bindtouchstart="startRecode" bindtouchend="endRecode" hover-class='hover-save-voice'>
-    <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
-  </view>
-  <!-- voice-microphone end youcai0234  -->
-
-  <!--save-voice start-->
-  <view class="save-voice">
-    <input type='text' placeholder='输入指令...' bindinput='blurMessage' bindconfirm='saveIMessage' class="save-input fl" value='{{ voiceIMessage }}'></input>
-    <button class="save-button fl" bindtap='saveIMessage'>发送</button>
-  </view>
-  <!--save-voice end-->
-
 </view>
+
+
+<!-- voice-microphone start -->
+<view class="voice-microphone" bindtouchstart="startRecode" bindtouchend="endRecode" hover-class='hover-save-voice'>
+  <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
+</view>
+<!-- voice-microphone end youcai0234  -->
+
+<!--save-voice start-->
+<form bindsubmit='saveIMessage'>
+  <view class="save-voice">
+    <input placeholder='输入指令...' bindinput='blurMessage' name='ask_word' bindconfirm='saveIMessage' class="save-input fl" value='{{ voiceIMessage }}' />
+    <button class="save-button fl" formType="submit">发送</button>
+  </view>
+</form>
+<!--save-voice end-->

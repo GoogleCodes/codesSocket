@@ -282,7 +282,7 @@ Page({
       };
       tools.sendData('c2s_write', wx.getStorageSync('did'), json);
     }
-
+    
     function ajax(status) {
       let that = this;
       $.ajax({
@@ -328,12 +328,10 @@ Page({
                   array1 = [0xA1, 0x01, 0x00];
                   array2 = [0x00, 0x08, 0xA2];
                   socketGo(array1, array2);
-
                   that.setData({
                     status: false,
                     statusText: '关闭'
                   });
-
                   ajax("false");
                   wx.hideLoading();
 
@@ -419,14 +417,14 @@ Page({
         if (wx.getStorageSync('did') == did) {
           if (data[2] == 161) {
             if (wx.getStorageSync('backData') !== JSON.stringify(data)) {
-              $.ajax({
-                url: 'dev/delallregion',
-                method: 'POST',
-                data: {
-                  uid: wx.getStorageSync('wxuser').id
-                },
-              }).then((res) => {
-                if (res.code == 1) {
+              // $.ajax({
+              //   url: 'dev/delallregion',
+              //   method: 'POST',
+              //   data: {
+              //     uid: wx.getStorageSync('wxuser').id
+              //   },
+              // }).then((res) => {
+              //   if (res.code == 1) {
                   $.ajax({
                     url: 'dev/addregion',
                     method: 'POST',
@@ -444,7 +442,6 @@ Page({
                     $.getSocketResponse((did, data) => {
                       if (data[2] == 23) {
                         let k = data;
-                        console.log(k);
                         let last = null, json = {};
                         for (let p in k) {
                           last = k.splice(4, 10 + k[13])
@@ -481,8 +478,8 @@ Page({
                       }
                     });
                   });
-                }
-              });
+                // }
+              // });
             }
           }
         }

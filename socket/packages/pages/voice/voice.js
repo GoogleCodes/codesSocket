@@ -22,7 +22,7 @@ Page({
     voiceDone: true,
     voiceOpen: true,
     //  输入的指令
-    voiceIMessage: '打开测试情景',
+    voiceIMessage: '',
     sceneName: [],
     arrays: [],
     voices: [],
@@ -36,7 +36,8 @@ Page({
     input: "用户输入指令...",
     chatList: [],
     scrolltop: 0,
-    winHeight: 0
+    winHeight: 0,
+    sendButtDisable: true,
   },
 
   onLoad(options) {
@@ -136,7 +137,7 @@ Page({
               }
             }
           }
-        } catch(e) {
+        } catch (e) {
         }
       }
     });
@@ -214,6 +215,16 @@ Page({
             let array1 = [0xA1, 0x01, 0x01];
             let array2 = [0x00, 0x08, 0xA2];
             s.setData({ voiceNow: true });
+            if (res.statusCode == 500) {
+              wx.showToast({
+                title: '服务器错误',
+              })
+            } else if (res.statusCode == 400) {
+              wx.showToast({
+                title: '请求错误!',
+              })
+            }
+            console.log(res);
             var error_text = '语音识别失败';
             var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
             console.log("返回的东西是：", options);
@@ -244,245 +255,247 @@ Page({
             for (var i in options.yuyin) {
               sqlStr = options.yuyin[i].replace("，", "");
               that.addChat(sqlStr, 'r');
-              for (let l in s.data.scenelist) {
-                if ($.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情景", sqlStr) == 0 ||
-                  $.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情景", sqlStr) > 0 ||
-                  $.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情境", sqlStr) == 0 ||
-                  $.IndexDemo("打开" + s.data.scenelist[l].scene_name + "情境", sqlStr) > 0) {
-                  let byte = $.parse(s.data.scenelist[l].byteName);
-                  console.log(byte);
-                  that.setData({
-                    voiceNow: false,
-                  })
-                  if (byte[14] == 2) {
-                    byte[14] += 1;
-                  } else if (byte[14] == 0) {
-                    byte[14] += 1;
-                  }
-                  that.setData({
-                    input: s.data.voiceIMessage
-                  });
-                  try {
-                    let brr = [0, 18, 0x50];
-                    let count = brr.concat(byte);
-                    setTimeout(function (res) {
-                      tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                        'data': $.getArrays(count),
-                      });
-                      $.getSocketResponse(function (did, data) {
-                        that.setData({
-                          voiceNow: true,
-                        })
-                        if (data[3] == 0) {
-                          that.addChat("打开失败", 'l');
-                          return false;
-                        } else if (data[3] == 1) {
-                          that.addChat("打开成功", 'l');
-                          return false;
-                        }
-                      });
-                    }, 1000);
-                  } catch (e) { }
-                } else if ($.IndexDemo("关闭" + s.data.scenelist[l].scene_name + "情景", sqlStr) == 0 ||
-                  $.IndexDemo("关闭" + s.data.scenelist[l].scene_name + "情景", sqlStr) > 0 ||
-                  $.IndexDemo("关闭" + s.data.scenelist[l].scene_name + "情境", sqlStr) == 0 ||
-                  $.IndexDemo("关闭" + s.data.scenelist[l].scene_name + "情境", sqlStr) > 0) {
-                  let byte = $.parse(s.data.scenelist[l].byteName);
-                  that.setData({
-                    voiceNow: true,
-                  })
-                  if (byte[14] == 2) {
-                    byte[14] += 1;
-                  } else if (byte[14] == 0) {
-                    byte[14] += 1;
-                  }
-                  that.setData({
-                    input: s.data.voiceIMessage
-                  });
-                  try {
-                    let brr = [0, 18, 0x50];
-                    let count = brr.concat(byte);
-                    setTimeout((res) => {
-                      senceGo(count);
-                      $.getSocketResponse((did, data) => {
-                        if (data[3] == 1) {
-                          that.addChat("关闭成功", 'l');
-                          return false;
-                        }
-                      });
-                    }, 1000);
-                  } catch (e) { }
-                }
-              }
+              $.ajax({
+                url: 'dev/findsem',
+                method: "POST",
+                data: {
+                  sem: sqlStr
+                },
+              }).then((res) => {
+                if (res.code == 1) {
+                  switch(true) {
+                    case res.data.word == "打开":
+                    case res.data.word == "开":
+                    case res.data.word == "开启":
+                    case res.data.word == "着":
+                    case res.data.word == "亮":
+                    case res.data.word == "光":
+                      for (let l in s.data.scenelist) {
+                        if ($.IndexDemo(s.data.scenelist[l].scene_name + "情景", sqlStr) == 0 ||
+                          $.IndexDemo(s.data.scenelist[l].scene_name + "情景", sqlStr) > 0 ||
+                          $.IndexDemo(s.data.scenelist[l].scene_name + "情境", sqlStr) == 0 ||
+                          $.IndexDemo(s.data.scenelist[l].scene_name + "情境", sqlStr) > 0) {
+                          let byte = $.parse(s.data.scenelist[l].byteName);
+                          that.setData({
+                            voiceNow: false,
+                          })
+                          if (byte[14] == 2) {
+                            byte[14] += 1;
+                          } else if (byte[14] == 0) {
+                            byte[14] += 1;
+                          }
+                          that.setData({
+                            input: s.data.voiceIMessage
+                          });
+                          try {
+                            let brr = [0, 18, 0x50];
+                            let count = brr.concat(byte);
+                            setTimeout(function (res) {
+                              tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                                'data': $.getArrays(count),
+                              });
+                              $.getSocketResponse(function (did, data) {
+                                that.setData({
+                                  voiceNow: true,
+                                })
+                                if (data[3] == 0) {
+                                  that.addChat("打开失败", 'l');
+                                  return false;
+                                } else if (data[3] == 1) {
+                                  that.addChat("打开成功", 'l');
+                                  return false;
+                                }
+                              });
 
-              for (let k in semlist) {
-                if ((semlist[k].word == sqlStr) == true) {
-                  $.getRegion(sqlStr, (id, name) => {
-                    $.ajax({
-                      url: 'dev/getdev',
-                      method: 'POST',
-                      data: {
-                        rid: id,
-                        uid: wx.getStorageSync('wxuser').id,
-                      },
-                    }).then((res) => {
-                      let getdev = res.data, count = '';
-                      for (let i in getdev) {
-                        if (getdev[i].rid == id) {
-                          sdid = JSON.parse(getdev[i].did);
-                          let open = '打开' + name + getdev[i].dname;
-                          let openA = '开启' + name + getdev[i].dname;
-                          let close = '关闭' + name + getdev[i].dname;
-                          if (sqlStr == name + getdev[i].dname + "光一点" || sqlStr == name + getdev[i].dname + "亮一点") {
-                            let array1 = [0xA6, 0x01, 0x01, 0x64];
-                            let array2 = [0x00, 0x08, 0xA2];
-                            count = array2.concat(sdid.concat(array1));
-                            tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                              'data': $.getArrays(array2.concat(sdid.concat(array1))),
-                            });
-                            that.setData({
-                              voiceNow: false,
-                              voiceDone: true
-                            })
-                            $.getSocketResponse((did, data) => {
-                              that.setData({
-                                voiceNow: true,
-                              })
-                              that.addChat("已调成亮度为较光亮度", 'l');
-                            });
-                            return false;
-                          } else if (sqlStr == name + getdev[i].dname + "暗一点") {
-                            let array1 = [0xA6, 0x01, 0x00, 0x10];
-                            let array2 = [0x00, 0x08, 0xA2];
-                            count = array2.concat(sdid.concat(array1));
-                            tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                              'data': $.getArrays(array2.concat(sdid.concat(array1))),
-                            });
-                            that.setData({
-                              voiceNow: false,
-                              voiceDone: true
-                            })
-                            $.getSocketResponse((did, data) => {
-                              that.setData({
-                                voiceNow: true,
-                              })
-                              that.addChat("已调成亮度为较暗", 'l');
-                            });
-                            return false;
-                          }
-                          if ($.IndexDemo(openA, sqlStr) == 0 || $.IndexDemo(openA, sqlStr) > 0) {
-                            array1 = [0xA1, 0x01, 0x01];
-                            array2 = [0x00, 0x08, 0xA2];
-                            count = array2.concat(sdid.concat(array1));
-                            tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                              'data': $.getArrays(array2.concat(sdid.concat(array1))),
-                            });
-                            $.ajax({
-                              url: 'dev/updatevideo',
-                              method: 'POST',
-                              data: {
-                                dname: getdev[i].dname,
-                                id: getdev[i].id,
-                                rid: getdev[i].rid,
-                                status: "true"
-                              },
-                            }).then((res) => {
-                            })
-                            $.getSocketResponse((did, data) => {
-                              s.setData({
-                                voiceNow: true,
-                              });
-                              that.addChat("打开成功", 'l');
-                            })
-                            return false;
-                          } else if ($.IndexDemo(open, sqlStr) == 0 || $.IndexDemo(open, sqlStr) > 0) {
-                            array1 = [0xA1, 0x01, 0x01];
-                            array2 = [0x00, 0x08, 0xA2];
-                            count = array2.concat(sdid.concat(array1));
-                            tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                              'data': $.getArrays(array2.concat(sdid.concat(array1))),
-                            });
-                            $.ajax({
-                              url: 'dev/updatevideo',
-                              method: 'POST',
-                              data: {
-                                dname: getdev[i].dname,
-                                id: getdev[i].id,
-                                rid: getdev[i].rid,
-                                status: "true"
-                              },
-                            }).then((res) => {
-                              $.alert('打开成功!');
-                            })
-                            $.getSocketResponse((did, data) => {
-                              s.setData({
-                                voiceNow: true,
-                              });
-                              that.addChat("打开成功", 'l');
-                            })
-                            return false;
-                          } else if ($.IndexDemo(close, sqlStr) == 0 || $.IndexDemo(close, sqlStr) > 0) {
-                            array1 = [0xA1, 0x01, 0x00];
-                            array2 = [0x00, 0x08, 0xA2];
-                            count = array2.concat(sdid.concat(array1));
-                            tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                              'data': $.getArrays(array2.concat(sdid.concat(array1))),
-                            });
-                            $.ajax({
-                              url: 'dev/updatevideo',
-                              method: 'POST',
-                              data: {
-                                dname: getdev[i].dname,
-                                id: getdev[i].id,
-                                rid: getdev[i].rid,
-                                status: "false"
-                              },
-                            }).then((res) => {
-                              $.alert('关闭成功!');
-                            })
-                            $.getSocketResponse((did, data) => {
-                              s.setData({
-                                voiceNow: true,
-                              });
-                              that.addChat("打开成功", 'l');
-                            })
-                            return false;
-                          }
+                            }, 1000);
+                          } catch (e) { }
                         }
                       }
-                    });
+
+                      $.getRegion(sqlStr, (id, name) => {
+                        $.ajax({
+                          url: 'dev/getdev',
+                          method: 'POST',
+                          data: {
+                            rid: id,
+                            uid: wx.getStorageSync('wxuser').id,
+                          },
+                        }).then((res) => {
+                          let region = res.data;
+                          wx.setStorageSync('region', region);
+                          let device = wx.getStorageSync('region');
+                          for (let i in region) {
+                            sdid = JSON.parse(region[i].did);
+                            let count = name + region[i].dname;
+                            for (let y in device) {
+                              if (device[y].id == region[i].id) {
+                                if (sqlStr == name + region[i].dname + "亮一点" || sqlStr == name + region[i].dname + "光一点" || sqlStr == name + region[i].dname + "亮点" || sqlStr == name + region[i].dname + "光点") {
+                                  let array1 = [0xA6, 0x01, 0x01, 0x64, 0x00];
+                                  let array2 = [0x00, 0x08, 0xA2];
+                                  socketGo(array1, array2);
+                                  that.setData({
+                                    voiceNow: false,
+                                  })
+                                  $.getSocketResponse((did, data) => {
+                                    that.setData({
+                                      voiceNow: true,
+                                    })
+                                    that.addChat("已调成亮度为较光", 'l');
+                                  });
+                                  break;
+                                }
+                                if ($.IndexDemo(count, sqlStr) == 0 || $.IndexDemo(count, sqlStr) > 0) {
+                                  array1 = [0xA1, 0x01, 0x01];
+                                  array2 = [0x00, 0x08, 0xA2];
+                                  that.socketGo(sdid, array1, array2);
+                                  that.setData({
+                                    voiceNow: false,
+                                  })
+                                  $.getSocketResponse((did, data) => {
+                                    $.ajax({
+                                      url: 'dev/updatevideo',
+                                      method: 'POST',
+                                      data: {
+                                        dname: device[y].dname,
+                                        rid: device[y].rid,
+                                        id: device[y].id,
+                                        status: "true"
+                                      },
+                                    }).then(function (res) {
+                                    })
+                                    that.setData({
+                                      voiceNow: true,
+                                    })
+                                    that.addChat("打开成功", 'l');
+                                  });
+                                  break;
+                                }
+                              }
+                            }
+                          }
+                        });
+                      });
+                      break;
+                    
+                    case res.data.word == "关闭":
+                    case res.data.word == "关":
+                    case res.data.word == "暗":
+                    case res.data.word == "关闭测试情景":
+
+                      for (let l in s.data.scenelist) {
+                        if ($.IndexDemo(s.data.scenelist[l].scene_name + "情景", sqlStr) == 0 ||
+                          $.IndexDemo(s.data.scenelist[l].scene_name + "情景", sqlStr) > 0 ||
+                          $.IndexDemo(s.data.scenelist[l].scene_name + "情境", sqlStr) == 0 ||
+                          $.IndexDemo(s.data.scenelist[l].scene_name + "情境", sqlStr) > 0) {
+                          let byte = $.parse(s.data.scenelist[l].byteName);
+                          that.setData({
+                            voiceNow: true,
+                          })
+                          if (byte[14] == 3) {
+                            byte[14] -= 1;
+                          } else if (byte[14] == 1) {
+                            byte[14] -= 1;
+                          }
+                          that.setData({
+                            input: s.data.voiceIMessage
+                          });
+                          try {
+                            let brr = [0, 18, 0x50];
+                            let count = brr.concat(byte);
+                            setTimeout((res) => {
+                              senceGo(count);
+                              $.getSocketResponse((did, data) => {
+                                if (data[3] == 1) {
+                                  that.addChat("关闭成功", 'l');
+                                  return false;
+                                }
+                              });
+                            }, 1000);
+                          } catch (e) { }
+                        }
+                      }
+
+                      $.getRegion(sqlStr, (id, name) => {
+                        $.ajax({
+                          url: 'dev/getdev',
+                          method: 'POST',
+                          data: {
+                            rid: id,
+                            uid: wx.getStorageSync('wxuser').id,
+                          },
+                        }).then((res) => {
+                          let region = res.data;
+                          wx.setStorageSync('region', region);
+                          let device = wx.getStorageSync('region');
+                          for (let i in region) {
+                            sdid = JSON.parse(region[i].did);
+                            let count = name + region[i].dname;
+                            for (let y in device) {
+                              if (device[y].id == region[i].id) {
+                                if (sqlStr == name + region[i].dname + "暗一点" || sqlStr == name + region[i].dname + "暗点") {
+                                  array1 = [0xA6, 0x01, 0x00, 0x10, 0x00];
+                                  array2 = [0x00, 0x08, 0xA2];
+                                  console.log(12312312312);
+                                  count = array2.concat(sdid.concat(array1));
+                                  tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                                    'data': $.getArrays(array2.concat(sdid.concat(array1))),
+                                  });
+                                  that.setData({
+                                    voiceNow: false,
+                                  })
+                                  $.getSocketResponse((did, data) => {
+                                    that.setData({
+                                      voiceNow: true,
+                                    })
+                                    that.addChat("已调成亮度为较暗", 'l');
+                                  });
+                                  break;
+                                }
+                                if ($.IndexDemo(count, sqlStr) == 0 || $.IndexDemo(count, sqlStr) > 0) {
+                                  array1 = [0xA1, 0x01, 0x00];
+                                  array2 = [0x00, 0x08, 0xA2];
+                                  count = array2.concat(sdid.concat(array1));
+                                  tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                                    'data': $.getArrays(array2.concat(sdid.concat(array1))),
+                                  });
+                                  $.ajax({
+                                    url: 'dev/updatevideo',
+                                    method: 'POST',
+                                    data: {
+                                      dname: device[i].dname,
+                                      id: device[i].id,
+                                      rid: device[i].rid,
+                                      status: "false"
+                                    },
+                                  }).then((res) => {
+                                    $.alert('关闭成功!');
+                                  })
+                                  $.getSocketResponse((did, data) => {
+                                    s.setData({
+                                      voiceNow: true,
+                                    });
+                                    that.addChat("关闭成功", 'l');
+                                  })
+                                  break;
+                                }
+                              }
+                            }
+                          }
+                        });
+                      });
+                      break;
+                  }
+                } else if (res.code == 0) {
+                  wx.showModal({
+                    title: '警告!',
+                    content: '还没有这条语义,请到后台增加!',
+                    showCancel: false,
                   })
-                  return false;
+                  that.addChat("还没有这条语义,请到后台增加!", 'l');
                 }
-              }
+              });
             }
 
-            // if ($.IndexDemo(close, sqlStr) == -1 || $.IndexDemo(open, sqlStr)) {
-            //   that.setData({
-            //     voiceDone: false,
-            //     voiceOpen: true,
-            //     input: sqlStr,
-            //     openMessage: '识别失败!'
-            //   });
-            // }
-
-            for (let i in that.data.semlist) {
-              if ((that.data.semlist[i].word !== sqlStr)) {
-                // that.setData({
-                //   voiceDone: false,
-                //   voiceOpen: true,
-                //   input: sqlStr,
-                //   openMessage: '识别失败!'
-                // });
-                wx.showModal({
-                  title: '警告!',
-                  content: '还没有这条语义,请到后台增加!',
-                  showCancel: false,
-                })
-                that.addChat("识别错误~", 'l');
-                return false;
-              }
-            }
           },
           fail(res) {
             s.setData({
@@ -505,9 +518,20 @@ Page({
   },
 
   blurMessage(e) {
-    this.setData({
+
+    that.setData({
       voiceIMessage: e.detail.value
     });
+
+    var inputVal = e.detail.value;
+    var buttDis = true;
+    if (inputVal.length != 0) {
+      var buttDis = false;
+    }
+    that.setData({
+      sendButtDisable: buttDis,
+    })
+
   },
 
   getScene() {
@@ -562,10 +586,19 @@ Page({
   },
 
   saveIMessage(e) {
+    let word = e.detail.value.ask_word ? e.detail.value.ask_word : e.detail.value;
     let json = {};
     let arr = [], brr = [], list = [], sdid = null;
     let rid = null;
-    let con = that.data.voiceIMessage;
+    let con = word; //  that.data.voiceIMessage;
+
+    if (con == '') {
+      wx.showToast({
+        title: '请输入指令!',
+        duration: 2000
+      })
+      return false;
+    }
 
     let array1 = [0xA1, 0x01, 0x01];
     let array2 = [0x00, 0x08, 0xA2];
@@ -582,263 +615,257 @@ Page({
 
     let semlist = that.data.semlist;
     let sceneArrayMap = wx.getStorageSync('sceneArrayMap');
-    that.addChat(con, 'r');
 
-    for (let l in that.data.scenelist) {
-      if ($.IndexDemo("打开", con) == 0 || $.IndexDemo("打开", con) > 0) {
-        if ($.IndexDemo(that.data.scenelist[l].scene_name + "情景", con) == 0 ||
-          $.IndexDemo(that.data.scenelist[l].scene_name + "情景", con) > 0 ||
-          $.IndexDemo(that.data.scenelist[l].scene_name + "情境", con) == 0 ||
-          $.IndexDemo(that.data.scenelist[l].scene_name + "情境", con) > 0) {
-          let byte = $.parse(that.data.scenelist[l].byteName);
-          console.log(23123);
-          that.setData({
-            voiceNow: false,
-          })
-          if (byte[14] == 2) {
-            byte[14] += 1;
-          } else if (byte[14] == 0) {
-            byte[14] += 1;
-          }
-          try {
-            let brr = [0, 18, 0x50];
-            let count = brr.concat(byte);
-            that.setData({
-              input: that.data.voiceIMessage
-            });
-            setTimeout((res) => {
-              tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                'data': $.getArrays(count),
-              });
-              $.getSocketResponse((did, data) => {
+    $.ajax({
+      url: 'dev/findsem',
+      method: "POST",
+      data: {
+        sem: con
+      },
+    }).then((res) => {
+      if (res.code == 1) {
+        switch (true) {
+          case res.data.word == "打开":
+          case res.data.word == "开":
+          case res.data.word == "开启":
+          case res.data.word == "着":
+          case res.data.word == "光":
+          case res.data.word == "亮":
+            that.addChat(con, 'r');
+            for (let l in that.data.scenelist) {
+              if ($.IndexDemo(that.data.scenelist[l].scene_name + "情景", con) == 0 ||
+                $.IndexDemo(that.data.scenelist[l].scene_name + "情景", con) > 0 ||
+                $.IndexDemo(that.data.scenelist[l].scene_name + "情境", con) == 0 ||
+                $.IndexDemo(that.data.scenelist[l].scene_name + "情境", con) > 0) {
+                let byte = $.parse(that.data.scenelist[l].byteName);
                 that.setData({
-                  voiceNow: true,
+                  voiceNow: false,
                 })
-                if (data[3] == 0) {
-                  that.addChat("识别失败", 'l');
-                  return false;
-                } else if (data[3] == 1) {
-                  that.addChat("打开成功", 'l');
-                  return false;
+                if (byte[14] == 2) {
+                  byte[14] += 1;
+                } else if (byte[14] == 0) {
+                  byte[14] += 1;
                 }
-              });
-            }, 1000);
-            return false;
-          } catch (e) { }
-        }
-      } else if ($.IndexDemo("关闭", con) == 0 || $.IndexDemo("关闭", con) > 0) {
-        if ($.IndexDemo(that.data.scenelist[l].scene_name + "情景", con) == 0 ||
-          $.IndexDemo(that.data.scenelist[l].scene_name + "情景", con) > 0 ||
-          $.IndexDemo(that.data.scenelist[l].scene_name + "情境", con) == 0 ||
-          $.IndexDemo(that.data.scenelist[l].scene_name + "情境", con) > 0) {
-          let byte = $.parse(that.data.scenelist[l].byteName);
-          that.setData({
-            voiceNow: false,
-          })
-          if (byte[14] == 3) {
-            byte[14] -= 1;
-          } else if (byte[14] == 1) {
-            byte[14] -= 1;
-          }
-          that.setData({
-            input: that.data.voiceIMessage
-          });
-          try {
-            let brr = [0, 18, 0x50];
-            let count = brr.concat(byte);
-            setTimeout((res) => {
-              tools.sendData('c2s_write', wx.getStorageSync('did'), {
-                'data': $.getArrays(count),
-              });
-              $.getSocketResponse((did, data) => {
-                that.setData({
-                  voiceNow: true,
-                })
-                if (data[3] == 1) {
-                  that.addChat("关闭成功", 'l');
+                try {
+                  let brr = [0, 18, 0x50];
+                  let count = brr.concat(byte);
+                  that.setData({
+                    input: that.data.voiceIMessage
+                  });
+                  setTimeout((res) => {
+                    tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                      'data': $.getArrays(count),
+                    });
+                    $.getSocketResponse((did, data) => {
+                      that.setData({
+                        voiceNow: true,
+                      })
+                      if (data[3] == 0) {
+                        that.addChat("识别失败", 'l');
+                        return false;
+                      } else if (data[3] == 1) {
+                        that.addChat("打开成功", 'l');
+                        return false;
+                      }
+                    });
+                  }, 1000);
                   return false;
-                }
-              });
-            }, 1000);
-            return false;
-          } catch (e) { }
-        }
-      }
-    }
-
-    for (let i in that.data.semlist) {
-      if (that.data.semlist[i].word == con) {
-        $.getRegion(con, (id, name) => {
-          $.ajax({
-            url: 'dev/getdev',
-            method: 'POST',
-            data: {
-              rid: id,
-              uid: wx.getStorageSync('wxuser').id,
-            },
-          }).then((res) => {
-            let region = res.data;
-            wx.setStorageSync('region', region);
-            let device = wx.getStorageSync('region');
-            for (let i in region) {
-              let open = "打开" + name + region[i].dname;
-              let openA = "开启" + name + region[i].dname;
-              let close = "关闭" + name + region[i].dname;
-              let allOpen = '打开' + name, allClose = '关闭' + name;
-              sdid = JSON.parse(region[i].did);
-              for (let y in device) {
-                if (device[y].id == region[i].id) {
-                  //  节能灯亮度为百分之80%
-                  $.IndexDemo(name + region[i].dname + "亮度为", con)
-                  if (con == name + region[i].dname + "光一点" || con == name + region[i].dname + "亮一点") {
-                    let array1 = [0xA6, 0x01, 0x00, 0x64, 0x00];
-                    let array2 = [0x00, 0x08, 0xA2];
-                    that.socketGo(sdid, array1, array2);
-                    that.setData({
-                      voiceNow: false,
-                      // voiceDone: true
-                    })
-                    $.getSocketResponse((did, data) => {
-                      that.setData({
-                        voiceNow: true,
-                        // voiceDone: true,
-                        // openMessage: "已调成亮度为较光亮度",
-                        // voiceOpen: false
-                      })
-                      that.addChat("已调成亮度为较光亮度", 'l');
-                    });
-                    return false;
-                  } else if (con == name + region[i].dname + "暗一点") {
-                    let array1 = [0xA6, 0x01, 0x00, 0x10, 0x00];
-                    let array2 = [0x00, 0x08, 0xA2];
-                    socketGo(array1, array2);
-                    that.setData({
-                      voiceNow: false,
-                      voiceDone: true
-                    })
-                    $.getSocketResponse((did, data) => {
-                      that.setData({
-                        voiceNow: true,
-                        // voiceDone: true,
-                        // openMessage: "已调成亮度为较暗",
-                        // voiceOpen: false
-                      })
-                      that.addChat("已调成亮度为较暗", 'l');
-                    });
-                    return false;
-                  } else if ($.IndexDemo(open, con) == 0 || $.IndexDemo(open, con) > 0) {
-                    array1 = [0xA1, 0x01, 0x01];
-                    array2 = [0x00, 0x08, 0xA2];
-                    that.socketGo(sdid, array1, array2);
-                    that.setData({
-                      voiceNow: false,
-                      voiceDone: true
-                    })
-                    $.getSocketResponse((did, data) => {
-                      $.ajax({
-                        url: 'dev/updatevideo',
-                        method: 'POST',
-                        data: {
-                          dname: device[y].dname,
-                          rid: device[y].rid,
-                          id: device[y].id,
-                          status: "true"
-                        },
-                      }).then(function (res) {
-                      })
-                      that.setData({
-                        voiceNow: true,
-                        // voiceDone: true,
-                        // openMessage: that.data.voiceIMessage,
-                        // voiceOpen: false,
-                      })
-                      that.addChat("打开成功", 'l');
-                    });
-                    return false;
-                  } else if ($.IndexDemo(openA, con) == 0 || $.IndexDemo(openA, con) > 0) {
-                    array1 = [0xA1, 0x01, 0x01];
-                    array2 = [0x00, 0x08, 0xA2];
-                    that.socketGo(sdid, array1, array2);
-                    that.setData({
-                      voiceNow: false,
-                      voiceDone: true
-                    })
-                    $.getSocketResponse((did, data) => {
-                      $.ajax({
-                        url: 'dev/updatevideo',
-                        method: 'POST',
-                        data: {
-                          dname: device[y].dname,
-                          rid: device[y].rid,
-                          id: device[y].id,
-                          status: "true"
-                        },
-                      }).then(function (res) {
-                      })
-                      that.setData({
-                        voiceNow: true,
-                        // voiceDone: true,
-                        // openMessage: that.data.voiceIMessage,
-                        // voiceOpen: false,
-                      })
-                      that.addChat("打开成功", 'l');
-                    });
-                    return false;
-                  } else if ($.IndexDemo(close, con) == 0 || $.IndexDemo(close, con) > 0) {
-                    array1 = [0xA1, 0x01, 0x00];
-                    array2 = [0x00, 0x08, 0xA2];
-                    that.socketGo(sdid, array1, array2);
-                    that.setData({
-                      voiceNow: false,
-                      voiceDone: true
-                    })
-                    $.getSocketResponse((did, data) => {
-                      $.ajax({
-                        url: 'dev/updatevideo',
-                        method: 'POST',
-                        data: {
-                          dname: device[y].dname,
-                          rid: device[y].rid,
-                          id: device[y].id,
-                          status: "false"
-                        },
-                      }).then(function (res) {
-                      })
-                      that.setData({
-                        voiceNow: true,
-                        // openMessage: that.data.voiceIMessage,
-                        // voiceOpen: false,
-                      })
-                      that.addChat("关闭成功", 'l');
-                    });
-                    return false;
-                  } else {
-                    // that.setData({
-                    //   voiceDone: false,
-                    //   voiceOpen: true,
-                    //   input: that.data.voiceIMessage,
-                    //   openMessage: '识别失败!'
-                    // });
-                    that.addChat("识别失败", 'l');
-                  }
-                }
+                } catch (e) { }
               }
             }
-          });
-        });
-        return false;
-      }
-    }
-    for (let i in semlist) {
-      if (semlist[i].word !== that.data.voiceIMessage) {
+
+            $.getRegion(con, (id, name) => {
+              $.ajax({
+                url: 'dev/getdev',
+                method: 'POST',
+                data: {
+                  rid: id,
+                  uid: wx.getStorageSync('wxuser').id,
+                },
+              }).then((res) => {
+                let region = res.data;
+                wx.setStorageSync('region', region);
+                let device = wx.getStorageSync('region');
+                for (let i in region) {
+                  let open = "打开" + name + region[i].dname;
+                  let count = name + region[i].dname;
+                  sdid = JSON.parse(region[i].did);
+                  for (let y in device) {
+                    if (device[y].id == region[i].id) {
+                      if (con == name + region[i].dname + "亮一点" || con == name + region[i].dname + "光一点" || con == name + region[i].dname + "亮点" || con == name + region[i].dname + "光点") {
+                        let array1 = [0xA6, 0x01, 0x01, 0x64, 0x00];
+                        let array2 = [0x00, 0x08, 0xA2];
+                        that.socketGo(sdid, array1, array2);
+                        that.setData({
+                          voiceNow: false,
+                        })
+                        $.getSocketResponse((did, data) => {
+                          that.setData({
+                            voiceNow: true,
+                          })
+                          that.addChat("已调成亮度为较亮", 'l');
+                        });
+                        break;
+                      }
+                      if ($.IndexDemo(count, con) == 0 || $.IndexDemo(count, con) > 0) {
+                        array1 = [0xA1, 0x01, 0x01];
+                        array2 = [0x00, 0x08, 0xA2];
+                        that.socketGo(sdid, array1, array2);
+                        that.setData({
+                          voiceNow: false,
+                        })
+                        $.getSocketResponse((did, data) => {
+                          $.ajax({
+                            url: 'dev/updatevideo',
+                            method: 'POST',
+                            data: {
+                              dname: device[y].dname,
+                              rid: device[y].rid,
+                              id: device[y].id,
+                              status: "true"
+                            },
+                          }).then(function (res) {
+                          })
+                          that.setData({
+                            voiceNow: true,
+                          })
+                          that.addChat("打开成功", 'l');
+                        });
+                        break;
+                      }
+                    }
+                  }
+                }
+              });
+            });
+            break;
+          case res.data.word == "关闭":
+          case res.data.word == "关":
+          case res.data.word == "暗":
+          case res.data.word == "关闭测试情景":
+            that.addChat(con, 'r');
+            for (let l in that.data.scenelist) {
+              if ($.IndexDemo(that.data.scenelist[l].scene_name + "情景", con) == 0 ||
+                $.IndexDemo(that.data.scenelist[l].scene_name + "情景", con) > 0 ||
+                $.IndexDemo(that.data.scenelist[l].scene_name + "情境", con) == 0 ||
+                $.IndexDemo(that.data.scenelist[l].scene_name + "情境", con) > 0) {
+
+                let byte = $.parse(that.data.scenelist[l].byteName);
+                that.setData({
+                  voiceNow: false,
+                })
+                if (byte[14] == 3) {
+                  byte[14] -= 1;
+                } else if (byte[14] == 1) {
+                  byte[14] -= 1;
+                }
+                that.setData({
+                  input: that.data.voiceIMessage
+                });
+                try {
+                  let brr = [0, 18, 0x50];
+                  let count = brr.concat(byte);
+                  setTimeout((res) => {
+                    tools.sendData('c2s_write', wx.getStorageSync('did'), {
+                      'data': $.getArrays(count),
+                    });
+                    $.getSocketResponse((did, data) => {
+                      that.setData({
+                        voiceNow: true,
+                      })
+                      if (data[3] == 1) {
+                        that.addChat("关闭成功", 'l');
+                        return false;
+                      }
+                    });
+                  }, 1000);
+                  return false;
+                } catch (e) { }
+              }
+            }
+
+            $.getRegion(con, (id, name) => {
+              $.ajax({
+                url: 'dev/getdev',
+                method: 'POST',
+                data: {
+                  rid: id,
+                  uid: wx.getStorageSync('wxuser').id,
+                },
+              }).then((res) => {
+                let region = res.data;
+                wx.setStorageSync('region', region);
+                let device = wx.getStorageSync('region');
+                for (let i in region) {
+                  let close = "关闭" + name + region[i].dname;
+                  let count = name + region[i].dname;
+                  sdid = JSON.parse(region[i].did);
+                  for (let y in device) {
+                    if (device[y].id == region[i].id) {
+                      if (con == name + region[i].dname + "暗一点" || con == name + region[i].dname + "暗点") {
+                        console.log(1231231223);
+                        let array3 = [0xA6, 0x01, 0x00, 0x10, 0x00];
+                        let array4 = [0x00, 0x08, 0xA2];
+                        socketGo(array3, array4);
+                        that.setData({
+                          voiceNow: false,
+                          voiceDone: true
+                        })
+                        $.getSocketResponse((did, data) => {
+                          that.setData({
+                            voiceNow: true,
+                          })
+                          that.addChat("已调成亮度为较暗", 'l');
+                        });
+                        break;
+                      }
+                      if ($.IndexDemo(count, con) == 0 || $.IndexDemo(count, con) > 0) {
+                        array1 = [0xA1, 0x01, 0x00];
+                        array2 = [0x00, 0x08, 0xA2];
+                        that.socketGo(sdid, array1, array2);
+                        that.setData({
+                          voiceNow: false,
+                        })
+                        $.getSocketResponse((did, data) => {
+                          $.ajax({
+                            url: 'dev/updatevideo',
+                            method: 'POST',
+                            data: {
+                              dname: device[y].dname,
+                              rid: device[y].rid,
+                              id: device[y].id,
+                              status: "false"
+                            },
+                          }).then(function (res) {
+                            console.log(res);
+                          })
+                          that.setData({
+                            voiceNow: true,
+                          })
+                        });
+                        that.addChat("关闭成功", 'l');
+                        break;
+                      }
+                    }
+                  }
+                }
+              });
+            });
+            break;
+        }
+      } else if (res.code == 0) {
         wx.showModal({
           title: '警告!',
           content: '还没有这条语义,请到后台增加!',
           showCancel: false,
         })
-        return false;
       }
-    }
+    });
+
+    that.setData({
+      voiceIMessage: ""
+    });
+    
   },
 
   bindPickerChange(e) {

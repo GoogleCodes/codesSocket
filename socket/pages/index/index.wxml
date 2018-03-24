@@ -21,14 +21,14 @@
       <view class="ul-view">
         <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 0 }}'>
           <view class="pic-iview fl pic1">
-            <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}' wx:if='{{ item.types == 0 }}'></view>
+            <view class="iconfont  iconfont icon-leddeng {{ item.status ==  'true' ? 'status' : '' }}" bindtap='operating' data-types='{{ item.types }}' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}' wx:if='{{ item.types == 0 }}'></view>
           </view>
           <view class="fl status-iview f12">
             <view class="block" style='color: #b3b3b3'>
               <text class="block">{{ item.dname }}</text>
               <text>当前状态：</text>
-              <text wx:if="{{ item.status == 'false' }}" style='color: #6aa84f'>关闭</text>
-              <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
+              <text wx:if="{{ item.status == '0' }}" style='color: #6aa84f'>关闭</text>
+              <text wx:if="{{ item.status == '1' }}" style='color: #6aa84f'>开启</text>
             </view>
           </view>
           <navigator url="/pages/equipment/equipment?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
@@ -38,14 +38,14 @@
 
         <view class="li-view" wx:for="{{ spliceArray }}" wx:if='{{ item.types == 1 }}'>
           <view class="pic-iview fl pic1">
-            <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" bindtap='operating' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}' wx:if='{{ item.types == 1 }}'></view>
+            <view class="iconfont  iconfont icon-chuangliananzhuang {{ item.status ==  'true' ? 'status' : '' }}" bindtap='operating' data-types='{{ item.types }}' data-id='{{ item.id }}' data-sdid='{{ item.did }}' data-areaid='{{ areaid }}' wx:if='{{ item.types == 1 }}'></view>
           </view>
           <view class="fl status-iview f12">
             <view class="block" style='color: #b3b3b3'>
               <text class="block" style="height: 18px;">{{ item.dname }}</text>
               <text>当前状态：</text>
-              <text wx:if="{{ item.status == 'false' }}" style='color: #6aa84f'>关闭</text>
-              <text wx:if="{{ item.status == 'true' }}" style='color: #6aa84f'>开启</text>
+              <text wx:if="{{ item.status == '0' }}" style='color: #6aa84f'>关闭</text>
+              <text wx:if="{{ item.status == '1' }}" style='color: #6aa84f'>开启</text>
             </view>
           </view>
           <navigator url="/pages/windows/windows?sdid={{ item.did }}&id={{ item.id }}&rid={{ areaid }}">
@@ -61,9 +61,7 @@
 
 <!-- 语音按钮 -->
 <view class='music-iview'>
-  <!-- <navigator url='/pages/voice/voice' class="clea" hover-class='navGoHover'> -->
-    <view class="clea" bindtap='goPages' data-pagename='voice/voice'>
-      <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
-    </view>
-  <!-- </navigator> -->
+  <view class="clea" bindtap='goPages' data-pagename='voice/voice'>
+    <view class="iconfont icon-weibiaoti-12" hover-class='hover-icon'></view>
+  </view>
 </view>

@@ -199,13 +199,13 @@ Page({
     });
   },
 
-  //适配不同屏幕大小的canvas
+  //  适配不同屏幕大小的canvas
   setCanvasSize() {
     var size = {};
     try {
       var res = wx.getSystemInfoSync();
-      var scale = 1100 / 686;//不同屏幕下canvas的适配比例；设计稿是750宽
-      var width = 230; //  res.windowWidth / scale;
+      var scale = 1100 / 686;     //  不同屏幕下canvas的适配比例；设计稿是750宽
+      var width = 230;            //  res.windowWidth / scale;
       var height = 230;//canvas画布为正方形
       size.w = width;
       size.h = height;
@@ -214,6 +214,7 @@ Page({
     }
     return size;
   },
+
   createQrCode(url, canvasId, cavW, cavH) {
     //调用插件中的draw方法，绘制二维码图片
     QR.api.draw(url, canvasId, cavW, cavH);

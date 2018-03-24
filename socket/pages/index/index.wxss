@@ -4,10 +4,10 @@ page {
   background: #eee;
 }
 
- ::-webkit-scrollbar {
+::-webkit-scrollbar {
   height: 0px;
   color: transparent;
-} 
+}
 
 /* scrollTop start */
 
@@ -67,7 +67,6 @@ page {
   width: 85%;
   height: 100%;
 }
-
 
 .recommend_scroll_x_box .tab {
   width: 80px;
@@ -129,8 +128,8 @@ page {
 }
 
 .ul-view .li-view .pic1 {
-  width: 25px;
-  height: 39px;
+  width: 59px;
+  height: 65px;
 }
 
 .ul-view .li-view .pic1 .icon-leddeng {

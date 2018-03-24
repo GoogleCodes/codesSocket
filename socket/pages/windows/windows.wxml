@@ -19,7 +19,7 @@
 
   <view class="eq-iview">
     <view class="eq-iview-left fl">设备编码：</view>
-    <view class="eq-iview-left fl"></view>
+    <view class="eq-iview-left fl">04020025</view>
   </view>
 
   <view class="ul-iview">

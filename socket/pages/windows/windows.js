@@ -57,7 +57,7 @@ Page({
         });
       },
     });
-    this.getDev(that.data.rid, wx.getStorageSync('wxuser').id);
+    this.getDev();
   },
 
   getDev(rid, uid) {
@@ -66,8 +66,8 @@ Page({
       url: 'dev/getdev',
       method: 'POST',
       data: {
-        rid: rid,
-        uid: uid,
+        rid: that.data.rid,
+        uid: wx.getStorageSync('wxuser').id,
       },
     }).then(function (res) {
       for (let i in res.data) {
@@ -102,7 +102,6 @@ Page({
   },
 
   sliderchange(e) {
-
     let num = e.detail.value, arr = [0x00, 0x08, 0xA2], json = {}, that = this;
     let sdid = this.data.sdid;
     this.setData({
@@ -252,12 +251,9 @@ Page({
           $.alert(res.msg);
           that.setData({
             popers: true,
+            weibiao: true,
           });
-          setTimeout(function () {
-            wx.switchTab({
-              url: '../index/index',
-            })
-          }, 1000)
+          that.getDev();
         });
       } else {
         wx.showModal({
@@ -296,6 +292,7 @@ Page({
       if (data[8] == 1) {
         wx.showToast({
           title: '控制成功!',
+          duration: 2000
         })
       } else if (data[8] == 0) {
         wx.showToast({
@@ -366,12 +363,9 @@ Page({
                     }
                   }
                 });
-
               }
             }
-
           });
-
         } else if (res.cancel == true && res.confirm == false) {
           return false;
         }
@@ -395,6 +389,11 @@ Page({
       content: '保存成功!',
       showCancel: false,
     })
+    setTimeout(() => {
+      wx.switchTab({
+        url: '../index/index',
+      })
+    }, 800);
     this.setData({
       layerShow: true,
     });

@@ -1,20 +1,35 @@
 /* pages/voice/voice.wxss */
 
 .voice-control {
-  height: 100%;
-  overflow: hidden;
+  height: 70%;
+  display: flex;
+  margin: 0px 5px;
+  /* overflow: hidden; */
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 98%;
 }
 
-.voice-control .save-voice {
-  margin: 0px 10px;
-  position: absolute;
-  bottom: 10px;
+.voice-control .scrool-view {
+  height: 350px;
+  width: 100%;
+}
+
+.save-voice {
+  position: fixed;
+  bottom: 5px;
+  left: 0px;
+  right: 0px;
   width: 95%;
+  margin: 0px auto;
   background: #fff;
+  height: 38px;
+  border: 1px solid #ccc;
 }
 
-.voice-control .save-voice .save-input {
-  border: 1px solid #ccc;
+.save-voice .save-input {
+  /* border: 1px solid #ccc; */
   border-right: none;
   width: 70%;
   padding-left: 5%;
@@ -23,14 +38,14 @@
   color: #b3b3b3;
 }
 
-.voice-control .save-voice .save-button {
-  height: 40px;
+.save-voice .save-button {
+  height: 38px;
   line-height: 40px;
   background: #7cb242;
-  border: 1px solid #7cb242;
+  /* border:1px solid #7cb242; */
   border-radius: 0;
   color: #fff;
-  width: 24%;
+  width: 25%;
   font-size: 14px;
 }
 
@@ -57,13 +72,13 @@
   color: #808080;
 }
 
-.voice-control .voice-microphone {
+.voice-microphone {
   width: 71px;
   height: 71px;
   border: 1px solid #b3b3b3;
   background: #fff;
   border-radius: 100%;
-  position: absolute;
+  position: fixed;
   bottom: 70px;
   left: 0px;
   right: 0px;
@@ -72,21 +87,21 @@
   margin: 0px auto;
 }
 
-.voice-control .hover-save-voice {
+.hover-save-voice {
   border: 1px solid #7cb242;
   box-shadow: 1px 1px 10px #ccc;
 }
 
-.voice-control .voice-microphone .iconfont {
+.voice-microphone .iconfont {
   font-size: 45px;
   color: #b3b3b3;
 }
 
-.voice-control .voice-microphone .hover-icon {
+.voice-microphone .hover-icon {
   color: #7cb242;
 }
 
-.voice-control .voice-microphone image {
+.voice-microphone image {
   display: block;
   margin: 10px auto;
 }

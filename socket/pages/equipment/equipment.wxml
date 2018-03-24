@@ -17,7 +17,7 @@
 
   <view class="eq-iview">
     <view class="eq-iview-left fl">设备编码：</view>
-    <view class="eq-iview-left fl"></view>
+    <view class="eq-iview-left fl">04020025</view>
   </view>
 
   <view class="ul-iview">
@@ -45,9 +45,6 @@
 <view class="layer" hidden='{{ popers }}' bindtap='clearPopers'></view>
 <view class="poper" style='top: {{ winTop }}px' hidden='{{ popers }}'>
   <text class='poper_title'>修改设备名称</text>
-  <input type='text' placeholder='请输入文字' confirm-type='done' bindinput='blurInputDate' value='{{ blurInputText }}' class="poper_text" ></input>
+  <input type='text' placeholder='请输入文字' confirm-type='done' bindinput='blurInputDate' value='{{ blurInputText }}' class="poper_text"></input>
   <button class="poper_save" bindtap='goSaveImessage'>马上提交</button>
 </view>
-
-<!-- <import src="/pages/footer/footer.wxml" />
-<template is="footer" /> -->

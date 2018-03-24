@@ -1,6 +1,6 @@
 <!--pages/scene/scene.wxml-->
 <view class="scene-body">
-  <view class="scene-body-title">延迟情景</view>
+  <view class="scene-body-title">延时情景</view>
   <view>
     <view class="scene-delay" wx:for='{{ scenelist }}' wx:if='{{ item.sceneTypes == 2 }}'>
       <view class="scene-li">

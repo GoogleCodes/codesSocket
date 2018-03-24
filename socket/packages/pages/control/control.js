@@ -107,7 +107,7 @@ Page({
       url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
       success(res) {
         console.log(res);
-      },fail(err) {
+      }, fail(err) {
         console.log(err);
       }
     });
@@ -174,6 +174,30 @@ Page({
     wx.removeStorageSync('chatList')
   },
 
+  _login(did) {
+    let that = this, json = {};
+    wx.showLoading({
+      title: '数据获取中'
+    })
+    wx.setStorageSync('did', did);
+    let arr = [];
+    json = {
+      did: did,
+    }
+    arr.push(json);
+    json = {
+      cmd: "subscribe_req",
+      data: arr
+    };
+    that._sendJson(json);
+    wx.hideLoading();
+    setTimeout(() => {
+      wx.switchTab({
+        url: '../../../pages/index/index',
+      })
+    }, 500);
+  },
+
   getRegion(callback) {
     $.ajax({
       url: 'dev/getregion',
@@ -195,50 +219,97 @@ Page({
     $.getSocketResponse((did, data) => {
       if (wx.getStorageSync('did') == did) {
         if (data[2] == 161) {
-          let k = data, rid = 0;
-          let last = null, brr = [], json = {};
-          that.getRegion((res) => {
-            let list = res.data;
-            for (let i in list) {
-              if (list[i].pid == did) {
-                if (list[i].name == '全部') {
-                  that.setData({
-                    rid: list[i].id
-                  });
-
-                  for (let i in k) {
-                    last = k.splice(4, 6 + data[9]);
-                    if (last.indexOf(1) == 0) {
-                      let name = last;
-                      let doname = name.splice(6, last[5]);
-                      let str = "";
-                      for (let y in doname) {
-                        str += "%" + doname[y].toString(16);
+          $.ajax({
+            url: 'dev/sdidcot',
+            method: 'POST',
+            data: {
+              uid: wx.getStorageSync('wxuser').id,
+              str: JSON.stringify(data),
+              pid: did
+            },
+          }).then((res) => {
+            let json = {};
+            for (let i in res.data) {
+              let dev = res.data[i];
+              if (wx.getStorageSync('did') == dev.pid) {
+                $.ajax({
+                  url: 'dev/getregion',
+                  method: 'POST',
+                  data: {
+                    uid: wx.getStorageSync('wxuser').id
+                  },
+                }).then((res) => {
+                  let list = res.data;
+                  for (let i in list) {
+                    if (list[i].pid == did) {
+                      if (list[i].name == '全部') {
+                        json = {
+                          uid: wx.getStorageSync('wxuser').id,
+                          did: dev.did,
+                          dname: dev.dname,
+                          rid: list[i].id,
+                          status: dev.status,
+                          pid: wx.getStorageSync('did'),
+                          types: dev.types,
+                          isall: 1
+                        };
+                        console.log(json);
+                        $.ajax({
+                          url: 'dev/adddev',
+                          method: "POST",
+                          data: json,
+                        }).then(function (res) {
+                        })
                       }
-                      let deviceDid = last.splice(0, 4);
-
-                      json = {
-                        uid: wx.getStorageSync('wxuser').id,
-                        did: $.stringify(deviceDid),
-                        dname: $.utf8to16(unescape(str)),
-                        rid: that.data.rid,
-                        status: 'false',
-                        pid: wx.getStorageSync('did'),
-                        types: deviceDid[1],
-                        isall: 1
-                      };
-                      $.ajax({
-                        url: 'dev/adddev',
-                        method: "POST",
-                        data: json,
-                      }).then(function (res) {
-                      })
                     }
                   }
-                }
+                });
               }
             }
           });
+          // let k = data, rid = 0;
+          // let last = null, brr = [], json = {};
+          // that.getRegion((res) => {
+          //   let list = res.data;
+          //   for (let i in list) {
+          //     if (list[i].pid == did) {
+          //       if (list[i].name == '全部') {
+          //         that.setData({
+          //           rid: list[i].id
+          //         });
+          //         for (let i in k) {
+          //           last = k.splice(4, 6 + data[9]);
+          //           if (last.indexOf(1) == 0) {
+          //             let name = last;
+          //             let doname = name.splice(6, last[5]);
+          //             let str = "";
+          //             for (let y in doname) {
+          //               str += "%" + doname[y].toString(16);
+          //             }
+          //             console.log(str, " --------------");
+          //             let deviceDid = last.splice(0, 4);
+          //             json = {
+          //               uid: wx.getStorageSync('wxuser').id,
+          //               did: $.stringify(deviceDid),
+          //               dname: $.utf8to16(unescape(str)),
+          //               rid: that.data.rid,
+          //               status: 'false',
+          //               pid: wx.getStorageSync('did'),
+          //               types: deviceDid[1],
+          //               isall: 1
+          //             };
+          //             $.ajax({
+          //               url: 'dev/adddev',
+          //               method: "POST",
+          //               data: json,
+          //             }).then(function (res) {
+          //             })
+          //           }
+          //         }
+          //       }
+          //     }
+          //   }
+          // });
         }
       }
     });
@@ -271,31 +342,7 @@ Page({
         }
       }
     });
-    
-  },
 
-  _login(did) {
-    let that = this, json = {};
-    wx.showLoading({ 
-      title: '数据获取中' 
-    })
-    wx.setStorageSync('did', did);
-    let arr = [];
-    json = {
-      did: did,
-    }
-    arr.push(json);
-    json = {
-      cmd: "subscribe_req",
-      data: arr
-    };
-    that._sendJson(json);
-    wx.hideLoading();
-    setTimeout(() => {
-      wx.switchTab({
-        url: '../../../pages/index/index',
-      })
-    }, 500);
   },
 
   //  心跳开始
@@ -309,7 +356,7 @@ Page({
       that._sendJson(options);
     }, heartbeatInterval);
   },
-  
+
   /**
   * 发送数据
   */

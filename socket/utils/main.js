@@ -3,7 +3,7 @@ let urls = require('common/common.js');
 let tools = require('util.js');
 
 var $ = {
-
+  //  正则
   regex: /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/,
 
   getName(name) {
@@ -354,9 +354,9 @@ var $ = {
           json = {
             sdid: last.splice(0, 4),
             active: 0,
-            sname: that.utf8to16(unescape(str))
+            sname: that.utf8to16(unescape(str)),
+            select: false,
           };
-          console.log(json);
           brr.push(json);
           brr.concat(that.data.array);
           wx.setStorageSync('gizwits', brr);

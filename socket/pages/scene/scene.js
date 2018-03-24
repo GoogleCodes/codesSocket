@@ -101,26 +101,18 @@ Page({
   //  获取情景
   getSceneTo() {
     wx.showLoading({
-      title: '获取中。。。',
+      title: '加载中。。。',
     })
     let arr = [], json = {}, that = this;
-
     let status; // 状态
-
     arr.push(0x00, 0x01, 0x40);
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
     });
     $.getSocketResponse((did, res) => {
       if (res[3] == 0) {
-        console.log(res[3] == 0);
         wx.removeStorageSync('sceneArrayMap');
         wx.hideLoading();
-        wx.showModal({
-          title: '警告',
-          content: '暂时没有情景模式!',
-          showCancel: false,
-        })
         return false;
       }
       wx.hideLoading();
@@ -165,7 +157,6 @@ Page({
                 that.setData({
                   status: 1
                 });
-                console.log(that.data.status);
               }
               let n = name.concat(doname.concat(last));
               if (n[14] == 0 || n[14] == 1) {
@@ -213,6 +204,7 @@ Page({
       let c = by.concat(JSON.parse(name));
       if (c[14] == 2) {
         c[14] += 1;
+        
       } else if (c[14] == 0) {
         c[14] += 1;
       }
@@ -226,17 +218,6 @@ Page({
             if (res[2] == 81) {
               switch (res[3]) {
                 case 1:
-                  $.ajax({
-                    url: '/Scene/updateScene',
-                    method: 'POST',
-                    data: {
-                      scene_name: scenename,
-                      status: 1
-                    },
-                    success(res) {
-                    }
-                  });
-
                   $.alert('控制成功');
                   return false;
                 case 0:
@@ -249,6 +230,17 @@ Page({
           }
         } catch (e) { }
       });
+
+      setTimeout(() => {
+        if (c[14] == 3) {
+          c[14] -= 1;
+          count = arr.concat(c);
+          tools.sendData('c2s_write', wx.getStorageSync('did'), {
+            'data': $.getArrays(count),
+          });
+          that.getSceneTo();
+        }
+      }, 1000);
       return false;
     } else if (flag == false) {
       let by = [];
@@ -266,26 +258,8 @@ Page({
         try {
           if (wx.getStorageSync('did') == did) {
             if (res[2] == 81) {
-              console.log(res);
               switch (res[3]) {
                 case 1:
-                  // for (let n in sceneArrayMap) {
-                  //   if (sceneArrayMap[n].id == id) {
-                  //     sceneArrayMap[n].status = 0;
-                  //     wx.setStorageSync("sceneArrayMap", sceneArrayMap);
-                  //     console.log(wx.getStorageSync('sceneArrayMap'));
-                  //   }
-                  // }
-                  $.ajax({
-                    url: '/Scene/updateScene',
-                    method: 'POST',
-                    data: {
-                      scene_name: scenename,
-                      status: 0
-                    },
-                    success(res) {
-                    }
-                  });
                   $.alert('控制成功')
                   return false;
                 case 0:
