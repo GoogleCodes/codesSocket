@@ -339,6 +339,7 @@ var $ = {
   getBackDevices() {
     let that = this;
     that.getSocketResponse((did, data) => {
+      console.log(data);
       let k = data;
       let last = null, brr = [], json = {};
       for (let i in k) {
@@ -355,17 +356,59 @@ var $ = {
             sdid: last.splice(0, 4),
             active: 0,
             sname: that.utf8to16(unescape(str)),
-            select: false,
+            status: last[0]
           };
           brr.push(json);
           brr.concat(that.data.array);
           wx.setStorageSync('gizwits', brr);
-          // that.setData({
-          //   array: wx.getStorageSync('gizwits')
-          // });
         }
       }
     })
+  },
+
+  intersection(a, b) {
+    var c = [];
+    for (let m in a) {
+      for (let n in b) {
+        if ((a[m].id == a[n].id) && (a[m].name == b[n].name))
+          c.push(a[m]);
+      }
+    }
+    return c;
+  },
+  
+  /**
+	 * @brieaf 数组合并去重
+	 * @param array1
+	 * @param array2
+	 * @return array
+   */
+  mergeResetArray(array1, array2) {
+    if ((array1 == null) || (array1 == undefined) || (array2 == null) || (array2 == undefined)) {
+      return false;
+    }
+    var array = [];
+    if (array1.constructor !== Array) {
+      array[0] = array1;
+    } else {
+      array1.forEach(function (val, index) {
+        //将array1去重压入新数组
+        if (array.indexOf(val) === -1) {
+          array.push(val);
+        }
+      });
+    }
+    if (array2.constructor !== Array) {
+      array.push(array2);
+    } else {
+      //循环array2，判断当前value是否在新数组last中，不在则压入last数组
+      array2.forEach(function (v, i) {
+        if (array.indexOf(v) === -1) {
+          array.push(v);
+        }
+      })
+    }
+    return array;
   },
 
 };

@@ -29,73 +29,20 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.getSceneTo();
     that = this;
-  },
-
-  onShow() {
     this.getSceneTo();
-    // this.getScene();
   },
 
   getScene() {
     $.getName('title');
-    wx.showLoading({
-      title: '获取中...',
-    })
+    if (wx.getStorageSync('sceneArrayMap') == '') {
+      that.this.getSceneTo();
+      return false;
+    }
     that.setData({
       scenelist: wx.getStorageSync('sceneArrayMap'),
     });
     wx.hideLoading();
-    // $.ajax({
-    //   url: 'Scene/getScene',
-    //   method: 'POST',
-    // }).then((res) => {
-    //   wx.hideLoading();
-    //   let json = {}, arr = [];
-    //   if (res.data == '') {
-    //     wx.showToast({
-    //       title: '暫没情景模式!',
-    //     })
-    //     return false;
-    //   } else {
-    //     wx.removeStorageSync('ls');
-    //     // if (wx.getStorageSync('did') == res.data[i].did) {
-    //       if (wx.getStorageSync('scenelist') == '') {
-    //         for (let i in res.data) {
-    //           json = {
-    //             scene_id: res.data[i].scene_id,
-    //             byteName: JSON.parse(res.data[i].byteName),
-    //             scene_name: res.data[i].scene_name,
-    //             sceneTypes: res.data[i].sceneTypes,
-    //             status: res.data[i].status
-    //           };
-    //           arr.push(json);
-    //           console.log(that.data.scenelist);
-    //         }
-    //         wx.setStorageSync('scenelist', arr);
-    //         that.setData({
-    //           scenelist: arr,
-    //         });
-    //       } else if (wx.getStorageSync('scenelist') !== '') {
-    //         let list = wx.getStorageSync('scenelist');
-    //         for (let i in list) {
-    //           try {
-    //             wx.setStorageSync('ls', list);
-    //             if (wx.getStorageSync('ls')[i].scene_id == list[i].id) {
-    //               list[i].status = wx.getStorageSync('ls')[i].status;
-    //               wx.hideLoading();
-    //             }
-    //           } catch (e) {
-    //           }
-    //         }
-    //         that.setData({
-    //           scenelist: list,
-    //         });
-    //       }
-    //     // }
-    //   }
-    // });
   },
 
   //  获取情景
@@ -103,8 +50,7 @@ Page({
     wx.showLoading({
       title: '加载中。。。',
     })
-    let arr = [], json = {}, that = this;
-    let status; // 状态
+    let arr = [], json = {};
     arr.push(0x00, 0x01, 0x40);
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
@@ -115,7 +61,6 @@ Page({
         wx.hideLoading();
         return false;
       }
-      wx.hideLoading();
       try {
         let arr = res, arrID = res;
         if (did !== wx.getStorageSync('did')) {
@@ -147,12 +92,10 @@ Page({
               for (let j in tmp) {
                 str += "%" + tmp[j].toString(16);
               }
-              console.log(last);
               if (last[0] == 0 || last[0] == 2) {
                 that.setData({
                   status: 0
                 });
-                console.log(that.data.status);
               } else if (last[0] == 1 || last[0] == 3) {
                 that.setData({
                   status: 1
@@ -173,7 +116,6 @@ Page({
                 sceneTypes: that.data.sceneTypes,
                 scene_id: n[0],
                 scene_name: $.utf8to16(unescape(str)),
-                scene_num: '123',
                 last: $.stringify(last.splice(1, 6)),
                 did: wx.getStorageSync('did'),
                 status: that.data.status,
@@ -184,6 +126,7 @@ Page({
             }
           }
           that.getScene();
+          wx.hideLoading();
         }
       } catch (e) { }
     })
@@ -196,7 +139,7 @@ Page({
     let scenename = e.currentTarget.dataset.scenename;
     let id = e.currentTarget.dataset.id;
     let map = [], index = '';
-    let arr = [0, 18, 0x50], that = this, json = {};
+    let arr = [0, 18, 0x50], json = {};
     let count = null;
     let sceneArrayMap = wx.getStorageSync('sceneArrayMap');
     if (flag == true) {
@@ -277,7 +220,7 @@ Page({
   },
 
   switchDeleteScene(e) {
-    let arr = [], that = this;
+    let arr = [];
     wx.showModal({
       title: '删除情景模式',
       content: '确定要删除吗?',

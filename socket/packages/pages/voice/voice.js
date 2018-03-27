@@ -37,7 +37,6 @@ Page({
     chatList: [],
     scrolltop: 0,
     winHeight: 0,
-    sendButtDisable: true,
   },
 
   onLoad(options) {
@@ -175,7 +174,6 @@ Page({
 
   endRecode(e) {
     var s = this, sdid = '';
-    let that = this;
     let semlist = s.data.semlist;
     s.setData({
       voiceNow: false,
@@ -212,6 +210,7 @@ Page({
             'lan': wx.getStorageSync('Language'),
           },
           success(res) {
+            console.log(res);
             let array1 = [0xA1, 0x01, 0x01];
             let array2 = [0x00, 0x08, 0xA2];
             s.setData({ voiceNow: true });
@@ -220,11 +219,13 @@ Page({
                 title: '服务器错误',
               })
             } else if (res.statusCode == 400) {
-              wx.showToast({
-                title: '请求错误!',
-              })
+              // wx.showToast({
+              //   title: '请求错误!',
+              // })
+              // that.addChat("识别错误", 'l');
+            } else if (res.statusCode == 200) {
+              // that.addChat("", 'l');
             }
-            console.log(res);
             var error_text = '语音识别失败';
             var options = JSON.parse(res.data), result = null, sqlStr = null, json = {};
             console.log("返回的东西是：", options);
@@ -263,7 +264,7 @@ Page({
                 },
               }).then((res) => {
                 if (res.code == 1) {
-                  switch(true) {
+                  switch (true) {
                     case res.data.word == "打开":
                     case res.data.word == "开":
                     case res.data.word == "开启":
@@ -376,7 +377,7 @@ Page({
                         });
                       });
                       break;
-                    
+
                     case res.data.word == "关闭":
                     case res.data.word == "关":
                     case res.data.word == "暗":
@@ -435,7 +436,6 @@ Page({
                                 if (sqlStr == name + region[i].dname + "暗一点" || sqlStr == name + region[i].dname + "暗点") {
                                   array1 = [0xA6, 0x01, 0x00, 0x10, 0x00];
                                   array2 = [0x00, 0x08, 0xA2];
-                                  console.log(12312312312);
                                   count = array2.concat(sdid.concat(array1));
                                   tools.sendData('c2s_write', wx.getStorageSync('did'), {
                                     'data': $.getArrays(array2.concat(sdid.concat(array1))),
@@ -484,6 +484,8 @@ Page({
                         });
                       });
                       break;
+                    default:
+                      that.addChat("识别错误", 'l');
                   }
                 } else if (res.code == 0) {
                   wx.showModal({
@@ -518,24 +520,13 @@ Page({
   },
 
   blurMessage(e) {
-
     that.setData({
       voiceIMessage: e.detail.value
     });
-
-    var inputVal = e.detail.value;
-    var buttDis = true;
-    if (inputVal.length != 0) {
-      var buttDis = false;
-    }
-    that.setData({
-      sendButtDisable: buttDis,
-    })
-
   },
 
   getScene() {
-    let arr = [], json = {}, that = this;
+    let arr = [], json = {};
     arr.push(0x00, 0x01, 0x40);
     tools.sendData('c2s_write', that.data.did, {
       'data': $.getArrays(arr),
@@ -687,12 +678,14 @@ Page({
                 wx.setStorageSync('region', region);
                 let device = wx.getStorageSync('region');
                 for (let i in region) {
-                  let open = "打开" + name + region[i].dname;
                   let count = name + region[i].dname;
                   sdid = JSON.parse(region[i].did);
                   for (let y in device) {
                     if (device[y].id == region[i].id) {
-                      if (con == name + region[i].dname + "亮一点" || con == name + region[i].dname + "光一点" || con == name + region[i].dname + "亮点" || con == name + region[i].dname + "光点") {
+                      if (con == name + region[i].dname + "亮一点" || 
+                      con == name + region[i].dname + "光一点" || 
+                      con == name + region[i].dname + "亮点" || 
+                      con == name + region[i].dname + "光点") {
                         let array1 = [0xA6, 0x01, 0x01, 0x64, 0x00];
                         let array2 = [0x00, 0x08, 0xA2];
                         that.socketGo(sdid, array1, array2);
@@ -708,6 +701,7 @@ Page({
                         break;
                       }
                       if ($.IndexDemo(count, con) == 0 || $.IndexDemo(count, con) > 0) {
+                        console.log(123123);
                         array1 = [0xA1, 0x01, 0x01];
                         array2 = [0x00, 0x08, 0xA2];
                         that.socketGo(sdid, array1, array2);
@@ -735,6 +729,7 @@ Page({
                       }
                     }
                   }
+
                 }
               });
             });
@@ -865,7 +860,7 @@ Page({
     that.setData({
       voiceIMessage: ""
     });
-    
+
   },
 
   bindPickerChange(e) {

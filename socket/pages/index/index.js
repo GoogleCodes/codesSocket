@@ -5,6 +5,8 @@ import { $ } from '../../utils/main.js'
 
 let com = require('../../utils/common/common.js');
 
+let that;
+
 Page({
 
   /**
@@ -48,7 +50,6 @@ Page({
   },
 
   bindChange(e) {
-    let that = this;
     wx.showLoading({
       title: '获取中。。。',
     })
@@ -90,7 +91,7 @@ Page({
   },
 
   selected(e) {
-    var that = this, arr = [];
+    var arr = [];
     if (this.data.currentTab === e.target.dataset.current) {
       return false;
     } else {
@@ -129,7 +130,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    let that = this;
+    that = this;
     if (wx.getStorageSync('options') == '') {
       wx.removeStorageSync('userInformation');
       wx.removeStorageSync('wxuser');
@@ -138,12 +139,10 @@ Page({
   },
 
   onShow() {
-    let that = this;
     this._getBindingList(20, 0);
   },
 
   getIndexGizwits() {
-    let that = this;
     $.getName('title');
     $.ajax({
       url: 'dev/getregion',
@@ -226,7 +225,6 @@ Page({
   },
 
   elePosition(rid) {
-    let that = this;
     $.ajax({
       url: 'dev/getdev',
       method: 'POST',
@@ -284,7 +282,6 @@ Page({
     }
     
     function ajax(status) {
-      let that = this;
       $.ajax({
         url: 'dev/editdev',
         method: 'POST',
@@ -294,6 +291,14 @@ Page({
           status: status
         }
       }).then((res) => {
+        if (res.msg == '请求失败') {
+          wx.showToast({
+            title: res.msg,
+            duration: 2000,
+          })
+          return false;
+        }
+        wx.hideLoading();
       });
     }
 
@@ -313,6 +318,7 @@ Page({
               });
               switch (true) {
                 case that.data.spliceArray[y].status == "false":
+                  ajax("true");
                   array1 = [0xA1, 0x01, 0x01];
                   array2 = [0x00, 0x08, 0xA2];
                   socketGo(array1, array2);
@@ -320,11 +326,11 @@ Page({
                     status: true,
                     statusText: '开启',
                   });
-                  ajax("true");
                   wx.hideLoading();
                   that.elePosition(that.data.areaid);
                   return;
                 case that.data.spliceArray[y].status == "true":
+                  ajax("false");
                   array1 = [0xA1, 0x01, 0x00];
                   array2 = [0x00, 0x08, 0xA2];
                   socketGo(array1, array2);
@@ -332,9 +338,6 @@ Page({
                     status: false,
                     statusText: '关闭'
                   });
-                  ajax("false");
-                  wx.hideLoading();
-
                   that.elePosition(that.data.areaid);
                   return false;
                 default:
@@ -347,11 +350,10 @@ Page({
       }
     } catch (e) {
     }
-
   },
 
   _login() {
-    let that = this, json = {};
+    let json = {};
     wx.showLoading({ title: '' })
     var options = wx.getStorageSync('options');
     //  创建Socket
@@ -399,7 +401,6 @@ Page({
   },
 
   getDevice() {
-    let that = this;
     let arr = [0x00, 0x02, 0xA0, 0xFF];
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
@@ -490,7 +491,6 @@ Page({
 
   //  心跳开始
   _startPing() {
-    var that = this;
     var heartbeatInterval = that.data._heartbeatInterval * 1000;
     that.data._heartbeatTimerId = setInterval(() => {
       var options = {
@@ -501,7 +501,6 @@ Page({
   },
 
   _getBindingList(limit, skip) {
-    var that = this;
     let devices = wx.getStorageSync('devices');
     let json = {}, arr = [];
     for (var i in devices) {
@@ -552,7 +551,6 @@ Page({
   * 发送数据
   */
   _sendJson(json) {
-    var that = this;
     wx.sendSocketMessage({
       //  对象转换字符串
       data: JSON.stringify(json),
@@ -560,7 +558,6 @@ Page({
   },
 
   getJSON(cmd, dids, names) {
-    var that = this;
     //  读取数据
     var json = {
       cmd: cmd,
@@ -573,9 +570,8 @@ Page({
   },
 
   goPages(e) {
-    let pageNames = e.currentTarget.dataset.pagename;
     wx.navigateTo({
-      url: '../../packages/pages/' + pageNames,
+      url: '../../packages/pages/' + e.currentTarget.dataset.pagename,
     })
   }
 

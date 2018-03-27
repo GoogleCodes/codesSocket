@@ -3,6 +3,8 @@
 var tools = require('../../utils/util.js');
 import { $ } from '../../utils/main.js'
 
+let that;
+
 Page({
 
   /**
@@ -43,6 +45,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    that = this;
     this._getBindingList(20, 0);
   },
 
@@ -54,7 +57,6 @@ Page({
     wx.showLoading({
       title: '获取中...',
     })
-    var that = this;
     that.setData({
       list: wx.getStorageSync('devices')
     });
@@ -101,7 +103,7 @@ Page({
   },
 
   goConnSocket() {
-    let that = this, json = {};
+    let json = {};
     //  创建Socket
     wx.connectSocket({
       url: 'wss://' + that.data.host + ':' + that.data.wss_port + '/ws/app/v1',
@@ -165,7 +167,7 @@ Page({
         uid: wx.getStorageSync('wxuser').id,
         name: '全部',
         pid: did,
-        isall: 1
+        isall: 1,
       },
     }).then((res) => {
     })
@@ -175,7 +177,7 @@ Page({
   },
 
   _login(did) {
-    let that = this, json = {};
+    let json = {};
     wx.showLoading({
       title: '数据获取中'
     })
@@ -211,7 +213,6 @@ Page({
   },
 
   getDevice(did) {
-    let that = this;
     let arr = [0x00, 0x02, 0xA0, 0xFF];
     tools.sendData('c2s_write', wx.getStorageSync('did'), {
       'data': $.getArrays(arr),
@@ -220,53 +221,34 @@ Page({
       if (wx.getStorageSync('did') == did) {
         if (data[2] == 161) {
           $.ajax({
-            url: 'dev/sdidcot',
+            url: 'dev/getregion',
             method: 'POST',
             data: {
-              uid: wx.getStorageSync('wxuser').id,
-              str: JSON.stringify(data),
-              pid: did
+              uid: wx.getStorageSync('wxuser').id
             },
           }).then((res) => {
-            let json = {};
-            for (let i in res.data) {
-              let dev = res.data[i];
-              if (wx.getStorageSync('did') == dev.pid) {
-                $.ajax({
-                  url: 'dev/getregion',
-                  method: 'POST',
-                  data: {
-                    uid: wx.getStorageSync('wxuser').id
-                  },
-                }).then((res) => {
-                  let list = res.data;
-                  for (let i in list) {
-                    if (list[i].pid == did) {
-                      if (list[i].name == '全部') {
-                        json = {
-                          uid: wx.getStorageSync('wxuser').id,
-                          did: dev.did,
-                          dname: dev.dname,
-                          rid: list[i].id,
-                          status: dev.status,
-                          pid: wx.getStorageSync('did'),
-                          types: dev.types,
-                          isall: 1
-                        };
-                        console.log(json);
-                        $.ajax({
-                          url: 'dev/adddev',
-                          method: "POST",
-                          data: json,
-                        }).then(function (res) {
-                        })
-                      }
-                    }
-                  }
-                });
+            let list = res.data;
+            for (let i in list) {
+              if (list[i].pid == did) {
+                if (list[i].name == '全部') {
+                  $.ajax({
+                    url: 'dev/sdidcot',
+                    method: 'POST',
+                    data: {
+                      uid: wx.getStorageSync('wxuser').id,
+                      str: JSON.stringify(data),
+                      pid: did,
+                      rid: list[i].id
+                    },
+                  }).then((res) => {
+                  });
+                }
               }
             }
           });
+          //   }
+          // }
+          // });
           // let k = data, rid = 0;
           // let last = null, brr = [], json = {};
           // that.getRegion((res) => {
@@ -322,10 +304,9 @@ Page({
       data: {
         uid: wx.getStorageSync('wxuser').id
       },
-    }).then(function (res) {
+    }).then((res) => {
       for (let i in res.data) {
         if (res.data[i].pid == wx.getStorageSync('did')) {
-
           if (res.data[i].name !== '全部') {
             $.ajax({
               url: 'dev/addregion',
@@ -338,16 +319,13 @@ Page({
             }).then((res) => {
             })
           }
-
         }
       }
     });
-
   },
 
   //  心跳开始
   _startPing() {
-    var that = this;
     var heartbeatInterval = that.data._heartbeatInterval * 1000;
     that.data._heartbeatTimerId = setInterval(() => {
       var options = {
@@ -361,7 +339,6 @@ Page({
   * 发送数据
   */
   _sendJson(json) {
-    var that = this;
     wx.sendSocketMessage({
       //  对象转换字符串
       data: JSON.stringify(json),
@@ -369,7 +346,6 @@ Page({
   },
 
   getJSON(cmd, dids, names) {
-    var that = this;
     //  读取数据
     var json = {
       cmd: cmd,
@@ -389,7 +365,6 @@ Page({
 
   //  获取服务器返回的信息
   getServiceBack() {
-    let that = this;
     wx.onSocketMessage((res) => {
       var noti = JSON.parse(res.data), _sendJson = {}, arr = [];
       switch (noti.cmd) {
